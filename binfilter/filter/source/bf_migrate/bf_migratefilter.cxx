@@ -2,9 +2,9 @@
  *
  *  $RCSfile: bf_migratefilter.cxx,v $
  *
- *  $Revision: 1.2 $
+ *  $Revision: 1.3 $
  *
- *  last change: $Author: mwu $ $Date: 2003-11-06 07:59:00 $
+ *  last change: $Author: mba $ $Date: 2004-04-02 14:14:57 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -63,6 +63,10 @@
 #include <bf_migratefilter.hxx>
 #endif
 
+#ifndef _COM_SUN_STAR_UTIL_XCLOSEABLE_HPP_
+#include <com/sun/star/util/XCloseable.hpp>
+#endif
+
 #ifndef _COM_SUN_STAR_IO_XOUTPUTSTREAM_HPP_
 #include <com/sun/star/io/XOutputStream.hpp>
 #endif
@@ -87,7 +91,7 @@
 #include <com/sun/star/io/XSeekable.hpp>
 #endif
 
-#ifndef _UNTOOLS_UCBSTREAMHELPER_HXX 
+#ifndef _UNTOOLS_UCBSTREAMHELPER_HXX
 #include <unotools/ucbstreamhelper.hxx>
 #endif
 
@@ -122,6 +126,7 @@ using namespace com::sun::star::xml;
 using namespace com::sun::star::xml::sax;
 using namespace com::sun::star::frame;
 using namespace com::sun::star::task;
+using namespace com::sun::star::util;
 
 const OUString sServiceNameTextDocument(RTL_CONSTASCII_USTRINGPARAM("com.sun.star.text.TextDocument"));
 const OUString sServiceNameGlobalDocument(RTL_CONSTASCII_USTRINGPARAM("com.sun.star.text.GlobalDocument"));
@@ -144,25 +149,25 @@ sal_Bool bf_MigrateFilter::getContactToLegacyProcessServiceFactory()
     }
 
     if( mxLegServFact.is() )
-    { 
-        bRetval = sal_True; 
+    {
+        bRetval = sal_True;
     }
 
     return bRetval;
 }
 
-sal_Bool bf_MigrateFilter::importImpl(const Sequence< ::com::sun::star::beans::PropertyValue >& aDescriptor) 
+sal_Bool bf_MigrateFilter::importImpl(const Sequence< ::com::sun::star::beans::PropertyValue >& aDescriptor)
     throw (RuntimeException)
 {
     sal_Int32 nLength(aDescriptor.getLength());
     const PropertyValue* pValue = aDescriptor.getConstArray();
 
     Reference < XInputStream > xInputStream;
-    Reference< XComponent > rStrippedDocument;
+    Reference< XCloseable > rStrippedDocument;
     Reference< XMultiServiceFactory > rStrippedMSF;
     Reference < XDocumentHandler > xLocalDocumentHandler;
     Reference < XExporter > xStrippedExporter;
-    Reference< XInteractionHandler > xInteractionHandler;	
+    Reference< XInteractionHandler > xInteractionHandler;
 
     OUString sFilterName;
     OUString sURL;
@@ -251,7 +256,7 @@ sal_Bool bf_MigrateFilter::importImpl(const Sequence< ::com::sun::star::beans::P
     {
         // Get DocumentType using GetFilterMatcher() (test)
         const SfxFilter* pFilter = SFX_APP()->GetFilterMatcher().GetFilter4FilterName( sFilterName );
-    
+
         if(pFilter)
         {
             // Get sStrippedDocumentType. For SRX645 this is more simple, look below.
@@ -264,7 +269,7 @@ sal_Bool bf_MigrateFilter::importImpl(const Sequence< ::com::sun::star::beans::P
             // sStrippedDocumentType = pFilter->GetServiceName();
 
             // ...fill rStrippedDocument somehow
-            rStrippedDocument = Reference< XComponent >::query(rStrippedMSF->createInstance(sStrippedDocumentType));
+            rStrippedDocument = Reference< XCloseable >::query(rStrippedMSF->createInstance(sStrippedDocumentType));
 
             if(rStrippedDocument.is())
             {
@@ -402,7 +407,7 @@ sal_Bool bf_MigrateFilter::importImpl(const Sequence< ::com::sun::star::beans::P
             xLocalImporter->setTargetDocument(mxDoc);
         }
     }
-    
+
     if(bRetval)
     {
         // try to create Stripped exporter, give local document handler as target
@@ -418,10 +423,10 @@ sal_Bool bf_MigrateFilter::importImpl(const Sequence< ::com::sun::star::beans::P
         else
         {
             // set source document to Strippedly loaded read-only document
-            xStrippedExporter->setSourceDocument(rStrippedDocument);
+            xStrippedExporter->setSourceDocument( Reference < XComponent >( rStrippedDocument, UNO_QUERY ) );
         }
     }
-    
+
     if(bRetval)
     {
         try
@@ -455,13 +460,19 @@ sal_Bool bf_MigrateFilter::importImpl(const Sequence< ::com::sun::star::beans::P
     if(bStrippedDocumentCreated)
     {
         // close Stripped document again
-        rStrippedDocument->dispose();
+        try
+        {
+            rStrippedDocument->close(sal_True);
+        }
+        catch(Exception& /*e*/)
+        {
+        }
     }
 
     return bRetval;
 }
 
-sal_Bool bf_MigrateFilter::exportImpl(const Sequence< ::com::sun::star::beans::PropertyValue >& aDescriptor) 
+sal_Bool bf_MigrateFilter::exportImpl(const Sequence< ::com::sun::star::beans::PropertyValue >& aDescriptor)
     throw (RuntimeException)
 {
     sal_Int32 nLength(aDescriptor.getLength());
@@ -469,11 +480,11 @@ sal_Bool bf_MigrateFilter::exportImpl(const Sequence< ::com::sun::star::beans::P
 
     Reference < XOutputStream > xOutputStream;
     Reference< XMultiServiceFactory > rStrippedMSF;
-    Reference< XComponent > rStrippedDocument;
+    Reference< XCloseable > rStrippedDocument;
     Reference < XDocumentHandler > xStrippedDocumentHandler;
     Reference < XExporter > xLocalExporter;
-    Reference< XInteractionHandler > xInteractionHandler;	
-    
+    Reference< XInteractionHandler > xInteractionHandler;
+
     OUString sFilterName;
     OUString sXMLImportService;
     OUString sXMLExportService;
@@ -614,7 +625,7 @@ sal_Bool bf_MigrateFilter::exportImpl(const Sequence< ::com::sun::star::beans::P
     if(bRetval)
     {
         // open an empty Stripped document
-        rStrippedDocument = Reference< XComponent >::query(rStrippedMSF->createInstance(sStrippedDocumentType));
+        rStrippedDocument = Reference< XCloseable >::query(rStrippedMSF->createInstance(sStrippedDocumentType));
 
         if(!rStrippedDocument.is())
         {
@@ -650,7 +661,7 @@ sal_Bool bf_MigrateFilter::exportImpl(const Sequence< ::com::sun::star::beans::P
         {
             // set target document at Stripped document handler
             Reference < XImporter > xStrippedImporter(xStrippedDocumentHandler, UNO_QUERY);
-            xStrippedImporter->setTargetDocument(rStrippedDocument);
+            xStrippedImporter->setTargetDocument( Reference < XComponent >( rStrippedDocument, UNO_QUERY ) );
         }
     }
 
@@ -718,7 +729,7 @@ sal_Bool bf_MigrateFilter::exportImpl(const Sequence< ::com::sun::star::beans::P
                 xSeekable = Reference<XSeekable>::query(xOutputStream);
 
                 Sequence < PropertyValue > seqPropValues(xInteractionHandler.is() ? 4 : 3);
-    
+
                 seqPropValues[0].Name = OUString(RTL_CONSTASCII_USTRINGPARAM("Overwrite"));
                 seqPropValues[0].Value <<= sal_True;
 
@@ -765,13 +776,19 @@ sal_Bool bf_MigrateFilter::exportImpl(const Sequence< ::com::sun::star::beans::P
     if(bStrippedDocumentCreated)
     {
         // close Stripped document again
-        rStrippedDocument->dispose();
+        try
+        {
+            rStrippedDocument->close(sal_True);
+        }
+        catch(Exception& /*e*/)
+        {
+        }
     }
 
     return bRetval;
 }
 
-sal_Bool SAL_CALL bf_MigrateFilter::filter(const Sequence< ::com::sun::star::beans::PropertyValue >& aDescriptor) 
+sal_Bool SAL_CALL bf_MigrateFilter::filter(const Sequence< ::com::sun::star::beans::PropertyValue >& aDescriptor)
     throw (RuntimeException)
 {
     sal_Bool bRetval(sal_False);
@@ -779,7 +796,7 @@ sal_Bool SAL_CALL bf_MigrateFilter::filter(const Sequence< ::com::sun::star::bea
 
     if(bGotLegacyServiceManager)
     {
-        Reference < XComponent > xWrapper( mxLegServFact->createInstance( 
+        Reference < XComponent > xWrapper( mxLegServFact->createInstance(
             ::rtl::OUString( RTL_CONSTASCII_USTRINGPARAM( "com.sun.star.office.OfficeWrapper" ))), UNO_QUERY );
 
         bRetval = (FILTER_EXPORT == meType) ? exportImpl(aDescriptor) : importImpl(aDescriptor);
@@ -791,13 +808,13 @@ sal_Bool SAL_CALL bf_MigrateFilter::filter(const Sequence< ::com::sun::star::bea
     return bRetval;
 }
 
-void SAL_CALL bf_MigrateFilter::cancel() 
+void SAL_CALL bf_MigrateFilter::cancel()
     throw (RuntimeException)
 {
 }
 
 // XExporter
-void SAL_CALL bf_MigrateFilter::setSourceDocument(const Reference< ::com::sun::star::lang::XComponent >& xDoc) 
+void SAL_CALL bf_MigrateFilter::setSourceDocument(const Reference< ::com::sun::star::lang::XComponent >& xDoc)
     throw (::com::sun::star::lang::IllegalArgumentException, RuntimeException)
 {
     meType = FILTER_EXPORT;
@@ -805,7 +822,7 @@ void SAL_CALL bf_MigrateFilter::setSourceDocument(const Reference< ::com::sun::s
 }
 
 // XImporter
-void SAL_CALL bf_MigrateFilter::setTargetDocument(const Reference< ::com::sun::star::lang::XComponent >& xDoc) 
+void SAL_CALL bf_MigrateFilter::setTargetDocument(const Reference< ::com::sun::star::lang::XComponent >& xDoc)
     throw (::com::sun::star::lang::IllegalArgumentException, RuntimeException)
 {
     meType = FILTER_IMPORT;
@@ -813,21 +830,21 @@ void SAL_CALL bf_MigrateFilter::setTargetDocument(const Reference< ::com::sun::s
 }
 
 // XInitialization
-void SAL_CALL bf_MigrateFilter::initialize(const Sequence< Any >& aArguments) 
+void SAL_CALL bf_MigrateFilter::initialize(const Sequence< Any >& aArguments)
     throw (Exception, RuntimeException)
 {
     Sequence < PropertyValue > aAnySeq;
     sal_Int32 nLength(aArguments.getLength());
-    
+
     if(nLength && (aArguments[0] >>= aAnySeq))
     {
         const PropertyValue* pValue = aAnySeq.getConstArray();
         nLength = aAnySeq.getLength();
-        
+
         for(sal_Int32 a(0); a < nLength; a++)
         {
             OUString sName(pValue[a].Name);
-    
+
             if(pValue[a].Name.equalsAsciiL(RTL_CONSTASCII_STRINGPARAM("Type")))
                 pValue[a].Value >>= msFilterName;
         }
@@ -843,14 +860,14 @@ OUString bf_MigrateFilter_getImplementationName()
 #define SERVICE_NAME1 "com.sun.star.document.ExportFilter"
 #define SERVICE_NAME2 "com.sun.star.document.ImportFilter"
 
-sal_Bool SAL_CALL bf_MigrateFilter_supportsService(const OUString& ServiceName) 
+sal_Bool SAL_CALL bf_MigrateFilter_supportsService(const OUString& ServiceName)
     throw (RuntimeException)
 {
     return ServiceName.equalsAsciiL(RTL_CONSTASCII_STRINGPARAM(SERVICE_NAME1)) ||
            ServiceName.equalsAsciiL(RTL_CONSTASCII_STRINGPARAM(SERVICE_NAME2));
 }
 
-Sequence< OUString > SAL_CALL bf_MigrateFilter_getSupportedServiceNames() 
+Sequence< OUString > SAL_CALL bf_MigrateFilter_getSupportedServiceNames()
     throw (RuntimeException)
 {
     Sequence < OUString > aRet(2);
@@ -858,7 +875,7 @@ Sequence< OUString > SAL_CALL bf_MigrateFilter_getSupportedServiceNames()
 
     pArray[0] =  OUString(RTL_CONSTASCII_USTRINGPARAM(SERVICE_NAME1));
     pArray[1] =  OUString(RTL_CONSTASCII_USTRINGPARAM(SERVICE_NAME2));
-    
+
     return aRet;
 }
 
@@ -872,19 +889,19 @@ Reference< XInterface > SAL_CALL bf_MigrateFilter_createInstance(const Reference
 }
 
 // XServiceInfo
-OUString SAL_CALL bf_MigrateFilter::getImplementationName() 
+OUString SAL_CALL bf_MigrateFilter::getImplementationName()
     throw (RuntimeException)
 {
     return bf_MigrateFilter_getImplementationName();
 }
 
-sal_Bool SAL_CALL bf_MigrateFilter::supportsService(const OUString& rServiceName) 
+sal_Bool SAL_CALL bf_MigrateFilter::supportsService(const OUString& rServiceName)
     throw (RuntimeException)
 {
     return bf_MigrateFilter_supportsService(rServiceName);
 }
 
-Sequence< OUString > SAL_CALL bf_MigrateFilter::getSupportedServiceNames() 
+Sequence< OUString > SAL_CALL bf_MigrateFilter::getSupportedServiceNames()
     throw (RuntimeException)
 {
     return bf_MigrateFilter_getSupportedServiceNames();
