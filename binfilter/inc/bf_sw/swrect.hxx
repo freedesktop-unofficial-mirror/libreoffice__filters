@@ -2,9 +2,9 @@
  *
  *  $RCSfile: swrect.hxx,v $
  *
- *  $Revision: 1.1.1.1 $
+ *  $Revision: 1.2 $
  *
- *  last change: $Author: hjs $ $Date: 2003-10-01 12:23:53 $
+ *  last change: $Author: mwu $ $Date: 2003-11-06 08:34:13 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -66,7 +66,9 @@
 #ifndef _GEN_HXX //autogen
 #include <tools/gen.hxx>
 #endif
-class SvStream;
+class SvStream; 
+namespace binfilter {
+
 
 class SwRect
 {
@@ -424,4 +426,5 @@ inline SwRect::SwRect( long X, long Y, long Width, long Height ) :
 }
 
 
+} //namespace binfilter
 #endif	//_SWRECT_HXX
