@@ -2,9 +2,9 @@
  *
  *  $RCSfile: starmath_config.cxx,v $
  *
- *  $Revision: 1.3 $
+ *  $Revision: 1.4 $
  *
- *  last change: $Author: hr $ $Date: 2004-08-03 15:11:31 $
+ *  last change: $Author: vg $ $Date: 2005-02-16 17:40:15 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -122,7 +122,7 @@ namespace binfilter {
 //STRIP001 void SmConfig::ItemSetToConfig(const SfxItemSet &rSet)
 //STRIP001 {
 //STRIP001 	const SfxPoolItem *pItem	 = NULL;
-//STRIP001 
+//STRIP001
 //STRIP001 	UINT16 nU16;
 //STRIP001 	BOOL bVal;
 //STRIP001 	if (rSet.GetItemState(SID_PRINTSIZE, TRUE, &pItem) == SFX_ITEM_SET)
@@ -154,8 +154,8 @@ namespace binfilter {
 //STRIP001         if (IsIgnoreSpacesRight() != bVal)
 //STRIP001         {
 //STRIP001             SetIgnoreSpacesRight( bVal );
-//STRIP001 
-//STRIP001 			// (angezeigte) Formeln müssen entsprechen neu formatiert werden.
+//STRIP001
+//STRIP001          // (angezeigte) Formeln muessen entsprechen neu formatiert werden.
 //STRIP001 			// Das erreichen wir mit:
 //STRIP001 			Broadcast(SfxSimpleHint(HINT_FORMATCHANGED));
 //STRIP001 		}
@@ -166,12 +166,12 @@ namespace binfilter {
 /*N*/ void SmConfig::ConfigToItemSet(SfxItemSet &rSet) const
 /*N*/ {
 /*N*/ 	const SfxItemPool *pPool = rSet.GetPool();
-/*N*/ 
+/*N*/
 /*N*/ 	rSet.Put(SfxUInt16Item(pPool->GetWhich(SID_PRINTSIZE),
 /*N*/                            (UINT16) GetPrintSize()));
 /*N*/ 	rSet.Put(SfxUInt16Item(pPool->GetWhich(SID_PRINTZOOM),
 /*N*/                            (UINT16) GetPrintZoomFactor()));
-/*N*/ 
+/*N*/
 /*N*/     rSet.Put(SfxBoolItem(pPool->GetWhich(SID_PRINTTITLE), IsPrintTitle()));
 /*N*/     rSet.Put(SfxBoolItem(pPool->GetWhich(SID_PRINTTEXT),  IsPrintFormulaText()));
 /*N*/     rSet.Put(SfxBoolItem(pPool->GetWhich(SID_PRINTFRAME), IsPrintFrame()));
