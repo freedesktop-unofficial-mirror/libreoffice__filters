@@ -1,5 +1,7 @@
 /************************************************************************
  *
+ *  OperandLookup.java
+ *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
  *
@@ -44,7 +46,7 @@
  *
  *  The Initial Developer of the Original Code is: Sun Microsystems, Inc.
  *
- *  Copyright: 2000 by Sun Microsystems, Inc.
+ *  Copyright: 2001 by Sun Microsystems, Inc.
  *
  *  All Rights Reserved.
  *
@@ -53,70 +55,68 @@
  *
  ************************************************************************/
 
-package org.openoffice.xmerge.converter.xml.sxc.pexcel.records;
 
-import java.io.DataInputStream;
-import java.io.OutputStream;
-import java.io.InputStream;
-import java.io.IOException;
+package org.openoffice.xmerge.converter.xml.sxc.pexcel.records.formula;
+import java.util.HashMap;
 
 import org.openoffice.xmerge.util.Debug;
-import org.openoffice.xmerge.util.EndianConverter;
 
 /**
- * Represents a BIFF record defiuning the defualt column width 
- */
-public class DefColWidth implements BIFFRecord {
-
-    private byte[] grbit = new byte[2];
-    private byte[] coldx = new byte[2];
-    private byte[] ixfe  = new byte[2];
+  * A lookup table containing information about operands
+  */
+public class OperandLookup implements SymbolLookup {
+    private static HashMap stringToID = null;
+    private static HashMap idToString = null;
     
-/**
- * Constructs a pocket Excel Document from the
- * <code>InputStream</code> and assigns it the document name passed in
- *
- * @param	is InputStream containing a Pocket Excel Data file.
- */
-    public DefColWidth() {
-        grbit	= new byte[] {0x00, 0x00};
-        coldx	= new byte[] {0x00, 0x09};
-        ixfe	= new byte[] {0x00, 0x00};
-    }
 
-    public DefColWidth(InputStream is) throws IOException {
-        read(is);
+    /**
+    * The default constructor - invokes {@link #initialize() initialize()}
+    */
+    public OperandLookup() {
+        initialize();
     }
 
     /**
-     * Get the hex code for this particular <code>BIFFRecord</code> 
-     *
-     * @return the hex code for <code>DefColWidth</code>
+     * Initialize the lookup table for operandss
      */
-    public short getBiffType() {
-        return PocketExcelBiffConstants.DEF_COL_WIDTH;
-    }
-       
-    public void write(OutputStream output) throws IOException {
-
-        output.write(getBiffType());
-        output.write(grbit);
-        output.write(coldx);
-        output.write(ixfe);
-
-        Debug.log(Debug.TRACE,	"Writing DefColWidth record");
+    public synchronized void initialize() {
+        if ((stringToID != null) || (idToString != null)) {
+            return;
+        }
+        stringToID = new HashMap();
+        idToString = new HashMap();
+        addEntry("CELL_REFERENCE", TokenConstants.TREF);
+        addEntry("CELL_AREA_REFERENCE", TokenConstants.TAREA);
+        addEntry("INTEGER", TokenConstants.TINT);
+        addEntry("NUMBER", TokenConstants.TNUM);
     }
     
-    public int read(InputStream input) throws IOException {
-
-        int numOfBytesRead	= input.read(grbit);
-        numOfBytesRead 		+= input.read(coldx);
-        numOfBytesRead		+= input.read(ixfe);
+    /**
+     * Associate an operand with an identifier
+     * @param symbol	The operand that will act as the key in the lookup table
+     * @param id		The identifier for the operand
+     */
+    public void addEntry(String symbol, int id) {
+        Integer iObj = new Integer(id);
+        stringToID.put(symbol,iObj);
+        idToString.put(iObj,symbol);
+    }
         
-        Debug.log(Debug.TRACE,"\tgrbit : "+ EndianConverter.readShort(grbit) + 
-                            " coldx : " + EndianConverter.readShort(coldx) +
-                            " ixfe : " + EndianConverter.readShort(ixfe));
-        return 0;
+    /**
+     * Retrieve the operand string associated with a given id
+     * @param	id	The identfier for the operand
+     * @return	The operand string
+     */
+    public String getStringFromID(int id) {
+        return (String)idToString.get(new Integer(id));
     }
     
+    /**
+     * Retrieve the identifier associated with a given operator
+     * @param	symbol	The operand name
+     * @return	The identifier associated with this operand in the lookup table.
+     */
+    public int getIDFromString(String symbol) {
+        return ((Integer)stringToID.get(symbol)).intValue();
+    }
 }

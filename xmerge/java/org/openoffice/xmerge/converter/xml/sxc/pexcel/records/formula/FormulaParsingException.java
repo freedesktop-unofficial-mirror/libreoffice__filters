@@ -1,5 +1,7 @@
 /************************************************************************
  *
+ *  EndianConverter.java
+ *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
  *
@@ -44,7 +46,7 @@
  *
  *  The Initial Developer of the Original Code is: Sun Microsystems, Inc.
  *
- *  Copyright: 2000 by Sun Microsystems, Inc.
+ *  Copyright: 2001 by Sun Microsystems, Inc.
  *
  *  All Rights Reserved.
  *
@@ -53,70 +55,22 @@
  *
  ************************************************************************/
 
-package org.openoffice.xmerge.converter.xml.sxc.pexcel.records;
 
-import java.io.DataInputStream;
-import java.io.OutputStream;
-import java.io.InputStream;
-import java.io.IOException;
+package org.openoffice.xmerge.converter.xml.sxc.pexcel.records.formula;
+
+/*
+ * If the formula failed to be parsed properly this exception will be thrown
+ *
+ * Martin Maher
+ */
+ 
+import java.io.*;
 
 import org.openoffice.xmerge.util.Debug;
-import org.openoffice.xmerge.util.EndianConverter;
 
-/**
- * Represents a BIFF record defiuning the defualt column width 
- */
-public class DefColWidth implements BIFFRecord {
-
-    private byte[] grbit = new byte[2];
-    private byte[] coldx = new byte[2];
-    private byte[] ixfe  = new byte[2];
+public class FormulaParsingException extends Exception {
     
-/**
- * Constructs a pocket Excel Document from the
- * <code>InputStream</code> and assigns it the document name passed in
- *
- * @param	is InputStream containing a Pocket Excel Data file.
- */
-    public DefColWidth() {
-        grbit	= new byte[] {0x00, 0x00};
-        coldx	= new byte[] {0x00, 0x09};
-        ixfe	= new byte[] {0x00, 0x00};
-    }
-
-    public DefColWidth(InputStream is) throws IOException {
-        read(is);
-    }
-
-    /**
-     * Get the hex code for this particular <code>BIFFRecord</code> 
-     *
-     * @return the hex code for <code>DefColWidth</code>
-     */
-    public short getBiffType() {
-        return PocketExcelBiffConstants.DEF_COL_WIDTH;
-    }
-       
-    public void write(OutputStream output) throws IOException {
-
-        output.write(getBiffType());
-        output.write(grbit);
-        output.write(coldx);
-        output.write(ixfe);
-
-        Debug.log(Debug.TRACE,	"Writing DefColWidth record");
-    }
-    
-    public int read(InputStream input) throws IOException {
-
-        int numOfBytesRead	= input.read(grbit);
-        numOfBytesRead 		+= input.read(coldx);
-        numOfBytesRead		+= input.read(ixfe);
-        
-        Debug.log(Debug.TRACE,"\tgrbit : "+ EndianConverter.readShort(grbit) + 
-                            " coldx : " + EndianConverter.readShort(coldx) +
-                            " ixfe : " + EndianConverter.readShort(ixfe));
-        return 0;
-    }
-    
-}
+     public FormulaParsingException(String message) {
+         super(message);
+     }
+ }

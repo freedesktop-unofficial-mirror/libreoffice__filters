@@ -48,75 +48,73 @@
  *
  *  All Rights Reserved.
  *
- *  Contributor(s): _______________________________________
+ *  Contributor(s): Michael Hayes (mhayes@openoffice.org) and Martin Maher
  *
  *
  ************************************************************************/
 
-package org.openoffice.xmerge.converter.xml.sxc.pexcel.records;
+package org.openoffice.xmerge.converter.xml.sxc.pexcel.records.formula;
 
-import java.io.DataInputStream;
-import java.io.OutputStream;
-import java.io.InputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-
-import org.openoffice.xmerge.util.Debug;
-import org.openoffice.xmerge.util.EndianConverter;
+import java.util.Vector;
+import java.util.Enumeration;
 
 /**
- * Represents a BIFF record defiuning the defualt column width 
+ * This Helper class provides a simplified interface to conversion between PocketXL formula representation
+ * and Calc formula representation.<p>
+ * The class is used by {@link org.openoffice.xmerge.converter.xml.sxc.pexcel.Records.Formula}
  */
-public class DefColWidth implements BIFFRecord {
-
-    private byte[] grbit = new byte[2];
-    private byte[] coldx = new byte[2];
-    private byte[] ixfe  = new byte[2];
+public class FormulaHelper {
+    private static FormulaParser parser;
+    private static FormulaCompiler compiler;
+    private static TokenEncoder encoder;
+    private static TokenDecoder decoder;
     
-/**
- * Constructs a pocket Excel Document from the
- * <code>InputStream</code> and assigns it the document name passed in
- *
- * @param	is InputStream containing a Pocket Excel Data file.
- */
-    public DefColWidth() {
-        grbit	= new byte[] {0x00, 0x00};
-        coldx	= new byte[] {0x00, 0x09};
-        ixfe	= new byte[] {0x00, 0x00};
+    static {
+        parser   = new FormulaParser();
+        compiler = new FormulaCompiler();
+        encoder = new TokenEncoder();
+        decoder  = new TokenDecoder();	
     }
-
-    public DefColWidth(InputStream is) throws IOException {
-        read(is);
-    }
-
+    
     /**
-     * Get the hex code for this particular <code>BIFFRecord</code> 
+     * Convertes a string representation of a calc formula into an array of PocketXL bytes
+     * @param	formula	The Formula String (e.g. 1+SUM(A1,B1))
      *
-     * @return the hex code for <code>DefColWidth</code>
+     * @throws	UnsupportedFunctionException	Thrown if a function in the formula is nto supported by Pocket Excel
+     * @throws	FormulaParsingException	Thrown when the formula is not well formed
+     *
      */
-    public short getBiffType() {
-        return PocketExcelBiffConstants.DEF_COL_WIDTH;
-    }
-       
-    public void write(OutputStream output) throws IOException {
+    public byte[] convertCalcToPXL(String formula) throws UnsupportedFunctionException, FormulaParsingException {
+        Vector parseTokens = parser.parse(formula);
+        Vector rpnTokens = compiler.infix2RPN(parseTokens);
 
-        output.write(getBiffType());
-        output.write(grbit);
-        output.write(coldx);
-        output.write(ixfe);
-
-        Debug.log(Debug.TRACE,	"Writing DefColWidth record");
-    }
-    
-    public int read(InputStream input) throws IOException {
-
-        int numOfBytesRead	= input.read(grbit);
-        numOfBytesRead 		+= input.read(coldx);
-        numOfBytesRead		+= input.read(ixfe);
+        ByteArrayOutputStream bytes = null;
+        try {
+            bytes = new ByteArrayOutputStream(); 
+            for (Enumeration e = rpnTokens.elements(); e.hasMoreElements();) {
+                bytes.write(encoder.getByte((Token)e.nextElement()));
+            }
+        } catch (IOException e) {
+        }
         
-        Debug.log(Debug.TRACE,"\tgrbit : "+ EndianConverter.readShort(grbit) + 
-                            " coldx : " + EndianConverter.readShort(coldx) +
-                            " ixfe : " + EndianConverter.readShort(ixfe));
-        return 0;
+        return bytes.toByteArray();
     }
     
+    /**
+     * Converts a PocketXL byte array into a Calc function string
+     * @param 	formula	A byte array that contains the PocketXL bytes for a formula
+     *
+     */
+    public String convertPXLToCalc(byte[] formula) {
+        Vector parseTokens = decoder.getTokenVector(formula);
+        Vector infixTokens = compiler.RPN2Infix(parseTokens);
+        
+        StringBuffer buff = new StringBuffer();
+        for (Enumeration e = infixTokens.elements();e.hasMoreElements();) {
+            buff.append(((Token)e.nextElement()).toString());
+        }
+        return buff.toString();
+    }
 }
