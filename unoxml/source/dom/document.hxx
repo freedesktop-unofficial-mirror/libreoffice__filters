@@ -2,9 +2,9 @@
  *
  *  $RCSfile: document.hxx,v $
  *
- *  $Revision: 1.4 $
+ *  $Revision: 1.5 $
  *
- *  last change: $Author: lo $ $Date: 2004-02-27 16:41:55 $
+ *  last change: $Author: obo $ $Date: 2004-11-16 12:20:43 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -289,7 +289,7 @@ namespace DOM
     virtual OUString SAL_CALL getPrefix()
         throw (RuntimeException)
     {
-        return CNode::getPrefix();
+       return CNode::getPrefix();
     }
     virtual Reference< XNode > SAL_CALL getPreviousSibling()
         throw (RuntimeException)
