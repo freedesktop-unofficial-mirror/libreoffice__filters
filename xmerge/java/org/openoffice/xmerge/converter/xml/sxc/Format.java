@@ -433,7 +433,13 @@ public class Format implements Cloneable {
      public String toString() {
          return new String("Value : " + getValue() + " Category : " + getCategory());
      }
-    
+
+    /** 
+     * Tests if the current <code>Format</code> object has default attribute
+     * values.
+     *
+     * @return true if it contains default value 
+     */
     public boolean isDefault() {
 
         Format rhs = new Format();
