@@ -2,9 +2,9 @@
  *
  *  $RCSfile: starmath_document.cxx,v $
  *
- *  $Revision: 1.6 $
+ *  $Revision: 1.7 $
  *
- *  last change: $Author: pjunck $ $Date: 2004-10-27 13:31:11 $
+ *  last change: $Author: vg $ $Date: 2005-02-16 17:40:40 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -312,7 +312,7 @@ static const char __FAR_DATA pStarMathDoc[] = "StarMathDocument";
 //STRIP001 	{
 //STRIP001 		case HINT_FORMATCHANGED:
 //STRIP001 			SetFormulaArranged(FALSE);
-//STRIP001 			nModifyCount++; 	//! merkwrdig...
+//STRIP001          nModifyCount++;     //! merkwuerdig...
 //STRIP001 								// ohne dies wird die Grafik letztlich
 //STRIP001 								// nicht geupdatet
 //STRIP001 			Resize();
@@ -358,7 +358,7 @@ static const char __FAR_DATA pStarMathDoc[] = "StarMathDocument";
 /*N*/ 		BOOL bIsEnabled = IsEnableSetModified();
 /*N*/ 		if( bIsEnabled )
 /*N*/ 			EnableSetModified( FALSE );
-/*N*/ 
+/*N*/
 /*N*/ 		aText = rBuffer;
 /*N*/ 		Parse();
 /*N*/         //Resize();
@@ -371,11 +371,11 @@ static const char __FAR_DATA pStarMathDoc[] = "StarMathDocument";
 /*N*/             else
 /*N*/                 pViewSh->GetGraphicWindow().Invalidate();
 /*N*/         }
-/*N*/ 
+/*N*/
 /*N*/ 		if ( bIsEnabled )
 /*N*/ 			EnableSetModified( bIsEnabled );
 /*N*/ 		SetModified(TRUE);
-/*N*/ 
+/*N*/
         // launch accessible event if necessary
 //STRIP001         SmGraphicAccessible *pAcc = pViewSh ? pViewSh->GetGraphicWindow().GetAccessible() : 0;
 //STRIP001         if (pAcc)
@@ -425,18 +425,18 @@ static const char __FAR_DATA pStarMathDoc[] = "StarMathDocument";
 
 /*N*/ void SmDocShell::ArrangeFormula()
 /*N*/ {
-/*N*/ 	//! Nur für die Dauer der Existenz dieses Objekts sind am Drucker die
+/*N*/   //! Nur fuer die Dauer der Existenz dieses Objekts sind am Drucker die
 /*N*/ 	//! richtigen Einstellungen garantiert.
 /*N*/     SmPrinterAccess  aPrtAcc(*this);
 /*N*/ //	OutputDevice	*pOutDev = aPrtAcc.GetPrinter();
 /*N*/     OutputDevice* pOutDev = aPrtAcc.GetRefDev();
-/*N*/ 
+/*N*/
 /*N*/ #ifndef PRODUCT
 /*N*/ 	if (!pOutDev)
 /*N*/ 		DBG_WARNING("Sm : kein Drucker vorhanden");
 /*N*/ #endif
-/*N*/ 
-/*N*/ 	// falls nötig ein anderes OutputDevice holen für das formatiert wird
+/*N*/
+/*N*/   // falls noetig ein anderes OutputDevice holen fuer das formatiert wird
 /*N*/ 	if (!pOutDev)
 /*N*/ 	{
 /*N*/ 		SmViewShell *pView = SmGetActiveView();
@@ -449,13 +449,13 @@ static const char __FAR_DATA pStarMathDoc[] = "StarMathDocument";
 /*N*/ 	}
 /*N*/ 	DBG_ASSERT(pOutDev->GetMapMode().GetMapUnit() == MAP_100TH_MM,
 /*N*/ 			   "Sm : falscher MapMode");
-/*N*/ 
+/*N*/
 /*N*/ 	const SmFormat &rFormat = GetFormat();
 /*N*/ 	pTree->Prepare(rFormat, *this);
 /*N*/ 	pTree->Arrange(*pOutDev, rFormat);
-/*N*/ 
+/*N*/
 /*N*/ 	SetFormulaArranged(TRUE);
-/*N*/ 
+/*N*/
 /*N*/     // invalidate accessible text
 /*N*/     aAccText = String();
 /*N*/ }
@@ -468,9 +468,9 @@ static const char __FAR_DATA pStarMathDoc[] = "StarMathDocument";
 /*N*/         //!
 /*N*/         //! see also SmEditWindow::DataChanged !
 /*N*/         //!
-/*N*/ 
+/*N*/
 /*N*/ 		pEditEngineItemPool = EditEngine::CreatePool();
-/*N*/ 
+/*N*/
 /*N*/         //
 /*N*/         // set fonts to be used
 /*N*/         //
@@ -510,7 +510,7 @@ static const char __FAR_DATA pStarMathDoc[] = "StarMathDocument";
 /*N*/                         aFont.GetStyleName(), aFont.GetPitch(), aFont.GetCharSet(),
 /*N*/                         rFntDta.nFontInfoId ) );
 /*N*/         }
-/*N*/ 
+/*N*/
 /*N*/         // set font heights
 /*N*/ 		SvxFontHeightItem aFontHeigt(
 /*N*/ 						Application::GetDefaultDevice()->LogicToPixel(
@@ -521,33 +521,33 @@ static const char __FAR_DATA pStarMathDoc[] = "StarMathDocument";
 /*N*/ 		pEditEngineItemPool->SetPoolDefaultItem( aFontHeigt );
 /*N*/ 		aFontHeigt.SetWhich( EE_CHAR_FONTHEIGHT_CTL );
 /*N*/ 		pEditEngineItemPool->SetPoolDefaultItem( aFontHeigt );
-/*N*/ 
+/*N*/
 /*N*/ 		pEditEngine = new EditEngine( pEditEngineItemPool );
-/*N*/ 
+/*N*/
 /*N*/ 		pEditEngine->EnableUndo( TRUE );
 /*N*/ 		pEditEngine->SetDefTab( USHORT(
 /*N*/ 			Application::GetDefaultDevice()->GetTextWidth( C2S("XXXX") ) ) );
-/*N*/ 
+/*N*/
 /*N*/ 		pEditEngine->SetControlWord(
 /*N*/ 				(pEditEngine->GetControlWord() | EE_CNTRL_AUTOINDENTING) &
 /*N*/ 				(~EE_CNTRL_UNDOATTRIBS) &
 /*N*/ 				(~EE_CNTRL_PASTESPECIAL) );
-/*N*/ 
+/*N*/
 /*N*/ 		pEditEngine->SetWordDelimiters( C2S(" .=+-*/(){}[];\"" ) );
 /*N*/ 		pEditEngine->SetRefMapMode( MAP_PIXEL );
-/*N*/ 
+/*N*/
 /*N*/ 		pEditEngine->SetPaperSize( Size( 800, 0 ) );
-/*N*/ 
+/*N*/
 /*N*/ 		pEditEngine->EraseVirtualDevice();
-/*N*/ 
+/*N*/
 /*N*/         // set initial text if the document already has some...
 /*N*/         // (may be the case when reloading a doc)
 /*N*/         String aTxt( GetText() );
 /*N*/         if (aTxt.Len())
 /*N*/             pEditEngine->SetText( aTxt );
-/*N*/ 
+/*N*/
 /*N*/ 		pEditEngine->ClearModifyFlag();
-/*N*/ 
+/*N*/
 /*N*/ 		// forces new settings to be used if the itempool was modified
 /*N*/ 		// after cthe creation of the EditEngine
 /*N*/ 		//pEditEngine->Clear();	//#77957 incorrect font size
@@ -570,20 +570,20 @@ static const char __FAR_DATA pStarMathDoc[] = "StarMathDocument";
 /*N*/ 	if (!pTree)
 /*?*/ 		Parse();
 /*N*/ 	DBG_ASSERT(pTree, "Sm : NULL pointer");
-/*N*/ 
+/*N*/
 /*N*/ 	if (!IsFormulaArranged())
 /*N*/ 		ArrangeFormula();
-/*N*/ 
+/*N*/
 /*N*/ 	//Problem: Was passiert mit dem WYSIWYG? Wir haben waehrend wir inplace aktiv
 /*N*/ 	//sind kein Referenzdevice und sind auch nicht darauf ausgerichtet. Es kann
 /*N*/ 	//also jetzt eine Differenz zwischen der VisArea (spricht die Groesse im Client)
 /*N*/ 	//und der jetzt vorliegenden Groese geben.
 /*N*/ 	//Idee: Die Differenz koennte, zumindest behelfsmaessig, mit SmNod::SetSize
 /*N*/ 	//angepasst werden.
-/*N*/ 
+/*N*/
 /*N*/ 	rPosition.X() += aFormat.GetDistance( DIS_LEFTSPACE );
 /*N*/ 	rPosition.Y() += aFormat.GetDistance( DIS_TOPSPACE	);
-/*N*/ 
+/*N*/
 /*N*/     //! in case of high contrast-mode (accessibility option!)
 /*N*/     //! the draw mode needs to be set to default, because when imbedding
 /*N*/     //! Math for example in Calc in "a over b" the fraction bar may not
@@ -597,9 +597,9 @@ static const char __FAR_DATA pStarMathDoc[] = "StarMathDocument";
 /*?*/          rDev.SetDrawMode( DRAWMODE_DEFAULT );
 /*?*/          bRestoreDrawMode = TRUE;
 /*N*/     }
-/*N*/ 
+/*N*/
 /*N*/     pTree->Draw(rDev, rPosition);
-/*N*/ 
+/*N*/
 /*N*/     if (bRestoreDrawMode)
 /*?*/         rDev.SetDrawMode( nOldDrawMode );
 /*N*/ }
@@ -609,16 +609,16 @@ static const char __FAR_DATA pStarMathDoc[] = "StarMathDocument";
 /*N*/ Size SmDocShell::GetSize()
 /*N*/ {
 /*N*/ 	Size aRet;
-/*N*/ 
+/*N*/
 /*N*/ 	if (!pTree)
 /*N*/ 		Parse();
-/*N*/ 
+/*N*/
 /*N*/ 	if (pTree)
 /*N*/ 	{
 /*N*/ 		if (!IsFormulaArranged())
 /*N*/ 			ArrangeFormula();
 /*N*/ 		aRet = pTree->GetSize();
-/*N*/ 
+/*N*/
 /*N*/ 		if ( !aRet.Width() )
 /*?*/ 			aRet.Width() = 2000;
 /*N*/ 		else
@@ -630,7 +630,7 @@ static const char __FAR_DATA pStarMathDoc[] = "StarMathDocument";
 /*N*/ 			aRet.Height() += aFormat.GetDistance( DIS_TOPSPACE ) +
 /*N*/ 							 aFormat.GetDistance( DIS_BOTTOMSPACE );
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	return aRet;
 /*N*/ }
 
@@ -650,7 +650,7 @@ static const char __FAR_DATA pStarMathDoc[] = "StarMathDocument";
 /*N*/ 			//!be set correct (once) elsewhere(!), in order to avoid numerous
 /*N*/ 			//!superfluous pushing and poping of the MapMode when using
 /*N*/ 			//!this class.
-/*N*/ 
+/*N*/
 /*N*/ 			const MapUnit eOld = pPrinter->GetMapMode().GetMapUnit();
 /*?*/  			if ( MAP_100TH_MM != eOld )
 /*?*/  			{
@@ -676,7 +676,7 @@ static const char __FAR_DATA pStarMathDoc[] = "StarMathDocument";
 /*N*/             //!be set correct (once) elsewhere(!), in order to avoid numerous
 /*N*/             //!superfluous pushing and poping of the MapMode when using
 /*N*/             //!this class.
-/*N*/ 
+/*N*/
 /*N*/             const MapUnit eOld = pRefDev->GetMapMode().GetMapUnit();
 /*N*/             if ( MAP_100TH_MM != eOld )
 /*N*/             {
@@ -728,7 +728,7 @@ static const char __FAR_DATA pStarMathDoc[] = "StarMathDocument";
 /*N*/ 						   SID_PRINTFRAME,		SID_PRINTFRAME,
 /*N*/ 						   SID_NO_RIGHT_SPACES, SID_NO_RIGHT_SPACES,
 /*N*/ 						   0);
-/*N*/ 
+/*N*/
 /*N*/ 		SmModule *pp = SM_MOD1();
 /*N*/ 		pp->GetConfig()->ConfigToItemSet(*pOptions);
 /*N*/ 		pPrinter = new SfxPrinter(pOptions);
@@ -746,13 +746,13 @@ static const char __FAR_DATA pStarMathDoc[] = "StarMathDocument";
 /*N*/         if ( pOutDev )
 /*N*/             return pOutDev;
 /*N*/     }
-/*N*/ 
+/*N*/
 /*N*/     return GetPrt();
 /*N*/ }
 
 
 /*N*/ void SmDocShell::SetPrinter( SfxPrinter *pNew )
-/*N*/ {DBG_BF_ASSERT(0, "STRIP"); //STRIP001 
+/*N*/ {DBG_BF_ASSERT(0, "STRIP"); //STRIP001
 //STRIP001 	delete pPrinter;
 //STRIP001 	pPrinter = pNew;	//Eigentumsuebergang!
 //STRIP001 	pPrinter->SetMapMode( MapMode(MAP_100TH_MM) );
@@ -776,16 +776,16 @@ static const char __FAR_DATA pStarMathDoc[] = "StarMathDocument";
 /*N*/ void SmDocShell::Resize()
 /*N*/ {
 /*N*/ 	Size aVisSize = GetSize();
-/*N*/ 
+/*N*/
 /*N*/ 	BOOL bIsEnabled = IsEnableSetModified();
 /*N*/ 	if ( bIsEnabled )
 /*?*/ 		EnableSetModified( FALSE );
-/*N*/ 
+/*N*/
 /*N*/ 	SetVisAreaSize( aVisSize );
 /*N*/ 	SmViewShell *pViewSh = SmGetActiveView();
 /*N*/ 	if (pViewSh)
 /*?*/         pViewSh->GetGraphicWindow().Invalidate();
-/*N*/ 
+/*N*/
 /*N*/ 	if ( bIsEnabled )
 /*?*/ 		EnableSetModified( bIsEnabled );
 /*N*/ }
@@ -803,16 +803,16 @@ static const char __FAR_DATA pStarMathDoc[] = "StarMathDocument";
 /*N*/ 	bIsFormulaArranged	( FALSE )
 /*N*/ {
 /*N*/ 	SetPool(&SFX_APP()->GetPool());
-/*N*/ 
+/*N*/
 /*N*/ 	SmModule *pp = SM_MOD1();
 /*N*/     aFormat = pp->GetConfig()->GetStandardFormat();
-/*N*/ 
+/*N*/
 /*N*/ 	StartListening(aFormat);
 /*N*/ 	StartListening(*pp->GetConfig());
-/*N*/ 
+/*N*/
 /*N*/ 	SetShell(this);
 /*N*/ 	SetModel( new SmModel(this) );	//! das hier mit new erzeugte Model brauch
-/*N*/ 									//! im Destruktor nicht explizit gelöscht werden.
+/*N*/                                   //! im Destruktor nicht explizit geloescht werden.
 /*N*/ 									//! Dies erledigt das Sfx.
 /*N*/ }
 
@@ -821,10 +821,10 @@ static const char __FAR_DATA pStarMathDoc[] = "StarMathDocument";
 /*N*/ SmDocShell::~SmDocShell()
 /*N*/ {
 /*N*/ 	SmModule *pp = SM_MOD1();
-/*N*/ 
+/*N*/
 /*N*/ 	EndListening(aFormat);
 /*N*/ 	EndListening(*pp->GetConfig());
-/*N*/ 
+/*N*/
 /*N*/ 	delete pEditEngine;
 /*N*/ 	delete pEditEngineItemPool;
 /*N*/ 	delete pTree;
@@ -846,17 +846,17 @@ static const char __FAR_DATA pStarMathDoc[] = "StarMathDocument";
 /*N*/ {
 /*N*/ 	if (pTree)
 /*N*/ 		delete pTree;
-/*N*/ 
+/*N*/
 /*N*/     SmConvert  eTmpConv = aInterpreter.GetConversion();
-/*N*/ 
+/*N*/
 /*N*/     // parse in old style and make changes for new style
 /*N*/     aInterpreter.SetConversion(eConv);
 /*N*/     pTree = aInterpreter.Parse(rText);
 /*N*/     // get to new version converted text
 /*N*/     rText = aInterpreter.GetText();
-/*N*/ 
+/*N*/
 /*N*/     aInterpreter.SetConversion(eTmpConv);
-/*N*/ 
+/*N*/
 /*N*/ 	// clean up tree parsed in old style
 /*N*/ 	if (pTree)
 /*N*/ 	{	delete pTree;
@@ -909,7 +909,7 @@ static const char __FAR_DATA pStarMathDoc[] = "StarMathDocument";
 //STRIP001     BOOL        bSuccess = FALSE;
 //STRIP001     SvStream   *pStream = rMedium.GetInStream();
 //STRIP001     String      aTemp = aText;
-//STRIP001 
+//STRIP001
 //STRIP001     if (pStream)
 //STRIP001     {
 //STRIP001         const String& rFltName = rMedium.GetFilter()->GetFilterName();
@@ -925,12 +925,12 @@ static const char __FAR_DATA pStarMathDoc[] = "StarMathDocument";
 //STRIP001             rMedium.CloseInStream();
 //STRIP001         }
 //STRIP001     }
-//STRIP001 
+//STRIP001
 //STRIP001     if( bSuccess )
 //STRIP001     {
 //STRIP001         SmViewShell *pView = SmGetActiveView();
 //STRIP001         SmEditWindow *pEditWin = pView ? pView->GetEditWindow() : 0;
-//STRIP001 
+//STRIP001
 //STRIP001         if (pEditWin)
 //STRIP001             pEditWin->InsertText( aText );
 //STRIP001         else
@@ -939,7 +939,7 @@ static const char __FAR_DATA pStarMathDoc[] = "StarMathDocument";
 //STRIP001             aTemp += aText;
 //STRIP001             aText  = aTemp;
 //STRIP001         }
-//STRIP001 
+//STRIP001
 //STRIP001         Parse();
 //STRIP001         SetModified(TRUE);
 //STRIP001         if (pView)
@@ -949,7 +949,7 @@ static const char __FAR_DATA pStarMathDoc[] = "StarMathDocument";
 //STRIP001             rBnd.Invalidate(SID_TEXT);
 //STRIP001         }
 //STRIP001     }
-//STRIP001 
+//STRIP001
 //STRIP001     return bSuccess;
 //STRIP001 }
 
@@ -968,7 +968,7 @@ static const char __FAR_DATA pStarMathDoc[] = "StarMathDocument";
 /*N*/ 			aDocStream = pStor->OpenStream(String::CreateFromAscii(pStarMathDoc));
 /*N*/ 			aDocStream->SetVersion (pStor->GetVersion ());
 /*N*/ 			GetPool().SetFileFormatVersion(USHORT(pStor->GetVersion()));
-/*N*/ 
+/*N*/
 /*N*/ 			if (! aDocStream )
 /*N*/ 				bRet = FALSE;
 /*N*/ 		}
@@ -1005,7 +1005,7 @@ static const char __FAR_DATA pStarMathDoc[] = "StarMathDocument";
 /*N*/ 		else
 /*N*/ 		{
 /*N*/             bRet = Try3x(pStor, STREAM_READWRITE);
-/*N*/ 
+/*N*/
 /*N*/ 			if( !bRet )
 /*N*/ 			{
 /*?*/  				pStor->Remove(String::CreateFromAscii(pStarMathDoc));
@@ -1036,7 +1036,7 @@ static const char __FAR_DATA pStarMathDoc[] = "StarMathDocument";
 //STRIP001 {
 //STRIP001 	String aTemp = aText;
 //STRIP001     BOOL bRet = FALSE, bChkOldVersion = TRUE;
-//STRIP001 
+//STRIP001
 //STRIP001 	String aTmpStr( C2S( "Equation Native" ));
 //STRIP001 	if( pStor->IsStream( aTmpStr ))
 //STRIP001 	{
@@ -1062,12 +1062,12 @@ static const char __FAR_DATA pStarMathDoc[] = "StarMathDocument";
 //STRIP001         bRet = Try2x(pStor, STREAM_STD_READ);
 //STRIP001 		pStor->Remove(C2S("\1Ole10Native"));
 //STRIP001 	}
-//STRIP001 
+//STRIP001
 //STRIP001 	if( bRet )
 //STRIP001 	{
 //STRIP001         SmViewShell *pView = SmGetActiveView();
 //STRIP001         SmEditWindow *pEditWin = pView ? pView->GetEditWindow() : 0;
-//STRIP001 
+//STRIP001
 //STRIP001         if (pEditWin)
 //STRIP001             pEditWin->InsertText( aText );
 //STRIP001         else
@@ -1076,7 +1076,7 @@ static const char __FAR_DATA pStarMathDoc[] = "StarMathDocument";
 //STRIP001             aTemp += aText;
 //STRIP001             aText  = aTemp;
 //STRIP001         }
-//STRIP001 
+//STRIP001
 //STRIP001         if( bChkOldVersion )
 //STRIP001         {
 //STRIP001             if( SOFFICE_FILEFORMAT_40 >= pStor->GetVersion() )
@@ -1084,7 +1084,7 @@ static const char __FAR_DATA pStarMathDoc[] = "StarMathDocument";
 //STRIP001             if( SOFFICE_FILEFORMAT_50 >= pStor->GetVersion() )
 //STRIP001                 ConvertText( aText, CONVERT_50_TO_60 );
 //STRIP001         }
-//STRIP001 
+//STRIP001
 //STRIP001 		Parse();
 //STRIP001 		SetModified(TRUE);
 //STRIP001         if (pView)
@@ -1105,7 +1105,7 @@ static const char __FAR_DATA pStarMathDoc[] = "StarMathDocument";
 /*N*/     if (SOFFICE_FILEFORMAT_50 >= xStrm->GetVersion())
 /*N*/         ConvertText( aTmp, CONVERT_60_TO_50 );
 /*N*/     ByteString exString( ExportString( aTmp ) );
-/*N*/ 
+/*N*/
 /*N*/ 	*xStrm	<< SM304AIDENT << SM50VERSION
 /*N*/ 			<< 'T';
 /*N*/ 	xStrm->WriteByteString(exString);
@@ -1120,14 +1120,14 @@ static const char __FAR_DATA pStarMathDoc[] = "StarMathDocument";
 /*N*/ {
 /*N*/     //! apply latest changes if necessary
 /*N*/     UpdateText();
-/*N*/ 
+/*N*/
 /*N*/     if ( SfxInPlaceObject::Save() )
 /*N*/ 	{
 /*N*/ 		if( !pTree )
 /*N*/ 			Parse();
 /*N*/ 		if( pTree && !IsFormulaArranged() )
 /*N*/ 			ArrangeFormula();
-/*N*/ 
+/*N*/
 /*N*/ 		SvStorage *pStor = GetStorage();
 /*N*/ 		if(pStor->GetVersion() >= SOFFICE_FILEFORMAT_60)
 /*N*/ 		{
@@ -1143,10 +1143,10 @@ static const char __FAR_DATA pStarMathDoc[] = "StarMathDocument";
 /*?*/ 			aDocStream = pStor->OpenStream(String::CreateFromAscii(pStarMathDoc));
 /*?*/ 			aDocStream->SetVersion (pStor->GetVersion ());
 /*?*/ 			GetPool().SetFileFormatVersion(USHORT(pStor->GetVersion()));
-/*?*/ 
+/*?*/
 /*?*/ 			aDocStream->Seek(0);
 /*?*/ 			ImplSave( aDocStream );
-/*?*/ 
+/*?*/
 /*?*/ 			aDocStream.Clear();
 /*?*/ 			return TRUE;
 /*N*/ 		}
@@ -1169,17 +1169,17 @@ static const char __FAR_DATA pStarMathDoc[] = "StarMathDocument";
 /*N*/ BOOL SmDocShell::SaveAs(SvStorage * pNewStor)
 /*N*/ {
 /*N*/ 	BOOL bRet = FALSE;
-/*N*/ 
+/*N*/
 /*N*/     //! apply latest changes if necessary
 /*N*/     UpdateText();
-/*N*/ 
+/*N*/
 /*N*/     if ( SfxInPlaceObject::SaveAs( pNewStor ) )
 /*N*/ 	{
 /*N*/ 		if( !pTree )
 /*?*/ 			Parse();
 /*N*/ 		if( pTree && !IsFormulaArranged() )
 /*?*/ 			ArrangeFormula();
-/*N*/ 
+/*N*/
 /*N*/ 		if (pNewStor->GetVersion() >= SOFFICE_FILEFORMAT_60)
 /*N*/ 		{
 /*N*/ 			// a math package as a storage
@@ -1197,7 +1197,7 @@ static const char __FAR_DATA pStarMathDoc[] = "StarMathDocument";
 /*N*/ 			GetPool().SetFileFormatVersion( USHORT( pNewStor->GetVersion() ));
 /*N*/ 			aStm->SetBufferSize(DOCUMENT_BUFFER_SIZE);
 /*N*/ 			aStm->SetKey( pNewStor->GetKey() ); // Passwort setzen
-/*N*/ 
+/*N*/
 /*N*/ 			if ( aStm.Is() )
 /*N*/ 			{
 /*N*/ 				ImplSave( aStm );
@@ -1218,7 +1218,7 @@ static const char __FAR_DATA pStarMathDoc[] = "StarMathDocument";
 //STRIP001 			Parse();
 //STRIP001 		if( pTree && !IsFormulaArranged() )
 //STRIP001 			ArrangeFormula();
-//STRIP001 
+//STRIP001
 //STRIP001 		const String& rFltName = pFlt->GetFilterName();
 //STRIP001 		if(rFltName.EqualsAscii( STAROFFICE_XML ))
 //STRIP001 		{
@@ -1247,7 +1247,7 @@ static const char __FAR_DATA pStarMathDoc[] = "StarMathDocument";
 /*N*/ #if 0
 /*N*/ 		if (! pStor)
 /*N*/ 			return TRUE;
-/*N*/ 
+/*N*/
 /*N*/ 		aDocStream = pStor->OpenStream(String::CreateFromAscii(pStarMathDoc));
 /*N*/ 		aDocStream->SetVersion (pStor->GetVersion ());
 /*N*/ 		GetPool().SetFileFormatVersion(USHORT(pStor->GetVersion()));
@@ -1265,7 +1265,7 @@ static const char __FAR_DATA pStarMathDoc[] = "StarMathDocument";
 //STRIP001 BOOL SmDocShell::ImportSM20File(SvStream *pStream)
 //STRIP001 {
 //STRIP001 	void ReadSM20SymSet(SvStream*, SmSymSet*);
-//STRIP001 
+//STRIP001
 //STRIP001 	char		 cTag;
 //STRIP001 	ULONG		 lIdent, lVersion;
 //STRIP001 	long		 lTime;
@@ -1274,13 +1274,13 @@ static const char __FAR_DATA pStarMathDoc[] = "StarMathDocument";
 //STRIP001     ByteString   aByteStr;
 //STRIP001 	SmSymSet	*pSymbolSet;
 //STRIP001 	ULONG		 FilePos = pStream->Tell();
-//STRIP001 
+//STRIP001
 //STRIP001 	*pStream >> lIdent >> lVersion;
-//STRIP001 
+//STRIP001
 //STRIP001 	if (lIdent == FRMIDENT)
 //STRIP001 	{
 //STRIP001 		DBG_ASSERT((lVersion == FRMVERSION), "Illegal file version");
-//STRIP001 
+//STRIP001
 //STRIP001 		*pStream >> cTag;
 //STRIP001         rtl_TextEncoding eEnc = RTL_TEXTENCODING_MS_1252;
 //STRIP001 		while (cTag && !pStream->IsEof())
@@ -1292,7 +1292,7 @@ static const char __FAR_DATA pStarMathDoc[] = "StarMathDocument";
 //STRIP001                     aText = ImportString( aByteStr );
 //STRIP001                     Parse();
 //STRIP001 					break;
-//STRIP001 
+//STRIP001
 //STRIP001 				case 'D':
 //STRIP001 					{
 //STRIP001 						pStream->ReadByteString(aBuffer, eEnc);
@@ -1303,29 +1303,29 @@ static const char __FAR_DATA pStarMathDoc[] = "StarMathDocument";
 //STRIP001 						pStream->ReadByteString(aBuffer, eEnc);
 //STRIP001 					}
 //STRIP001 					break;
-//STRIP001 
+//STRIP001
 //STRIP001 				case 'F':
 //STRIP001 					aFormat.ReadSM20Format(*pStream);
 //STRIP001 					aFormat.From300To304a ();
 //STRIP001 					break;
-//STRIP001 
+//STRIP001
 //STRIP001 				case 'S':
 //STRIP001 					pSymbolSet = new SmSymSet();
 //STRIP001 					ReadSM20SymSet(pStream, pSymbolSet);
 //STRIP001                     delete pSymbolSet;
 //STRIP001 					break;
-//STRIP001 
+//STRIP001
 //STRIP001 				default:
 //STRIP001 					DBG_ASSERT((cTag != 0), "Illegal data tag");
 //STRIP001 			}
 //STRIP001 			*pStream >> cTag;
 //STRIP001 		}
-//STRIP001 
+//STRIP001
 //STRIP001 		return TRUE;
 //STRIP001 	}
-//STRIP001 
+//STRIP001
 //STRIP001 	pStream->Seek(FilePos);
-//STRIP001 
+//STRIP001
 //STRIP001 	return FALSE;
 //STRIP001 }
 
@@ -1345,7 +1345,7 @@ static const char __FAR_DATA pStarMathDoc[] = "StarMathDocument";
 /*?*/ 			rFormat.RequestApplyChanges();
 /*N*/ 		}
 /*N*/ 		break;
-/*N*/ 
+/*N*/
 /*?*/ 	case SID_AUTO_REDRAW :
 /*?*/ 		{
 /*?*/ 			DBG_BF_ASSERT(0, "STRIP"); //STRIP001 SmModule *pp = SM_MOD1();
@@ -1353,30 +1353,30 @@ static const char __FAR_DATA pStarMathDoc[] = "StarMathDocument";
 //STRIP001 /*?*/ 			pp->GetConfig()->SetAutoRedraw(!bRedraw);
 /*?*/ 		}
 /*?*/ 		break;
-/*?*/ 
+/*?*/
 /*?*/ 	case SID_SYMBOLS_CATALOGUE:
 /*?*/ 		{
 /*?*/ 			DBG_BF_ASSERT(0, "STRIP"); //STRIP001 /*?*/ 			SmSymbolDialog(NULL, GetSymSetManager()).Execute();
 //STRIP001 /*?*/ 			RestartFocusTimer();
 /*?*/ 		}
 /*?*/ 		break;
-/*?*/ 
+/*?*/
 /*?*/ 	case SID_TOOLBOX:
 /*?*/ 		{
 /*?*/ 			SmViewShell *pView = SmGetActiveView();
 /*?*/ 			if (pView)
-/*?*/ 			{DBG_BF_ASSERT(0, "STRIP"); //STRIP001 
+/*?*/ 			{DBG_BF_ASSERT(0, "STRIP"); //STRIP001
 //STRIP001 /*?*/ 				pView->GetViewFrame()->ToggleChildWindow(
 //STRIP001 /*?*/ 						SmToolBoxWrapper::GetChildWindowId() );
 /*?*/ 			}
 /*?*/ 		}
 /*?*/ 		break;
-/*?*/ 
+/*?*/
 /*?*/ 	case SID_INSERT_FORMULA:
 /*?*/ 		{
 /*?*/ 			DBG_BF_ASSERT(0, "STRIP"); //STRIP001 /*?*/ 			SfxMedium *pMedium = SFX_APP()->
 //STRIP001 /*?*/                     InsertDocumentDialog( 0, SmDocShell::Factory() );
-//STRIP001 /*?*/ 
+//STRIP001 /*?*/
 //STRIP001 /*?*/ 			if (pMedium != NULL)
 //STRIP001 /*?*/ 			{
 //STRIP001 /*?*/ 				if (pMedium->IsStorage())
@@ -1384,11 +1384,11 @@ static const char __FAR_DATA pStarMathDoc[] = "StarMathDocument";
 //STRIP001 /*?*/ 				else
 //STRIP001 /*?*/ 					InsertFrom(*pMedium);
 //STRIP001 /*?*/ 				delete pMedium;
-//STRIP001 /*?*/ 
+//STRIP001 /*?*/
 //STRIP001 /*?*/                 UpdateText();
 //STRIP001 /*?*/ 				ArrangeFormula();
 //STRIP001 /*?*/ 				Resize();
-//STRIP001 /*?*/ 				// Fenster anpassen, neuzeichnen, ModifyCount erhöhen,...
+//STRIP001 /*?*/                // Fenster anpassen, neuzeichnen, ModifyCount erhoehen,...
 //STRIP001 /*?*/ 				if (pBindings)
 //STRIP001 /*?*/ 					pBindings->Invalidate(SID_GRAPHIC);
 //STRIP001 /*?*/ 			}
@@ -1396,30 +1396,30 @@ static const char __FAR_DATA pStarMathDoc[] = "StarMathDocument";
 //STRIP001 /*?*/ 			rReq.SetReturnValue (SfxBoolItem (rReq.GetSlot(), TRUE));
 /*?*/ 		}
 /*?*/ 		break;
-/*?*/ 
+/*?*/
 /*?*/ 	case SID_LOADSYMBOLS:
 /*?*/ 		{DBG_BF_ASSERT(0, "STRIP");} //STRIP001 /*?*/ 		LoadSymbols();
 /*?*/ 		break;
-/*?*/ 
+/*?*/
 /*?*/ 	case SID_SAVESYMBOLS:
 /*?*/ 		{DBG_BF_ASSERT(0, "STRIP");} //STRIP001 /*?*/ 		SaveSymbols();
 /*?*/ 		break;
-/*?*/ 
+/*?*/
 /*?*/ 	case SID_FONT:
 /*?*/ 		{
 /*?*/ 			DBG_BF_ASSERT(0, "STRIP"); //STRIP001 /*?*/ 			SmFontTypeDialog *pFontTypeDialog = new SmFontTypeDialog(NULL);
-//STRIP001 /*?*/ 
+//STRIP001 /*?*/
 //STRIP001 /*?*/ 			pFontTypeDialog->ReadFrom(GetFormat());
 //STRIP001 /*?*/ 			if (pFontTypeDialog->Execute() == RET_OK)
 //STRIP001 /*?*/ 			{
 //STRIP001 /*?*/ 				SmFormat& rOldFormat  = GetFormat();
-//STRIP001 /*?*/ 
+//STRIP001 /*?*/
 //STRIP001 /*?*/ 				pFontTypeDialog->WriteTo(GetFormat());
 //STRIP001 /*?*/ 				SfxUndoManager *pUndoMgr = GetUndoManager();
 //STRIP001 /*?*/ 				if (pUndoMgr)
 //STRIP001 /*?*/ 					pUndoMgr->AddUndoAction(
 //STRIP001 /*?*/ 						new SmFormatAction(this, rOldFormat, GetFormat()));
-//STRIP001 /*?*/ 
+//STRIP001 /*?*/
 //STRIP001 /*?*/ 				if (aText.Len ())
 //STRIP001 /*?*/ 				{
 //STRIP001 /*?*/ 					SetModified(TRUE);
@@ -1432,23 +1432,23 @@ static const char __FAR_DATA pStarMathDoc[] = "StarMathDocument";
 //STRIP001 /*?*/ 			RestartFocusTimer ();
 /*?*/ 		}
 /*?*/ 		break;
-/*?*/ 
+/*?*/
 /*?*/ 	case SID_FONTSIZE:
 /*?*/ 		{
 /*?*/ 			DBG_BF_ASSERT(0, "STRIP"); //STRIP001 /*?*/ 			SmFontSizeDialog *pFontSizeDialog = new SmFontSizeDialog(NULL);
-//STRIP001 /*?*/ 
+//STRIP001 /*?*/
 //STRIP001 /*?*/ 			pFontSizeDialog->ReadFrom(GetFormat());
 //STRIP001 /*?*/ 			if (pFontSizeDialog->Execute() == RET_OK)
 //STRIP001 /*?*/ 			{
 //STRIP001 /*?*/ 				SmFormat& rOldFormat  = GetFormat();
-//STRIP001 /*?*/ 
+//STRIP001 /*?*/
 //STRIP001 /*?*/ 				pFontSizeDialog->WriteTo(GetFormat());
-//STRIP001 /*?*/ 
+//STRIP001 /*?*/
 //STRIP001 /*?*/ 				SfxUndoManager *pUndoMgr = GetUndoManager();
 //STRIP001 /*?*/ 				if (pUndoMgr)
 //STRIP001 /*?*/ 					pUndoMgr->AddUndoAction(
 //STRIP001 /*?*/ 						new SmFormatAction(this, rOldFormat, GetFormat()));
-//STRIP001 /*?*/ 
+//STRIP001 /*?*/
 //STRIP001 /*?*/ 				if (aText.Len ())
 //STRIP001 /*?*/ 				{
 //STRIP001 /*?*/ 					SetModified(TRUE);
@@ -1461,23 +1461,23 @@ static const char __FAR_DATA pStarMathDoc[] = "StarMathDocument";
 //STRIP001 /*?*/ 			RestartFocusTimer ();
 /*?*/ 		}
 /*?*/ 		break;
-/*?*/ 
+/*?*/
 /*?*/ 	case SID_DISTANCE:
 /*?*/ 		{
 /*?*/ 			DBG_BF_ASSERT(0, "STRIP"); //STRIP001 /*?*/ 			SmDistanceDialog *pDistanceDialog = new SmDistanceDialog(NULL);
-//STRIP001 /*?*/ 
+//STRIP001 /*?*/
 //STRIP001 /*?*/ 			pDistanceDialog->ReadFrom(GetFormat());
 //STRIP001 /*?*/ 			if (pDistanceDialog->Execute() == RET_OK)
 //STRIP001 /*?*/ 			{
 //STRIP001 /*?*/ 				SmFormat& rOldFormat  = GetFormat();
-//STRIP001 /*?*/ 
+//STRIP001 /*?*/
 //STRIP001 /*?*/ 				pDistanceDialog->WriteTo(GetFormat());
-//STRIP001 /*?*/ 
+//STRIP001 /*?*/
 //STRIP001 /*?*/ 				SfxUndoManager *pUndoMgr = GetUndoManager();
 //STRIP001 /*?*/ 				if (pUndoMgr)
 //STRIP001 /*?*/ 					pUndoMgr->AddUndoAction(
 //STRIP001 /*?*/ 						new SmFormatAction(this, rOldFormat, GetFormat()));
-//STRIP001 /*?*/ 
+//STRIP001 /*?*/
 //STRIP001 /*?*/ 				if (aText.Len ())
 //STRIP001 /*?*/ 				{
 //STRIP001 /*?*/ 					SetModified(TRUE);
@@ -1491,28 +1491,28 @@ static const char __FAR_DATA pStarMathDoc[] = "StarMathDocument";
 //STRIP001 /*?*/ 			RestartFocusTimer ();
 /*?*/ 		}
 /*?*/ 		break;
-/*?*/ 
+/*?*/
 /*?*/ 	case SID_ALIGN:
 /*?*/ 		{
 /*?*/ 			DBG_BF_ASSERT(0, "STRIP"); //STRIP001 /*?*/ 			SmAlignDialog *pAlignDialog = new SmAlignDialog(NULL);
-//STRIP001 /*?*/ 
+//STRIP001 /*?*/
 //STRIP001 /*?*/ 			pAlignDialog->ReadFrom(GetFormat());
 //STRIP001 /*?*/ 			if (pAlignDialog->Execute() == RET_OK)
 //STRIP001 /*?*/ 			{
 //STRIP001 /*?*/                 SmFormat aOldFormat(GetFormat());
-//STRIP001 /*?*/ 
+//STRIP001 /*?*/
 //STRIP001 /*?*/ 				pAlignDialog->WriteTo(GetFormat());
-//STRIP001 /*?*/ 
+//STRIP001 /*?*/
 //STRIP001 /*?*/                 SmModule *pp = SM_MOD1();
 //STRIP001 /*?*/                 SmFormat aFmt( pp->GetConfig()->GetStandardFormat() );
 //STRIP001 /*?*/                 pAlignDialog->WriteTo( aFmt );
 //STRIP001 /*?*/                 pp->GetConfig()->SetStandardFormat( aFmt );
-//STRIP001 /*?*/ 
+//STRIP001 /*?*/
 //STRIP001 /*?*/ 				SfxUndoManager *pUndoMgr = GetUndoManager();
 //STRIP001 /*?*/ 				if (pUndoMgr)
 //STRIP001 /*?*/ 					pUndoMgr->AddUndoAction(
 //STRIP001 /*?*/                         new SmFormatAction(this, aOldFormat, GetFormat()));
-//STRIP001 /*?*/ 
+//STRIP001 /*?*/
 //STRIP001 /*?*/ 				if (aText.Len ())
 //STRIP001 /*?*/ 				{
 //STRIP001 /*?*/ 					SetModified(TRUE);
@@ -1526,19 +1526,19 @@ static const char __FAR_DATA pStarMathDoc[] = "StarMathDocument";
 //STRIP001 /*?*/ 			RestartFocusTimer ();
 /*?*/ 		}
 /*N*/ 		break;
-/*N*/ 
+/*N*/
 /*N*/ 	case SID_TEXT:
 /*N*/ 		{
 /*N*/ 			const SfxStringItem& rItem =
 /*N*/ 				(const SfxStringItem&)rReq.GetArgs()->Get(SID_TEXT);
-/*N*/ 
+/*N*/
 /*N*/ 			if (GetText() != rItem.GetValue())
 /*N*/ 			{
 /*?*/ 				SetText(rItem.GetValue());
 /*N*/ 			}
 /*N*/ 		}
 /*N*/ 		break;
-/*N*/ 
+/*N*/
 /*?*/ 	case SID_COPYOBJECT:
 /*?*/ 		{
 /*?*/     		Reference< datatransfer::XTransferable > xTrans(
@@ -1558,7 +1558,7 @@ static const char __FAR_DATA pStarMathDoc[] = "StarMathDocument";
 /*?*/ 			}
 /*?*/ 		}
 /*?*/ 		break;
-/*?*/ 
+/*?*/
 /*?*/ 	case SID_PASTEOBJECT:
 /*?*/ 		{
 /*?*/ 			TransferableDataHelper aData( TransferableDataHelper::
@@ -1588,7 +1588,7 @@ static const char __FAR_DATA pStarMathDoc[] = "StarMathDocument";
 /*?*/ 			}
 /*?*/ 		}
 /*?*/ 		break;
-/*?*/ 
+/*?*/
 /*?*/ 	case SID_UNDO:
 /*?*/ 	case SID_REDO:
 /*?*/ 		{
@@ -1600,9 +1600,9 @@ static const char __FAR_DATA pStarMathDoc[] = "StarMathDocument";
 /*?*/ 				const SfxPoolItem* pItem;
 /*?*/ 				if( pArgs && SFX_ITEM_SET == pArgs->GetItemState( nId, FALSE, &pItem ))
 /*?*/ 					nCnt = ((SfxUInt16Item*)pItem)->GetValue();
-/*?*/ 
+/*?*/
 /*?*/ 				BOOL (SfxUndoManager:: *fnDo)( USHORT );
-/*?*/ 
+/*?*/
 /*?*/ 				sal_uInt16 nCount;
 /*?*/ 				if( SID_UNDO == rReq.GetSlot() )
 /*?*/ 				{
@@ -1614,7 +1614,7 @@ static const char __FAR_DATA pStarMathDoc[] = "StarMathDocument";
 /*?*/ 					nCount = pUndoMgr->GetRedoActionCount();
 /*?*/ 					fnDo = &SfxUndoManager::Redo;
 /*?*/ 				}
-/*?*/ 
+/*?*/
 /*?*/ 				for( ; nCnt && nCount; --nCnt, --nCount )
 /*?*/ 					(pUndoMgr->*fnDo)( 0 );
 /*?*/ 			}
@@ -1627,7 +1627,7 @@ static const char __FAR_DATA pStarMathDoc[] = "StarMathDocument";
 /*N*/ void SmDocShell::GetState(SfxItemSet &rSet)
 /*N*/ {
 /*N*/ 	SfxWhichIter aIter(rSet);
-/*N*/ 
+/*N*/
 /*N*/ 	for (USHORT nWh = aIter.FirstWhich();  0 != nWh;  nWh = aIter.NextWhich())
 /*N*/ 	{
 /*N*/ 		switch (nWh)
@@ -1635,36 +1635,36 @@ static const char __FAR_DATA pStarMathDoc[] = "StarMathDocument";
 /*?*/ 		case SID_TEXTMODE:
 /*?*/ 			rSet.Put(SfxBoolItem(SID_TEXTMODE, GetFormat().IsTextmode()));
 /*?*/ 			break;
-/*?*/ 
+/*?*/
 /*?*/ 		case SID_DOCTEMPLATE :
 /*?*/ 			rSet.DisableItem (SID_DOCTEMPLATE);
 /*?*/ 			break;
-/*?*/ 
+/*?*/
 /*?*/ 		case SID_AUTO_REDRAW :
 /*?*/ 			{
 /*?*/ 				SmModule  *pp = SM_MOD1();
 /*?*/ 				BOOL	   bRedraw = pp->GetConfig()->IsAutoRedraw();
-/*?*/ 
+/*?*/
 /*?*/ 				rSet.Put (SfxBoolItem(SID_AUTO_REDRAW, bRedraw));
 /*?*/ 			}
 /*?*/ 			break;
-/*?*/ 
+/*?*/
 /*?*/ 		case SID_TOOLBOX:
 /*?*/ 			{
 /*?*/ 				BOOL bState = FALSE;
 /*?*/ 				SmViewShell *pView = SmGetActiveView();
 /*?*/ 				if (pView)
-/*?*/ 				{DBG_BF_ASSERT(0, "STRIP"); //STRIP001 
+/*?*/ 				{DBG_BF_ASSERT(0, "STRIP"); //STRIP001
 //STRIP001 /*?*/ 					SfxChildWindow *pChildWnd = pView->GetViewFrame()->
 //STRIP001 /*?*/ 							GetChildWindow( SmToolBoxWrapper::GetChildWindowId() );
-//STRIP001 /*?*/ 
+//STRIP001 /*?*/
 //STRIP001 /*?*/ 					if (pChildWnd  &&  pChildWnd->GetWindow()->IsVisible())
 //STRIP001 /*?*/ 						bState = TRUE;
 /*?*/ 				}
 /*?*/ 				rSet.Put(SfxBoolItem(SID_TOOLBOX, bState));
 /*?*/ 			}
 /*N*/ 			break;
-/*N*/ 
+/*N*/
 /*N*/ 		case SID_MODIFYSTATUS:
 /*N*/ 			{
 /*N*/ 				sal_Unicode cMod = ' ';
@@ -1673,15 +1673,15 @@ static const char __FAR_DATA pStarMathDoc[] = "StarMathDocument";
 /*N*/ 				rSet.Put(SfxStringItem(SID_MODIFYSTATUS, String(cMod)));
 /*N*/ 			}
 /*N*/ 			break;
-/*N*/ 
+/*N*/
 /*N*/ 		case SID_TEXT:
 /*N*/ 			rSet.Put(SfxStringItem(SID_TEXT, GetText()));
 /*N*/ 			break;
-/*N*/ 
+/*N*/
 /*N*/ 		case SID_GRAPHIC:
 /*N*/ 			rSet.Put(SfxInt16Item(SID_GRAPHIC, nModifyCount));
 /*N*/ 			break;
-/*N*/ 
+/*N*/
 /*N*/ 		case SID_UNDO:
 /*N*/ 		case SID_REDO:
 /*N*/ 			{
@@ -1692,7 +1692,7 @@ static const char __FAR_DATA pStarMathDoc[] = "StarMathDocument";
 /*?*/ 					rSet.DisableItem( nWh );
 /*N*/ 			}
 /*N*/ 			break;
-/*N*/ 
+/*N*/
 /*N*/ 		case SID_GETUNDOSTRINGS:
 /*N*/ 		case SID_GETREDOSTRINGS:
 /*N*/ 			{
@@ -1700,7 +1700,7 @@ static const char __FAR_DATA pStarMathDoc[] = "StarMathDocument";
 /*?*/ 				if( pUndoMgr )
 /*?*/ 				{
 /*?*/ 					UniString (SfxUndoManager:: *fnGetComment)( USHORT ) const;
-/*?*/ 
+/*?*/
 /*?*/ 					sal_uInt16 nCount;
 /*?*/ 					if( SID_GETUNDOSTRINGS == nWh )
 /*?*/ 					{
@@ -1718,7 +1718,7 @@ static const char __FAR_DATA pStarMathDoc[] = "StarMathDocument";
 /*?*/ 						for( sal_uInt16 n = 0; n < nCount; ++n )
 /*?*/ 							( sList += (pUndoMgr->*fnGetComment)( n ) )
 /*?*/ 									+= '\n';
-/*?*/ 
+/*?*/
 /*?*/ 						SfxStringListItem aItem( nWh );
 /*?*/ 						aItem.SetString( sList );
 /*?*/ 						rSet.Put( aItem );
@@ -1756,7 +1756,7 @@ static const char __FAR_DATA pStarMathDoc[] = "StarMathDocument";
 //STRIP001 	if (pView)
 //STRIP001 		pWrapper = (SmCmdBoxWrapper *) pView->GetViewFrame()->
 //STRIP001 				GetChildWindow( SmCmdBoxWrapper::GetChildWindowId() );
-//STRIP001 
+//STRIP001
 //STRIP001 	if (pWrapper)
 //STRIP001 		pWrapper->RestartFocusTimer ();
 //STRIP001 }
@@ -1791,16 +1791,16 @@ static const char __FAR_DATA pStarMathDoc[] = "StarMathDocument";
 /*N*/ void SmDocShell::SetVisArea (const Rectangle & rVisArea)
 /*N*/ {
 /*N*/ 	Rectangle aNewRect (rVisArea);
-/*N*/ 
+/*N*/
 /*N*/ 	aNewRect.SetPos(Point ());
-/*N*/ 
+/*N*/
 /*N*/ 	if (! aNewRect.Right ()) aNewRect.Right () = 2000;
 /*N*/ 	if (! aNewRect.Bottom ()) aNewRect.Bottom () = 1000;
-/*N*/ 
+/*N*/
 /*N*/ 	BOOL bIsEnabled = IsEnableSetModified();
 /*N*/ 	if ( bIsEnabled )
 /*?*/ 		EnableSetModified( FALSE );
-/*N*/ 
+/*N*/
 /*N*/ 	// If outplace editing, then dont resize the OutplaceWindow. But the
 /*N*/ 	// ObjectShell has to resize. Bug 56470
 /*N*/ 	BOOL bUnLockFrame;
@@ -1811,12 +1811,12 @@ static const char __FAR_DATA pStarMathDoc[] = "StarMathDocument";
 /*N*/ 	}
 /*N*/ 	else
 /*N*/ 		bUnLockFrame = FALSE;
-/*N*/ 
+/*N*/
 /*N*/ 	SfxInPlaceObject::SetVisArea( aNewRect );
-/*N*/ 
+/*N*/
 /*N*/ 	if( bUnLockFrame )
 /*?*/ 		GetFrame()->UnlockAdjustPosSizePixel();
-/*N*/ 
+/*N*/
 /*N*/ 	if ( bIsEnabled )
 /*?*/ 		EnableSetModified( bIsEnabled );
 /*N*/ }
@@ -1824,17 +1824,17 @@ static const char __FAR_DATA pStarMathDoc[] = "StarMathDocument";
 
 /*N*/ BOOL SmDocShell::Try3x (SvStorage *pStor,
 /*N*/ 						StreamMode eMode)
-/*N*/ 
+/*N*/
 /*N*/ {
 /*N*/ 	BOOL bRet = FALSE;
-/*N*/ 
+/*N*/
 /*N*/ 	SvStorageStreamRef aTempStream = pStor->OpenStream(
 /*N*/ 								String::CreateFromAscii(pStarMathDoc), eMode);
 /*N*/ 	aTempStream->SetVersion (pStor->GetVersion ());
 /*N*/ 	GetPool().SetFileFormatVersion (USHORT(pStor->GetVersion()));
 /*N*/ 	aTempStream->SetBufferSize(DOCUMENT_BUFFER_SIZE);
 /*N*/ 	aTempStream->SetKey( pStor->GetKey() ); // Passwort setzen
-/*N*/ 
+/*N*/
 /*N*/ 	if (aTempStream->GetError() == 0)
 /*N*/ 	{
 /*N*/ 		SvStream*	 pSvStream = aTempStream;
@@ -1844,14 +1844,14 @@ static const char __FAR_DATA pStarMathDoc[] = "StarMathDocument";
 /*N*/ 		ULONG		 lDate;
 /*N*/ 		String		 aBuffer;
 /*N*/         ByteString   aByteStr;
-/*N*/ 
+/*N*/
 /*N*/ 		*pSvStream >> lIdent >> lVersion;
-/*N*/ 
+/*N*/
 /*N*/ 		if ((lIdent == SM30IDENT) || (lIdent == SM30BIDENT) || (lIdent == SM304AIDENT))
 /*N*/ 		{
 /*N*/ 			DBG_ASSERT((lVersion == SM30VERSION) ||
 /*N*/ 					   (lVersion == SM50VERSION), "Illegal file version");
-/*N*/ 
+/*N*/
 /*N*/ 			*pSvStream >> cTag;
 /*N*/             rtl_TextEncoding eEnc = RTL_TEXTENCODING_MS_1252;
 /*N*/ 			while (cTag && !pSvStream->IsEof())
@@ -1863,7 +1863,7 @@ static const char __FAR_DATA pStarMathDoc[] = "StarMathDocument";
 /*N*/                         aText = ImportString( aByteStr );
 /*N*/ 						Parse();
 /*N*/ 						break;
-/*N*/ 
+/*N*/
 /*N*/ 					case 'D':
 /*?*/ 						pSvStream->ReadByteString(aBuffer, eEnc);
 /*?*/ 						pSvStream->ReadByteString(aBuffer, eEnc);
@@ -1872,7 +1872,7 @@ static const char __FAR_DATA pStarMathDoc[] = "StarMathDocument";
 /*?*/ 						*pSvStream >> lDate >> lTime;
 /*?*/ 						pSvStream->ReadByteString(aBuffer, eEnc);
 /*?*/ 						break;
-/*N*/ 
+/*N*/
 /*N*/ 					case 'F':
 /*N*/ 						*pSvStream >> aFormat;
 /*N*/ 						if (lIdent != SM304AIDENT)
@@ -1885,7 +1885,7 @@ static const char __FAR_DATA pStarMathDoc[] = "StarMathDocument";
 /*?*/ 							aFormat.SetDistance(DIS_BOTTOMSPACE, 100);
 /*N*/ 						}
 /*N*/ 						break;
-/*N*/ 
+/*N*/
 /*N*/ 					case 'S':
 /*N*/ 					{
 /*N*/                         String      aTmp;
@@ -1894,20 +1894,20 @@ static const char __FAR_DATA pStarMathDoc[] = "StarMathDocument";
 /*N*/                         *pSvStream >> n;
 /*N*/ 						break;
 /*N*/ 					}
-/*N*/ 
+/*N*/
 /*N*/ 					default:
 /*N*/ 						DBG_ASSERT((cTag != 0), "Illegal data tag");
 /*N*/ 				}
 /*N*/ 				*pSvStream >> cTag;
 /*N*/ 			}
-/*N*/ 
+/*N*/
 /*N*/ 			bRet = TRUE;
 /*N*/ #if 0
 /*N*/ 			aDocStream = aTempStream;
 /*N*/ #endif
 /*N*/ 		}
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	if (!bRet)
 /*N*/ 	{
 /*N*/ 		// kein Passwort gesetzt --> Datei marode
@@ -1921,7 +1921,7 @@ static const char __FAR_DATA pStarMathDoc[] = "StarMathDocument";
 /*?*/ 			SetError(ERRCODE_SFX_WRONGPASSWORD);
 /*?*/ 		}
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	return bRet;
 /*N*/ }
 
@@ -2022,7 +2022,7 @@ BOOL SmDocShell::Try2x (SvStorage *pStor,
 //STRIP001 		if (pView)
 //STRIP001 			pWrapper = (SmCmdBoxWrapper *)pView->GetViewFrame()->
 //STRIP001 					GetChildWindow( SmCmdBoxWrapper::GetChildWindowId() );
-//STRIP001 
+//STRIP001
 //STRIP001 		if (pWrapper)
 //STRIP001 			pWrapper->Grab ();
 //STRIP001 	}
@@ -2036,7 +2036,7 @@ BOOL SmDocShell::Try2x (SvStorage *pStor,
 //STRIP001 					new SfxVoidItem (SID_GETEDITTEXT), 0L);
 //STRIP001 			Resize();
 //STRIP001 		}
-//STRIP001 
+//STRIP001
 //STRIP001         SfxInPlaceObject::UIActivate (bActivate);
 //STRIP001 	}
 //STRIP001 }
@@ -2051,7 +2051,7 @@ BOOL SmDocShell::Try2x (SvStorage *pStor,
 /*N*/ {
 /*N*/ 	SfxInPlaceObject::FillClass(pClassName, pFormat, pAppName, pFullTypeName,
 /*N*/ 								pShortTypeName, nFileFormat);
-/*N*/ 
+/*N*/
 /*N*/ 	if (nFileFormat == SOFFICE_FILEFORMAT_31)
 /*N*/ 	{
 /*N*/ 		*pClassName 	= SvGlobalName(BF_SO3_SM_CLASSID_30);
