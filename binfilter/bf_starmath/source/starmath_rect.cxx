@@ -2,9 +2,9 @@
  *
  *  $RCSfile: starmath_rect.cxx,v $
  *
- *  $Revision: 1.5 $
+ *  $Revision: 1.6 $
  *
- *  last change: $Author: pjunck $ $Date: 2004-10-27 13:32:14 $
+ *  last change: $Author: vg $ $Date: 2005-02-16 17:41:29 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -110,10 +110,10 @@ static xub_Unicode __READONLY_DATA aMathAlpha[] =
 /*N*/ {
 /*N*/ 	if (rText.Len() == 0)
 /*N*/ 		return FALSE;
-/*N*/ 
-/*N*/ 	DBG_ASSERT(rText.Len() == 1, "Sm : String enthält nicht genau ein Zeichen");
+/*N*/
+/*N*/   DBG_ASSERT(rText.Len() == 1, "Sm : String enthaelt nicht genau ein Zeichen");
 /*N*/ 	xub_Unicode cChar = rText.GetChar(0);
-/*N*/ 
+/*N*/
 /*N*/ 	// ist es ein griechisches Zeichen ?
 /*N*/     if (xub_Unicode(0xE0AC) <= cChar  &&  cChar <= xub_Unicode(0xE0D4))
 /*N*/ 		return TRUE;
@@ -139,7 +139,7 @@ static xub_Unicode __READONLY_DATA aMathAlpha[] =
 /*N*/ {
 /*N*/ 	DBG_ASSERT(aTopLeft == Point(0, 0), "Sm: ooops...");
 /*N*/ 	DBG_ASSERT(aSize == Size(0, 0), "Sm: ooops...");
-/*N*/ 
+/*N*/
 /*N*/ 	bHasBaseline = bHasAlignInfo = FALSE;
 /*N*/ 	nBaseline = nAlignT = nAlignM = nAlignB =
 /*N*/ 	nGlyphTop = nGlyphBottom =
@@ -189,17 +189,17 @@ static xub_Unicode __READONLY_DATA aMathAlpha[] =
 /*N*/ 	if (rDev.GetOutDevType() != OUTDEV_PRINTER)
 /*N*/ 		DBG_WARNING("Sm :  Referenz-Device ist kein Drucker");
 /*N*/ #endif
-/*N*/ 
+/*N*/
 /*N*/ 	DBG_ASSERT(aTopLeft == Point(0, 0), "Sm: Ooops...");
-/*N*/ 
+/*N*/
 /*N*/ 	aSize = Size(rDev.GetTextWidth(rText), rDev.GetTextHeight());
-/*N*/ 
+/*N*/
 /*N*/ 	const FontMetric  aFM (rDev.GetFontMetric());
 /*N*/     BOOL              bIsMath  = aFM.GetName().EqualsIgnoreCaseAscii( FONTNAME_MATH ) ||
 /*N*/                                  aFM.GetName().EqualsIgnoreCaseAscii( FONTNAME_MATH2 );
 /*N*/ 	BOOL			  bAllowSmaller = bIsMath && !SmIsMathAlpha(rText);
 /*N*/ 	const long		  nFontHeight = rDev.GetFont().GetSize().Height();
-/*N*/ 
+/*N*/
 /*N*/   nBorderWidth  = nBorder;
 /*N*/ 	bHasAlignInfo = TRUE;
 /*N*/ 	bHasBaseline  = TRUE;
@@ -210,66 +210,66 @@ static xub_Unicode __READONLY_DATA aMathAlpha[] =
 /*N*/ 		// (1/3 of ascent over baseline)
 /*N*/ 		// (121 = 1/3 of 12pt ascent, 422 = 12pt fontheight)
 /*N*/ 	nAlignB		  = nBaseline;
-/*N*/ 
+/*N*/
 /*N*/ 	// workaround for printer fonts with very small (possible 0 or even
 /*N*/ 	// negative(!)) leading
 /*N*/ 	if (aFM.GetIntLeading() < 5  &&  rDev.GetOutDevType() == OUTDEV_PRINTER)
 /*N*/ 	{
 /*?*/ 		OutputDevice	*pWindow = Application::GetDefaultDevice();
-/*?*/ 
+/*?*/
 /*?*/ 		pWindow->Push(PUSH_MAPMODE | PUSH_FONT);
-/*?*/ 
+/*?*/
 /*?*/ 		pWindow->SetMapMode(rDev.GetMapMode());
 /*?*/ 		pWindow->SetFont(rDev.GetFontMetric());
-/*?*/ 
+/*?*/
 /*?*/ 		long  nDelta = pWindow->GetFontMetric().GetIntLeading();
 /*?*/ 		if (nDelta == 0)
 /*?*/ 		{ 	// dieser Wert entspricht etwa einem Leading von 80 bei einer
-/*?*/ 			// Fonthöhe von 422 (12pt)
+/*?*/           // Fonthoehe von 422 (12pt)
 /*?*/ 			nDelta = nFontHeight * 8L / 43;
 /*?*/ 		}
 /*?*/ 		SetTop(GetTop() - nDelta);
-/*?*/ 
+/*?*/
 /*?*/ 		pWindow->Pop();
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	// get GlyphBoundRect
 /*N*/ 	Rectangle  aGlyphRect;
 /*N*/ 	BOOL       bSuccess = SmGetGlyphBoundRect(rDev, rText, aGlyphRect);
 /*N*/ 	DBG_ASSERT(bSuccess, "Sm : Ooops... (fehlt evtl. der Font?)");
-/*N*/ 
+/*N*/
 /*N*/ 	nItalicLeftSpace  = GetLeft() - aGlyphRect.Left() + nBorderWidth;
 /*N*/ 	nItalicRightSpace = aGlyphRect.Right() - GetRight() + nBorderWidth;
 /*N*/ 	if (nItalicLeftSpace  < 0  &&  !bAllowSmaller)
 /*N*/ 		nItalicLeftSpace  = 0;
 /*N*/ 	if (nItalicRightSpace < 0  &&  !bAllowSmaller)
 /*N*/ 		nItalicRightSpace = 0;
-/*N*/ 
+/*N*/
 /*N*/ 	long  nDist = 0;
 /*N*/ 	if (pFormat)
 /*N*/ 		nDist = (rDev.GetFont().GetSize().Height()
 /*N*/ 				* pFormat->GetDistance(DIS_ORNAMENTSIZE)) / 100L;
-/*N*/ 
+/*N*/
 /*N*/ 	nHiAttrFence = aGlyphRect.TopLeft().Y() - 1 - nBorderWidth - nDist;
 /*N*/ 	nLoAttrFence = SmFromTo(GetAlignB(), GetBottom(), 0.0);
-/*N*/ 
+/*N*/
 /*N*/ 	nGlyphTop    = aGlyphRect.Top() - nBorderWidth;
 /*N*/ 	nGlyphBottom = aGlyphRect.Bottom() + nBorderWidth;
-/*N*/ 
+/*N*/
 /*N*/ 	if (bAllowSmaller)
 /*N*/ 	{
-/*N*/ 		// für Symbole und Operatoren aus dem StarMath Font passen wir den
+/*N*/       // fuer Symbole und Operatoren aus dem StarMath Font passen wir den
 /*N*/ 		// oberen und unteren Rand dem Zeichen an.
 /*N*/ 		SetTop(nGlyphTop);
 /*N*/ 		SetBottom(nGlyphBottom);
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	if (nHiAttrFence < GetTop())
 /*N*/ 		nHiAttrFence = GetTop();
-/*N*/ 
+/*N*/
 /*N*/ 	if (nLoAttrFence > GetBottom())
 /*N*/ 		nLoAttrFence = GetBottom();
-/*N*/ 
+/*N*/
 /*N*/ 	DBG_ASSERT(rText.Len() == 0  ||  !IsEmpty(),
 /*N*/ 			   "Sm: leeres Rechteck erzeugt");
 /*N*/ }
@@ -281,10 +281,10 @@ static xub_Unicode __READONLY_DATA aMathAlpha[] =
 /*N*/ {
 /*N*/ 	SmRectCache *pRectCache = SM_MOD1()->GetRectCache();
 /*N*/ 	DBG_ASSERT(pRectCache, "Sm : NULL pointer");
-/*N*/ 
+/*N*/
 /*N*/ 	// build key for rectangle (to look up in cache for)
 /*N*/ 	const SmRectCache::Key  aKey (rText, rDev.GetFont());
-/*N*/ 
+/*N*/
 /*N*/ 	const SmRect *pResult = pRectCache->Search(aKey);
 /*N*/ 	if (pResult)
 /*?*/ 		*this = *pResult;
@@ -315,7 +315,7 @@ static xub_Unicode __READONLY_DATA aMathAlpha[] =
 /*N*/ :	aSize(nWidth, nHeight)
 /*N*/ {
 /*N*/ 	DBG_ASSERT(aTopLeft == Point(0, 0), "Sm: ooops...");
-/*N*/ 
+/*N*/
 /*N*/ 	bHasBaseline  = FALSE;
 /*N*/ 	bHasAlignInfo = TRUE;
 /*N*/ 	nBaseline	  = 0;
@@ -365,7 +365,7 @@ static xub_Unicode __READONLY_DATA aMathAlpha[] =
 /*N*/ 	// move rectangle by position 'rPosition'.
 /*N*/ {
 /*N*/ 	aTopLeft  += rPosition;
-/*N*/ 
+/*N*/
 /*N*/ 	long  nDelta = rPosition.Y();
 /*N*/ 	nBaseline += nDelta;
 /*N*/ 	nAlignT   += nDelta;
@@ -382,7 +382,7 @@ static xub_Unicode __READONLY_DATA aMathAlpha[] =
 /*N*/ 							RectHorAlign eHor, RectVerAlign eVer) const
 /*N*/ {	Point  aPos (GetTopLeft());
 /*N*/ 		// will become the topleft point of the new rectangle position
-/*N*/ 
+/*N*/
 /*N*/ 	// set horizontal or vertical new rectangle position depending on
 /*N*/ 	// 'ePos' is one of 'RP_LEFT', 'RP_RIGHT' or 'RP_TOP', 'RP_BOTTOM'
 /*N*/ 	switch (ePos)
@@ -406,7 +406,7 @@ static xub_Unicode __READONLY_DATA aMathAlpha[] =
 /*N*/ 		default :
 /*N*/ 			DBG_ASSERT(FALSE, "Sm: unbekannter Fall");
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	// check if horizontal position is already set
 /*N*/ 	if (ePos == RP_LEFT  ||  ePos == RP_RIGHT  ||  ePos == RP_ATTRIBUT)
 /*N*/ 		// correct error in current vertical position
@@ -443,7 +443,7 @@ static xub_Unicode __READONLY_DATA aMathAlpha[] =
 /*?*/ 		default :
 /*N*/ 				DBG_ASSERT(FALSE, "Sm: unbekannter Fall");
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 	// check if vertical position is already set
 /*N*/ 	if (ePos == RP_TOP	||	ePos == RP_BOTTOM)
 /*N*/ 		// correct error in current horizontal position
@@ -460,7 +460,7 @@ static xub_Unicode __READONLY_DATA aMathAlpha[] =
 /*N*/ 			default :
 /*N*/ 				DBG_ASSERT(FALSE, "Sm: unbekannter Fall");
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 	return aPos;
 /*N*/ }
 
@@ -473,7 +473,7 @@ static xub_Unicode __READONLY_DATA aMathAlpha[] =
 /*N*/ {
 /*N*/ 	if (rRect.IsEmpty())
 /*N*/ 		return *this;
-/*N*/ 
+/*N*/
 /*N*/ 	long  nL  = rRect.GetLeft(),
 /*N*/ 		  nR  = rRect.GetRight(),
 /*N*/ 		  nT  = rRect.GetTop(),
@@ -482,7 +482,7 @@ static xub_Unicode __READONLY_DATA aMathAlpha[] =
 /*N*/ 		  nGB = rRect.nGlyphBottom;
 /*N*/ 	if (!IsEmpty())
 /*N*/ 	{	long  nTmp;
-/*N*/ 
+/*N*/
 /*N*/ 		if ((nTmp = GetLeft()) < nL)
 /*N*/ 			nL = nTmp;
 /*N*/ 		if ((nTmp = GetRight()) > nR)
@@ -496,14 +496,14 @@ static xub_Unicode __READONLY_DATA aMathAlpha[] =
 /*N*/ 		if ((nTmp = nGlyphBottom) > nGB)
 /*N*/ 			nGB = nTmp;
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	SetLeft(nL);
 /*N*/ 	SetRight(nR);
 /*N*/ 	SetTop(nT);
 /*N*/ 	SetBottom(nB);
 /*N*/ 	nGlyphTop    = nGT;
 /*N*/ 	nGlyphBottom = nGB;
-/*N*/ 
+/*N*/
 /*N*/ 	return *this;
 /*N*/ }
 
@@ -519,11 +519,11 @@ static xub_Unicode __READONLY_DATA aMathAlpha[] =
 /*N*/ 	// ! (need to be done before changing current SmRect) !
 /*N*/ 	long  nL = Min(GetItalicLeft(),  rRect.GetItalicLeft()),
 /*N*/ 		  nR = Max(GetItalicRight(), rRect.GetItalicRight());
-/*N*/ 
+/*N*/
 /*N*/ 	Union(rRect);
-/*N*/ 
+/*N*/
 /*N*/ 	SetItalicSpaces(GetLeft() - nL, nR - GetRight());
-/*N*/ 
+/*N*/
 /*N*/ 	if (!HasAlignInfo())
 /*N*/ 		CopyAlignInfo(rRect);
 /*N*/ 	else if (rRect.HasAlignInfo())
@@ -532,7 +532,7 @@ static xub_Unicode __READONLY_DATA aMathAlpha[] =
 /*N*/ 		nHiAttrFence = Min(GetHiAttrFence(), rRect.GetHiAttrFence());
 /*N*/ 		nLoAttrFence = Max(GetLoAttrFence(), rRect.GetLoAttrFence());
 /*N*/ 		DBG_ASSERT(HasAlignInfo(), "Sm: ooops...");
-/*N*/ 
+/*N*/
 /*N*/ 		switch (eCopyMode)
 /*N*/ 		{	case RCP_THIS:
 /*N*/ 				// already done
@@ -552,7 +552,7 @@ static xub_Unicode __READONLY_DATA aMathAlpha[] =
 /*N*/ 				DBG_ASSERT(FALSE, "Sm: unbekannter Fall");
 /*N*/ 		}
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	return *this;
 /*N*/ }
 
@@ -565,10 +565,10 @@ static xub_Unicode __READONLY_DATA aMathAlpha[] =
 /*N*/ 	// be (AlignT + AlignB) / 2)
 /*N*/ {
 /*N*/ 	DBG_ASSERT(HasAlignInfo(), "Sm: keine Align Info");
-/*N*/ 
+/*N*/
 /*N*/ 	ExtendBy(rRect, eCopyMode);
 /*N*/ 	nAlignM = nNewAlignM;
-/*N*/ 
+/*N*/
 /*N*/ 	return *this;
 /*N*/ }
 
@@ -585,9 +585,9 @@ static xub_Unicode __READONLY_DATA aMathAlpha[] =
 /*N*/ 		  nOldAlignB   = GetAlignB(),
 /*N*/ 		  nOldBaseline = nBaseline;		//! depends not on 'HasBaseline'
 /*N*/ 	BOOL  bOldHasAlignInfo = HasAlignInfo();
-/*N*/ 
+/*N*/
 /*N*/ 	ExtendBy(rRect, eCopyMode);
-/*N*/ 
+/*N*/
 /*N*/ 	if (bKeepVerAlignParams)
 /*N*/ 	{	nAlignT	  = nOldAlignT;
 /*N*/ 		nAlignM	  = nOldAlignM;
@@ -595,7 +595,7 @@ static xub_Unicode __READONLY_DATA aMathAlpha[] =
 /*N*/ 		nBaseline = nOldBaseline;
 /*N*/ 		bHasAlignInfo = bOldHasAlignInfo;
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	return *this;
 /*N*/ }
 
@@ -706,23 +706,23 @@ SmRect SmRect::AsGlyphRect() const
 //STRIP001 {
 //STRIP001 	if (IsEmpty())
 //STRIP001 		return;
-//STRIP001 
+//STRIP001
 //STRIP001 	rDev.Push(PUSH_LINECOLOR);
-//STRIP001 
+//STRIP001
 //STRIP001 	if (nFlags & SM_RECT_LINES)
 //STRIP001 	{	long   nLeftSpace  = 0,
 //STRIP001 			   nRightSpace = 0;
-//STRIP001 
+//STRIP001
 //STRIP001 		if (nFlags & SM_RECT_ITALIC)
 //STRIP001 		{	nLeftSpace	= GetItalicLeftSpace();
 //STRIP001 			nRightSpace = GetItalicRightSpace();
 //STRIP001 		}
-//STRIP001 
+//STRIP001
 //STRIP001 		long  nLeft  = GetLeft()  - nLeftSpace,
 //STRIP001 			  nRight = GetRight() + nRightSpace;
-//STRIP001 
+//STRIP001
 //STRIP001 		Point aOffset (rPosition - GetTopLeft());
-//STRIP001 
+//STRIP001
 //STRIP001 		rDev.SetLineColor(COL_LIGHTBLUE);
 //STRIP001 		rDev.DrawLine(Point(nLeft,	GetAlignB()) += aOffset,
 //STRIP001 					  Point(nRight, GetAlignB()) += aOffset);
@@ -731,30 +731,30 @@ SmRect SmRect::AsGlyphRect() const
 //STRIP001 		if (HasBaseline())
 //STRIP001 			rDev.DrawLine(Point(nLeft,	GetBaseline()) += aOffset,
 //STRIP001 						  Point(nRight, GetBaseline()) += aOffset);
-//STRIP001 
+//STRIP001
 //STRIP001 		rDev.SetLineColor(COL_GRAY);
 //STRIP001 		rDev.DrawLine(Point(nLeft,	GetHiAttrFence()) += aOffset,
 //STRIP001 					  Point(nRight, GetHiAttrFence()) += aOffset);
 //STRIP001 	}
-//STRIP001 
+//STRIP001
 //STRIP001 	if (nFlags & SM_RECT_MID)
 //STRIP001 	{	Point	aCenter = rPosition
 //STRIP001 						  + (Point(GetItalicCenterX(), GetAlignM()) -= GetTopLeft()),
 //STRIP001 				aLenX	  (GetWidth() / 5, 0),
 //STRIP001 				aLenY	  (0, GetHeight() / 16);
-//STRIP001 
+//STRIP001
 //STRIP001 		rDev.SetLineColor(COL_LIGHTGREEN);
 //STRIP001 		rDev.DrawLine(aCenter - aLenX, aCenter + aLenX);
 //STRIP001 		rDev.DrawLine(aCenter - aLenY, aCenter + aLenY);
 //STRIP001 	}
-//STRIP001 
+//STRIP001
 //STRIP001 	if (nFlags & SM_RECT_ITALIC)
 //STRIP001 		SmDrawFrame(rDev, Rectangle(rPosition - Point(GetItalicLeftSpace(), 0),
 //STRIP001 				GetItalicSize()));
-//STRIP001 
+//STRIP001
 //STRIP001 	if (nFlags & SM_RECT_CORE)
 //STRIP001 		SmDrawFrame(rDev, Rectangle(rPosition, GetSize()), COL_LIGHTRED);
-//STRIP001 
+//STRIP001
 //STRIP001 	rDev.Pop();
 //STRIP001 }
 
@@ -769,14 +769,14 @@ SmRect SmRect::AsGlyphRect() const
 //STRIP001 				 const Color aCol)
 //STRIP001 {
 //STRIP001 	rDev.Push(PUSH_LINECOLOR);
-//STRIP001 
+//STRIP001
 //STRIP001 	rDev.SetLineColor(aCol);
-//STRIP001 
+//STRIP001
 //STRIP001 	rDev.DrawLine(rRec.TopLeft(),	  rRec.BottomLeft());
 //STRIP001 	rDev.DrawLine(rRec.BottomLeft(),  rRec.BottomRight());
 //STRIP001 	rDev.DrawLine(rRec.BottomRight(), rRec.TopRight());
 //STRIP001 	rDev.DrawLine(rRec.TopRight(),	  rRec.TopLeft());
-//STRIP001 
+//STRIP001
 //STRIP001 	rDev.Pop();
 //STRIP001 }
 
@@ -792,7 +792,7 @@ SmRect SmRect::AsGlyphRect() const
 /*N*/ 	{	rRect.SetEmpty();
 /*N*/ 		return TRUE;
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/     // get a device where 'OutputDevice::GetTextBoundRect' will be successful
 /*N*/ 	OutputDevice *pGlyphDev;
 /*N*/ 	if (rDev.GetOutDevType() != OUTDEV_PRINTER)
@@ -803,13 +803,13 @@ SmRect SmRect::AsGlyphRect() const
 /*N*/ 		// we need a virtual device here.
 /*N*/ 		pGlyphDev = SM_MOD1()->GetRectCache()->GetVirDev();
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	const FontMetric  aDevFM (rDev.GetFontMetric());
-/*N*/ 
+/*N*/
 /*N*/     pGlyphDev->Push(PUSH_FONT | PUSH_MAPMODE);
 /*N*/     Font aFnt(rDev.GetFont());
 /*N*/     aFnt.SetAlign(ALIGN_TOP);
-/*N*/ 
+/*N*/
 /*N*/     // use scale factor when calling GetTextBoundRect to counter
 /*N*/     // negative effects from antialiasing which may otherwise result
 /*N*/     // in significant incorrect bounding rectangles for some charcters.
@@ -817,16 +817,16 @@ SmRect SmRect::AsGlyphRect() const
 /*N*/ 	Size aFntSize = aFnt.GetSize();
 /*N*/     aFnt.SetSize( Size( aFntSize.Width() * nScaleFactor, aFntSize.Height() * nScaleFactor ) );
 /*N*/     pGlyphDev->SetFont(aFnt);
-/*N*/ 
+/*N*/
 /*N*/     long nTextWidth = rDev.GetTextWidth(rText);
 /*N*/     Point aPoint;
 /*N*/     Rectangle   aResult (aPoint, Size(nTextWidth, rDev.GetTextHeight())),
 /*N*/ 				aTmp;
-/*N*/ 
+/*N*/
 /*N*/     BOOL bSuccess = pGlyphDev->GetTextBoundRect(aTmp, rText, 0, 0);
 /*N*/     DBG_ASSERT( bSuccess, "GetTextBoundRect failed" );
-/*N*/ 
-/*N*/ 
+/*N*/
+/*N*/
 /*N*/     if (!aTmp.IsEmpty())
 /*N*/     {
 /*N*/         aResult = Rectangle(aTmp.Left() / nScaleFactor, aTmp.Top() / nScaleFactor,
@@ -842,14 +842,14 @@ SmRect SmRect::AsGlyphRect() const
 /*N*/             }
 /*N*/         }
 /*N*/     }
-/*N*/ 
+/*N*/
 /*N*/ 	// move rectangle to match possibly different baselines
 /*N*/ 	// (because of different devices)
 /*N*/     long nDelta = aDevFM.GetAscent() - pGlyphDev->GetFontMetric().GetAscent() / nScaleFactor;
 /*N*/ 	aResult.Move(0, nDelta);
-/*N*/ 
+/*N*/
 /*N*/ 	pGlyphDev->Pop();
-/*N*/ 
+/*N*/
 /*N*/     rRect = aResult;
 /*N*/ 	return bSuccess;
 /*N*/ }
