@@ -2,9 +2,9 @@
  *
  *  $RCSfile: starmath_format.cxx,v $
  *
- *  $Revision: 1.3 $
+ *  $Revision: 1.4 $
  *
- *  last change: $Author: pjunck $ $Date: 2004-10-27 13:31:28 $
+ *  last change: $Author: vg $ $Date: 2005-02-16 17:41:04 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -125,7 +125,7 @@ namespace binfilter {
 /*N*/ {
 /*N*/     DBG_ASSERT( FNT_BEGIN <= nIdent  &&  nIdent <= FNT_END,
 /*N*/             "index out opd range" );
-/*N*/     
+/*N*/
 /*N*/     if (FNT_MATH == nIdent)
 /*?*/         return String::CreateFromAscii( FNTNAME_MATH );
 /*N*/     else
@@ -136,13 +136,13 @@ namespace binfilter {
 /*N*/             case SCRIPTTYPE_LATIN :     pTable = aLatinDefFnts; break;
 /*?*/             case SCRIPTTYPE_ASIAN :     pTable = aCJKDefFnts; break;
 /*?*/             case SCRIPTTYPE_COMPLEX :   pTable = aCTLDefFnts; break;
-/*?*/             default : 
+/*?*/             default :
 /*?*/                 pTable = aLatinDefFnts;
 /*?*/                 DBG_ERROR( "unknown script-type" );
 /*N*/         }
-/*N*/ 
+/*N*/
 /*N*/         return Application::GetDefaultDevice()->GetDefaultFont(
-/*N*/                         pTable[ nIdent ], nLang, 
+/*N*/                         pTable[ nIdent ], nLang,
 /*N*/                         DEFAULTFONT_FLAGS_ONLYONE ).GetName();
 /*N*/     }
 /*N*/ }
@@ -153,16 +153,16 @@ namespace binfilter {
 /*N*/ :	aBaseSize(0, SmPtsTo100th_mm(12))
 /*N*/ {
 /*N*/ 	nVersion 	= SM_FMT_VERSION_NOW;
-/*N*/ 
+/*N*/
 /*N*/ 	eHorAlign   = AlignCenter;
 /*N*/ 	bIsTextmode = bScaleNormalBrackets = FALSE;
-/*N*/ 
+/*N*/
 /*N*/ 	vSize[SIZ_TEXT] 	= 100;
 /*N*/ 	vSize[SIZ_INDEX]	= 60;
 /*N*/ 	vSize[SIZ_FUNCTION] =
 /*N*/ 	vSize[SIZ_OPERATOR] = 100;
 /*N*/ 	vSize[SIZ_LIMITS]	= 60;
-/*N*/ 
+/*N*/
 /*N*/ 	vDist[DIS_HORIZONTAL]	 		= 10;
 /*N*/ 	vDist[DIS_VERTICAL] 	 		= 5;
 /*N*/ 	vDist[DIS_ROOT] 		 		= 0;
@@ -187,7 +187,7 @@ namespace binfilter {
 /*N*/ 	vDist[DIS_TOPSPACE]		 		=
 /*N*/ 	vDist[DIS_BOTTOMSPACE]	 		=
 /*N*/ 	vDist[DIS_NORMALBRACKETSIZE]	= 0;
-/*N*/ 
+/*N*/
 /*N*/ 	vFont[FNT_VARIABLE]	=
 /*N*/ 	vFont[FNT_FUNCTION]	=
 /*N*/ 	vFont[FNT_NUMBER]	=
@@ -196,13 +196,13 @@ namespace binfilter {
 /*N*/ 	vFont[FNT_SANS]		= SmFace(C2S(FNTNAME_HELV),  aBaseSize);
 /*N*/ 	vFont[FNT_FIXED]	= SmFace(C2S(FNTNAME_COUR),  aBaseSize);
 /*N*/ 	vFont[FNT_MATH]		= SmFace(C2S(FNTNAME_MATH),  aBaseSize);
-/*N*/     
+/*N*/
 /*N*/     vFont[FNT_MATH].SetCharSet( RTL_TEXTENCODING_UNICODE );
-/*N*/ 
+/*N*/
 /*N*/ 	vFont[FNT_VARIABLE].SetItalic(ITALIC_NORMAL);
 /*N*/ 	vFont[FNT_FUNCTION].SetItalic(ITALIC_NONE);
 /*N*/ 	vFont[FNT_TEXT].SetItalic(ITALIC_NONE);
-/*N*/ 
+/*N*/
 /*N*/ 	for ( USHORT i = FNT_BEGIN;  i <= FNT_END;  i++ )
 /*N*/ 	{
 /*N*/         SmFace &rFace = vFont[i];
@@ -219,7 +219,7 @@ namespace binfilter {
 /*N*/     vFont[nIdent] = rFont;
 /*N*/     vFont[nIdent].SetTransparent( TRUE );
 /*N*/     vFont[nIdent].SetAlign( ALIGN_BASELINE );
-/*N*/     
+/*N*/
 /*N*/     bDefaultFont[nIdent] = bDefault;
 /*N*/ }
 
@@ -230,7 +230,7 @@ namespace binfilter {
 /*N*/ 	SetHorAlign(rFormat.GetHorAlign());
 /*N*/ 	SetTextmode(rFormat.IsTextmode());
 /*N*/ 	SetScaleNormalBrackets(rFormat.IsScaleNormalBrackets());
-/*N*/ 
+/*N*/
 /*N*/ 	USHORT  i;
 /*N*/ 	for (i = FNT_BEGIN;  i <= FNT_END;  i++)
 /*N*/     {
@@ -241,7 +241,7 @@ namespace binfilter {
 /*N*/ 		SetRelSize(i, rFormat.GetRelSize(i));
 /*N*/ 	for (i = DIS_BEGIN;  i <= DIS_END;  i++)
 /*N*/ 		SetDistance(i, rFormat.GetDistance(i));
-/*N*/ 
+/*N*/
 /*N*/ 	return *this;
 /*N*/ }
 
@@ -252,7 +252,7 @@ namespace binfilter {
 /*N*/                 eHorAlign == rFormat.eHorAlign  &&
 /*N*/                 bIsTextmode == rFormat.bIsTextmode  &&
 /*N*/                 bScaleNormalBrackets  == rFormat.bScaleNormalBrackets;
-/*N*/ 
+/*N*/
 /*N*/     USHORT i;
 /*N*/     for (i = 0;  i <= SIZ_END && bRes;  ++i)
 /*N*/     {
@@ -270,59 +270,59 @@ namespace binfilter {
 /*N*/             bDefaultFont[i] != rFormat.bDefaultFont[i])
 /*N*/             bRes = FALSE;
 /*N*/     }
-/*N*/ 
+/*N*/
 /*N*/     return bRes;
 /*N*/ }
 
 
 /*N*/ SvStream & operator << (SvStream &rStream, const SmFormat &rFormat)
 /*N*/ {
-/*N*/ 	//Da hier keinerlei Kompatibilit„t vorgesehen ist muessen wir leider
+/*N*/   //Da hier keinerlei Kompatibilitaet vorgesehen ist muessen wir leider
 /*N*/ 	//heftig tricksen. Gluecklicherweise sind offenbar einige Informationen
 /*N*/ 	//ueberfluessig geworden. In diese quetschen wir jetzt vier neue
 /*N*/ 	//Einstellungen fuer die Rander.
 /*N*/ 	//Bei Gelegenheit wird hier ein Im- Und Export gebraucht. Dann muessen
 /*N*/ 	//die Stream-Operatoren dieser Klassen dringend mit Versionsverwaltung
 /*N*/ 	//versehen werden!
-/*N*/ 
+/*N*/
 /*N*/ 	UINT16	n;
-/*N*/ 
+/*N*/
 /*N*/ 	// convert the heigth (in 100th of mm) to Pt and round the result to the
 /*N*/ 	// nearest integer
 /*N*/ 	n = (UINT16) SmRoundFraction(Sm100th_mmToPts(rFormat.aBaseSize.Height()));
 /*N*/ 	DBG_ASSERT((n & 0xFF00) == 0, "Sm : higher Byte nicht leer");
-/*N*/ 
+/*N*/
 /*N*/ 	// to be compatible with the old format (size and order) we put the info
 /*N*/ 	// about textmode in the higher byte (height is already restricted to a
 /*N*/ 	// maximum of 127!)
 /*N*/ 	n |=   (rFormat.bIsTextmode != 0)          << 8
 /*N*/ 		 | (rFormat.bScaleNormalBrackets != 0) << 9;
 /*N*/ 	rStream << n;
-/*N*/ 
+/*N*/
 /*N*/ 	rStream << rFormat.vDist[DIS_LEFTSPACE];	//Wir nutzen den Platz
 /*N*/ 	rStream << rFormat.vDist[DIS_RIGHTSPACE];	//Wir nutzen den Platz
-/*N*/ 
+/*N*/
 /*N*/ 	for ( n = SIZ_BEGIN; n <= SIZ_END; ++n )
 /*N*/ 		rStream << rFormat.vSize[n];
-/*N*/ 
+/*N*/
 /*N*/ 	rStream << rFormat.vDist[DIS_TOPSPACE];		//Wir nutzen den Platz
-/*N*/ 
+/*N*/
 /*N*/ 	for ( n = 0; n <= FNT_FIXED; ++n )
 /*N*/ 		rStream << rFormat.vFont[n];
-/*N*/ 
+/*N*/
 /*N*/ 	// Den zweiten Wert noch im HigherByte unterbringen
 /*N*/ 	USHORT uTmp =   rFormat.vDist[DIS_BRACKETSIZE]
 /*N*/ 				  | rFormat.vDist[DIS_NORMALBRACKETSIZE] << 8;
 /*N*/ 	// und dann dieses rausstreamen
 /*N*/ 	for ( n = 0; n <= DIS_OPERATORSPACE; ++n )
 /*N*/ 		rStream << (USHORT)(n != DIS_BRACKETSIZE ? rFormat.vDist[(USHORT) n] : uTmp);
-/*N*/ 
+/*N*/
 /*N*/ 	// higher byte is version number, lower byte is horizontal alignment
 /*N*/ 	n = rFormat.eHorAlign | SM_FMT_VERSION_NOW << 8;
 /*N*/ 	rStream << n;
-/*N*/ 
+/*N*/
 /*N*/ 	rStream << rFormat.vDist[DIS_BOTTOMSPACE];	//Wir nutzen den Platz
-/*N*/ 
+/*N*/
 /*N*/ 	return rStream;
 /*N*/ }
 
@@ -330,38 +330,38 @@ namespace binfilter {
 /*N*/ SvStream & operator >> (SvStream &rStream, SmFormat &rFormat)
 /*N*/ {
 /*N*/ 	UINT16	n;
-/*N*/ 
+/*N*/
 /*N*/ 	rStream >> n;
 /*N*/ 	long nBaseHeight    = n & 0x00FF;
 /*N*/ 	rFormat.bIsTextmode 		 = ((n >> 8) & 0x01) != 0;
 /*N*/ 	rFormat.bScaleNormalBrackets = ((n >> 9) & 0x01) != 0;
 /*N*/ 	rFormat.aBaseSize   = Size(0, SmPtsTo100th_mm(nBaseHeight));
-/*N*/ 
+/*N*/
 /*N*/ 	rStream >> rFormat.vDist[DIS_LEFTSPACE];	//Wir nutzen den Platz
 /*N*/ 	rStream >> rFormat.vDist[DIS_RIGHTSPACE];	//Wir nutzen den Platz
-/*N*/ 
+/*N*/
 /*N*/ 	for ( n = SIZ_BEGIN; n <= SIZ_END; ++n )
 /*N*/ 		rStream >> rFormat.vSize[n];
-/*N*/ 
+/*N*/
 /*N*/ 	rStream >> rFormat.vDist[DIS_TOPSPACE];		//Wir nutzen den Platz
-/*N*/ 
+/*N*/
 /*N*/ 	for ( n = 0; n <= FNT_FIXED; ++n )
 /*N*/ 		rStream >> rFormat.vFont[n];
-/*N*/ 
+/*N*/
 /*N*/ 	for ( n = 0; n <= DIS_OPERATORSPACE; ++n )
 /*N*/ 		rStream >> rFormat.vDist[n];
 /*N*/ 	// den zweiten Wert aus dem HigherByte holen
 /*N*/ 	rFormat.vDist[DIS_NORMALBRACKETSIZE] = rFormat.vDist[DIS_BRACKETSIZE] >> 8;
 /*N*/ 	// und dieses dann ausblenden
 /*N*/ 	rFormat.vDist[DIS_BRACKETSIZE] &= 0x00FF;
-/*N*/ 
+/*N*/
 /*N*/ 	// higher byte is version number, lower byte is horizontal alignment
 /*N*/ 	rStream >> n;
 /*N*/ 	rFormat.nVersion  = n >> 8;
 /*N*/ 	rFormat.eHorAlign = (SmHorAlign) (n & 0x00FF);
-/*N*/ 
+/*N*/
 /*N*/ 	rStream >> rFormat.vDist[DIS_BOTTOMSPACE];	//Wir nutzen den Platz
-/*N*/ 
+/*N*/
 /*N*/ 	const Size aTmp( rFormat.GetBaseSize() );
 /*N*/ 	for ( USHORT i = 0; i <= FNT_FIXED; ++i )
 /*N*/ 	{
@@ -370,21 +370,21 @@ namespace binfilter {
 /*N*/ 		rFormat.vFont[i].SetAlign(ALIGN_BASELINE);
 /*N*/ 	}
 /*N*/ 	rFormat.vFont[FNT_MATH].SetSize(aTmp);
-/*N*/ 
-/*N*/ 	// Für Version 4.0 (und älter) sollen auch die normalen Klammern skalierbar
+/*N*/
+/*N*/   // Fuer Version 4.0 (und aelter) sollen auch die normalen Klammern skalierbar
 /*N*/ 	// sein und wachsen (so wie es der Fall war), in der 5.0 Version jedoch nicht.
-/*N*/ 	// In späteren Versionen (>= 5.1) ist das Verhalten nun durch den Anwender
+/*N*/   // In spaeteren Versionen (>= 5.1) ist das Verhalten nun durch den Anwender
 /*N*/ 	// festzulegen (bleibt also wie aus dem Stream gelesen).
 /*N*/ 	if (rFormat.nVersion < SM_FMT_VERSION_51)
 /*N*/ 	{
 /*?*/ 		BOOL    bIs50Stream = rStream.GetVersion() == SOFFICE_FILEFORMAT_50;
 /*?*/ 		BOOL	bVal        = bIs50Stream ? FALSE : TRUE;
 /*?*/ 		USHORT  nExcHeight  = bIs50Stream ? 0 : rFormat.vDist[DIS_BRACKETSIZE];
-/*?*/ 
+/*?*/
 /*?*/ 		rFormat.SetScaleNormalBrackets(bVal);
 /*?*/ 		rFormat.SetDistance(DIS_NORMALBRACKETSIZE, nExcHeight);
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	return rStream;
 /*N*/ }
 
@@ -392,31 +392,31 @@ namespace binfilter {
 /*?*/ {
 /*?*/ 	UINT16	n;
 /*?*/ 	USHORT  i;
-/*?*/ 
+/*?*/
 /*?*/ 	rStream >> n;
 /*?*/ 	SetBaseSize( Size(0, SmPtsTo100th_mm(n)) );
-/*?*/ 
+/*?*/
 /*?*/ 	rStream >> n >> n;
-/*?*/ 
+/*?*/
 /*?*/ 	for (i = SIZ_BEGIN;  i <= SIZ_LIMITS;  i++)
 /*?*/ 	{	rStream >> n;
 /*?*/ 		SetRelSize(i, n);
 /*?*/ 	}
-/*?*/ 
+/*?*/
 /*?*/ 	rStream >> n;
-/*?*/ 
+/*?*/
 /*?*/ 	for (i = FNT_BEGIN;  i <= FNT_FIXED;  i++)
 /*?*/         ReadSM20Font(rStream, vFont[i]);
-/*?*/ 
+/*?*/
 /*?*/ 	for (i = DIS_BEGIN;  i <= DIS_OPERATORSPACE;  i++)
 /*?*/ 	{	rStream >> n;
 /*?*/ 		SetDistance(i, n);
 /*?*/ 	}
-/*?*/ 
+/*?*/
 /*?*/ 	rStream >> n;
 /*?*/ 	SetHorAlign((SmHorAlign) n);
 /*?*/ 	rStream >> n;
-/*?*/ 
+/*?*/
 /*?*/ 	const Size  aTmp (GetBaseSize());
 /*?*/ 	for (i = FNT_BEGIN;  i <= FNT_FIXED;  i++)
 /*?*/ 	{
