@@ -239,6 +239,11 @@ public class XSLTransformer
                     }                        
                     while ((rbytes = xistream.readSomeBytes(byteBuffer, bsize)) != 0)
                         bufstream.write(byteBuffer[0], 0, rbytes);
+
+                    // close the input stream after we have transferred all data
+                    // into the buffer so it won't keep the content open until it
+                    // gets finalized by the java GC
+                    xistream.closeInput();
                     
                     String xmlFile = bufstream.toString("UTF-8");
                     if (xmlFile.indexOf("<!DOCTYPE")!=-1){
