@@ -2,9 +2,9 @@
  *
  *  $RCSfile: sfx2_sfxbasemodel.cxx,v $
  *
- *  $Revision: 1.2 $
+ *  $Revision: 1.3 $
  *
- *  last change: $Author: mwu $ $Date: 2003-11-06 07:39:24 $
+ *  last change: $Author: mba $ $Date: 2004-04-02 14:16:02 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -234,14 +234,14 @@
 #include "sfx.hrc"
 #endif
 
-
+#include "openflag.hxx"
 #include "topfrm.hxx"
 #include "appdata.hxx"
 #include "loadenv.hxx"
 #include "docfac.hxx"
 #include "fcontnr.hxx"
 #ifndef _LEGACYBINFILTERMGR_HXX
-#include <legacysmgr/legacy_binfilters_smgr.hxx>	//STRIP002 
+#include <legacysmgr/legacy_binfilters_smgr.hxx>	//STRIP002
 #endif
 namespace binfilter {
 
@@ -340,20 +340,20 @@ struct IMPL_SfxBaseModel_DataContainer
 /*?*/ SIZE impl_Size_Object2Struct( const Size& aSize )
 /*?*/ {
 /*?*/ 	SIZE aReturnValue;
-/*?*/ 
+/*?*/
 /*?*/ 	aReturnValue.Width  = aSize.Width()  ;
 /*?*/ 	aReturnValue.Height = aSize.Height() ;
-/*?*/ 
+/*?*/
 /*?*/ 	return aReturnValue ;
 /*?*/ }
 
 /*?*/ Size impl_Size_Struct2Object( const SIZE& aSize )
 /*?*/ {
 /*?*/ 	Size aReturnValue;
-/*?*/ 
+/*?*/
 /*?*/ 	aReturnValue.Width()  = aSize.Width  ;
 /*?*/ 	aReturnValue.Height() = aSize.Height ;
-/*?*/ 
+/*?*/
 /*?*/ 	return aReturnValue ;
 /*?*/ }
 
@@ -368,7 +368,7 @@ extern sal_Bool supportsMetaFileHandle_Impl();
 //STRIP001 >
 //STRIP001 {
 //STRIP001 		IMPL_SfxBaseModel_DataContainer* m_pData;
-//STRIP001 
+//STRIP001
 //STRIP001 public:
 //STRIP001 		SfxPrintJob_Impl( IMPL_SfxBaseModel_DataContainer* pData );
 //STRIP001     	virtual Sequence< ::com::sun::star::beans::PropertyValue > SAL_CALL getPrintOptions(  ) throw (RuntimeException);
@@ -436,7 +436,7 @@ extern sal_Bool supportsMetaFileHandle_Impl();
 /*N*/ {
 /*N*/ 	// Attention:
 /*N*/ 	//	Don't use mutex or guard in this method!!! Is a method of XInterface.
-/*N*/ 
+/*N*/
 /*N*/ 	// Ask for my own supported interfaces ...
 /*N*/ 	ANY aReturn( ::cppu::queryInterface(	rType											,
 /*N*/ 									   		static_cast< XTYPEPROVIDER*			> ( this )	,
@@ -451,7 +451,7 @@ extern sal_Bool supportsMetaFileHandle_Impl();
 /*N*/                                             static_cast< XSTORABLE*             > ( this )  ,
 /*N*/                                             static_cast< XLOADABLE*             > ( this )  ,
 /*N*/                                             static_cast< XCLOSEABLE*            > ( this )  ) );
-/*N*/ 
+/*N*/
 /*N*/ 	if ( aReturn.hasValue() == sal_False )
 /*N*/ 	{
 /*N*/ 		aReturn = ::cppu::queryInterface(	rType											,
@@ -484,7 +484,7 @@ extern sal_Bool supportsMetaFileHandle_Impl();
 /*N*/ {
 /*N*/ 	// Attention:
 /*N*/ 	//	Don't use mutex or guard in this method!!! Is a method of XInterface.
-/*N*/ 
+/*N*/
 /*N*/ 	// Forward to baseclass
 /*N*/ 	OWeakObject::acquire() ;
 /*N*/ }
@@ -497,7 +497,7 @@ extern sal_Bool supportsMetaFileHandle_Impl();
 /*N*/ {
 /*N*/ 	// Attention:
 /*N*/ 	//	Don't use mutex or guard in this method!!! Is a method of XInterface.
-/*N*/ 
+/*N*/
 /*N*/ 	// Forward to baseclass
 /*N*/ 	OWeakObject::release() ;
 /*N*/ }
@@ -512,12 +512,12 @@ extern sal_Bool supportsMetaFileHandle_Impl();
 /*N*/ 	// We initialize a static variable only one time. And we don't must use a mutex at every call!
 /*N*/ 	// For the first call; pTypeCollection is NULL - for the second call pTypeCollection is different from NULL!
 /*N*/ 	static OTYPECOLLECTION* pTypeCollection = NULL ;
-/*N*/ 
+/*N*/
 /*N*/ 	if ( pTypeCollection == NULL )
 /*N*/ 	{
 /*N*/ 		// Ready for multithreading; get global mutex for first call of this method only! see before
 /*N*/ 		MUTEXGUARD aGuard( MUTEX::getGlobalMutex() ) ;
-/*N*/ 
+/*N*/
 /*N*/ 		// Control these pointer again ... it can be, that another instance will be faster then these!
 /*N*/ 		if ( pTypeCollection == NULL )
 /*N*/ 		{
@@ -534,19 +534,19 @@ extern sal_Bool supportsMetaFileHandle_Impl();
 /*N*/                                                          ::getCppuType(( const REFERENCE< XCLOSEABLE             >*)NULL ) ,
 /*N*/                                                          ::getCppuType(( const REFERENCE< XSTARBASICACCESS       >*)NULL ) ,
 /*N*/                                                          ::getCppuType(( const REFERENCE< XEVENTBROADCASTER      >*)NULL ) );
-/*N*/ 
+/*N*/
 /*N*/             static OTYPECOLLECTION aTypeCollection     ( ::getCppuType(( const REFERENCE< XVIEWDATASUPPLIER      >*)NULL ) ,
 /*N*/                                                          ::getCppuType(( const REFERENCE< XTRANSFERABLE          >*)NULL ) ,
 /*N*/                                                          ::getCppuType(( const REFERENCE< XPRINTJOBBROADCASTER   >*)NULL ) ,
 /*N*/                                                          ::getCppuType(( const REFERENCE< XEVENTSSUPPLIER        >*)NULL ) ,
 /*N*/                                                          ::getCppuType(( const REFERENCE< XCLOSEBROADCASTER      >*)NULL ) ,
 /*N*/                                                          aTypeCollectionFirst.getTypes()                                   );
-/*N*/ 
+/*N*/
 /*N*/ 			// ... and set his address to static pointer!
 /*N*/ 			pTypeCollection = &aTypeCollection ;
 /*N*/ 		}
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	return pTypeCollection->getTypes() ;
 /*N*/ }
 
@@ -558,17 +558,17 @@ extern sal_Bool supportsMetaFileHandle_Impl();
 /*N*/ {
 /*N*/ 	// Create one Id for all instances of this class.
 /*N*/ 	// Use ethernet address to do this! (sal_True)
-/*N*/ 
+/*N*/
 /*N*/ 	// Optimize this method
 /*N*/ 	// We initialize a static variable only one time. And we don't must use a mutex at every call!
 /*N*/ 	// For the first call; pID is NULL - for the second call pID is different from NULL!
 /*N*/ 	static OIMPLEMENTATIONID* pID = NULL ;
-/*N*/ 
+/*N*/
 /*N*/ 	if ( pID == NULL )
 /*N*/ 	{
 /*N*/ 		// Ready for multithreading; get global mutex for first call of this method only! see before
 /*N*/ 		MUTEXGUARD aGuard( MUTEX::getGlobalMutex() ) ;
-/*N*/ 
+/*N*/
 /*N*/ 		// Control these pointer again ... it can be, that another instance will be faster then these!
 /*N*/ 		if ( pID == NULL )
 /*N*/ 		{
@@ -578,7 +578,7 @@ extern sal_Bool supportsMetaFileHandle_Impl();
 /*N*/ 			pID = &aID ;
 /*N*/ 		}
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	return pID->getImplementationId() ;
 /*N*/ }
 
@@ -602,11 +602,11 @@ extern sal_Bool supportsMetaFileHandle_Impl();
 /*N*/     ::vos::OGuard aGuard( Application::GetSolarMutex() );
 /*N*/ 	if ( impl_isDisposed() )
 /*N*/ 		throw DISPOSEDEXCEPTION();
-/*N*/ 
+/*N*/
 /*N*/ 	REFERENCE< XSTARBASICACCESS >& rxAccess = m_pData->m_xStarBasicAccess;
 /*N*/ 	if( !rxAccess.is() )
 /*N*/ 		rxAccess = implGetStarBasicAccess( m_pData->m_pObjectShell );
-/*N*/ 
+/*N*/
 /*N*/ 	REFERENCE< XNAMECONTAINER > xRet;
 /*N*/ 	if( rxAccess.is() )
 /*N*/ 		xRet = rxAccess->getLibraryContainer();
@@ -623,11 +623,11 @@ extern sal_Bool supportsMetaFileHandle_Impl();
 /*N*/     ::vos::OGuard aGuard( Application::GetSolarMutex() );
 /*N*/ 	if ( impl_isDisposed() )
 /*N*/ 		throw DISPOSEDEXCEPTION();
-/*N*/ 
+/*N*/
 /*N*/ 	REFERENCE< XSTARBASICACCESS >& rxAccess = m_pData->m_xStarBasicAccess;
 /*N*/ 	if( !rxAccess.is() )
 /*N*/ 		rxAccess = implGetStarBasicAccess( m_pData->m_pObjectShell );
-/*N*/ 
+/*N*/
 /*N*/ 	if( rxAccess.is() )
 /*N*/ 		rxAccess->createLibrary( LibName, Password, ExternalSourceURL, LinkTargetURL );
 /*N*/ }
@@ -642,11 +642,11 @@ extern sal_Bool supportsMetaFileHandle_Impl();
 /*N*/     ::vos::OGuard aGuard( Application::GetSolarMutex() );
 /*N*/ 	if ( impl_isDisposed() )
 /*N*/ 		throw DISPOSEDEXCEPTION();
-/*N*/ 
+/*N*/
 /*N*/ 	REFERENCE< XSTARBASICACCESS >& rxAccess = m_pData->m_xStarBasicAccess;
 /*N*/ 	if( !rxAccess.is() )
 /*N*/ 		rxAccess = implGetStarBasicAccess( m_pData->m_pObjectShell );
-/*N*/ 
+/*N*/
 /*N*/ 	if( rxAccess.is() )
 /*N*/ 		rxAccess->addModule( LibraryName, ModuleName, Language, Source );
 /*N*/ }
@@ -661,11 +661,11 @@ extern sal_Bool supportsMetaFileHandle_Impl();
 /*N*/     ::vos::OGuard aGuard( Application::GetSolarMutex() );
 /*N*/ 	if ( impl_isDisposed() )
 /*N*/ 		throw DISPOSEDEXCEPTION();
-/*N*/ 
+/*N*/
 /*N*/ 	REFERENCE< XSTARBASICACCESS >& rxAccess = m_pData->m_xStarBasicAccess;
 /*N*/ 	if( !rxAccess.is() )
 /*N*/ 		rxAccess = implGetStarBasicAccess( m_pData->m_pObjectShell );
-/*N*/ 
+/*N*/
 /*N*/ 	if( rxAccess.is() )
 /*N*/ 		rxAccess->addDialog( LibraryName, DialogName, Data );
 /*N*/ }
@@ -695,7 +695,7 @@ extern sal_Bool supportsMetaFileHandle_Impl();
 /*N*/     ::vos::OGuard aGuard( Application::GetSolarMutex() );
 /*N*/ 	if ( impl_isDisposed() )
 /*N*/ 		throw DISPOSEDEXCEPTION();
-/*N*/ 
+/*N*/
 /*N*/ 	return m_pData->m_xParent;
 /*N*/ }
 
@@ -709,7 +709,7 @@ extern sal_Bool supportsMetaFileHandle_Impl();
 /*N*/ 	if ( Parent.is() && getParent().is() )
 /*N*/ 		// only set parent when no parent is available
 /*N*/ 		throw NOSUPPORTEXCEPTION();
-/*N*/ 
+/*N*/
 /*N*/ 	m_pData->m_xParent = Parent;
 /*N*/ }
 
@@ -722,11 +722,11 @@ extern sal_Bool supportsMetaFileHandle_Impl();
 /*N*/ void SAL_CALL SfxBaseModel::dispose() throw(::com::sun::star::uno::RuntimeException)
 /*N*/ {
 /*N*/     ::vos::OGuard aGuard( Application::GetSolarMutex() );
-/*N*/ 
+/*N*/
 /*N*/ 	// object already disposed?
 /*N*/ 	if ( impl_isDisposed() )
 /*N*/ 		throw DISPOSEDEXCEPTION();
-/*N*/ 
+/*N*/
 /*N*/ 	if  ( !m_pData->m_bClosed )
 /*N*/ 	{
 /*N*/ 		// gracefully accept wrong dispose calls instead of close call
@@ -738,20 +738,20 @@ extern sal_Bool supportsMetaFileHandle_Impl();
 /*N*/ 		catch ( ::com::sun::star::util::CloseVetoException& )
 /*N*/ 		{
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		return;
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	EVENTOBJECT aEvent( (XMODEL *)this );
 /*N*/ 	m_pData->m_aInterfaceContainer.disposeAndClear( aEvent );
-/*N*/ 
+/*N*/
 /*N*/ 	// is an object shell assigned?
 /*N*/ 	if ( m_pData->m_pObjectShell.Is() )
 /*N*/ 	{
 /*N*/ 		// Rekursion vermeiden
 /*N*/         SfxObjectShellRef pShell;
 /*N*/         //SfxObjectShellLock pShellLock;
-/*N*/ 
+/*N*/
 /*N*/         {
 /*N*/             // am I "ThisComponent" in AppBasic?
 /*N*/             StarBASIC* pBas = SFX_APP()->GetBasic_Impl();
@@ -768,14 +768,14 @@ extern sal_Bool supportsMetaFileHandle_Impl();
 /*N*/                     pCompVar->PutObject( GetSbUnoObject( DEFINE_CONST_UNICODE("ThisComponent"), aComponent ) );
 /*N*/                 }
 /*N*/             }
-/*N*/ 
+/*N*/
 /*N*/             pShell = m_pData->m_pObjectShell;
 /*N*/             //pShellLock = m_pData->m_pObjectShellLock;
 /*N*/             EndListening( *pShell );
 /*N*/             m_pData->m_pObjectShell = SfxObjectShellRef();
 /*N*/         	//m_pData->m_pObjectShellLock = SfxObjectShellLock();
 /*N*/         }
-/*N*/ 
+/*N*/
 /*N*/ 		// Bei dispose keine Speichern-R"uckfrage
 /*N*/ 		if ( pShell->IsEnableSetModified() && !pShell->Get_Impl()->bClosing )
 /*N*/ 			pShell->SetModified( sal_False );
@@ -783,10 +783,10 @@ extern sal_Bool supportsMetaFileHandle_Impl();
 /*N*/         //pShellLock = SfxObjectShellLock();
 /*N*/ 		SfxObjectShellClose_Impl( 0, (void*) pShell );
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	m_pData->m_xCurrent = REFERENCE< XCONTROLLER > ();
 /*N*/ 	m_pData->m_seqControllers = SEQUENCE< REFERENCE< XCONTROLLER > > () ;
-/*N*/ 
+/*N*/
 /*N*/ 	DELETEZ(m_pData);
 /*N*/ }
 
@@ -801,7 +801,7 @@ extern sal_Bool supportsMetaFileHandle_Impl();
 /*N*/     ::vos::OGuard aGuard( Application::GetSolarMutex() );
 /*N*/ 	if ( impl_isDisposed() )
 /*N*/ 		return;
-/*N*/ 
+/*N*/
 /*N*/ 	m_pData->m_aInterfaceContainer.addInterface( ::getCppuType((const REFERENCE< XEVENTLISTENER >*)0), aListener );
 /*N*/ }
 
@@ -816,7 +816,7 @@ extern sal_Bool supportsMetaFileHandle_Impl();
 /*N*/     ::vos::OGuard aGuard( Application::GetSolarMutex() );
 /*N*/ 	if ( impl_isDisposed() )
 /*N*/ 		return;
-/*N*/ 
+/*N*/
 /*N*/ 	m_pData->m_aInterfaceContainer.removeInterface( ::getCppuType((const REFERENCE< XEVENTLISTENER >*)0), aListener );
 /*N*/ }
 
@@ -830,10 +830,10 @@ extern sal_Bool supportsMetaFileHandle_Impl();
 /*N*/     ::vos::OGuard aGuard( Application::GetSolarMutex() );
 /*N*/ 	if ( impl_isDisposed() )
 /*N*/ 		throw DISPOSEDEXCEPTION();
-/*N*/ 
+/*N*/
 /*N*/ 	if ( !m_pData->m_xDocumentInfo.is() && m_pData->m_pObjectShell.Is() )
 /*N*/ 		((SfxBaseModel*)this)->m_pData->m_xDocumentInfo = new SfxDocumentInfoObject( m_pData->m_pObjectShell ) ;
-/*N*/ 
+/*N*/
 /*N*/ 	return m_pData->m_xDocumentInfo;
 /*N*/ }
 
@@ -847,11 +847,11 @@ extern sal_Bool supportsMetaFileHandle_Impl();
 /*N*/     ::vos::OGuard aGuard( Application::GetSolarMutex() );
 /*N*/ 	if ( impl_isDisposed() )
 /*N*/ 		return;
-/*N*/ 
+/*N*/
 /*N*/     REFERENCE< XMODIFYLISTENER >  xMod( aObject.Source, UNO_QUERY );
 /*N*/     REFERENCE< XEVENTLISTENER >  xListener( aObject.Source, UNO_QUERY );
 /*N*/     REFERENCE< XDOCEVENTLISTENER >  xDocListener( aObject.Source, UNO_QUERY );
-/*N*/ 
+/*N*/
 /*N*/     if ( xMod.is() )
 /*N*/         m_pData->m_aInterfaceContainer.removeInterface( ::getCppuType((const REFERENCE< XMODIFYLISTENER >*)0), xMod );
 /*N*/     else if ( xListener.is() )
@@ -885,7 +885,7 @@ extern sal_Bool supportsMetaFileHandle_Impl();
 /*N*/     ::vos::OGuard aGuard( Application::GetSolarMutex() );
 /*N*/ 	if ( impl_isDisposed() )
 /*N*/ 		throw DISPOSEDEXCEPTION();
-/*N*/ 
+/*N*/
 /*N*/ 	if ( rURL.getLength() == 0 && rArgs.getLength() == 1 && rArgs[0].Name.equalsAscii( "SetEmbedded" ) )
 /*N*/ 	{
 /*N*/ 		// allows to set a windowless document to EMBEDDED state
@@ -896,15 +896,15 @@ extern sal_Bool supportsMetaFileHandle_Impl();
 /*?*/ 			if ( ( rArgs[0].Value >>= bEmb ) && bEmb )
 /*?*/ 				{DBG_ASSERT(0, "STRIP");}//STRIP001 m_pData->m_pObjectShell->SetCreateMode_Impl( SFX_CREATE_MODE_EMBEDDED );
 /*?*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		return sal_True;
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	if ( m_pData->m_pObjectShell.Is() )
 /*N*/ 	{
 /*N*/ 		m_pData->m_sURL = rURL;
 /*N*/ 		m_pData->m_seqArguments = rArgs;
-/*N*/ 
+/*N*/
 /*N*/ 		sal_Int32 nNewLength = rArgs.getLength();
 /*N*/ 		for ( sal_Int32 nInd = 0; nInd < rArgs.getLength(); nInd++ )
 /*N*/ 			if ( rArgs[nInd].Name.equalsAscii( "WinExtent" ) )
@@ -918,12 +918,12 @@ extern sal_Bool supportsMetaFileHandle_Impl();
 /*?*/ 					{
 /*?*/ 						Rectangle aTmpRect( aSize[0], aSize[1], aSize[2], aSize[3] );
 /*?*/ 						aTmpRect = OutputDevice::LogicToLogic( aTmpRect, MAP_100TH_MM, pInPlaceObj->GetMapUnit() );
-/*?*/ 
+/*?*/
 /*?*/ 						pInPlaceObj->SetVisArea( aTmpRect );
 /*?*/ 					}
 /*?*/ 				}
 /*N*/ 			}
-/*N*/ 
+/*N*/
 /*N*/ 		if( m_pData->m_pObjectShell->GetMedium() )
 /*N*/ 		{
 /*N*/ 			SfxAllItemSet aSet( m_pData->m_pObjectShell->GetPool() );
@@ -935,7 +935,7 @@ extern sal_Bool supportsMetaFileHandle_Impl();
 /*N*/ 					m_pData->m_pObjectShell->GetFactory().GetFilterContainer()->GetFilter( pItem->GetValue() ) );
 /*N*/ 		}
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	return sal_True ;
 /*N*/ }
 
@@ -948,7 +948,7 @@ extern sal_Bool supportsMetaFileHandle_Impl();
 /*N*/     ::vos::OGuard aGuard( Application::GetSolarMutex() );
 /*N*/ 	if ( impl_isDisposed() )
 /*N*/ 		throw DISPOSEDEXCEPTION();
-/*N*/ 
+/*N*/
 /*N*/ 	return m_pData->m_sURL ;
 /*N*/ }
 
@@ -961,25 +961,25 @@ extern sal_Bool supportsMetaFileHandle_Impl();
 /*N*/     ::vos::OGuard aGuard( Application::GetSolarMutex() );
 /*N*/ 	if ( impl_isDisposed() )
 /*N*/ 		throw DISPOSEDEXCEPTION();
-/*N*/ 
+/*N*/
 /*N*/ 	if ( m_pData->m_pObjectShell.Is() )
 /*N*/ 	{
 /*N*/ 		SEQUENCE< PROPERTYVALUE > seqArgsNew;
 /*N*/ 		SEQUENCE< PROPERTYVALUE > seqArgsOld;
 /*N*/ 		SfxAllItemSet aSet( m_pData->m_pObjectShell->GetPool() );
-/*N*/ 
+/*N*/
 /*N*/ 		// we need to know which properties are supported by the transformer
 /*N*/ 		// hopefully it is a temporary solution, I guess nonconvertable properties
 /*N*/ 		// should not be supported so then there will be only ItemSet from medium
-/*N*/ 
+/*N*/
 /*N*/ 		TransformItems( SID_OPENDOC, *(m_pData->m_pObjectShell->GetMedium()->GetItemSet()), seqArgsNew );
 /*N*/ 		TransformParameters( SID_OPENDOC, m_pData->m_seqArguments, aSet );
 /*N*/ 		TransformItems( SID_OPENDOC, aSet, seqArgsOld );
-/*N*/ 
+/*N*/
 /*N*/ 		sal_Int32 nOrgLength = m_pData->m_seqArguments.getLength();
 /*N*/ 		sal_Int32 nOldLength = seqArgsOld.getLength();
 /*N*/ 		sal_Int32 nNewLength = seqArgsNew.getLength();
-/*N*/ 
+/*N*/
 /*N*/ 		// "WinExtent" property should be updated always.
 /*N*/ 		// We can store it now to overwrite an old value
 /*N*/ 		// since it is not from ItemSet
@@ -988,18 +988,18 @@ extern sal_Bool supportsMetaFileHandle_Impl();
 /*N*/ 		{
 /*N*/ 			Rectangle aTmpRect = pInPlaceObj->GetVisArea( ASPECT_CONTENT );
 /*N*/ 			aTmpRect = OutputDevice::LogicToLogic( aTmpRect, pInPlaceObj->GetMapUnit(), MAP_100TH_MM );
-/*N*/ 
+/*N*/
 /*N*/ 			Sequence< sal_Int32 > aSize(4);
 /*N*/ 			aSize[0] = aTmpRect.Left();
 /*N*/ 			aSize[1] = aTmpRect.Top();
 /*N*/ 			aSize[2] = aTmpRect.Right();
 /*N*/ 			aSize[3] = aTmpRect.Bottom();
-/*N*/ 
+/*N*/
 /*N*/ 			seqArgsNew.realloc( ++nNewLength );
 /*N*/ 			seqArgsNew[ nNewLength - 1 ].Name = ::rtl::OUString::createFromAscii( "WinExtent" );
 /*N*/ 			seqArgsNew[ nNewLength - 1 ].Value <<= aSize;
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		for ( sal_Int32 nOrg = 0; nOrg < nOrgLength; nOrg++ )
 /*N*/ 		{
 /*N*/  			sal_Int32 nOldInd = 0;
@@ -1009,21 +1009,21 @@ extern sal_Bool supportsMetaFileHandle_Impl();
 /*N*/ 					break;
 /*N*/ 				nOldInd++;
 /*N*/ 			}
-/*N*/ 
+/*N*/
 /*N*/ 			if ( nOldInd == nOldLength )
 /*N*/ 			{
 /*N*/ 				// the entity with this name should be new for seqArgsNew
 /*N*/ 				// since it is not supported by transformer
-/*N*/ 
+/*N*/
 /*N*/ 				seqArgsNew.realloc( ++nNewLength );
 /*N*/ 				seqArgsNew[ nNewLength - 1 ].Name = m_pData->m_seqArguments[nOrg].Name;
 /*N*/ 				seqArgsNew[ nNewLength - 1 ].Value = m_pData->m_seqArguments[nOrg].Value;
 /*N*/ 			}
-/*N*/ 
+/*N*/
 /*N*/ 		}
 /*N*/ 		m_pData->m_seqArguments = seqArgsNew;
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	return m_pData->m_seqArguments ;
 /*N*/ }
 
@@ -1037,7 +1037,7 @@ extern sal_Bool supportsMetaFileHandle_Impl();
 /*N*/     ::vos::OGuard aGuard( Application::GetSolarMutex() );
 /*N*/ 	if ( impl_isDisposed() )
 /*N*/ 		throw DISPOSEDEXCEPTION();
-/*N*/ 
+/*N*/
 /*N*/ 	sal_uInt32 nOldCount = m_pData->m_seqControllers.getLength();
 /*N*/ 	SEQUENCE< REFERENCE< XCONTROLLER > > aNewSeq( nOldCount + 1 );
 /*N*/ 	for ( sal_uInt32 n = 0; n < nOldCount; n++ )
@@ -1055,11 +1055,11 @@ extern sal_Bool supportsMetaFileHandle_Impl();
 /*N*/     ::vos::OGuard aGuard( Application::GetSolarMutex() );
 /*N*/ 	if ( impl_isDisposed() )
 /*N*/ 		throw DISPOSEDEXCEPTION();
-/*N*/ 
+/*N*/
 /*N*/ 	sal_uInt32 nOldCount = m_pData->m_seqControllers.getLength();
 /*N*/     if ( !nOldCount )
 /*N*/         return;
-/*N*/ 
+/*N*/
 /*N*/ 	SEQUENCE< REFERENCE< XCONTROLLER > > aNewSeq( nOldCount - 1 );
 /*N*/ 	for ( sal_uInt32 nOld = 0, nNew = 0; nOld < nOldCount; ++nOld )
 /*N*/     {
@@ -1069,9 +1069,9 @@ extern sal_Bool supportsMetaFileHandle_Impl();
 /*N*/ 			++nNew;
 /*N*/ 		}
 /*N*/     }
-/*N*/ 
+/*N*/
 /*N*/ 	m_pData->m_seqControllers = aNewSeq;
-/*N*/ 
+/*N*/
 /*N*/ 	if ( xController == m_pData->m_xCurrent )
 /*N*/ 		m_pData->m_xCurrent = REFERENCE< XCONTROLLER > ();
 /*N*/ }
@@ -1122,11 +1122,11 @@ extern sal_Bool supportsMetaFileHandle_Impl();
 /*N*/     ::vos::OGuard aGuard( Application::GetSolarMutex() );
 /*N*/ 	if ( impl_isDisposed() )
 /*N*/ 		throw DISPOSEDEXCEPTION();
-/*N*/ 
+/*N*/
 /*N*/     // get the last active controller of this model
 /*N*/ 	if ( m_pData->m_xCurrent.is() )
 /*N*/ 		return m_pData->m_xCurrent;
-/*N*/ 
+/*N*/
 /*N*/ 	// get the first controller of this model
 /*N*/ 	return m_pData->m_seqControllers.getLength() ? m_pData->m_seqControllers.getConstArray()[0] : m_pData->m_xCurrent;
 /*N*/ }
@@ -1142,7 +1142,7 @@ extern sal_Bool supportsMetaFileHandle_Impl();
 /*N*/     ::vos::OGuard aGuard( Application::GetSolarMutex() );
 /*N*/ 	if ( impl_isDisposed() )
 /*N*/ 		throw DISPOSEDEXCEPTION();
-/*N*/ 
+/*N*/
 /*N*/ 	m_pData->m_xCurrent = xCurrentController;
 /*N*/ }
 
@@ -1156,10 +1156,10 @@ extern sal_Bool supportsMetaFileHandle_Impl();
 /*N*/     ::vos::OGuard aGuard( Application::GetSolarMutex() );
 /*N*/ 	if ( impl_isDisposed() )
 /*N*/ 		throw DISPOSEDEXCEPTION();
-/*N*/ 
+/*N*/
 /*N*/     REFERENCE< XINTERFACE >     xReturn;
 /*N*/ 	REFERENCE< XCONTROLLER >	xController	=	getCurrentController()		;
-/*N*/ 
+/*N*/
 /*N*/ 	if ( xController.is() )
 /*N*/ 	{
 /*N*/ 		REFERENCE< XSELECTIONSUPPLIER >  xDocView( xController, UNO_QUERY );
@@ -1173,7 +1173,7 @@ extern sal_Bool supportsMetaFileHandle_Impl();
 /*N*/ 			xSel >>= xReturn ;
 /*N*/ 		}
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	return xReturn ;
 /*N*/ }
 
@@ -1187,7 +1187,7 @@ extern sal_Bool supportsMetaFileHandle_Impl();
 /*N*/     ::vos::OGuard aGuard( Application::GetSolarMutex() );
 /*N*/ 	if ( impl_isDisposed() )
 /*N*/ 		throw DISPOSEDEXCEPTION();
-/*N*/ 
+/*N*/
 /*N*/ 	return m_pData->m_pObjectShell.Is() ? m_pData->m_pObjectShell->IsModified() : sal_False;
 /*N*/ }
 
@@ -1202,7 +1202,7 @@ extern sal_Bool supportsMetaFileHandle_Impl();
 /*N*/     ::vos::OGuard aGuard( Application::GetSolarMutex() );
 /*N*/ 	if ( impl_isDisposed() )
 /*N*/ 		throw DISPOSEDEXCEPTION();
-/*N*/ 
+/*N*/
 /*N*/ 	if ( m_pData->m_pObjectShell.Is() )
 /*N*/ 		m_pData->m_pObjectShell->SetModified(bModified);
 /*N*/ }
@@ -1217,7 +1217,7 @@ extern sal_Bool supportsMetaFileHandle_Impl();
 /*N*/     ::vos::OGuard aGuard( Application::GetSolarMutex() );
 /*N*/ 	if ( impl_isDisposed() )
 /*N*/ 		return;
-/*N*/ 
+/*N*/
 /*N*/ 	m_pData->m_aInterfaceContainer.addInterface( ::getCppuType((const REFERENCE< XMODIFYLISTENER >*)0),xListener );
 /*N*/ }
 
@@ -1231,7 +1231,7 @@ extern sal_Bool supportsMetaFileHandle_Impl();
 /*N*/     ::vos::OGuard aGuard( Application::GetSolarMutex() );
 /*N*/ 	if ( impl_isDisposed() )
 /*N*/ 		return;
-/*N*/ 
+/*N*/
 /*N*/ 	m_pData->m_aInterfaceContainer.removeInterface( ::getCppuType((const REFERENCE< XMODIFYLISTENER >*)0), xListener );
 /*N*/ }
 
@@ -1244,7 +1244,7 @@ extern sal_Bool supportsMetaFileHandle_Impl();
 /*N*/ 	::vos::OGuard aGuard( Application::GetSolarMutex() );
 /*N*/ 	if ( !m_pData || m_pData->m_bClosed || m_pData->m_bClosing )
 /*N*/ 		return;
-/*N*/ 
+/*N*/
 /*N*/     uno::Reference< uno::XInterface > xSelfHold( static_cast< ::cppu::OWeakObject* >(this) );
 /*N*/     lang::EventObject             aSource    (static_cast< ::cppu::OWeakObject*>(this));
 /*N*/     ::cppu::OInterfaceContainerHelper* pContainer = m_pData->m_aInterfaceContainer.getContainer( ::getCppuType( ( const uno::Reference< util::XCloseListener >*) NULL ) );
@@ -1263,7 +1263,7 @@ extern sal_Bool supportsMetaFileHandle_Impl();
 /*N*/             }
 /*N*/         }
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	// no own objections against closing!
 /*N*/ 	m_pData->m_bClosing = sal_True;
 /*N*/     m_pData->m_pObjectShell->Broadcast( SfxSimpleHint(SFX_HINT_DEINITIALIZING) );
@@ -1283,10 +1283,10 @@ extern sal_Bool supportsMetaFileHandle_Impl();
 /*N*/             }
 /*N*/         }
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	m_pData->m_bClosed = sal_True;
 /*N*/ 	m_pData->m_bClosing = sal_False;
-/*N*/ 
+/*N*/
 /*N*/     dispose();
 /*N*/ }
 
@@ -1300,7 +1300,7 @@ extern sal_Bool supportsMetaFileHandle_Impl();
 /*N*/     ::vos::OGuard aGuard( Application::GetSolarMutex() );
 /*N*/ 	if ( impl_isDisposed() )
 /*N*/ 		return;
-/*N*/ 
+/*N*/
 /*N*/ 	m_pData->m_aInterfaceContainer.addInterface( ::getCppuType((const REFERENCE< XCLOSELISTENER >*)0), xListener );
 /*N*/ }
 
@@ -1314,7 +1314,7 @@ extern sal_Bool supportsMetaFileHandle_Impl();
 /*N*/     ::vos::OGuard aGuard( Application::GetSolarMutex() );
 /*N*/ 	if ( impl_isDisposed() )
 /*N*/ 		return;
-/*N*/ 
+/*N*/
 /*N*/ 	m_pData->m_aInterfaceContainer.removeInterface( ::getCppuType((const REFERENCE< XCLOSELISTENER >*)0), xListener );
 /*N*/ }
 
@@ -1328,7 +1328,7 @@ extern sal_Bool supportsMetaFileHandle_Impl();
 //STRIP001     ::vos::OGuard aGuard( Application::GetSolarMutex() );
 //STRIP001 	if ( impl_isDisposed() )
 //STRIP001 		throw DISPOSEDEXCEPTION();
-//STRIP001 
+//STRIP001
 //STRIP001 	// Printer beschaffen
 //STRIP001 	SfxViewFrame *pViewFrm = m_pData->m_pObjectShell.Is() ?
 //STRIP001 								SfxViewFrame::GetFirst( m_pData->m_pObjectShell, 0, sal_False ) : 0;
@@ -1337,38 +1337,38 @@ extern sal_Bool supportsMetaFileHandle_Impl();
 //STRIP001 	const SfxPrinter *pPrinter = pViewFrm->GetViewShell()->GetPrinter(sal_True);
 //STRIP001 	if ( !pPrinter )
 //STRIP001 		return SEQUENCE< PROPERTYVALUE >();
-//STRIP001 
+//STRIP001
 //STRIP001 	// Printer Eigenschaften uebertragen
 //STRIP001 	SEQUENCE< PROPERTYVALUE > aPrinter(8);
-//STRIP001 
+//STRIP001
 //STRIP001 	aPrinter.getArray()[7].Name = DEFINE_CONST_UNICODE( "CanSetPaperSize" );
 //STRIP001 	aPrinter.getArray()[7].Value <<= ( pPrinter->HasSupport( SUPPORT_SET_PAPERSIZE ) );
-//STRIP001 
+//STRIP001
 //STRIP001 	aPrinter.getArray()[6].Name = DEFINE_CONST_UNICODE( "CanSetPaperFormat" );
 //STRIP001 	aPrinter.getArray()[6].Value <<= ( pPrinter->HasSupport( SUPPORT_SET_PAPER ) );
-//STRIP001 
+//STRIP001
 //STRIP001 	aPrinter.getArray()[5].Name = DEFINE_CONST_UNICODE( "CanSetPaperOrientation" );
 //STRIP001 	aPrinter.getArray()[5].Value <<= ( pPrinter->HasSupport( SUPPORT_SET_ORIENTATION ) );
-//STRIP001 
+//STRIP001
 //STRIP001 	aPrinter.getArray()[4].Name = DEFINE_CONST_UNICODE( "IsBusy" );
 //STRIP001 	aPrinter.getArray()[4].Value <<= ( pPrinter->IsPrinting() );
-//STRIP001 
+//STRIP001
 //STRIP001 	aPrinter.getArray()[3].Name = DEFINE_CONST_UNICODE( "PaperSize" );
 //STRIP001 	SIZE aSize = impl_Size_Object2Struct(pPrinter->GetPaperSize() );
 //STRIP001 	aPrinter.getArray()[3].Value <<= aSize;
-//STRIP001 
+//STRIP001
 //STRIP001 	aPrinter.getArray()[2].Name = DEFINE_CONST_UNICODE( "PaperFormat" );
 //STRIP001 	PAPERFORMAT eFormat = (PAPERFORMAT)pPrinter->GetPaper();
 //STRIP001 	aPrinter.getArray()[2].Value <<= eFormat;
-//STRIP001 
+//STRIP001
 //STRIP001 	aPrinter.getArray()[1].Name = DEFINE_CONST_UNICODE( "PaperOrientation" );
 //STRIP001 	PAPERORIENTATION eOrient = (PAPERORIENTATION)pPrinter->GetOrientation();
 //STRIP001 	aPrinter.getArray()[1].Value <<= eOrient;
-//STRIP001 
+//STRIP001
 //STRIP001 	aPrinter.getArray()[0].Name = DEFINE_CONST_UNICODE( "Name" );
 //STRIP001 	String sStringTemp = pPrinter->GetName() ;
 //STRIP001 	aPrinter.getArray()[0].Value <<= ::rtl::OUString( sStringTemp );
-//STRIP001 
+//STRIP001
 //STRIP001 	return aPrinter;
 //STRIP001 }
 
@@ -1377,7 +1377,7 @@ extern sal_Bool supportsMetaFileHandle_Impl();
 //________________________________________________________________________________________________________
 
 //STRIP001 void SfxBaseModel::impl_setPrinter(const SEQUENCE< PROPERTYVALUE >& rPrinter,SfxPrinter*& pPrinter,sal_uInt16& nChangeFlags,SfxViewShell*& pViewSh)
-//STRIP001 
+//STRIP001
 //STRIP001 {
 //STRIP001 	// alten Printer beschaffen
 //STRIP001 	SfxViewFrame *pViewFrm = m_pData->m_pObjectShell.Is() ?
@@ -1388,7 +1388,7 @@ extern sal_Bool supportsMetaFileHandle_Impl();
 //STRIP001 	pPrinter = pViewSh->GetPrinter(sal_True);
 //STRIP001 	if ( !pPrinter )
 //STRIP001 		return;
-//STRIP001 
+//STRIP001
 //STRIP001 	// new Printer-Name available?
 //STRIP001 	nChangeFlags = 0;
 //STRIP001     sal_Int32 lDummy;
@@ -1396,21 +1396,21 @@ extern sal_Bool supportsMetaFileHandle_Impl();
 //STRIP001 	{
 //STRIP001 		// get Property-Value from printer description
 //STRIP001 		const PROPERTYVALUE &rProp = rPrinter.getConstArray()[n];
-//STRIP001 
+//STRIP001
 //STRIP001 		// Name-Property?
 //STRIP001 		if ( rProp.Name.compareToAscii( "Name" ) == 0 )
 //STRIP001 		{
 //STRIP001 			OUSTRING sTemp;
 //STRIP001             if ( ( rProp.Value >>= sTemp ) == sal_False )
 //STRIP001 				throw ILLEGALARGUMENTEXCEPTION();
-//STRIP001 
+//STRIP001
 //STRIP001 			String aPrinterName( sTemp ) ;
 //STRIP001             pPrinter = new SfxPrinter( pPrinter->GetOptions().Clone(), aPrinterName );
 //STRIP001 			nChangeFlags = SFX_PRINTER_PRINTER;
 //STRIP001 			break;
 //STRIP001 		}
 //STRIP001 	}
-//STRIP001 
+//STRIP001
 //STRIP001 	Size aSetPaperSize( 0, 0);
 //STRIP001     PAPERFORMAT nPaperFormat = (PAPERFORMAT) PAPER_USER;
 //STRIP001 	// other properties
@@ -1418,7 +1418,7 @@ extern sal_Bool supportsMetaFileHandle_Impl();
 //STRIP001 	{
 //STRIP001 		// get Property-Value from printer description
 //STRIP001 		const PROPERTYVALUE &rProp = rPrinter.getConstArray()[i];
-//STRIP001 
+//STRIP001
 //STRIP001 		// PaperOrientation-Property?
 //STRIP001 		if ( rProp.Name.compareToAscii( "PaperOrientation" ) == 0 )
 //STRIP001 		{
@@ -1429,11 +1429,11 @@ extern sal_Bool supportsMetaFileHandle_Impl();
 //STRIP001                     throw ILLEGALARGUMENTEXCEPTION();
 //STRIP001                 eOrient = ( PAPERORIENTATION ) lDummy;
 //STRIP001             }
-//STRIP001 
+//STRIP001
 //STRIP001             pPrinter->SetOrientation( (Orientation) eOrient );
 //STRIP001 			nChangeFlags |= SFX_PRINTER_CHG_ORIENTATION;
 //STRIP001 		}
-//STRIP001 
+//STRIP001
 //STRIP001 		// PaperFormat-Property?
 //STRIP001 		if ( rProp.Name.compareToAscii( "PaperFormat" ) == 0 )
 //STRIP001 		{
@@ -1443,11 +1443,11 @@ extern sal_Bool supportsMetaFileHandle_Impl();
 //STRIP001                     throw ILLEGALARGUMENTEXCEPTION();
 //STRIP001                 nPaperFormat = ( PAPERFORMAT ) lDummy;
 //STRIP001             }
-//STRIP001 
+//STRIP001
 //STRIP001 			pPrinter->SetPaper( (Paper) nPaperFormat );
 //STRIP001 			nChangeFlags |= SFX_PRINTER_CHG_SIZE;
 //STRIP001 		}
-//STRIP001 
+//STRIP001
 //STRIP001 		// PaperSize-Property?
 //STRIP001 		if ( rProp.Name.compareToAscii( "PaperSize" ) == 0 )
 //STRIP001 		{
@@ -1462,7 +1462,7 @@ extern sal_Bool supportsMetaFileHandle_Impl();
 //STRIP001 			}
 //STRIP001 		}
 //STRIP001 	}
-//STRIP001 
+//STRIP001
 //STRIP001 	//os 12.11.98: die PaperSize darf nur gesetzt werden, wenn tatsaechlich
 //STRIP001 	//PAPER_USER gilt, sonst koennte vom Treiber ein falsches Format gewaehlt werden
 //STRIP001     if(nPaperFormat == PAPER_USER && aSetPaperSize.Width())
@@ -1477,7 +1477,7 @@ extern sal_Bool supportsMetaFileHandle_Impl();
 //STRIP001 			nChangeFlags |= SFX_PRINTER_CHG_SIZE;
 //STRIP001 		}
 //STRIP001 	}
-//STRIP001 
+//STRIP001
 //STRIP001     // #96772#: wait until printing is done
 //STRIP001     SfxPrinter* pDocPrinter = pViewSh->GetPrinter();
 //STRIP001     while ( pDocPrinter->IsPrinting() )
@@ -1491,7 +1491,7 @@ extern sal_Bool supportsMetaFileHandle_Impl();
 //STRIP001     ::vos::OGuard aGuard( Application::GetSolarMutex() );
 //STRIP001 	if ( impl_isDisposed() )
 //STRIP001 		throw DISPOSEDEXCEPTION();
-//STRIP001 
+//STRIP001
 //STRIP001 	SfxViewShell* pViewSh = NULL;
 //STRIP001 	SfxPrinter* pPrinter = NULL;
 //STRIP001 	sal_uInt16 nChangeFlags = 0;
@@ -1518,7 +1518,7 @@ extern sal_Bool supportsMetaFileHandle_Impl();
 //STRIP001         String m_sTargetURL;
 //STRIP001         /// it holds the temp file alive, till the print job will finish and remove it from disk automaticly if the object die
 //STRIP001         ::utl::TempFile* m_pTempFile;
-//STRIP001 
+//STRIP001
 //STRIP001     public:
 //STRIP001         /* initialize this watcher but don't start it */
 //STRIP001         ImplUCBPrintWatcher( SfxPrinter* pPrinter, ::utl::TempFile* pTempFile, const String& sTargetURL )
@@ -1526,7 +1526,7 @@ extern sal_Bool supportsMetaFileHandle_Impl();
 //STRIP001                 , m_sTargetURL( sTargetURL )
 //STRIP001                 , m_pTempFile ( pTempFile  )
 //STRIP001         {}
-//STRIP001 
+//STRIP001
 //STRIP001         /* waits for finishing of the print job and moves the temp file afterwards
 //STRIP001            Note: Starting of the job is done outside this thread!
 //STRIP001            But we have to free some of the given ressources on heap!
@@ -1541,22 +1541,22 @@ extern sal_Bool supportsMetaFileHandle_Impl();
 //STRIP001                 m_pPrinter = NULL; // don't delete it! It's borrowed only :-)
 //STRIP001             }
 //STRIP001             /* } SAFE */
-//STRIP001 
+//STRIP001
 //STRIP001             // lock for further using of our member isn't neccessary - because
 //STRIP001             // we truns alone by defenition. Nobody join for us nor use us ...
 //STRIP001             ImplUCBPrintWatcher::moveAndDeleteTemp(&m_pTempFile,m_sTargetURL);
-//STRIP001 
+//STRIP001
 //STRIP001             // finishing of this run() method will call onTerminate() automaticly
 //STRIP001             // kill this thread there!
 //STRIP001         }
-//STRIP001 
+//STRIP001
 //STRIP001         /* nobody wait for this thread. We must kill ourself ...
 //STRIP001          */
 //STRIP001         void SAL_CALL onTerminated()
 //STRIP001         {
 //STRIP001             delete this;
 //STRIP001         }
-//STRIP001 
+//STRIP001
 //STRIP001         /* static helper to move the temp. file to the target location by using the ucb
 //STRIP001            It's static to be useable from outside too. So it's not realy neccessary to start
 //STRIP001            the thread, if finishing of the job was detected outside this thread.
@@ -1577,11 +1577,11 @@ extern sal_Bool supportsMetaFileHandle_Impl();
 //STRIP001 					::ucb::Content aSource(
 //STRIP001 							::rtl::OUString((*ppTempFile)->GetURL()),
 //STRIP001 							::com::sun::star::uno::Reference< ::com::sun::star::ucb::XCommandEnvironment >());
-//STRIP001 
+//STRIP001
 //STRIP001 					::ucb::Content aTarget(
 //STRIP001 							::rtl::OUString(aSplitter.GetMainURL(INetURLObject::NO_DECODE)),
 //STRIP001 							::com::sun::star::uno::Reference< ::com::sun::star::ucb::XCommandEnvironment >());
-//STRIP001 
+//STRIP001
 //STRIP001 					aTarget.transferContent(
 //STRIP001 							aSource,
 //STRIP001 							::ucb::InsertOperation_COPY,
@@ -1593,7 +1593,7 @@ extern sal_Bool supportsMetaFileHandle_Impl();
 //STRIP001             catch( ::com::sun::star::ucb::CommandAbortedException&  ) { DBG_ERROR("command abort exception"); }
 //STRIP001             catch( ::com::sun::star::uno::RuntimeException&         ) { DBG_ERROR("runtime exception"); }
 //STRIP001             catch( ::com::sun::star::uno::Exception&                ) { DBG_ERROR("unknown exception"); }
-//STRIP001 
+//STRIP001
 //STRIP001             // kill the temp file!
 //STRIP001             delete *ppTempFile;
 //STRIP001             *ppTempFile = NULL;
@@ -1607,13 +1607,13 @@ extern sal_Bool supportsMetaFileHandle_Impl();
 //________________________________________________________________________________________________________
 /*?*/ void SAL_CALL SfxBaseModel::print(const SEQUENCE< PROPERTYVALUE >& rOptions)
 /*?*/         throw (::com::sun::star::lang::IllegalArgumentException, ::com::sun::star::uno::RuntimeException)
-/*?*/ {DBG_ASSERT(0, "STRIP"); //STRIP001 
+/*?*/ {DBG_ASSERT(0, "STRIP"); //STRIP001
 //STRIP001 /*?*/ 	// object already disposed?
 //STRIP001 /*?*/ 	// object already disposed?
 //STRIP001 /*?*/     ::vos::OGuard aGuard( Application::GetSolarMutex() );
 //STRIP001 /*?*/ 	if ( impl_isDisposed() )
 //STRIP001 /*?*/ 		throw DISPOSEDEXCEPTION();
-//STRIP001 /*?*/ 
+//STRIP001 /*?*/
 //STRIP001 /*?*/ 	// get view for sfx printing capabilities
 //STRIP001 /*?*/ 	SfxViewFrame *pViewFrm = m_pData->m_pObjectShell.Is() ?
 //STRIP001 /*?*/ 								SfxViewFrame::GetFirst( m_pData->m_pObjectShell, 0, sal_False ) : 0;
@@ -1622,7 +1622,7 @@ extern sal_Bool supportsMetaFileHandle_Impl();
 //STRIP001 /*?*/ 	SfxViewShell* pView = pViewFrm->GetViewShell();
 //STRIP001 /*?*/ 	if ( !pView )
 //STRIP001 /*?*/ 		return;
-//STRIP001 /*?*/ 
+//STRIP001 /*?*/
 //STRIP001 /*?*/ 	SfxAllItemSet aArgs( pView->GetPool() );
 //STRIP001 /*?*/     sal_Bool bMonitor = sal_False;
 //STRIP001 /*?*/     // We need this information at the end of this method, if we start the vcl printer
@@ -1633,13 +1633,13 @@ extern sal_Bool supportsMetaFileHandle_Impl();
 //STRIP001 /*?*/     // right for us.
 //STRIP001 /*?*/     String sUcbUrl;
 //STRIP001 /*?*/     ::utl::TempFile* pUCBPrintTempFile = NULL;
-//STRIP001 /*?*/ 
+//STRIP001 /*?*/
 //STRIP001 /*?*/     sal_Bool bWaitUntilEnd = sal_False;
 //STRIP001 /*?*/ 	for ( int n = 0; n < rOptions.getLength(); ++n )
 //STRIP001 /*?*/ 	{
 //STRIP001 /*?*/ 		// get Property-Value from options
 //STRIP001 /*?*/ 		const PROPERTYVALUE &rProp = rOptions.getConstArray()[n];
-//STRIP001 /*?*/ 
+//STRIP001 /*?*/
 //STRIP001 /*?*/ 		// FileName-Property?
 //STRIP001 /*?*/ 		if ( rProp.Name.compareToAscii( "FileName" ) == 0 )
 //STRIP001 /*?*/ 		{
@@ -1652,7 +1652,7 @@ extern sal_Bool supportsMetaFileHandle_Impl();
 //STRIP001 /*?*/             {
 //STRIP001 /*?*/ 				throw ILLEGALARGUMENTEXCEPTION();
 //STRIP001 /*?*/             }
-//STRIP001 /*?*/ 
+//STRIP001 /*?*/
 //STRIP001 /*?*/             String        sPath        ;
 //STRIP001 /*?*/             String        sURL  (sTemp);
 //STRIP001 /*?*/             INetURLObject aCheck(sURL );
@@ -1700,7 +1700,7 @@ extern sal_Bool supportsMetaFileHandle_Impl();
 //STRIP001 /*?*/                 sUcbUrl = sURL;
 //STRIP001 /*?*/             }
 //STRIP001 /*?*/ 		}
-//STRIP001 /*?*/ 
+//STRIP001 /*?*/
 //STRIP001 /*?*/ 		// CopyCount-Property
 //STRIP001 /*?*/ 		else if ( rProp.Name.compareToAscii( "CopyCount" ) == 0 )
 //STRIP001 /*?*/ 		{
@@ -1709,7 +1709,7 @@ extern sal_Bool supportsMetaFileHandle_Impl();
 //STRIP001 /*?*/ 				throw ILLEGALARGUMENTEXCEPTION();
 //STRIP001 /*?*/             aArgs.Put( SfxInt16Item( SID_PRINT_COPIES, (USHORT) nCopies ) );
 //STRIP001 /*?*/ 		}
-//STRIP001 /*?*/ 
+//STRIP001 /*?*/
 //STRIP001 /*?*/ 		// Collate-Property
 //STRIP001 /*?*/ 		else if ( rProp.Name.compareToAscii( "Collate" ) == 0 )
 //STRIP001 /*?*/ 		{
@@ -1719,7 +1719,7 @@ extern sal_Bool supportsMetaFileHandle_Impl();
 //STRIP001 /*?*/ 			else
 //STRIP001 /*?*/ 				throw ILLEGALARGUMENTEXCEPTION();
 //STRIP001 /*?*/ 		}
-//STRIP001 /*?*/ 
+//STRIP001 /*?*/
 //STRIP001 /*?*/ 		// Sort-Property
 //STRIP001 /*?*/ 		else if ( rProp.Name.compareToAscii( "Sort" ) == 0 )
 //STRIP001 /*?*/ 		{
@@ -1729,7 +1729,7 @@ extern sal_Bool supportsMetaFileHandle_Impl();
 //STRIP001 /*?*/ 			else
 //STRIP001 /*?*/ 				throw ILLEGALARGUMENTEXCEPTION();
 //STRIP001 /*?*/ 		}
-//STRIP001 /*?*/ 
+//STRIP001 /*?*/
 //STRIP001 /*?*/ 		// Pages-Property
 //STRIP001 /*?*/ 		else if ( rProp.Name.compareToAscii( "Pages" ) == 0 )
 //STRIP001 /*?*/ 		{
@@ -1739,14 +1739,14 @@ extern sal_Bool supportsMetaFileHandle_Impl();
 //STRIP001 /*?*/ 			else
 //STRIP001 /*?*/ 				throw ILLEGALARGUMENTEXCEPTION();
 //STRIP001 /*?*/ 		}
-//STRIP001 /*?*/ 
+//STRIP001 /*?*/
 //STRIP001 /*?*/ 		// MonitorVisible
 //STRIP001 /*?*/ 		else if ( rProp.Name.compareToAscii( "MonitorVisible" ) == 0 )
 //STRIP001 /*?*/ 		{
 //STRIP001 /*?*/             if( !(rProp.Value >>= bMonitor) )
 //STRIP001 /*?*/ 				throw ILLEGALARGUMENTEXCEPTION();
 //STRIP001 /*?*/ 		}
-//STRIP001 /*?*/ 
+//STRIP001 /*?*/
 //STRIP001 /*?*/ 		// MonitorVisible
 //STRIP001 /*?*/ 		else if ( rProp.Name.compareToAscii( "Wait" ) == 0 )
 //STRIP001 /*?*/ 		{
@@ -1754,7 +1754,7 @@ extern sal_Bool supportsMetaFileHandle_Impl();
 //STRIP001 /*?*/ 				throw ILLEGALARGUMENTEXCEPTION();
 //STRIP001 /*?*/ 		}
 //STRIP001 /*?*/ 	}
-//STRIP001 /*?*/ 
+//STRIP001 /*?*/
 //STRIP001 /*?*/     // Execute the print request every time.
 //STRIP001 /*?*/     // It doesn'tmatter if it is a real printer used or we print to a local file
 //STRIP001 /*?*/     // nor if we print to a temp file and move it afterwards by using the ucb.
@@ -1765,7 +1765,7 @@ extern sal_Bool supportsMetaFileHandle_Impl();
 //STRIP001 /*?*/ 	SfxRequest aReq( SID_PRINTDOC, SFX_CALLMODE_SYNCHRON | SFX_CALLMODE_API, pView->GetPool() );
 //STRIP001 /*?*/ 	aReq.SetArgs( aArgs );
 //STRIP001 /*?*/ 	pView->ExecuteSlot( aReq );
-//STRIP001 /*?*/ 
+//STRIP001 /*?*/
 //STRIP001 /*?*/     // Ok - may be execution before has finished (or started!) printing.
 //STRIP001 /*?*/     // And may it was a printing to a file.
 //STRIP001 /*?*/     // Now we have to check if we can move the file (if neccessary) via ucb to his right location.
@@ -1800,7 +1800,7 @@ extern sal_Bool supportsMetaFileHandle_Impl();
 /*N*/     ::vos::OGuard aGuard( Application::GetSolarMutex() );
 /*N*/ 	if ( impl_isDisposed() )
 /*N*/ 		throw DISPOSEDEXCEPTION();
-/*N*/ 
+/*N*/
 /*N*/ 	return m_pData->m_pObjectShell.Is() ? m_pData->m_pObjectShell->HasName() : sal_False;
 /*N*/ }
 
@@ -1814,7 +1814,7 @@ extern sal_Bool supportsMetaFileHandle_Impl();
 /*N*/     ::vos::OGuard aGuard( Application::GetSolarMutex() );
 /*N*/ 	if ( impl_isDisposed() )
 /*N*/ 		throw DISPOSEDEXCEPTION();
-/*N*/ 
+/*N*/
 /*N*/ 	return m_pData->m_pObjectShell.Is() ? OUSTRING(m_pData->m_pObjectShell->GetMedium()->GetName()) : m_pData->m_sURL;
 /*N*/ }
 
@@ -1828,7 +1828,7 @@ extern sal_Bool supportsMetaFileHandle_Impl();
 /*N*/     ::vos::OGuard aGuard( Application::GetSolarMutex() );
 /*N*/ 	if ( impl_isDisposed() )
 /*N*/ 		throw DISPOSEDEXCEPTION();
-/*N*/ 
+/*N*/
 /*N*/ 	return m_pData->m_pObjectShell.Is() ? m_pData->m_pObjectShell->IsReadOnly() : sal_True;
 /*N*/ }
 
@@ -1842,7 +1842,7 @@ extern sal_Bool supportsMetaFileHandle_Impl();
 /*N*/     ::vos::OGuard aGuard( Application::GetSolarMutex() );
 /*N*/ 	if ( impl_isDisposed() )
 /*N*/ 		throw DISPOSEDEXCEPTION();
-/*N*/ 
+/*N*/
 /*N*/ 	if ( m_pData->m_pObjectShell.Is() )
 /*N*/     {
 /*N*/ 		if ( m_pData->m_pObjectShell->GetCreateMode() == SFX_CREATE_MODE_EMBEDDED )
@@ -1867,11 +1867,11 @@ extern sal_Bool supportsMetaFileHandle_Impl();
 /*N*/     ::vos::OGuard aGuard( Application::GetSolarMutex() );
 /*N*/ 	if ( impl_isDisposed() )
 /*N*/ 		throw DISPOSEDEXCEPTION();
-/*N*/ 
+/*N*/
 /*N*/ 	if ( m_pData->m_pObjectShell.Is() )
 /*N*/ 	{
 /*N*/ 		impl_store( m_pData->m_pObjectShell, rURL, rArgs, sal_False );
-/*N*/ 
+/*N*/
 /*N*/ 		SEQUENCE< PROPERTYVALUE > aSequence	;
 /*N*/ 		TransformItems( SID_OPENDOC, *m_pData->m_pObjectShell->GetMedium()->GetItemSet(), aSequence );
 /*N*/ 		attachResource( rURL, aSequence );
@@ -1890,7 +1890,7 @@ extern sal_Bool supportsMetaFileHandle_Impl();
 /*N*/     ::vos::OGuard aGuard( Application::GetSolarMutex() );
 /*N*/ 	if ( impl_isDisposed() )
 /*N*/ 		throw DISPOSEDEXCEPTION();
-/*N*/ 
+/*N*/
 /*N*/ 	if ( m_pData->m_pObjectShell.Is() )
 /*N*/     {
 /*N*/ 		impl_store( m_pData->m_pObjectShell, rURL, rArgs, sal_True );
@@ -1911,19 +1911,19 @@ extern sal_Bool supportsMetaFileHandle_Impl();
 /*N*/     ::vos::OGuard aGuard( Application::GetSolarMutex() );
 /*N*/ 	if ( impl_isDisposed() )
 /*N*/ 		throw DISPOSEDEXCEPTION();
-/*N*/ 
+/*N*/
 /*N*/ 	// the object shell should exist always
 /*N*/ 	DBG_ASSERT( m_pData->m_pObjectShell.Is(), "Model is useless without an ObjectShell" );
 /*N*/ 	if ( m_pData->m_pObjectShell.Is() )
 /*N*/ 	{
 /*N*/ 		if( m_pData->m_pObjectShell->GetMedium() )
 /*N*/ 			throw DOUBLEINITIALIZATIONEXCEPTION();
-/*N*/ 
+/*N*/
 /*N*/ 		sal_Bool bRes = m_pData->m_pObjectShell->DoInitNew( NULL );
 /*N*/ 		sal_uInt32 nErrCode = m_pData->m_pObjectShell->GetError() ?
 /*N*/ 									m_pData->m_pObjectShell->GetError() : ERRCODE_IO_CANTCREATE;
 /*N*/ 		m_pData->m_pObjectShell->ResetError();
-/*N*/ 
+/*N*/
 /*N*/ 		if ( !bRes )
 /*N*/ 		{
 /*N*/ 			throw SfxIOException_Impl( nErrCode );
@@ -1945,64 +1945,62 @@ extern sal_Bool supportsMetaFileHandle_Impl();
 /*N*/     ::vos::OGuard aGuard( Application::GetSolarMutex() );
 /*N*/ 	if ( impl_isDisposed() )
 /*N*/ 		throw DISPOSEDEXCEPTION();
-/*N*/ 
+/*N*/
 /*N*/ 	// the object shell should exist always
 /*N*/ 	DBG_ASSERT( m_pData->m_pObjectShell.Is(), "Model is useless without an ObjectShell" );
-/*N*/ 
-/*N*/ 	if ( m_pData->m_pObjectShell.Is() )
-/*N*/ 	{
-/*N*/ 		if( m_pData->m_pObjectShell->GetMedium() )
-/*N*/ 			throw DOUBLEINITIALIZATIONEXCEPTION();
-/*N*/ 
-/*N*/     	SfxAllItemSet *pParams = new SfxAllItemSet( SFX_APP()->GetPool() );
-/*N*/     	TransformParameters( SID_OPENDOC, seqArguments, *pParams );
-/*N*/ 
-/*N*/ 		::rtl::OUString aFilterName;
-/*N*/ 		SFX_ITEMSET_ARG( pParams, pFilterNameItem, SfxStringItem, SID_FILTER_NAME, sal_False );
-/*N*/ 		if( pFilterNameItem )
-/*N*/ 			aFilterName = pFilterNameItem->GetValue();
-/*N*/ 
-/*N*/ 		if( !aFilterName.getLength() )
-/*N*/ 			throw ILLEGALARGUMENTIOEXCEPTION();
-/*N*/ 
-/*N*/ 		pParams->Put( SfxBoolItem( SID_VIEW, sal_False ) );
-/*N*/ 		pParams->Put( SfxObjectShellItem( SID_OBJECTSHELL, m_pData->m_pObjectShell ) );
-/*N*/ 
-/*N*/    		// create LoadEnvironment and set link for callback when it is finished
-/*N*/    		m_pData->m_pLoader = LoadEnvironment_Impl::Create( *pParams, TRUE );
-/*N*/    		m_pData->m_pLoader->AddRef();
-/*N*/    		m_pData->m_pLoader->SetDoneLink( LINK( this, SfxBaseModel, LoadDone_Impl ) );
-/*N*/ 
-/*N*/         m_pData->m_bLoadDone = sal_False;
-/*N*/         m_pData->m_pLoader->Start();
-/*N*/ 
-/*N*/        	// wait for callback
-/*N*/        	while( m_pData->m_bLoadDone == sal_False )
-/*N*/            	Application::Yield();
-/*N*/ 
-/*N*/ 	    m_pData->m_pLoader->ReleaseRef();
-/*N*/ 	    m_pData->m_pLoader = NULL;
-/*N*/ 		DELETEZ( pParams );
-/*N*/ 
-/*N*/ 		sal_uInt32 nErrCode = m_pData->m_pObjectShell->GetError() ?
-/*N*/ 								m_pData->m_pObjectShell->GetError() : ERRCODE_IO_CANTREAD;
-/*N*/ 		m_pData->m_pObjectShell->ResetError();
-/*
-         // remove lock without closing (it is set in the LoadEnvironment, because the document
-         // is loaded in a hidden mode)
-         m_pData->m_pObjectShell->RemoveOwnerLock();
-*/
-/*N*/ 		if ( !m_pData->m_bLoadState )
-/*N*/ 		{
-/*N*/ 			throw SfxIOException_Impl( nErrCode );
-/*N*/ 		}
-/*N*/ 	}
-/*N*/ }
+    if ( m_pData->m_pObjectShell.Is() )
+     {
+         if( m_pData->m_pObjectShell->GetMedium() )
+             throw DOUBLEINITIALIZATIONEXCEPTION();
+
+         SfxAllItemSet *pParams = new SfxAllItemSet( SFX_APP()->GetPool() );
+         TransformParameters( SID_OPENDOC, seqArguments, *pParams );
+
+         ::rtl::OUString aFilterName;
+         SFX_ITEMSET_ARG( pParams, pFilterNameItem, SfxStringItem, SID_FILTER_NAME, sal_False );
+         if( pFilterNameItem )
+             aFilterName = pFilterNameItem->GetValue();
+
+         if( !aFilterName.getLength() )
+             throw ILLEGALARGUMENTIOEXCEPTION();
+
+        const SfxFilter* pFilter = SFX_APP()->GetFilterMatcher().GetFilter4FilterName( aFilterName );
+        BOOL bReadOnly = FALSE;
+        SFX_ITEMSET_ARG( pParams, pReadOnlyItem, SfxBoolItem, SID_DOC_READONLY, FALSE );
+        if ( pReadOnlyItem && pReadOnlyItem->GetValue() )
+            bReadOnly = TRUE;
+        SFX_ITEMSET_ARG( pParams, pFileNameItem, SfxStringItem, SID_FILE_NAME, FALSE );
+        SfxMedium* pMedium = new SfxMedium( pFileNameItem->GetValue(), bReadOnly ? SFX_STREAM_READONLY : SFX_STREAM_READWRITE, FALSE, pFilter, pParams );
+
+        // allow to use an interactionhandler (if there is one)
+        pMedium->UseInteractionHandler( TRUE );
+
+        // load document
+        sal_uInt32 nError = ERRCODE_NONE;
+        BOOL bOK = m_pData->m_pObjectShell->DoLoad(pMedium);
+        m_pData->m_pObjectShell->ResetError();
+        nError = pMedium->GetError();
+        if ( !nError && !bOK )
+            nError = ERRCODE_IO_GENERAL;
+
+        if ( nError )
+        {
+            if ( m_pData->m_pObjectShell->GetMedium() != pMedium )
+            {
+                // for whatever reason document now has another medium
+                DBG_ERROR("Document has rejected the medium?!");
+                delete pMedium;
+            }
+
+            throw SfxIOException_Impl( nError ? nError : ERRCODE_IO_CANTREAD );
+        }
+    }
+}
 
 /*N #dochnoetig# */ IMPL_LINK( SfxBaseModel, LoadDone_Impl, void*, pVoid )
 /*N*/ {
 /*N*/     DBG_ASSERT( m_pData->m_pLoader, "No Loader created, but LoadDone ?!" );
-/*N*/ 
+/*N*/
 /*N*/     if ( m_pData->m_pLoader->GetError() )
 /*N*/     {
 /*N*/ 		m_pData->m_bLoadDone  = sal_True ;
@@ -2013,7 +2011,7 @@ extern sal_Bool supportsMetaFileHandle_Impl();
 /*N*/ 		m_pData->m_bLoadDone  = sal_True;
 /*N*/ 		m_pData->m_bLoadState = sal_True;
 /*N*/     }
-/*N*/ 
+/*N*/
 /*N*/     return NULL;
 /*N*/ }
 
@@ -2025,14 +2023,14 @@ extern sal_Bool supportsMetaFileHandle_Impl();
 /*?*/ 		throw (::com::sun::star::datatransfer::UnsupportedFlavorException,
 /*?*/ 			   ::com::sun::star::io::IOException,
 /*?*/ 			   ::com::sun::star::uno::RuntimeException)
-/*?*/ {DBG_ASSERT(0, "STRIP"); ANY aAny; return aAny;//STRIP001 
+/*?*/ {DBG_ASSERT(0, "STRIP"); ANY aAny; return aAny;//STRIP001
 //STRIP001 	// object already disposed?
 //STRIP001     ::vos::OGuard aGuard( Application::GetSolarMutex() );
 //STRIP001 	if ( impl_isDisposed() )
 //STRIP001 		throw DISPOSEDEXCEPTION();
-//STRIP001 
+//STRIP001
 //STRIP001 	ANY aAny;
-//STRIP001 
+//STRIP001
 //STRIP001 	if ( m_pData->m_pObjectShell.Is() )
 //STRIP001 	{
 //STRIP001 		if ( aFlavor.MimeType.equalsAscii( "application/x-openoffice;windows_formatname=\"GDIMetaFile\"" ) )
@@ -2040,11 +2038,11 @@ extern sal_Bool supportsMetaFileHandle_Impl();
 //STRIP001 			if ( aFlavor.DataType == getCppuType( (const Sequence< sal_Int8 >*) 0 ) )
 //STRIP001 			{
 //STRIP001 				GDIMetaFile* pMetaFile = m_pData->m_pObjectShell->GetPreviewMetaFile( sal_True );
-//STRIP001 
+//STRIP001
 //STRIP001 				if ( pMetaFile )
 //STRIP001 				{
 //STRIP001 					SvMemoryStream aMemStm( 65535, 65535 );
-//STRIP001 
+//STRIP001
 //STRIP001 					pMetaFile->Write( aMemStm );
 //STRIP001 					delete pMetaFile;
 //STRIP001 					aAny <<= Sequence< sal_Int8 >( reinterpret_cast< const sal_Int8* >( aMemStm.GetData() ),
@@ -2059,7 +2057,7 @@ extern sal_Bool supportsMetaFileHandle_Impl();
 //STRIP001 			if ( aFlavor.DataType == getCppuType( (const Sequence< sal_Int8 >*) 0 ) )
 //STRIP001 			{
 //STRIP001 				GDIMetaFile* pMetaFile = m_pData->m_pObjectShell->GetPreviewMetaFile( sal_True );
-//STRIP001 
+//STRIP001
 //STRIP001 				if ( pMetaFile )
 //STRIP001 				{
 //STRIP001 					SvMemoryStream* pStream = getMetaMemStrFromGDI_Impl( pMetaFile, CVT_EMF );
@@ -2076,7 +2074,7 @@ extern sal_Bool supportsMetaFileHandle_Impl();
 //STRIP001 			  && aFlavor.DataType == getCppuType( (const sal_uInt64*) 0 ) )
 //STRIP001 			{
 //STRIP001 				GDIMetaFile* pMetaFile = m_pData->m_pObjectShell->GetPreviewMetaFile( sal_True );
-//STRIP001 
+//STRIP001
 //STRIP001 				if ( pMetaFile )
 //STRIP001 				{
 //STRIP001 					aAny <<= reinterpret_cast< const sal_uInt64 >( getEnhMetaFileFromGDI_Impl( pMetaFile ) );
@@ -2091,12 +2089,12 @@ extern sal_Bool supportsMetaFileHandle_Impl();
 //STRIP001 			if ( aFlavor.DataType == getCppuType( (const Sequence< sal_Int8 >*) 0 ) )
 //STRIP001 			{
 //STRIP001 				GDIMetaFile* pMetaFile = m_pData->m_pObjectShell->GetPreviewMetaFile( sal_True );
-//STRIP001 
+//STRIP001
 //STRIP001 				if ( pMetaFile )
 //STRIP001 				{
 //STRIP001 					SvMemoryStream* pStream = getMetaMemStrFromGDI_Impl( pMetaFile, CVT_WMF );
 //STRIP001 					delete pMetaFile;
-//STRIP001 
+//STRIP001
 //STRIP001 					if ( pStream )
 //STRIP001 					{
 //STRIP001 						aAny <<= Sequence< sal_Int8 >( reinterpret_cast< const sal_Int8* >( pStream->GetData() ),
@@ -2109,14 +2107,14 @@ extern sal_Bool supportsMetaFileHandle_Impl();
 //STRIP001 			  && aFlavor.DataType == getCppuType( (const sal_uInt64*) 0 ) )
 //STRIP001 			{
 //STRIP001 				// means HGLOBAL handler to memory storage containing METAFILEPICT structure
-//STRIP001 
+//STRIP001
 //STRIP001 				GDIMetaFile* pMetaFile = m_pData->m_pObjectShell->GetPreviewMetaFile( sal_True );
-//STRIP001 
+//STRIP001
 //STRIP001 				if ( pMetaFile )
 //STRIP001 				{
 //STRIP001 					Size aMetaSize = pMetaFile->GetPrefSize();
 //STRIP001 					aAny <<= reinterpret_cast< const sal_uInt64 >( getWinMetaFileFromGDI_Impl( pMetaFile, aMetaSize ) );
-//STRIP001 
+//STRIP001
 //STRIP001 					delete pMetaFile;
 //STRIP001 				}
 //STRIP001 			}
@@ -2126,7 +2124,7 @@ extern sal_Bool supportsMetaFileHandle_Impl();
 //STRIP001 		else
 //STRIP001 			throw UNSUPPORTEDFLAVOREXCEPTION();
 //STRIP001 	}
-//STRIP001 
+//STRIP001
 //STRIP001 	return aAny;
 /*?*/ }
 
@@ -2137,43 +2135,43 @@ extern sal_Bool supportsMetaFileHandle_Impl();
 
 /*?*/ SEQUENCE< DATAFLAVOR > SAL_CALL SfxBaseModel::getTransferDataFlavors()
 /*?*/ 		throw (::com::sun::star::uno::RuntimeException)
-/*?*/ {DBG_ASSERT(0, "STRIP"); SEQUENCE< DATAFLAVOR > aDATAFLAVOR(0); return aDATAFLAVOR;//STRIP001 
+/*?*/ {DBG_ASSERT(0, "STRIP"); SEQUENCE< DATAFLAVOR > aDATAFLAVOR(0); return aDATAFLAVOR;//STRIP001
 //STRIP001 	// object already disposed?
 //STRIP001     ::vos::OGuard aGuard( Application::GetSolarMutex() );
 //STRIP001 	if ( impl_isDisposed() )
 //STRIP001 		throw DISPOSEDEXCEPTION();
-//STRIP001 
+//STRIP001
 //STRIP001 	sal_Int32 nSuppFlavors = supportsMetaFileHandle_Impl() ? 5 : 3;
 //STRIP001 	SEQUENCE< DATAFLAVOR > aFlavorSeq( nSuppFlavors );
-//STRIP001 
+//STRIP001
 //STRIP001 	aFlavorSeq[0].MimeType =
 //STRIP001 		::rtl::OUString( RTL_CONSTASCII_USTRINGPARAM( "application/x-openoffice;windows_formatname=\"GDIMetaFile\"" ) );
 //STRIP001 	aFlavorSeq[0].HumanPresentableName = ::rtl::OUString( RTL_CONSTASCII_USTRINGPARAM( "GDIMetaFile" ) );
 //STRIP001 	aFlavorSeq[0].DataType = getCppuType( (const Sequence< sal_Int8 >*) 0 );
-//STRIP001 
+//STRIP001
 //STRIP001 	aFlavorSeq[1].MimeType =
 //STRIP001 		::rtl::OUString( RTL_CONSTASCII_USTRINGPARAM( "application/x-openoffice;windows_formatname=\"Image EMF\"" ) );
 //STRIP001 	aFlavorSeq[1].HumanPresentableName = ::rtl::OUString( RTL_CONSTASCII_USTRINGPARAM( "Enhanced Windows MetaFile" ) );
 //STRIP001 	aFlavorSeq[1].DataType = getCppuType( (const Sequence< sal_Int8 >*) 0 );
-//STRIP001 
+//STRIP001
 //STRIP001 	aFlavorSeq[2].MimeType =
 //STRIP001 		::rtl::OUString( RTL_CONSTASCII_USTRINGPARAM( "application/x-openoffice;windows_formatname=\"Image WMF\"" ) );
 //STRIP001 	aFlavorSeq[2].HumanPresentableName = ::rtl::OUString( RTL_CONSTASCII_USTRINGPARAM( "Windows MetaFile" ) );
 //STRIP001 	aFlavorSeq[2].DataType = getCppuType( (const Sequence< sal_Int8 >*) 0 );
-//STRIP001 
+//STRIP001
 //STRIP001 	if ( nSuppFlavors == 5 )
 //STRIP001 	{
 //STRIP001 		aFlavorSeq[3].MimeType =
 //STRIP001 			::rtl::OUString( RTL_CONSTASCII_USTRINGPARAM( "application/x-openoffice;windows_formatname=\"Image EMF\"" ) );
 //STRIP001 		aFlavorSeq[3].HumanPresentableName = ::rtl::OUString( RTL_CONSTASCII_USTRINGPARAM( "Enhanced Windows MetaFile" ) );
 //STRIP001 		aFlavorSeq[3].DataType = getCppuType( (const sal_uInt64*) 0 );
-//STRIP001 
+//STRIP001
 //STRIP001 		aFlavorSeq[4].MimeType =
 //STRIP001 			::rtl::OUString( RTL_CONSTASCII_USTRINGPARAM( "application/x-openoffice;windows_formatname=\"Image WMF\"" ) );
 //STRIP001 		aFlavorSeq[4].HumanPresentableName = ::rtl::OUString( RTL_CONSTASCII_USTRINGPARAM( "Windows MetaFile" ) );
 //STRIP001 		aFlavorSeq[4].DataType = getCppuType( (const sal_uInt64*) 0 );
 //STRIP001 	}
-//STRIP001 
+//STRIP001
 //STRIP001 	return aFlavorSeq;
 /*?*/ }
 
@@ -2189,7 +2187,7 @@ extern sal_Bool supportsMetaFileHandle_Impl();
 //STRIP001     ::vos::OGuard aGuard( Application::GetSolarMutex() );
 //STRIP001 	if ( impl_isDisposed() )
 //STRIP001 		throw DISPOSEDEXCEPTION();
-//STRIP001 
+//STRIP001
 //STRIP001 	if ( aFlavor.MimeType.equalsAscii( "application/x-openoffice;windows_formatname=\"GDIMetaFile\"" ) )
 //STRIP001 	{
 //STRIP001 		if ( aFlavor.DataType == getCppuType( (const Sequence< sal_Int8 >*) 0 ) )
@@ -2211,7 +2209,7 @@ extern sal_Bool supportsMetaFileHandle_Impl();
 //STRIP001 		  && aFlavor.DataType == getCppuType( (const sal_uInt64*) 0 ) )
 //STRIP001 			return sal_True;
 //STRIP001 	}
-//STRIP001 
+//STRIP001
 //STRIP001 	return sal_False;
 //STRIP001 }
 
@@ -2226,12 +2224,12 @@ extern sal_Bool supportsMetaFileHandle_Impl();
 /*N*/     ::vos::OGuard aGuard( Application::GetSolarMutex() );
 /*N*/ 	if ( impl_isDisposed() )
 /*N*/ 		throw DISPOSEDEXCEPTION();
-/*N*/ 
+/*N*/
 /*N*/ 	if ( ! m_pData->m_xEvents.is() )
 /*N*/ 	{
 /*N*/ 		m_pData->m_xEvents = new SfxEvents_Impl( m_pData->m_pObjectShell, this );
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	return m_pData->m_xEvents;
 /*N*/ }
 
@@ -2245,7 +2243,7 @@ extern sal_Bool supportsMetaFileHandle_Impl();
 /*N*/     ::vos::OGuard aGuard( Application::GetSolarMutex() );
 /*N*/ 	if ( impl_isDisposed() )
 /*N*/ 		return;
-/*N*/ 
+/*N*/
 /*N*/ 	m_pData->m_aInterfaceContainer.addInterface( ::getCppuType((const REFERENCE< XDOCEVENTLISTENER >*)0), aListener );
 /*N*/ }
 
@@ -2259,7 +2257,7 @@ extern sal_Bool supportsMetaFileHandle_Impl();
 /*N*/     ::vos::OGuard aGuard( Application::GetSolarMutex() );
 /*N*/ 	if ( impl_isDisposed() )
 /*N*/ 		return;
-/*N*/ 
+/*N*/
 /*N*/ 	m_pData->m_aInterfaceContainer.removeInterface( ::getCppuType((const REFERENCE< XDOCEVENTLISTENER >*)0), aListener );
 /*N*/ }
 
@@ -2279,7 +2277,7 @@ extern sal_Bool supportsMetaFileHandle_Impl();
 /*N*/             break;
 /*N*/         }
 /*N*/     }
-/*N*/ 
+/*N*/
 /*N*/     if ( nArg == nCount )
 /*N*/     {
 /*N*/         rSeq.realloc( nCount+1 );
@@ -2293,13 +2291,13 @@ extern sal_Bool supportsMetaFileHandle_Impl();
 /*N*/ {
 /*N*/ 	if ( !m_pData )
 /*N*/ 		return;
-/*N*/ 
+/*N*/
 /*N*/ 	if ( &rBC == m_pData->m_pObjectShell )
 /*N*/ 	{
 /*N*/ 		SfxSimpleHint* pSimpleHint = PTR_CAST( SfxSimpleHint, &rHint );
 /*N*/ 		if ( pSimpleHint && pSimpleHint->GetId() == SFX_HINT_DOCCHANGED )
 /*N*/ 			changing();
-/*N*/ 
+/*N*/
 /*N*/ 		SfxEventHint* pNamedHint = PTR_CAST( SfxEventHint, &rHint );
 /*N*/ 		if ( pNamedHint )
 /*N*/ 		{
@@ -2313,10 +2311,10 @@ extern sal_Bool supportsMetaFileHandle_Impl();
 /*N*/                 addTitle_Impl( aArgs, aTitle );
 /*N*/                 attachResource( m_pData->m_pObjectShell->GetMedium()->GetName(), aArgs );
 /*N*/             }
-/*N*/ 
+/*N*/
 /*N*/ 			postEvent_Impl( *pNamedHint );
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/         if ( pSimpleHint )
 /*N*/ 		{
 /*N*/ 			if ( pSimpleHint->GetId() == SFX_HINT_TITLECHANGED )
@@ -2333,7 +2331,7 @@ extern sal_Bool supportsMetaFileHandle_Impl();
             }
 */
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		SfxPrintingHint* pPrintHint = PTR_CAST( SfxPrintingHint, &rHint );
 /*N*/ 		if ( pPrintHint )
 /*N*/ 		{
@@ -2341,13 +2339,13 @@ extern sal_Bool supportsMetaFileHandle_Impl();
 /*?*/ 			{
 /*?*/ 				if ( !m_pData->m_xPrintJob.is() )
 /*?*/ 					{DBG_ASSERT(0, "STRIP");}//STRIP001 m_pData->m_xPrintJob = new SfxPrintJob_Impl( m_pData );
-/*?*/ 
+/*?*/
 /*?*/ 				PrintDialog* pDlg = pPrintHint->GetPrintDialog();
 /*?*/ 				Printer* pPrinter = pPrintHint->GetPrinter();
 /*?*/                 ::rtl::OUString aPrintFile ( ( pPrinter && pPrinter->IsPrintFileEnabled() ) ? pPrinter->GetPrintFile() : String() );
 /*?*/ 				::rtl::OUString aRangeText ( ( pDlg && pDlg->IsRangeChecked(PRINTDIALOG_RANGE) ) ? pDlg->GetRangeText() : String() );
 /*?*/ 				sal_Bool bSelectionOnly = ( ( pDlg && pDlg->IsRangeChecked(PRINTDIALOG_SELECTION) ) ? sal_True : sal_False );
-/*?*/ 
+/*?*/
 /*?*/ 				sal_Int32 nArgs = 2;
 /*?*/ 				if ( aPrintFile.getLength() )
 /*?*/ 					nArgs++;
@@ -2355,13 +2353,13 @@ extern sal_Bool supportsMetaFileHandle_Impl();
 /*?*/ 					nArgs++;
 /*?*/ 				else if ( bSelectionOnly )
 /*?*/ 					nArgs++;
-/*?*/ 
+/*?*/
 /*?*/ 				m_pData->m_aPrintOptions.realloc(nArgs);
 /*?*/ 				m_pData->m_aPrintOptions[0].Name = DEFINE_CONST_UNICODE("CopyCount");
 /*?*/ 				m_pData->m_aPrintOptions[0].Value <<= (sal_Int16) (pPrinter ? pPrinter->GetCopyCount() : 1 );
 /*?*/ 				m_pData->m_aPrintOptions[1].Name = DEFINE_CONST_UNICODE("Collate");
 /*?*/ 				m_pData->m_aPrintOptions[1].Value <<= (sal_Bool) (pDlg ? pDlg->IsCollateChecked() : sal_False );
-/*?*/ 
+/*?*/
 /*?*/ 				if ( bSelectionOnly )
 /*?*/ 				{
 /*?*/ 					m_pData->m_aPrintOptions[2].Name = DEFINE_CONST_UNICODE("Selection");
@@ -2372,7 +2370,7 @@ extern sal_Bool supportsMetaFileHandle_Impl();
 /*?*/ 					m_pData->m_aPrintOptions[2].Name = DEFINE_CONST_UNICODE("Pages");
 /*?*/ 					m_pData->m_aPrintOptions[2].Value <<= aRangeText;
 /*?*/ 				}
-/*?*/ 
+/*?*/
 /*?*/ 				if ( aPrintFile.getLength() )
 /*?*/ 				{
 /*?*/ 					m_pData->m_aPrintOptions[nArgs-1].Name = DEFINE_CONST_UNICODE("FileName");
@@ -2388,7 +2386,7 @@ extern sal_Bool supportsMetaFileHandle_Impl();
 /*?*/                         m_pData->m_aPrintOptions[ nOld+n ] = pPrintHint->GetAdditionalOptions()[n];
 /*?*/ 			}
 /*?*/ 			else if ( pPrintHint->GetWhich() != -2 )
-/*?*/ 			{DBG_ASSERT(0, "STRIP");//STRIP001 
+/*?*/ 			{DBG_ASSERT(0, "STRIP");//STRIP001
 //STRIP001 /*?*/ 				view::PrintJobEvent aEvent;
 //STRIP001 /*?*/ 				aEvent.Source = m_pData->m_xPrintJob;
 //STRIP001 /*?*/ 				aEvent.State = (::com::sun::star::view::PrintableState) pPrintHint->GetWhich();
@@ -2415,10 +2413,10 @@ extern sal_Bool supportsMetaFileHandle_Impl();
 /*N*/     ::vos::OGuard aGuard( Application::GetSolarMutex() );
 /*N*/ 	if ( impl_isDisposed() )
 /*N*/ 		return;
-/*N*/ 
+/*N*/
 /*N*/ 	OINTERFACECONTAINERHELPER* pIC = m_pData->m_aInterfaceContainer.getContainer( ::getCppuType((const REFERENCE< XMODIFYLISTENER >*)0) );
 /*N*/ 	if( pIC )
-/*N*/ 
+/*N*/
 /*N*/ 	{
 /*N*/ 		EVENTOBJECT aEvent( (XMODEL *)this );
 /*N*/ 		OINTERFACEITERATORHELPER aIt( *pIC );
@@ -2441,10 +2439,10 @@ extern sal_Bool supportsMetaFileHandle_Impl();
 /*?*/ 	// object already disposed?
 /*?*/ 	if ( impl_isDisposed() )
 /*?*/ 		return;
-/*?*/ 
+/*?*/
 /*?*/ 	OINTERFACECONTAINERHELPER* pIC = m_pData->m_aInterfaceContainer.getContainer( ::getCppuType((const REFERENCE< XMODIFYLISTENER >*)0) );
 /*?*/ 	if( pIC )
-/*?*/ 
+/*?*/
 /*?*/ 	{
 /*?*/ 		EVENTOBJECT aEvent( (XMODEL *)this );
 /*?*/ 		OINTERFACEITERATORHELPER aIt( *pIC );
@@ -2501,27 +2499,27 @@ extern sal_Bool supportsMetaFileHandle_Impl();
 /*N*/ {
 /*N*/ 	if( !sURL.getLength() )
 /*N*/ 		throw ILLEGALARGUMENTIOEXCEPTION();
-/*N*/ 
+/*N*/
 /*N*/ 	//sal_Bool aSaveAsTemplate = sal_False;
-/*N*/ 
+/*N*/
 /*N*/     SfxAllItemSet *aParams = new SfxAllItemSet( SFX_APP()->GetPool() );
 /*N*/ 	aParams->Put( SfxStringItem( SID_FILE_NAME, String(sURL) ) );
 /*N*/ 	if ( bSaveTo )
 /*N*/ 		aParams->Put( SfxBoolItem( SID_SAVETO, sal_True ) );
-/*N*/ 
+/*N*/
 /*N*/     TransformParameters( SID_SAVEASDOC, seqArguments, *aParams );
 /*N*/ 	sal_Bool aRet = pObjectShell->APISaveAs_Impl( sURL, aParams );
 /*N*/ 	DELETEZ( aParams );
-/*N*/ 
+/*N*/
 /*N*/ 	sal_uInt32 nErrCode = pObjectShell->GetError() ? pObjectShell->GetError() : ERRCODE_IO_CANTWRITE;
 /*N*/ 	pObjectShell->ResetError();
-/*N*/ 
+/*N*/
 /*N*/ 	if ( !aRet )
 /*N*/ 	{
 /*N*/ 		throw SfxIOException_Impl( nErrCode );
 /*N*/ 	}
 /*N*/ }
-/*N*/ 
+/*N*/
 //********************************************************************************************************
 
 /*N*/ void SfxBaseModel::postEvent_Impl( const SfxEventHint& rHint )
@@ -2529,11 +2527,11 @@ extern sal_Bool supportsMetaFileHandle_Impl();
 /*N*/ 	// object already disposed?
 /*N*/ 	if ( impl_isDisposed() )
 /*N*/ 		return;
-/*N*/ 
+/*N*/
 /*N*/ 	OINTERFACECONTAINERHELPER* pIC = m_pData->m_aInterfaceContainer.getContainer(
 /*N*/ 										::getCppuType((const REFERENCE< XDOCEVENTLISTENER >*)0) );
 /*N*/ 	if( pIC )
-/*N*/ 
+/*N*/
 /*N*/ 	{
 /*N*/ 		OUSTRING aName = SfxEventConfiguration::GetEventName_Impl( rHint.GetEventId() );
 /*N*/ 		DOCEVENTOBJECT aEvent( (XMODEL *)this, aName );
@@ -2558,28 +2556,28 @@ extern sal_Bool supportsMetaFileHandle_Impl();
 /*N*/     ::vos::OGuard aGuard( Application::GetSolarMutex() );
 /*N*/ 	if ( impl_isDisposed() )
 /*N*/ 		throw DISPOSEDEXCEPTION();
-/*N*/ 
+/*N*/
 /*N*/ 	if ( m_pData->m_pObjectShell.Is() && !m_pData->m_contViewData.is() )
 /*N*/ 	{
 /*N*/     	SfxViewFrame *pActFrame = SfxViewFrame::Current();
 /*N*/     	if ( !pActFrame || pActFrame->GetObjectShell() != m_pData->m_pObjectShell )
 /*N*/         	pActFrame = SfxViewFrame::GetFirst(m_pData->m_pObjectShell, TYPE(SfxTopViewFrame));
-/*N*/ 
+/*N*/
 /*N*/ 		if ( !pActFrame )
 /*N*/ 			// currently no frame for this document at all
 /*N*/ 			return REFERENCE < XINDEXACCESS >();
-/*N*/ 
+/*N*/
 /*N*/ 		m_pData->m_contViewData = Reference < XINDEXACCESS >(
 /*N*/ 				::legacy_binfilters::getLegacyProcessServiceFactory()->createInstance(
 /*N*/ 				DEFINE_CONST_UNICODE("com.sun.star.document.IndexedPropertyValues") ),
 /*N*/ 				UNO_QUERY );
-/*N*/ 
+/*N*/
 /*N*/ 		if ( !m_pData->m_contViewData.is() )
 /*N*/ 		{
 /*N*/ 			// error: no container class available!
 /*N*/ 			return REFERENCE < XINDEXACCESS >();
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		REFERENCE < XINDEXCONTAINER > xCont( m_pData->m_contViewData, UNO_QUERY );
 /*N*/ 		sal_Int32 nCount = 0;
 /*N*/ 		SEQUENCE < PROPERTYVALUE > aSeq;
@@ -2594,7 +2592,7 @@ extern sal_Bool supportsMetaFileHandle_Impl();
 /*N*/ 			nCount++;
 /*N*/ 		}
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	return m_pData->m_contViewData;
 /*N*/ }
 
@@ -2604,7 +2602,7 @@ extern sal_Bool supportsMetaFileHandle_Impl();
 /*N*/     ::vos::OGuard aGuard( Application::GetSolarMutex() );
 /*N*/ 	if ( impl_isDisposed() )
 /*N*/ 		throw DISPOSEDEXCEPTION();
-/*N*/ 
+/*N*/
 /*N*/ 	m_pData->m_contViewData = aData;
 /*N*/ }
 
@@ -2614,11 +2612,11 @@ extern sal_Bool supportsMetaFileHandle_Impl();
 /*N*/ 	// object already disposed?
 /*N*/ 	if ( impl_isDisposed() )
 /*N*/ 		return;
-/*N*/ 
+/*N*/
 /*N*/ 	OINTERFACECONTAINERHELPER* pIC = m_pData->m_aInterfaceContainer.getContainer(
 /*N*/ 										::getCppuType((const REFERENCE< XDOCEVENTLISTENER >*)0) );
 /*N*/ 	if( pIC )
-/*N*/ 
+/*N*/
 /*N*/ 	{
 /*N*/ 		OINTERFACEITERATORHELPER aIt( *pIC );
 /*N*/ 		while( aIt.hasMoreElements() )
@@ -2647,7 +2645,7 @@ extern sal_Bool supportsMetaFileHandle_Impl();
 //STRIP001     ::vos::OGuard aGuard( Application::GetSolarMutex() );
 //STRIP001 	if ( impl_isDisposed() )
 //STRIP001 		return;
-//STRIP001 
+//STRIP001
 //STRIP001 	m_pData->m_aInterfaceContainer.addInterface( ::getCppuType((const REFERENCE< XPRINTJOBLISTENER >*)0), xListener );
 //STRIP001 }
 
@@ -2657,7 +2655,7 @@ extern sal_Bool supportsMetaFileHandle_Impl();
 //STRIP001     ::vos::OGuard aGuard( Application::GetSolarMutex() );
 //STRIP001 	if ( impl_isDisposed() )
 //STRIP001 		return;
-//STRIP001 
+//STRIP001
 //STRIP001 	m_pData->m_aInterfaceContainer.removeInterface( ::getCppuType((const REFERENCE< XPRINTJOBLISTENER >*)0), xListener );
 //STRIP001 }
 
