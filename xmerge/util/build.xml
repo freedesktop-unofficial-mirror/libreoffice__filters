@@ -155,16 +155,6 @@
             <metainf dir="${java.dir}/${htmlsoff}" includes="converter.xml"/>
         </jar>
     </target>
-    
-    
-    <!-- create pocketword jar file -->
-    <target name="pocketword" depends="prepare,xmerge" if="build.class">
-        <jar jarfile="${build.class}/${jarname3}.jar"
-             basedir="${build.class}">
-            <include name="${pocketword}/**"/>
-            <metainf dir="${java.dir}/${pocketword}" includes="converter.xml"/>
-        </jar>
-    </target>
 
      <!-- create aportis jar file -->
     <target name="aportis" depends="prepare,xmerge" if="build.class">
@@ -175,6 +165,15 @@
         </jar>
     </target>
 
+    <!-- create pocketword jar file -->
+    <target name="pocketword" depends="prepare,xmerge" if="build.class">
+        <jar jarfile="${build.class}/${jarname4}.jar"
+             basedir="${build.class}">
+            <include name="${pocketword}/**"/>
+            <metainf dir="${java.dir}/${pocketword}" includes="converter.xml"/>
+        </jar>
+    </target>
+    
     <!-- clean up -->
     <target name="clean" depends="prepare">
         <delete file="${build.class}/${jarname1}.jar"/>
