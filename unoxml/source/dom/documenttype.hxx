@@ -2,9 +2,9 @@
  *
  *  $RCSfile: documenttype.hxx,v $
  *
- *  $Revision: 1.2 $
+ *  $Revision: 1.3 $
  *
- *  last change: $Author: lo $ $Date: 2004-02-26 14:43:15 $
+ *  last change: $Author: obo $ $Date: 2004-11-16 12:22:10 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
