@@ -2,9 +2,9 @@
  *
  *  $RCSfile: sfx2_docfile.cxx,v $
  *
- *  $Revision: 1.3 $
+ *  $Revision: 1.4 $
  *
- *  last change: $Author: rt $ $Date: 2004-05-05 16:40:13 $
+ *  last change: $Author: obo $ $Date: 2004-05-13 10:18:16 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -225,7 +225,7 @@ using namespace ::com::sun::star::io;
 #include "xmlversion.hxx"
 
 #ifndef _LEGACYBINFILTERMGR_HXX
-#include <legacysmgr/legacy_binfilters_smgr.hxx>	//STRIP002 
+#include <legacysmgr/legacy_binfilters_smgr.hxx>	//STRIP002
 #endif
 namespace binfilter {
 
@@ -241,7 +241,7 @@ namespace binfilter {
 /*N*/                         : m_pMedium( pMedium )
 /*N*/                         , m_nAcquireCount( 0 )
 /*N*/                     {}
-/*N*/ 
+/*N*/
 /*N*/     virtual void    Handle( ::utl::UcbLockBytesHandler::LoadHandlerItem nWhich, ::utl::UcbLockBytesRef xLockBytes );
 /*N*/     ::vos::OMutex&  GetMutex()
 /*N*/                     { return m_aMutex; }
@@ -277,7 +277,7 @@ namespace binfilter {
 /*N*/ class UcbLockBytesCancellable_Impl : public SfxCancellable
 /*N*/ {
 /*N*/     ::utl::UcbLockBytesRef         xLockBytes;
-/*N*/ 
+/*N*/
 /*N*/ public:
 /*N*/                             UcbLockBytesCancellable_Impl( const ::utl::UcbLockBytesRef& rLockBytes, SfxCancelManager* pManager, const String& rTitle )
 /*N*/                                 : SfxCancellable( pManager, rTitle )
@@ -295,15 +295,15 @@ namespace binfilter {
 /*N*/ class SfxMediumHandler_Impl : public ::cppu::WeakImplHelper1< ::com::sun::star::task::XInteractionHandler >
 /*N*/ {
 /*N*/     ::com::sun::star::uno::Reference< ::com::sun::star::task::XInteractionHandler > m_xInter;
-/*N*/ 
+/*N*/
 /*N*/ public:
 /*N*/     virtual void SAL_CALL handle( const ::com::sun::star::uno::Reference< ::com::sun::star::task::XInteractionRequest >& xRequest )
 /*N*/             throw( ::com::sun::star::uno::RuntimeException );
-/*N*/ 
+/*N*/
 /*N*/     SfxMediumHandler_Impl( ::com::sun::star::uno::Reference< ::com::sun::star::task::XInteractionHandler > xInteraction )
 /*N*/         : m_xInter( xInteraction )
 /*N*/         {}
-/*N*/ 
+/*N*/
 /*N*/     ~SfxMediumHandler_Impl();
 /*N*/ };
 
@@ -313,10 +313,10 @@ namespace binfilter {
 
 /*N*/ void SAL_CALL SfxMediumHandler_Impl::handle( const ::com::sun::star::uno::Reference< ::com::sun::star::task::XInteractionRequest >& xRequest )
 /*N*/         throw( ::com::sun::star::uno::RuntimeException )
-/*N*/ {DBG_BF_ASSERT(0, "STRIP"); //STRIP001 
+/*N*/ {DBG_BF_ASSERT(0, "STRIP"); //STRIP001
 //STRIP001 	if( !m_xInter.is() )
 //STRIP001 		return;
-//STRIP001 
+//STRIP001
 //STRIP001     ::com::sun::star::uno::Any aRequest = xRequest->getRequest();
 //STRIP001     ::com::sun::star::ucb::InteractiveIOException aIoException;
 //STRIP001     ::com::sun::star::ucb::UnsupportedDataSinkException aSinkException;
@@ -402,16 +402,16 @@ namespace binfilter {
 /*?*/     sal_Bool bAllowDefaultIntHdl: 1;
 /*?*/     sal_Bool bIsDiskSpannedJAR: 1;
 /*?*/     sal_Bool bIsCharsetInitialized: 1;
-/*?*/ 
+/*?*/
 /*?*/     sal_uInt16       nPrio;
-/*?*/ 
+/*?*/
 /*?*/     SfxPoolCancelManagerRef xCancelManager;
 /*?*/     UcbLockBytesCancellable_Impl* pCancellable;
 /*?*/     SfxMedium*       pAntiImpl;
 /*?*/     SvEaMgr*         pEaMgr;
-/*?*/ 
+/*?*/
 /*?*/     long             nFileVersion;
-/*?*/ 
+/*?*/
 /*?*/     const SfxFilter* pOrigFilter;
 /*?*/     String           aOrigURL;
 /*?*/     String           aPreRedirectionURL;
@@ -421,28 +421,28 @@ namespace binfilter {
 /*?*/     LoadEnvironment_Impl* pLoadEnv;
 /*?*/     SvKeyValueIteratorRef xAttributes;
 /*?*/     SvRefBaseRef    xLoadRef;
-/*?*/ 
+/*?*/
 /*?*/     svtools::AsynchronLink  aDoneLink;
 /*?*/     svtools::AsynchronLink  aAvailableLink;
 /*?*/     SfxLockBytesHandler_ImplRef  aHandler;
-/*?*/ 
+/*?*/
 /*?*/     SfxVersionTableDtor*    pVersions;
 /*?*/     ::utl::TempFile*           pTempDir;
 /*?*/     ::utl::TempFile*           pTempFile;
-/*?*/ 
+/*?*/
 /*?*/     Reference < XInputStream > xInputStream;
 /*?*/     ::utl::UcbLockBytesRef     xLockBytes;
-/*?*/ 
+/*?*/
 /*?*/ 	sal_uInt32					nLastStorageError;
 /*?*/ 	::rtl::OUString				aCharset;
-/*?*/ 
+/*?*/
 /*?*/     ::com::sun::star::uno::Reference< ::com::sun::star::task::XInteractionHandler > xInteraction;
-/*?*/ 
+/*?*/
 /*?*/ 	sal_Bool 		m_bRemoveBackup;
 /*?*/ 	::rtl::OUString m_aBackupURL;
-/*?*/ 
+/*?*/
 /*?*/     SfxPoolCancelManager* GetCancelManager();
-/*?*/ 
+/*?*/
 /*?*/     SfxMedium_Impl( SfxMedium* pAntiImplP );
 /*?*/     ~SfxMedium_Impl();
 /*?*/ };
@@ -454,7 +454,7 @@ namespace binfilter {
 /*N*/     SetError( nError );
 /*N*/     if ( pImp->xLockBytes.Is() )
 /*N*/         pImp->xInputStream = pImp->xLockBytes->getInputStream();
-/*N*/ 
+/*N*/
 /*N*/     if ( ( !nError || !pImp->bDontCallDoneLinkOnSharingError ) && ( pImp->bStreamReady || !pInStream ) )
 /*N*/     {
 /*N*/         pImp->aDoneLink.ClearPendingCall();
@@ -463,7 +463,7 @@ namespace binfilter {
 /*N*/ }
 
 /*N*/ void SfxMedium::DataAvailable_Impl()
-/*N*/ {DBG_BF_ASSERT(0, "STRIP"); //STRIP001 
+/*N*/ {DBG_BF_ASSERT(0, "STRIP"); //STRIP001
 //STRIP001     pImp->aAvailableLink.ClearPendingCall();
 //STRIP001     pImp->aAvailableLink.Call( NULL );
 /*N*/ }
@@ -514,19 +514,19 @@ namespace binfilter {
 /*N*/ SfxMedium_Impl::~SfxMedium_Impl()
 /*N*/ {
 /*N*/     delete pCancellable;
-/*N*/ 
+/*N*/
 /*N*/     if ( aHandler.Is() )
 /*N*/         aHandler->Activate( sal_False );
-/*N*/ 
+/*N*/
 /*N*/     aDoneLink.ClearPendingCall();
 /*N*/     aAvailableLink.ClearPendingCall();
-/*N*/ 
+/*N*/
 /*N*/     delete pEaMgr;
 /*N*/     delete pVersions;
-/*N*/ 
+/*N*/
 /*N*/     if ( pTempFile )
 /*N*/         delete pTempFile;
-/*N*/ 
+/*N*/
 /*N*/     if ( pTempDir )
 /*?*/         delete pTempDir;
 /*N*/ }
@@ -605,7 +605,7 @@ namespace binfilter {
 /*N*/         SFX_ITEMSET_ARG( pSet, pItem, SfxUnoAnyItem, SID_CONTENT, sal_False);
 /*N*/         if ( pItem )
 /*?*/             pItem->GetValue() >>= xContent;
-/*N*/ 
+/*N*/
 /*N*/ 		if ( xContent.is() )
 /*N*/ 		{
 /*N*/ 			try
@@ -627,7 +627,7 @@ namespace binfilter {
 /*N*/ 	            ::ucb::Content::create( aURL, xEnv, pImp->aContent );
 /*N*/ 		}
 /*N*/     }
-/*N*/ 
+/*N*/
 /*N*/     return pImp->aContent.get();
 /*N*/ }
 
@@ -646,7 +646,7 @@ namespace binfilter {
 /*N*/         {
 /*N*/         }
 /*N*/     }
-/*N*/ 
+/*N*/
 /*N*/ 	if ( !pImp->aBaseURL.Len() )
 /*N*/ 		pImp->aBaseURL = GetURLObject().GetMainURL( INetURLObject::NO_DECODE );
 /*N*/ 	return pImp->aBaseURL;
@@ -657,13 +657,13 @@ namespace binfilter {
 /*N*/ {
 /*N*/     if ( pInStream )
 /*N*/         return pInStream;
-/*N*/ 
+/*N*/
 /*N*/     if ( pImp->pTempFile || pImp->pTempDir )
 /*N*/     {
 /*?*/         pInStream = new SvFileStream( aName, nStorOpenMode );
-/*?*/ 
+/*?*/
 /*?*/         eError = pInStream->GetError();
-/*?*/ 
+/*?*/
 /*?*/         if( !eError && (nStorOpenMode & STREAM_WRITE)
 /*?*/                     && ! pInStream->IsWritable() )
 /*?*/         {
@@ -674,12 +674,12 @@ namespace binfilter {
 /*?*/         else
 /*?*/             return pInStream;
 /*N*/     }
-/*N*/ 
+/*N*/
 /*N*/     GetMedium_Impl();
-/*N*/ 
+/*N*/
 /*N*/     if ( !pInStream && eError == ERRCODE_IO_PENDING )
 /*?*/         eError = SVSTREAM_OK;
-/*N*/ 
+/*N*/
 /*N*/     return pInStream;
 /*N*/ }
 
@@ -702,13 +702,13 @@ namespace binfilter {
 /*?*/             CloseStorage();
 /*?*/         }
 /*?*/     }
-/*N*/ 
+/*N*/
 /*N*/     DELETEZ( pInStream );
 /*N*/     pImp->xInputStream = Reference < XInputStream >();
 /*N*/     pImp->xLockBytes.Clear();
 /*N*/     if ( pSet )
 /*N*/         pSet->ClearItem( SID_INPUTSTREAM );
-/*N*/ 
+/*N*/
 /*N*/     DELETEZ( pImp->pCancellable );
 /*N*/ }
 
@@ -721,14 +721,14 @@ namespace binfilter {
 /*N*/         // need one.
 /*N*/         if ( !pImp->pTempFile )
 /*?*/             CreateTempFile();
-/*N*/ 
+/*N*/
 /*N*/         if ( pImp->pTempFile )
 /*N*/         {
 /*N*/             pOutStream = new SvFileStream( aName, STREAM_STD_READWRITE );
 /*N*/             CloseStorage();
 /*N*/         }
 /*N*/     }
-/*N*/ 
+/*N*/
 /*N*/     return pOutStream;
 /*N*/ }
 
@@ -752,11 +752,11 @@ namespace binfilter {
 /*?*/             if ( pStorage == pOutStream )
 /*?*/                 CloseStorage();
 /*N*/         }
-/*N*/ 
+/*N*/
 /*N*/         delete pOutStream;
 /*N*/         pOutStream = NULL;
 /*N*/     }
-/*N*/ 
+/*N*/
 /*N*/     return sal_True;
 /*N*/ }
 
@@ -765,7 +765,7 @@ namespace binfilter {
 /*N*/ {
 /*N*/     if ( !aName.Len() && aLogicName.Len() )
 /*N*/         (( SfxMedium*)this)->CreateFileStream();
-/*N*/ 
+/*N*/
 /*N*/     // return the name then
 /*N*/     return aName;
 /*N*/ }
@@ -797,12 +797,12 @@ namespace binfilter {
 /*?*/         pOutStream->Flush();
 /*N*/     else if( pInStream  )
 /*?*/         pInStream->Flush();
-/*N*/ 
+/*N*/
 /*N*/     if ( ( GetError() == SVSTREAM_OK ) && pImp->pTempFile )
 /*N*/         Transfer_Impl();
-/*N*/ 
+/*N*/
 /*N*/ 	ClearBackup_Impl();
-/*N*/ 
+/*N*/
 /*N*/     return GetError() == SVSTREAM_OK;
 /*N*/ }
 
@@ -811,15 +811,17 @@ namespace binfilter {
 /*N*/ {
 /*N*/     if ( aStorage.Is() )
 /*?*/         return TRUE;
-/*N*/ 
+/*N*/
 /*N*/     if ( bTriedStorage )
 /*?*/         return pImp->bIsStorage;
-/*N*/ 
+/*N*/
 /*N*/     if ( pImp->pTempFile )
 /*N*/     {
 /*?*/ 		String aURL;
+#ifdef DBG_UTIL
 /*?*/ 		if ( !::utl::LocalFileHelper::ConvertPhysicalNameToURL( aName, aURL ) )
 /*?*/ 			DBG_ERROR("Physical name not convertable!");
+#endif
 /*?*/         pImp->bIsStorage = SotStorage::IsStorageFile( aURL );
 /*?*/         if ( !pImp->bIsStorage )
 /*?*/             bTriedStorage = TRUE;
@@ -830,7 +832,7 @@ namespace binfilter {
 /*?*/         if ( !pInStream->GetError() && !pImp->bIsStorage )
 /*?*/             bTriedStorage = TRUE;
 /*N*/     }
-/*N*/ 
+/*N*/
 /*N*/     return pImp->bIsStorage;
 /*N*/ }
 
@@ -864,25 +866,25 @@ namespace binfilter {
 //STRIP001                 bPreview = sal_True;
 //STRIP001         }
 //STRIP001     }
-//STRIP001 
+//STRIP001
 //STRIP001     return bPreview;
 //STRIP001 }
 
 //------------------------------------------------------------------
 /*N*/ sal_Bool SfxMedium::TryStorage()
-/*N*/ {DBG_BF_ASSERT(0, "STRIP"); return FALSE;//STRIP001 
+/*N*/ {DBG_BF_ASSERT(0, "STRIP"); return FALSE;//STRIP001
 //STRIP001     GetStorage();
-//STRIP001 
+//STRIP001
 //STRIP001     if ( aStorage.Is() )
 //STRIP001         return sal_True;
-//STRIP001 
+//STRIP001
 //STRIP001     ::com::sun::star::uno::Reference< ::com::sun::star::lang::XMultiServiceFactory >  xSMgr( ::legacy_binfilters::getLegacyProcessServiceFactory() );
 //STRIP001     ::com::sun::star::uno::Reference< ::com::sun::star::util::XArchiver >
 //STRIP001             xPacker( xSMgr->createInstance( DEFINE_CONST_UNICODE( "com.sun.star.util.Archiver" ) ), ::com::sun::star::uno::UNO_QUERY );
-//STRIP001 
+//STRIP001
 //STRIP001     if( !xPacker.is() )
 //STRIP001         return sal_False;
-//STRIP001 
+//STRIP001
 //STRIP001     // extract extra data
 //STRIP001     ::rtl::OUString aPath = GetURLObject().PathToFileName();
 //STRIP001     ::rtl::OUString aExtraData = xPacker->getExtraData( aPath );
@@ -892,17 +894,17 @@ namespace binfilter {
 //STRIP001     const ::rtl::OUString aSig2( aTmp );
 //STRIP001     sal_Int32 nIndex1 = aExtraData.indexOf( aSig1 );
 //STRIP001     sal_Int32 nIndex2 = aExtraData.indexOf( aSig2 );
-//STRIP001 
+//STRIP001
 //STRIP001     if( nIndex1 != 0 || nIndex2 == -1 )
 //STRIP001         return sal_False;
-//STRIP001 
+//STRIP001
 //STRIP001     nIndex1 += aSig1.getLength();
 //STRIP001     ::rtl::OUString aTempDoku = aExtraData.copy( nIndex1, nIndex2 - nIndex1 );
-//STRIP001 
+//STRIP001
 //STRIP001     // create a temp dir to unpack to
 //STRIP001     pImp->pTempDir = new ::utl::TempFile( NULL, sal_True );
 //STRIP001     pImp->pTempDir->EnableKillingFile( sal_True );
-//STRIP001 
+//STRIP001
 //STRIP001     // unpack all files to temp dir
 //STRIP001     ::com::sun::star::uno::Sequence< ::com::sun::star::beans::PropertyValue > aArgs;
 //STRIP001     ::com::sun::star::uno::Reference< ::com::sun::star::task::XInteractionHandler > xInteractionHandler = GetInteractionHandler();
@@ -913,10 +915,10 @@ namespace binfilter {
 //STRIP001         aArgs.getArray()[0].Value <<= xInteractionHandler ;
 //STRIP001     }
 //STRIP001     ::com::sun::star::uno::Sequence< ::rtl::OUString > files(0);
-//STRIP001 
+//STRIP001
 //STRIP001     if( !xPacker->unpack( pImp->pTempDir->GetURL(), aPath, files, aArgs ) )
 //STRIP001         return sal_False;
-//STRIP001 
+//STRIP001
 //STRIP001     String aNewName = pImp->pTempDir->GetURL();
 //STRIP001     aNewName += '/';
 //STRIP001     aNewName += String( aTempDoku );
@@ -925,7 +927,7 @@ namespace binfilter {
 //STRIP001     ::utl::LocalFileHelper::ConvertURLToPhysicalName( aNewName, aTemp );
 //STRIP001     SetPhysicalName_Impl( aTemp );
 //STRIP001     GetStorage();
-//STRIP001 
+//STRIP001
 //STRIP001     if ( aStorage.Is() )
 //STRIP001     {
 //STRIP001         const SfxFilter *pRealFilter = SFX_APP()->GetFilterMatcher().GetFilter4ClipBoardId( aStorage->GetFormat() );
@@ -934,10 +936,10 @@ namespace binfilter {
 //STRIP001             pImp->nFileVersion = pRealFilter->GetVersion();
 //STRIP001             aStorage->SetVersion( pImp->nFileVersion );
 //STRIP001         }
-//STRIP001 
+//STRIP001
 //STRIP001         DBG_ASSERT( pRealFilter, "Unknown storage format!" );
 //STRIP001     }
-//STRIP001 
+//STRIP001
 //STRIP001     return aStorage.Is();
 /*N*/ }
 
@@ -957,14 +959,14 @@ namespace binfilter {
 //STRIP001             aDest += aTmp.GetName();
 //STRIP001             if ( aDir[n] == DirEntry( GetPhysicalName() ) )
 //STRIP001                 continue;
-//STRIP001 
+//STRIP001
 //STRIP001             nRet = aTmp.CopyTo( aDest, FSYS_ACTION_COPYFILE );
 //STRIP001             if ( nRet != ERRCODE_NONE )
 //STRIP001                 break;
 //STRIP001         }
 //STRIP001  */
 //STRIP001     }
-//STRIP001 
+//STRIP001
 //STRIP001     return nRet;
 //STRIP001 }
 
@@ -974,7 +976,7 @@ namespace binfilter {
 /*N*/     // if the medium was constructed with a SvStorage: use this one, not a temp. storage
 /*N*/     if ( aStorage.Is() && !aLogicName.Len() )
 /*N*/         return aStorage;
-/*N*/ 
+/*N*/
 /*N*/     if ( !pImp->pTempFile )
 /*N*/         CreateTempFile();
 /*N*/     return GetStorage_Impl( bUCBStorage );
@@ -989,7 +991,7 @@ namespace binfilter {
 /*N*/ {
 /*N*/     if ( aStorage.Is() || bTriedStorage )
 /*N*/         return aStorage;
-/*N*/ 
+/*N*/
 /*N*/     String aStorageName;
 /*N*/     if ( pImp->pTempFile || pImp->pTempDir )
 /*N*/     {
@@ -1012,7 +1014,7 @@ namespace binfilter {
 /*N*/         }
 /*N*/         else
 /*N*/             aStorageName = GetURLObject().GetMainURL( INetURLObject::NO_DECODE );
-/*N*/ 
+/*N*/
 /*N*/         GetInStream();
 /*N*/         if ( pInStream )
 /*N*/         {
@@ -1032,7 +1034,7 @@ namespace binfilter {
 /*N*/                 // download the stream ( or at least start the download )
 /*N*/                 if ( !pImp->aDoneLink.IsSet() )
 /*N*/                     DownLoad();
-/*N*/ 
+/*N*/
 /*N*/        			SFX_ITEMSET_ARG( GetItemSet(), pItem, SfxBoolItem, SID_REPAIRPACKAGE, sal_False);
 /*N*/        			if ( pItem && pItem->GetValue() )
 /*N*/ 				{
@@ -1043,7 +1045,7 @@ namespace binfilter {
 /*?*/ 					if( pxProgressItem && ( pxProgressItem->GetValue() >>= xStatusIndicator ) )
 /*?*/ 						xProgressHandler = Reference< ::com::sun::star::ucb::XProgressHandler >(
 /*?*/ 												new ::utl::ProgressHandlerWrap( xStatusIndicator ) );
-/*?*/ 
+/*?*/
 /*?*/        				INetURLObject aObj( aName );
 /*?*/        				if ( aObj.GetProtocol() == INET_PROT_NOT_VALID )
 /*?*/        				{
@@ -1051,20 +1053,20 @@ namespace binfilter {
 /*?*/            				::utl::LocalFileHelper::ConvertPhysicalNameToURL( aName, aURL );
 /*?*/            				aObj.SetURL( aURL );
 /*?*/        				}
-/*?*/ 
+/*?*/
 /*?*/ 					UCBStorage* pUCBStorage = new UCBStorage( aObj.GetMainURL( INetURLObject::NO_DECODE ),
 /*?*/ 															  nStorOpenMode,
 /*?*/ 															  bDirect ? 0 : STORAGE_TRANSACTED,
 /*?*/ 															  sal_True,
 /*?*/ 															  sal_True,
 /*?*/ 															  xProgressHandler );
-/*?*/ 
+/*?*/
 /*?*/ 					aStorage = new SvStorage( pUCBStorage );
 /*N*/ 				}
 /*N*/ 				else
 /*N*/ 				{
 /*N*/ 					if( SotStorage::IsStorageFile( pInStream ) )
-/*N*/ 					{		
+/*N*/ 					{
 /*N*/ 						if ( IsReadOnly() && ::utl::LocalFileHelper::IsLocalFile( aLogicName ) )
 /*N*/ 						{
 /*N*/ 							CreateTempFile();
@@ -1074,7 +1076,7 @@ namespace binfilter {
 /*N*/ 						{
 /*N*/ 							if ( bUCBStorage && !UCBStorage::IsStorageFile( pInStream ) )
 /*N*/ 								return NULL;
-/*N*/ 
+/*N*/
 /*N*/ 							// create a storage on the stream
 /*N*/                 			aStorage = new SvStorage( pInStream, sal_False );
 /*N*/                 			if ( !aStorage->GetName().Len() )
@@ -1089,7 +1091,7 @@ namespace binfilter {
 /*N*/         else
 /*N*/             return NULL;
 /*N*/     }
-/*N*/ 
+/*N*/
 /*N*/     if( ( pImp->nLastStorageError = GetError() ) != SVSTREAM_OK )
 /*N*/     {
 /*N*/         aStorage.Clear();
@@ -1097,19 +1099,19 @@ namespace binfilter {
 /*N*/             pInStream->Seek(0);
 /*N*/         return NULL;
 /*N*/     }
-/*N*/ 
+/*N*/
 /*N*/     bTriedStorage = sal_True;
-/*N*/ 
+/*N*/
 /*N*/     if ( aStorage->GetError() == SVSTREAM_OK )
 /*N*/         GetVersionList();
-/*N*/ 
+/*N*/
 /*N*/     // ???? wird das noch gebraucht?
 /*N*/ //  GetMedium_Impl();
 /*N*/ //  if ( !aStorage.Is() )
 /*N*/ //      CreateFileStream();
-/*N*/ 
+/*N*/
 /*N*/     SFX_ITEMSET_ARG( pSet, pVersion, SfxInt16Item, SID_VERSION, sal_False);
-/*N*/ 
+/*N*/
 /*N*/     BOOL bResetStorage = FALSE;
 /*N*/     if ( pVersion && pVersion->GetValue() )
 /*N*/     {
@@ -1125,29 +1127,29 @@ namespace binfilter {
 /*?*/                 nVersion = ( (short) pImp->pVersions->Count() ) + nVersion;
 /*?*/             else if ( nVersion )
 /*?*/                 nVersion--;
-/*?*/ 
+/*?*/
 /*?*/             SfxVersionInfo* pInfo = nVersion>=0 ? pImp->pVersions->GetObject( nVersion ) : NULL;
 /*?*/             if ( pInfo )
 /*?*/             {
 /*?*/                 String aVersionStream = pInfo->aName;
-/*?*/ 
+/*?*/
 /*?*/                 // SubStorage f"ur alle Versionen "offnen
 /*?*/                 SvStorageRef aSub =
 /*?*/                     aStorage->OpenStorage( DEFINE_CONST_UNICODE( "Versions" ), SFX_STREAM_READONLY | STREAM_NOCREATE );
-/*?*/ 
+/*?*/
 /*?*/                 DBG_ASSERT( aSub.Is() && !aSub->GetError(), "Versionsliste, aber keine Versionen!" );
-/*?*/ 
+/*?*/
 /*?*/                 // Dort ist die Version als gepackter Stream gespeichert
 /*?*/                 SvStorageStreamRef aStream =
 /*?*/                     aSub->OpenStream( aVersionStream, SFX_STREAM_READONLY );
-/*?*/ 
+/*?*/
 /*?*/                 if ( aStream.Is() && aStream->GetError() == SVSTREAM_OK )
 /*?*/                 {
 /*?*/                     // Stream ins TempDir auspacken
 /*?*/                     ::utl::TempFile aTempFile;
 /*?*/                     String          aTmpName = aTempFile.GetURL();
 /*?*/                     SvFileStream    aTmpStream( aTmpName, SFX_STREAM_READWRITE );
-/*?*/ 
+/*?*/
 /*?*/                     // The new file format uses UCB storages instead of OLE storages.
 /*?*/                     // These storages aren't compressed.
 /*?*/                     if ( !aSub->IsOLEStorage() )
@@ -1162,15 +1164,15 @@ namespace binfilter {
 /*?*/                         aCodec.EndCompression();
 /*?*/                     }
 /*?*/                     aTmpStream.Close();
-/*?*/ 
+/*?*/
 /*?*/                     // Datei als Storage "offnen
 /*?*/                     nStorOpenMode = SFX_STREAM_READONLY;
 /*?*/                     aStorage = new SvStorage( aTmpName, nStorOpenMode );
-/*?*/ 
+/*?*/
 /*?*/                     String aTemp;
 /*?*/                     ::utl::LocalFileHelper::ConvertURLToPhysicalName( aTmpName, aTemp );
 /*?*/                     SetPhysicalName_Impl( aTemp );
-/*?*/ 
+/*?*/
 /*?*/                     pImp->bIsTemp = sal_True;
 /*?*/                     GetItemSet()->Put( SfxBoolItem( SID_DOC_READONLY, sal_True ) );
 /*?*/                     DELETEZ( pImp->pVersions );
@@ -1184,7 +1186,7 @@ namespace binfilter {
 /*?*/         else
 /*?*/             bResetStorage = TRUE;
 /*N*/     }
-/*N*/ 
+/*N*/
 /*N*/     if ( aStorage.Is() )
 /*N*/     {
 /*N*/         if( ( pImp->nLastStorageError = aStorage->GetError() ) != SVSTREAM_OK )
@@ -1192,14 +1194,14 @@ namespace binfilter {
 /*N*/         else if ( GetFilter() )
 /*N*/             aStorage->SetVersion( GetFilter()->GetVersion() );
 /*N*/     }
-/*N*/ 
+/*N*/
 /*N*/     if ( bResetStorage )
 /*N*/     {
 /*?*/         aStorage.Clear();
 /*?*/         if ( pInStream )
 /*?*/             pInStream->Seek( 0L );
 /*N*/     }
-/*N*/ 
+/*N*/
 /*N*/     pImp->bIsStorage = aStorage.Is();
 /*N*/     return aStorage;
 /*N*/ }
@@ -1220,11 +1222,11 @@ namespace binfilter {
 /*?*/     if ( nStorOpenMode != nStorOpen )
 /*?*/     {
 /*?*/         nStorOpenMode = nStorOpen;
-/*?*/ 
+/*?*/
 /*?*/         if( !bDontClose )
 /*?*/             Close();
 /*?*/     }
-/*?*/ 
+/*?*/
 /*?*/     bDirect     = bDirectP;
 /*?*/     bSetFilter  = sal_False;
 /*?*/ }
@@ -1238,10 +1240,10 @@ namespace binfilter {
 //STRIP001 	Reference< XOutputStream > aDestStream;
 //STRIP001 	Reference< XSimpleFileAccess > aSimpleAccess;
 //STRIP001 	::ucb::Content aOriginalContent;
-//STRIP001 
+//STRIP001
 //STRIP001 	DBG_ASSERT( ::utl::LocalFileHelper::IsLocalFile( aDest.GetMainURL( INetURLObject::NO_DECODE ) ),
 //STRIP001 				"SfxMedium::TransactedTransferForFS() should be used only for local contents!" );
-//STRIP001 
+//STRIP001
 //STRIP001 	if( ::ucb::Content::create( aDest.GetMainURL( INetURLObject::NO_DECODE ), xComEnv, aOriginalContent ) )
 //STRIP001 	{
 //STRIP001 		Close();
@@ -1253,14 +1255,14 @@ namespace binfilter {
 //STRIP001    			SFX_ITEMSET_ARG( GetItemSet(), pRename, SfxBoolItem, SID_RENAME, sal_False );
 //STRIP001 			sal_Bool bRename = pRename ? pRename->GetValue() : FALSE;
 //STRIP001 			sal_Bool bOverWrite = pOverWrite ? pOverWrite->GetValue() : !bRename;
-//STRIP001 
+//STRIP001
 //STRIP001 			try
 //STRIP001 			{
 //STRIP001 				if( bOverWrite && ::utl::UCBContentHelper::IsDocument( aDest.GetMainURL( INetURLObject::NO_DECODE ) ) )
 //STRIP001 				{
 //STRIP001 					if( ! pImp->m_aBackupURL.getLength() )
 //STRIP001 						DoInternalBackup_Impl( aOriginalContent );
-//STRIP001 
+//STRIP001
 //STRIP001 					if( pImp->m_aBackupURL.getLength() )
 //STRIP001 					{
 //STRIP001 						Reference< XInputStream > aTempInput = aTempCont.openStream();
@@ -1304,13 +1306,13 @@ namespace binfilter {
 //STRIP001 			{
 //STRIP001 				eError = ERRCODE_IO_GENERAL;
 //STRIP001 			}
-//STRIP001 
+//STRIP001
 //STRIP001    			if ( bResult )
 //STRIP001    			{
 //STRIP001 				pImp->pTempFile->EnableKillingFile( sal_True );
 //STRIP001    				delete pImp->pTempFile;
 //STRIP001    				pImp->pTempFile = NULL;
-//STRIP001 
+//STRIP001
 //STRIP001 				// without a TempFile the physical and logical name should be the same
 //STRIP001   				::utl::LocalFileHelper::ConvertURLToPhysicalName( GetURLObject().GetMainURL( INetURLObject::NO_DECODE ),
 //STRIP001 																  aName );
@@ -1337,7 +1339,7 @@ namespace binfilter {
 //STRIP001 		else
 //STRIP001 			eError = ERRCODE_IO_CANTREAD;
 //STRIP001 	}
-//STRIP001 
+//STRIP001
 //STRIP001 	return bResult;
 //STRIP001 }
 
@@ -1349,7 +1351,7 @@ namespace binfilter {
 /*N*/     {
 /*N*/         Reference < ::com::sun::star::ucb::XCommandEnvironment > xEnv;
 /*N*/ 		Reference< XOutputStream > rOutStream;
-/*N*/ 
+/*N*/
 /*N*/ 		// in case an output stream is provided from outside and the URL is correct
 /*N*/ 		// commit to the stream
 /*N*/         if( aLogicName.CompareToAscii( "private:stream", 14 ) == COMPARE_EQUAL )
@@ -1359,7 +1361,7 @@ namespace binfilter {
 /*N*/ 			{
 /*N*/ 				// write directly to the stream
 /*N*/ 				Close();
-/*N*/ 
+/*N*/
 /*N*/     		    INetURLObject aSource( pImp->pTempFile->GetURL() );
 /*N*/ 				::ucb::Content aTempCont;
 /*N*/ 				if( ::ucb::Content::create( aSource.GetMainURL( INetURLObject::NO_DECODE ), xEnv, aTempCont ) )
@@ -1370,7 +1372,7 @@ namespace binfilter {
 /*N*/ 						sal_Int32 nBufferSize = 32767;
 /*N*/ 						Sequence < sal_Int8 > aSequence ( nBufferSize );
 /*N*/ 						Reference< XInputStream > aTempInput = aTempCont.openStream();
-/*N*/ 
+/*N*/
 /*N*/ 						do
 /*N*/ 						{
 /*N*/ 							nRead = aTempInput->readBytes ( aSequence, nBufferSize );
@@ -1383,7 +1385,7 @@ namespace binfilter {
 /*N*/ 								rOutStream->writeBytes ( aSequence );
 /*N*/ 						}
 /*N*/ 						while ( nRead == nBufferSize );
-/*N*/ 
+/*N*/
 /*N*/ 						// remove temporary file
 /*N*/             			pImp->pTempFile->EnableKillingFile( sal_True );
 /*N*/             			delete pImp->pTempFile;
@@ -1398,20 +1400,20 @@ namespace binfilter {
 /*N*/ 				DBG_ERROR( "Illegal Output stream parameter!\n" );
 /*N*/         		SetError( ERRCODE_IO_GENERAL );
 /*N*/ 			}
-/*N*/ 
+/*N*/
 /*N*/ 			// free the reference
 /*N*/ 			pSet->ClearItem( SID_OUTPUTSTREAM );
-/*N*/ 
+/*N*/
 /*N*/ 			return;
 /*N*/ 		}
-/*N*/ DBG_BF_ASSERT(0, "STRIP"); return;//STRIP001 
+/*N*/ DBG_BF_ASSERT(0, "STRIP"); return;//STRIP001
 //STRIP001 /*?*/         GetContent();
 //STRIP001 /*?*/         if ( !pImp->aContent.get().is() )
 //STRIP001 /*?*/         {
 //STRIP001 /*?*/             eError = ERRCODE_IO_NOTEXISTS;
 //STRIP001 /*?*/             return;
 //STRIP001 /*?*/         }
-//STRIP001 /*?*/ 
+//STRIP001 /*?*/
 //STRIP001 /*?*/         SFX_ITEMSET_ARG( GetItemSet(), pSegmentSize, SfxInt32Item, SID_SEGMENTSIZE, sal_False);
 //STRIP001 /*?*/         if ( pSegmentSize )
 //STRIP001 /*?*/         {
@@ -1424,17 +1426,17 @@ namespace binfilter {
 //STRIP001 /*?*/                 ::com::sun::star::uno::Any aAny;
 //STRIP001 /*?*/                 aAny <<= pSegmentSize->GetValue();
 //STRIP001 /*?*/                 xStor->SetProperty( String::CreateFromAscii("SegmentSize"), aAny );
-//STRIP001 /*?*/ 
+//STRIP001 /*?*/
 //STRIP001 /*?*/ 				// copy the temporary storage into the disk spanned package
 //STRIP001 /*?*/                 GetStorage()->CopyTo( xStor );
 //STRIP001 /*?*/                 xStor->Commit();
 //STRIP001 /*?*/             }
-//STRIP001 /*?*/ 
+//STRIP001 /*?*/
 //STRIP001 /*?*/ 			if ( !GetError() )
 //STRIP001 /*?*/             	SetError( xStor->GetError() );
 //STRIP001 /*?*/             return;
 //STRIP001 /*?*/         }
-//STRIP001 /*?*/ 
+//STRIP001 /*?*/
 //STRIP001 /*?*/         if ( pFilter && SOFFICE_FILEFORMAT_60 <= pFilter->GetVersion() )
 //STRIP001 /*?*/ 		{
 //STRIP001 /*?*/             SFX_ITEMSET_ARG( GetItemSet(), pItem, SfxBoolItem, SID_UNPACK, sal_False);
@@ -1449,19 +1451,19 @@ namespace binfilter {
 //STRIP001 /*?*/ 					if ( aURL.Len() )
 //STRIP001 /*?*/ 						// remove a possibly existing old folder
 //STRIP001 /*?*/ 						::utl::UCBContentHelper::Kill( aURL );
-//STRIP001 /*?*/ 
+//STRIP001 /*?*/
 //STRIP001 /*?*/                     DELETEZ( pStream );
 //STRIP001 /*?*/                 }
-//STRIP001 /*?*/ 
+//STRIP001 /*?*/
 //STRIP001 /*?*/                 // create a new folder based storage
 //STRIP001 /*?*/                 SvStorageRef xStor = new SvStorage( TRUE, GetName(), STREAM_STD_READWRITE, STORAGE_CREATE_UNPACKED );
-//STRIP001 /*?*/ 
+//STRIP001 /*?*/
 //STRIP001 /*?*/                 // copy package into unpacked storage
 //STRIP001 /*?*/                 if ( xStor->GetError() == ERRCODE_NONE && GetStorage()->CopyTo( xStor ) )
 //STRIP001 /*?*/                 {
 //STRIP001 /*?*/                     // commit changes, writing will happen now
 //STRIP001 /*?*/                     xStor->Commit();
-//STRIP001 /*?*/ 
+//STRIP001 /*?*/
 //STRIP001 /*?*/                     // take new unpacked storage as own storage
 //STRIP001 /*?*/                     Close();
 //STRIP001 /*?*/                     DELETEZ( pImp->pTempFile );
@@ -1473,13 +1475,13 @@ namespace binfilter {
 //STRIP001 /*?*/                 return;
 //STRIP001 /*?*/             }
 //STRIP001 /*?*/ 		}
-//STRIP001 /*?*/ 
+//STRIP001 /*?*/
 //STRIP001 /*?*/         sal_Bool bSuccess = sal_False;
 //STRIP001 /*?*/         INetURLObject aDest( GetURLObject() );
-//STRIP001 /*?*/ 
+//STRIP001 /*?*/
 //STRIP001 /*?*/         // source is the temp file written so far
 //STRIP001 /*?*/         INetURLObject aSource( pImp->pTempFile->GetURL() );
-//STRIP001 /*?*/ 
+//STRIP001 /*?*/
 //STRIP001 /*?*/ 		// a special case, an interaction handler should be used for
 //STRIP001 /*?*/ 		// authentication in case it is available
 //STRIP001 /*?*/ 		Reference< ::com::sun::star::ucb::XCommandEnvironment > xComEnv;
@@ -1487,24 +1489,24 @@ namespace binfilter {
 //STRIP001 /*?*/         if (xInteractionHandler.is())
 //STRIP001 /*?*/ 			xComEnv = new ::ucb::CommandEnvironment( xInteractionHandler,
 //STRIP001 /*?*/ 													  Reference< ::com::sun::star::ucb::XProgressHandler >() );
-//STRIP001 /*?*/ 
+//STRIP001 /*?*/
 //STRIP001 /*?*/         if ( ::utl::LocalFileHelper::IsLocalFile( aDest.GetMainURL( INetURLObject::NO_DECODE ) ) )
 //STRIP001 /*?*/ 		{
 //STRIP001 /*?*/ 			TransactedTransferForFS_Impl( aSource, aDest, xComEnv );
 //STRIP001 /*?*/ 			return;
 //STRIP001 /*?*/ 		}
-//STRIP001 /*?*/ 
+//STRIP001 /*?*/
 //STRIP001 /*?*/         if ( aDest.removeSegment() )
 //STRIP001 /*?*/         {
 //STRIP001 /*?*/             // create content for the parent folder and call transfer on that content with the source content
 //STRIP001 /*?*/             // and the destination file name as parameters
 //STRIP001 /*?*/             ::ucb::Content aSourceContent;
 //STRIP001 /*?*/             ::ucb::Content aTransferContent;
-//STRIP001 /*?*/ 
+//STRIP001 /*?*/
 //STRIP001 /*?*/             String aFileName = GetLongName();
 //STRIP001 /*?*/             if ( !aFileName.Len() )
 //STRIP001 /*?*/                 aFileName = GetURLObject().getName( INetURLObject::LAST_SEGMENT, true, INetURLObject::DECODE_WITH_CHARSET );
-//STRIP001 /*?*/ 
+//STRIP001 /*?*/
 //STRIP001 /*?*/             if ( ::ucb::Content::create( aDest.GetMainURL( INetURLObject::NO_DECODE ), xComEnv, aTransferContent ) )
 //STRIP001 /*?*/             {
 //STRIP001 /*?*/                 // free resources, otherwise the transfer may fail
@@ -1514,7 +1516,7 @@ namespace binfilter {
 //STRIP001 /*?*/                 // remove+move in the file FCP. The "remove" is notified to the ::ucb::Content, that clears its URL and its
 //STRIP001 /*?*/                 // content reference in this notification and thus will never get back any URL, so my transfer will fail!
 //STRIP001 /*?*/                 ::ucb::Content::create( aSource.GetMainURL( INetURLObject::NO_DECODE ), xEnv, aSourceContent );
-//STRIP001 /*?*/ 
+//STRIP001 /*?*/
 //STRIP001 /*?*/                 // check for external parameters that may customize the handling of NameClash situations
 //STRIP001 /*?*/                 SFX_ITEMSET_ARG( GetItemSet(), pRename, SfxBoolItem, SID_RENAME, sal_False );
 //STRIP001 /*?*/                 SFX_ITEMSET_ARG( GetItemSet(), pOverWrite, SfxBoolItem, SID_OVERWRITE, sal_False );
@@ -1528,7 +1530,7 @@ namespace binfilter {
 //STRIP001 /*?*/                 else
 //STRIP001 /*?*/                     // default is overwrite existing files
 //STRIP001 /*?*/                     nNameClash = NameClash::OVERWRITE;
-//STRIP001 /*?*/ 
+//STRIP001 /*?*/
 //STRIP001 /*?*/                 try
 //STRIP001 /*?*/                 {
 //STRIP001 /*?*/                     bSuccess = aTransferContent.transferContent( aSourceContent, ::ucb::InsertOperation_COPY, aFileName, nNameClash );
@@ -1556,7 +1558,7 @@ namespace binfilter {
 //STRIP001 /*?*/                 {
 //STRIP001 /*?*/                     eError = ERRCODE_IO_GENERAL;
 //STRIP001 /*?*/                 }
-//STRIP001 /*?*/ 
+//STRIP001 /*?*/
 //STRIP001 /*?*/ 				// do not switch from temporary file in case of nonfile protocol
 //STRIP001 /*?*/ 	    	}
 //STRIP001 /*?*/ 		}
@@ -1571,13 +1573,13 @@ namespace binfilter {
 //STRIP001 {
 //STRIP001 	if ( pImp->m_aBackupURL.getLength() )
 //STRIP001 		return; // the backup was done already
-//STRIP001 
+//STRIP001
 //STRIP001 	::utl::TempFile aTransactTemp( aPrefix, &aExtension, &aDestDir );
 //STRIP001 	aTransactTemp.EnableKillingFile( sal_False );
-//STRIP001 
+//STRIP001
 //STRIP001 	INetURLObject aBackObj( aTransactTemp.GetURL() );
 //STRIP001 	::rtl::OUString aBackupName = aBackObj.getName( INetURLObject::LAST_SEGMENT, true, INetURLObject::DECODE_WITH_CHARSET );
-//STRIP001 
+//STRIP001
 //STRIP001 	Reference < ::com::sun::star::ucb::XCommandEnvironment > xDummyEnv;
 //STRIP001 	::ucb::Content aBackupCont;
 //STRIP001 	if( ::ucb::Content::create( aDestDir, xDummyEnv, aBackupCont ) )
@@ -1596,28 +1598,28 @@ namespace binfilter {
 //STRIP001 		catch( Exception& )
 //STRIP001 		{}
 //STRIP001 	}
-//STRIP001 
+//STRIP001
 //STRIP001 	if ( !pImp->m_aBackupURL.getLength() )
 //STRIP001 		aTransactTemp.EnableKillingFile( sal_True );
 //STRIP001 }
 
 //------------------------------------------------------------------
 /*?*/ void SfxMedium::DoInternalBackup_Impl( const ::ucb::Content& aOriginalContent )
-/*?*/ {{DBG_BF_ASSERT(0, "STRIP");}//STRIP001 
+/*?*/ {{DBG_BF_ASSERT(0, "STRIP");}//STRIP001
 //STRIP001 	if ( pImp->m_aBackupURL.getLength() )
 //STRIP001 		return; // the backup was done already
-//STRIP001 
+//STRIP001
 //STRIP001 	::rtl::OUString aFileName =  GetURLObject().getName( INetURLObject::LAST_SEGMENT,
 //STRIP001 														true,
 //STRIP001 														INetURLObject::NO_DECODE );
-//STRIP001 
+//STRIP001
 //STRIP001 	sal_Int32 nPrefixLen = aFileName.lastIndexOf( '.' );
 //STRIP001 	String aPrefix = ( nPrefixLen == -1 ) ? aFileName : aFileName.copy( 0, nPrefixLen );
 //STRIP001 	String aExtension = ( nPrefixLen == -1 ) ? String() : String(aFileName.copy( nPrefixLen ));
 //STRIP001    	String aBakDir = SvtPathOptions().GetBackupPath();
-//STRIP001 
+//STRIP001
 //STRIP001 	DoInternalBackup_Impl( aOriginalContent, aPrefix, aExtension, aBakDir );
-//STRIP001 
+//STRIP001
 //STRIP001 	if ( !pImp->m_aBackupURL.getLength() )
 //STRIP001 	{
 //STRIP001 		// the copiing to the backup catalog failed ( for example because
@@ -1626,7 +1628,7 @@ namespace binfilter {
 //STRIP001 		// office should try to make backup in another place,
 //STRIP001 		// target catalog does not look bad for this case ( and looks
 //STRIP001 		// to be the only way for encrypted partitions )
-//STRIP001 
+//STRIP001
 //STRIP001 		INetURLObject aDest = GetURLObject();
 //STRIP001 		if ( aDest.removeSegment() )
 //STRIP001 			DoInternalBackup_Impl( aOriginalContent, aPrefix, aExtension, aDest.GetMainURL( INetURLObject::NO_DECODE ) );
@@ -1639,13 +1641,13 @@ namespace binfilter {
 //STRIP001 {
 //STRIP001    	// source file name is the logical name of this medium
 //STRIP001     INetURLObject aSource( GetURLObject() );
-//STRIP001 
+//STRIP001
 //STRIP001 	// there is nothing to backup in case source file does not exist
 //STRIP001 	if ( !::utl::UCBContentHelper::IsDocument( aSource.GetMainURL( INetURLObject::NO_DECODE ) ) )
 //STRIP001 		return;
-//STRIP001 
+//STRIP001
 //STRIP001     sal_Bool        bSuccess = sal_False;
-//STRIP001 
+//STRIP001
 //STRIP001     // get path for backups
 //STRIP001     String aBakDir = SvtPathOptions().GetBackupPath();
 //STRIP001     if( aBakDir.Len() )
@@ -1660,7 +1662,7 @@ namespace binfilter {
 //STRIP001         	aDest.insertName( aSource.getName() );
 //STRIP001         	aDest.setExtension( DEFINE_CONST_UNICODE( "bak" ) );
 //STRIP001         	String aFileName = aDest.getName( INetURLObject::LAST_SEGMENT, true, INetURLObject::DECODE_WITH_CHARSET );
-//STRIP001 
+//STRIP001
 //STRIP001         	// create a content for the source file
 //STRIP001         	::ucb::Content aSourceContent;
 //STRIP001         	if ( ::ucb::Content::create( aSource.GetMainURL( INetURLObject::NO_DECODE ), xEnv, aSourceContent ) )
@@ -1684,7 +1686,7 @@ namespace binfilter {
 //STRIP001         	}
 //STRIP001     	}
 //STRIP001 	}
-//STRIP001 
+//STRIP001
 //STRIP001     if ( !bSuccess )
 //STRIP001 	{
 //STRIP001 		eError = ERRCODE_ABORT;
@@ -1697,13 +1699,14 @@ namespace binfilter {
 /*N*/ {
 /*N*/ 	if( pImp->m_bRemoveBackup )
 /*N*/ 	{
+#ifdef DBG_UTIL
 /*?*/ 		if ( pImp->m_aBackupURL.getLength() )
 /*?*/ 			if ( !::utl::UCBContentHelper::Kill( pImp->m_aBackupURL ) )
 /*?*/ 				DBG_ERROR("Couldn't remove backup file!");
-/*?*/ 
+#endif
 /*?*/ 		pImp->m_bRemoveBackup = sal_False;
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	pImp->m_aBackupURL = ::rtl::OUString();
 /*N*/ }
 
@@ -1715,7 +1718,7 @@ namespace binfilter {
 /*N*/         pImp->bDownloadDone = sal_False;
 /*N*/         pImp->bStreamReady = sal_False;
 /*N*/         Reference< ::com::sun::star::task::XInteractionHandler > xInteractionHandler = GetInteractionHandler();
-/*N*/ 
+/*N*/
 /*N*/         ::utl::UcbLockBytesHandler* pHandler = pImp->aHandler;
 /*N*/         INetProtocol eProt = GetURLObject().GetProtocol();
 /*N*/         if ( eProt != INET_PROT_HTTP && eProt != INET_PROT_FTP || aName.Len() )
@@ -1740,7 +1743,7 @@ namespace binfilter {
 /*?*/                 {
 /*?*/                 }
 /*N*/             }
-/*N*/ 
+/*N*/
 /*N*/             Reference < ::com::sun::star::io::XInputStream > xStream;
 /*N*/             if ( ( pStreamItem->GetValue() >>= xStream ) && xStream.is() )
 /*N*/                 pImp->xLockBytes = ::utl::UcbLockBytes::CreateInputLockBytes( xStream );
@@ -1751,35 +1754,35 @@ namespace binfilter {
 /*N*/             SFX_ITEMSET_ARG( GetItemSet(), pItem, SfxBoolItem, SID_DOC_READONLY, sal_False);
 /*N*/             BOOL bAllowReadOnlyMode = pItem ? pItem->GetValue() : TRUE;
 /*N*/             BOOL bIsWritable = ( nStorOpenMode & STREAM_WRITE );
-/*N*/ 
+/*N*/
 /*N*/             SFX_ITEMSET_ARG( GetItemSet(), pPostDataItem, SfxUnoAnyItem, SID_POSTDATA, sal_False);
 /*N*/             SFX_ITEMSET_ARG( GetItemSet(), pContentTypeItem, SfxStringItem, SID_CONTENT_TYPE, sal_False);
 /*N*/             SFX_ITEMSET_ARG( GetItemSet(), pRefererItem, SfxStringItem, SID_REFERER, sal_False);
-/*N*/ 
+/*N*/
 /*N*/ 			::rtl::OUString aReferer;
 /*N*/ 			if ( pRefererItem )
 /*N*/ 				aReferer = pRefererItem->GetValue();
-/*N*/ 
+/*N*/
 /*N*/             if ( pPostDataItem )
 /*N*/ 			{
 /*?*/                 DBG_ASSERT( bAllowReadOnlyMode, "Strange open mode!" );
 /*?*/ 				bIsWritable = FALSE;
 /*?*/                 GetItemSet()->Put( SfxBoolItem(SID_DOC_READONLY, sal_True));
 /*?*/                 SetOpenMode(SFX_STREAM_READONLY, sal_False);
-/*?*/ 
+/*?*/
 /*?*/ 				::rtl::OUString aMimeType;
 /*?*/ 				if ( pContentTypeItem )
 /*?*/ 					aMimeType = pContentTypeItem->GetValue();
 /*?*/ 				else
 /*?*/ 					aMimeType = ::rtl::OUString::createFromAscii( "application/x-www-form-urlencoded" );
-/*?*/ 
+/*?*/
 /*?*/ 				Reference < XInputStream > xPostData;
 /*?*/ 				if ( pPostDataItem )
 /*?*/ 				{
 /*?*/                     Any aAny = pPostDataItem->GetValue();
 /*?*/                     aAny >>= xPostData;
 /*?*/ 				}
-/*?*/ 
+/*?*/
 /*?*/                 pImp->xLockBytes = ::utl::UcbLockBytes::CreateLockBytes(
 /*?*/                         GetContent(), aReferer, aMimeType, xPostData, xInteractionHandler, pHandler );
 /*N*/ 			}
@@ -1798,7 +1801,7 @@ namespace binfilter {
 /*N*/                 	pImp->xLockBytes = ::utl::UcbLockBytes::CreateLockBytes(
 /*N*/ 						GetContent(), Sequence < PropertyValue >(), nStorOpenMode, xInteractionHandler, bIsWritable ? NULL : pHandler );
 /*N*/ 			}
-/*N*/ 
+/*N*/
 /*N*/             if ( !pImp->xLockBytes.Is() )
 /*N*/             {
 /*N*/                 pImp->bDontCallDoneLinkOnSharingError = sal_False;
@@ -1812,13 +1815,13 @@ namespace binfilter {
 /*?*/                     GetItemSet()->Put( SfxBoolItem(SID_DOC_READONLY, sal_True));
 /*?*/                     SetOpenMode(SFX_STREAM_READONLY, sal_False);
 /*?*/                 }
-/*?*/ 
+/*?*/
 /*?*/                 ResetError();
 /*?*/                 pImp->bDownloadDone = sal_False;
 /*?*/                 pImp->bDontCallDoneLinkOnSharingError = sal_False;
 /*?*/                 pImp->xLockBytes = ::utl::UcbLockBytes::CreateLockBytes(
 /*?*/                         GetContent(), Sequence < PropertyValue >(), SFX_STREAM_READONLY, xInteractionHandler, pHandler );
-/*?*/ 
+/*?*/
 /*?*/ 				if ( !pHandler && !pImp->bDownloadDone )
 /*?*/                     Done_Impl( pImp->xLockBytes->GetError() );
 /*?*/             }
@@ -1826,7 +1829,7 @@ namespace binfilter {
 /*?*/                 // opening readwrite is always done synchronously
 /*?*/                 Done_Impl( pImp->xLockBytes->GetError() );
 /*N*/         }
-/*N*/ 
+/*N*/
 /*N*/         if ( pImp->xLockBytes.Is() && !GetError() )
 /*N*/         {
 /*N*/             if ( bSynchron )
@@ -1843,7 +1846,7 @@ namespace binfilter {
 /*N*/     // Download completion happened while pInStream was constructed
 /*N*/     if ( pImp->bDownloadDone )
 /*N*/         Done_Impl( GetError() );
-/*N*/ 
+/*N*/
 /*N*/ }
 
 //------------------------------------------------------------------
@@ -1974,7 +1977,7 @@ String SfxMedium::GetStatusString( const SvProgressArg* pArg )
 /*N*/ {
 /*N*/ 	Reference< XOutputStream > rOutStream;
 /*N*/     pImp->pVersions = NULL;
-/*N*/ 
+/*N*/
 /*N*/     SFX_ITEMSET_ARG( pSet, pSalvageItem, SfxStringItem, SID_DOC_SALVAGE, sal_False);
 /*N*/     if( aLogicName.Len() )
 /*N*/     {
@@ -1994,10 +1997,10 @@ String SfxMedium::GetStatusString( const SvProgressArg* pArg )
 /*?*/                 DBG_ASSERT( pSalvageItem, "Suspicious change of logical name!" );
 /*N*/         }
 /*N*/     }
-/*N*/ 
+/*N*/
 /*N*/     if ( pSalvageItem && pSalvageItem->GetValue().Len() )
 /*N*/         aLogicName = pSalvageItem->GetValue();
-/*N*/ 
+/*N*/
 /*N*/ 	// in case output stream is by mistake here
 /*N*/ 	// clear the reference
 /*N*/     SFX_ITEMSET_ARG( pSet, pOutStreamItem, SfxUnoAnyItem, SID_OUTPUTSTREAM, sal_False);
@@ -2008,7 +2011,7 @@ String SfxMedium::GetStatusString( const SvProgressArg* pArg )
 /*?*/ 		pSet->ClearItem( SID_OUTPUTSTREAM );
 /*?*/ 		DBG_ERROR( "Unexpected Output stream parameter!\n" );
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/     SetIsRemote_Impl();
 /*N*/ }
 
@@ -2017,7 +2020,7 @@ String SfxMedium::GetStatusString( const SvProgressArg* pArg )
 /*N*/ :   IMPL_CTOR(),
 /*N*/     bRoot( sal_False ),
 /*N*/     pURLObj(0),
-/*N*/ 
+/*N*/
 /*N*/     pSet(0),
 /*N*/     pImp(new SfxMedium_Impl( this )),
 /*N*/     pFilter(0)
@@ -2036,7 +2039,7 @@ String SfxMedium::GetStatusString( const SvProgressArg* pArg )
 /*?*/     nStorOpenMode = rMedium.GetOpenMode();
 /*?*/     if ( !bTemporary )
 /*?*/         aName = rMedium.aName;
-/*?*/ 
+/*?*/
 /*?*/     pImp->bIsTemp = bTemporary;
 /*?*/     DBG_ASSERT( ! rMedium.pImp->bIsTemp, "Temporaeres Medium darf nicht kopiert werden" );
 /*?*/     aLogicName = rMedium.aLogicName;
@@ -2045,7 +2048,7 @@ String SfxMedium::GetStatusString( const SvProgressArg* pArg )
 /*?*/     Init_Impl();
 /*?*/     if( bTemporary )
 /*?*/         CreateTempFile();
-/*?*/ 
+/*?*/
 /*?*/     if ( rMedium.pImp->pEaMgr )
 /*?*/         GetEaMgr();
 /*?*/ }
@@ -2065,7 +2068,7 @@ String SfxMedium::GetStatusString( const SvProgressArg* pArg )
 /*N*/     // if interaction isnt allowed explicitly ... return empty reference!
 /*N*/     if ( !pImp->bUseInteractionHandler )
 /*?*/         return ::com::sun::star::uno::Reference< ::com::sun::star::task::XInteractionHandler >();
-/*N*/ 
+/*N*/
 /*N*/     // search a possible existing handler inside cached item set
 /*N*/     if ( pSet )
 /*N*/     {
@@ -2074,15 +2077,15 @@ String SfxMedium::GetStatusString( const SvProgressArg* pArg )
 /*N*/         if ( pHandler && (pHandler->GetValue() >>= xHandler) && xHandler.is() )
 /*N*/             return xHandler;
 /*N*/     }
-/*N*/ 
+/*N*/
 /*N*/     // if default interaction isnt allowed explicitly ... return empty reference!
 /*N*/     if ( !pImp->bAllowDefaultIntHdl )
 /*N*/         return ::com::sun::star::uno::Reference< ::com::sun::star::task::XInteractionHandler >();
-/*N*/ 
+/*N*/
 /*N*/     // otherwhise return cached default handler ... if it exist.
 /*?*/     if ( pImp->xInteraction.is() )
 /*?*/         return pImp->xInteraction;
-/*?*/ 
+/*?*/
 /*?*/     // create default handler and cache it!
 /*?*/     ::com::sun::star::uno::Reference< ::com::sun::star::lang::XMultiServiceFactory > xFactory = ::legacy_binfilters::getLegacyProcessServiceFactory();
 /*?*/     if ( xFactory.is() )
@@ -2090,7 +2093,7 @@ String SfxMedium::GetStatusString( const SvProgressArg* pArg )
 /*?*/         pImp->xInteraction = ::com::sun::star::uno::Reference< ::com::sun::star::task::XInteractionHandler >( xFactory->createInstance( DEFINE_CONST_UNICODE("com.sun.star.task.InteractionHandler") ), ::com::sun::star::uno::UNO_QUERY );
 /*?*/         return pImp->xInteraction;
 /*?*/     }
-/*?*/ 
+/*?*/
 /*?*/ 	return ::com::sun::star::uno::Reference< ::com::sun::star::task::XInteractionHandler >();
 /*N*/ }
 
@@ -2127,7 +2130,7 @@ String SfxMedium::GetStatusString( const SvProgressArg* pArg )
 /*N*/     {
 /*N*/         // don't close the streams if they belong to the
 /*N*/         // storage
-/*N*/ 
+/*N*/
 /*N*/         const SvStream *pStream = aStorage->GetSvStream();
 /*N*/         if ( pStream && pStream == pInStream )
 /*N*/         {
@@ -2143,19 +2146,19 @@ String SfxMedium::GetStatusString( const SvProgressArg* pArg )
 /*?*/             pOutStream = NULL;
 /*?*/             aStorage->SetDeleteStream( TRUE );
 /*N*/         }
-/*N*/ 
+/*N*/
 /*N*/         CloseStorage();
 /*N*/     }
-/*N*/ 
+/*N*/
 /*N*/     if ( pInStream )
 /*N*/         CloseInStream_Impl();
-/*N*/ 
+/*N*/
 /*N*/     if ( pOutStream )
 /*?*/         CloseOutStream_Impl();
-/*N*/ 
+/*N*/
 /*N*/     if ( pSet )
 /*N*/         pSet->ClearItem( SID_CONTENT );
-/*N*/ 
+/*N*/
 /*N*/     pImp->aContent = ::ucb::Content();
 /*N*/ }
 
@@ -2195,7 +2198,7 @@ String SfxMedium::GetStatusString( const SvProgressArg* pArg )
 /*N*/             bRemote = ( GetName().CompareToAscii( "private:msgid", 13 ) == COMPARE_EQUAL );
 /*N*/             break;
 /*N*/     }
-/*N*/ 
+/*N*/
 /*N*/     // Da Dateien, die Remote geschrieben werden zur Uebertragung auch
 /*N*/     // gelesen werden koennen muessen
 /*N*/     if( bRemote )
@@ -2225,7 +2228,7 @@ String SfxMedium::GetStatusString( const SvProgressArg* pArg )
 //----------------------------------------------------------------
 
 /*N*/ void SfxMedium::SetPhysicalName_Impl( const String& rNameP )
-/*N*/ {DBG_BF_ASSERT(0, "STRIP"); //STRIP001 
+/*N*/ {DBG_BF_ASSERT(0, "STRIP"); //STRIP001
 //STRIP001     if ( rNameP != aName )
 //STRIP001     {
 //STRIP001         if( pImp->pTempFile )
@@ -2233,10 +2236,10 @@ String SfxMedium::GetStatusString( const SvProgressArg* pArg )
 //STRIP001             delete pImp->pTempFile;
 //STRIP001             pImp->pTempFile = NULL;
 //STRIP001         }
-//STRIP001 
+//STRIP001
 //STRIP001         if ( aName.Len() || rNameP.Len() )
 //STRIP001             pImp->aContent = ::ucb::Content();
-//STRIP001 
+//STRIP001
 //STRIP001         aName = rNameP;
 //STRIP001         bTriedStorage = sal_False;
 //STRIP001         pImp->bIsStorage = sal_False;
@@ -2251,12 +2254,12 @@ String SfxMedium::GetStatusString( const SvProgressArg* pArg )
 //STRIP001         if( pMedium->pImp->pTempFile )
 //STRIP001             delete pMedium->pImp->pTempFile;
 //STRIP001         pMedium->pImp->pTempFile = pImp->pTempFile;
-//STRIP001 
+//STRIP001
 //STRIP001     	pImp->pTempFile->EnableKillingFile( sal_True );
 //STRIP001 		pImp->pTempFile = NULL;
-//STRIP001 
+//STRIP001
 //STRIP001     	pMedium->aName = pMedium->pImp->pTempFile->GetFileName();
-//STRIP001 
+//STRIP001
 //STRIP001         pMedium->CloseInStream();
 //STRIP001     	pMedium->CloseStorage();
 //STRIP001         pMedium->pImp->aContent = ::ucb::Content();
@@ -2297,7 +2300,7 @@ String SfxMedium::GetStatusString( const SvProgressArg* pArg )
 /*N*/         else
 /*N*/             GetInStream();
 /*N*/     }
-/*N*/ 
+/*N*/
 /*N*/     pImp->bUseInteractionHandler = bUseInteractionHandler;
 /*N*/ }
 //------------------------------------------------------------------
@@ -2341,9 +2344,9 @@ String SfxMedium::GetStatusString( const SvProgressArg* pArg )
 /*N*/     }
 /*N*/     else
 /*N*/         pFilter = pApp->GetFilterMatcher().GetFilter4ClipBoardId( nFormat, 0, 0 );
-/*N*/ 
+/*N*/
 /*N*/     Init_Impl();
-/*N*/ 
+/*N*/
 /*N*/     if( !pFilter && nFormat )
 /*N*/     {
 /*STRIP003*/ pApp->GetFilterMatcher().GetFilter4Content( *this, &pFilter );  // #91292# PowerPoint does not support an OleComp stream,
@@ -2368,23 +2371,25 @@ String SfxMedium::GetStatusString( const SvProgressArg* pArg )
 /*N*/     ::vos::OClearableGuard aGuard( pImp->aHandler->GetMutex() );
 /*N*/     pImp->aHandler->ReleaseMedium();
 /*N*/     aGuard.clear();
-/*N*/ 
+/*N*/
 /*N*/     Close();
-/*N*/ 
+/*N*/
 /*N*/     delete pSet;
-/*N*/ 
+/*N*/
+/*N*/     #ifdef  DBG_UTIL
 /*N*/     if( pImp->bIsTemp && aName.Len() )
 /*N*/     {
 /*N*/         String aTemp;
 /*N*/         if ( !::utl::LocalFileHelper::ConvertPhysicalNameToURL( aName, aTemp ))
 /*N*/ 			DBG_ERROR("Physical name not convertable!");
-/*N*/ 
+/*N*/
 /*N*/         if ( !::utl::UCBContentHelper::Kill( aTemp ) )
 /*N*/ 			DBG_ERROR("Couldn't remove temporary file!");
 /*N*/     }
-/*N*/ 
+/*N*/     #endif
+/*N*/
 /*N*/     pFilter = 0;
-/*N*/ 
+/*N*/
 /*N*/     delete pURLObj;
 /*N*/     delete pImp;
 /*N*/ }
@@ -2413,7 +2418,7 @@ String SfxMedium::GetStatusString( const SvProgressArg* pArg )
 /*N*/ 		if ( pThis->pURLObj->HasMark() )
 /*N*/ 			(*pThis->pURLObj) = INetURLObject( aLogicName ).GetURLNoMark();
 /*N*/     }
-/*N*/ 
+/*N*/
 /*N*/     return *pURLObj;
 /*N*/ }
 
@@ -2526,10 +2531,10 @@ String SfxMedium::GetStatusString( const SvProgressArg* pArg )
 /*N*/     INetProtocol eProt = GetURLObject().GetProtocol();
 /*N*/     if( eProt == INET_PROT_HTTPS || eProt == INET_PROT_HTTP  )
 /*N*/         return sal_True;
-/*N*/ 
+/*N*/
 /*N*/     if( eProt == INET_PROT_NOT_VALID )
 /*N*/         return sal_False;
-/*N*/ 
+/*N*/
 /*N*/     if( eProt == INET_PROT_FTP )
 /*N*/     {
 /*N*/         try
@@ -2543,7 +2548,7 @@ String SfxMedium::GetStatusString( const SvProgressArg* pArg )
 /*?*/         {
 /*?*/         }
 /*N*/     }
-/*N*/ 
+/*N*/
 /*N*/     return sal_False;
 /*N*/ }
 
@@ -2591,17 +2596,17 @@ String SfxMedium::GetStatusString( const SvProgressArg* pArg )
 /*N*/     if( !pImp->xAttributes.Is() )
 /*N*/ 	{
 /*N*/ 		pImp->xAttributes = SvKeyValueIteratorRef( new SvKeyValueIterator );
-/*N*/ 
+/*N*/
 /*N*/ 		if ( GetContent().is() )
 /*N*/ 		{
 /*?*/ 			pImp->bIsCharsetInitialized = sal_True;
-/*?*/ 
+/*?*/
 /*?*/ 			try
 /*?*/ 			{
 /*?*/ 				Any aAny = pImp->aContent.getPropertyValue( ::rtl::OUString::createFromAscii( "MediaType" ) );
 /*?*/ 				::rtl::OUString aContentType;
 /*?*/ 				aAny >>= aContentType;
-/*?*/ 
+/*?*/
 /*?*/ 				pImp->xAttributes->Append( SvKeyValue( ::rtl::OUString::createFromAscii( "content-type" ), aContentType ) );
 /*?*/ 			}
 /*?*/ 			catch ( ::com::sun::star::uno::Exception& )
@@ -2609,7 +2614,7 @@ String SfxMedium::GetStatusString( const SvProgressArg* pArg )
 /*?*/ 			}
 /*?*/ 		}
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/     return pImp->xAttributes;
 /*N*/ }
 //----------------------------------------------------------------
@@ -2625,7 +2630,7 @@ String SfxMedium::GetStatusString( const SvProgressArg* pArg )
 /*N*/ }
 
 /*N*/ SvEaMgr* SfxMedium::GetEaMgr()
-/*N*/ {DBG_BF_ASSERT(0, "STRIP"); return 0;//STRIP001 
+/*N*/ {DBG_BF_ASSERT(0, "STRIP"); return 0;//STRIP001
 //STRIP001     if ( !pImp->pEaMgr && pFilter )
 //STRIP001     {
 //STRIP001         /* the stream in the storage is probably not a filestream ( the stream is
@@ -2637,7 +2642,7 @@ String SfxMedium::GetStatusString( const SvProgressArg* pArg )
 //STRIP001         //  else
 //STRIP001         pImp->pEaMgr = new SvEaMgr( GetPhysicalName() );
 //STRIP001     }
-//STRIP001 
+//STRIP001
 //STRIP001     return pImp->pEaMgr;
 /*N*/ }
 
@@ -2656,7 +2661,7 @@ String SfxMedium::GetStatusString( const SvProgressArg* pArg )
 /*N*/ 		// probably GetInStream should allways open pInStream based on xInputStream
 /*N*/ 		GetMedium_Impl();
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/     return pImp->xInputStream;
 /*N*/ }
 
@@ -2666,7 +2671,7 @@ String SfxMedium::GetStatusString( const SvProgressArg* pArg )
 /*N*/     {
 /*N*/         if ( pImp->bIsDiskSpannedJAR )
 /*N*/             return NULL;
-/*N*/ 
+/*N*/
 /*N*/         SvStorageStreamRef aStream =
 /*N*/             GetStorage()->OpenStream( DEFINE_CONST_UNICODE( "VersionList" ), SFX_STREAM_READONLY | STREAM_NOCREATE );
 /*N*/         if ( aStream.Is() && aStream->GetError() == SVSTREAM_OK )
@@ -2683,14 +2688,14 @@ String SfxMedium::GetStatusString( const SvProgressArg* pArg )
 /*N*/ 			    delete pList;
 /*N*/         }
 /*N*/     }
-/*N*/ 
+/*N*/
 /*N*/     return pImp->pVersions;
 /*N*/ }
 
 //STRIP001 SfxVersionTableDtor* SfxMedium::GetVersionList( SvStorage* pStor )
 //STRIP001 {
 //STRIP001 	SfxVersionTableDtor* pVersions = NULL;
-//STRIP001 
+//STRIP001
 //STRIP001 	if( pStor )
 //STRIP001 	{
 //STRIP001         SvStorageStreamRef aStream =
@@ -2709,7 +2714,7 @@ String SfxMedium::GetStatusString( const SvProgressArg* pArg )
 //STRIP001 			    delete pList;
 //STRIP001         }
 //STRIP001     }
-//STRIP001 
+//STRIP001
 //STRIP001     return pVersions;
 //STRIP001 }
 
@@ -2720,7 +2725,7 @@ String SfxMedium::GetStatusString( const SvProgressArg* pArg )
 //STRIP001     {
 //STRIP001         if ( !pImp->pVersions )
 //STRIP001             pImp->pVersions = new SfxVersionTableDtor;
-//STRIP001 
+//STRIP001
 //STRIP001         // Einen eindeutigen Namen f"ur den Stream ermitteln
 //STRIP001         SvULongs aLongs;
 //STRIP001         SfxVersionInfo* pInfo = pImp->pVersions->First();
@@ -2731,23 +2736,23 @@ String SfxMedium::GetStatusString( const SvProgressArg* pArg )
 //STRIP001             for ( n=0; n<aLongs.Count(); n++ )
 //STRIP001                 if ( nVer<aLongs[n] )
 //STRIP001                     break;
-//STRIP001 
+//STRIP001
 //STRIP001             aLongs.Insert( nVer, n );
 //STRIP001             pInfo = pImp->pVersions->Next();
 //STRIP001         }
-//STRIP001 
+//STRIP001
 //STRIP001         sal_uInt16 nKey;
 //STRIP001         for ( nKey=0; nKey<aLongs.Count(); nKey++ )
 //STRIP001             if ( aLongs[nKey] > ( ULONG ) nKey+1 )
 //STRIP001                 break;
-//STRIP001 
+//STRIP001
 //STRIP001         rInfo.aName = DEFINE_CONST_UNICODE( "Version" );
 //STRIP001         rInfo.aName += String::CreateFromInt32( nKey + 1 );
 //STRIP001         pInfo = new SfxVersionInfo( rInfo );
 //STRIP001         pImp->pVersions->Insert( pInfo, LIST_APPEND );
 //STRIP001         return nKey;
 //STRIP001     }
-//STRIP001 
+//STRIP001
 //STRIP001     return 0;
 //STRIP001 }
 
@@ -2755,7 +2760,7 @@ String SfxMedium::GetStatusString( const SvProgressArg* pArg )
 //STRIP001 {
 //STRIP001     if ( !pImp->pVersions )
 //STRIP001         return sal_False;
-//STRIP001 
+//STRIP001
 //STRIP001     SfxVersionInfo* pInfo = pImp->pVersions->First();
 //STRIP001     while( pInfo )
 //STRIP001     {
@@ -2765,10 +2770,10 @@ String SfxMedium::GetStatusString( const SvProgressArg* pArg )
 //STRIP001             delete pInfo;
 //STRIP001             return sal_True;
 //STRIP001         }
-//STRIP001 
+//STRIP001
 //STRIP001         pInfo = pImp->pVersions->Next();
 //STRIP001     }
-//STRIP001 
+//STRIP001
 //STRIP001     return sal_False;
 //STRIP001 }
 
@@ -2780,7 +2785,7 @@ String SfxMedium::GetStatusString( const SvProgressArg* pArg )
 //STRIP001         pImp->pVersions = new SfxVersionTableDtor( *rMedium.pImp->pVersions );
 //STRIP001         return sal_True;
 //STRIP001     }
-//STRIP001 
+//STRIP001
 //STRIP001     return sal_False;
 //STRIP001 }
 
@@ -2790,7 +2795,7 @@ String SfxMedium::GetStatusString( const SvProgressArg* pArg )
 //STRIP001     {
 //STRIP001         if ( !pImp->pVersions )
 //STRIP001             return sal_True;
-//STRIP001 
+//STRIP001
 //STRIP001         if ( bUseXML )
 //STRIP001         {
 //STRIP001             SfxXMLVersList_Impl::WriteInfo( aStorage, pImp->pVersions );
@@ -2807,7 +2812,7 @@ String SfxMedium::GetStatusString( const SvProgressArg* pArg )
 //STRIP001             }
 //STRIP001         }
 //STRIP001     }
-//STRIP001 
+//STRIP001
 //STRIP001     return sal_False;
 //STRIP001 }
 
@@ -2826,7 +2831,7 @@ String SfxMedium::GetStatusString( const SvProgressArg* pArg )
 /*N*/         if ( pItem )
 /*N*/             bReadOnly = pItem->GetValue();
 /*N*/     }
-/*N*/ 
+/*N*/
 /*N*/     return bReadOnly;
 /*N*/ }
 
@@ -2843,7 +2848,7 @@ String SfxMedium::GetStatusString( const SvProgressArg* pArg )
 //STRIP001     		::utl::TempFile* pTmpFile = new ::utl::TempFile();
 //STRIP001     		pTmpFile->EnableKillingFile( sal_True );
 //STRIP001 			::rtl::OUString aNewName = pTmpFile->GetFileName();
-//STRIP001 		
+//STRIP001
 //STRIP001 			if( aNewName.getLength() )
 //STRIP001 			{
 //STRIP001 				SvStorageRef aNewStorage = new SvStorage( sal_True, aNewName, STREAM_WRITE | STREAM_TRUNC, STORAGE_TRANSACTED );
@@ -2851,19 +2856,19 @@ String SfxMedium::GetStatusString( const SvProgressArg* pArg )
 //STRIP001 				{
 //STRIP001 					aStorage->CopyTo( &aNewStorage );
 //STRIP001 					aNewStorage->Commit();
-//STRIP001 	
+//STRIP001
 //STRIP001 					if ( aNewStorage->GetError() == SVSTREAM_OK )
 //STRIP001 					{
 //STRIP001         				CloseInStream();
 //STRIP001     					CloseStorage();
 //STRIP001 	    				if ( pImp->pTempFile )
 //STRIP001         					DELETEZ( pImp->pTempFile );
-//STRIP001 
+//STRIP001
 //STRIP001 						pImp->pTempFile = pTmpFile;
 //STRIP001 						aName = aNewName;
 //STRIP001 					}
 //STRIP001 				}
-//STRIP001 	
+//STRIP001
 //STRIP001 				SetError( aNewStorage->GetError() );
 //STRIP001 			}
 //STRIP001 			else
@@ -2879,7 +2884,7 @@ String SfxMedium::GetStatusString( const SvProgressArg* pArg )
 /*N*/ {
 /*N*/     if ( pImp->pTempFile )
 /*N*/         DELETEZ( pImp->pTempFile );
-/*N*/ 
+/*N*/
 /*N*/     StreamMode nOpenMode = nStorOpenMode;
 /*N*/     GetInStream();
 /*N*/     BOOL bCopy = ( nStorOpenMode == nOpenMode && ! ( nOpenMode & STREAM_TRUNC ) );
