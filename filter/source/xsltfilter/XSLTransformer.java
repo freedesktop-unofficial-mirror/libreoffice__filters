@@ -81,9 +81,9 @@ import com.sun.star.lib.uno.adapter.*;
  * information about the component (__writeRegistryServiceInfo()).
  */
 public class XSLTransformer
-    implements XTypeProvider, XServiceName, XServiceInfo, XActiveDataSink, 
+    implements XTypeProvider, XServiceName, XServiceInfo, XActiveDataSink,
         XActiveDataSource, XActiveDataControl, XInitialization
-                
+
 {
 
     /**
@@ -93,17 +93,17 @@ public class XSLTransformer
      * example: 190 pages document, 82000 events 8seconds transform 40(!) sec. bridging
      *
      */
-    
+
     private XInputStream xistream;
     private XOutputStream xostream;
     private BufferedOutputStream ostream;
-    
+
     // private static HashMap templatecache;
-    
+
     private static final int STREAM_BUFFER_SIZE = 4000;
     private static final String STATSPROP = "XSLTransformer.statsfile";
     private static PrintStream statsp;
-    
+
     private String stylesheeturl;
     private String targeturl;
     private String targetbaseurl;
@@ -111,22 +111,22 @@ public class XSLTransformer
     private String sourcebaseurl;
     private String pubtype = new String();
     private String systype = new String();
-    
+
     // processing thread
     private Thread t;
-    
+
     // listeners
     private Vector listeners = new Vector();
-    
+
     //
     private XMultiServiceFactory svcfactory;
-    
+
     // --- Initialization ---
-    
+
     public XSLTransformer(XMultiServiceFactory msf) {
         svcfactory = msf;
     }
-    
+
     public void initialize(Object[] values) throws com.sun.star.uno.Exception {
         NamedValue nv = null;
         for (int i=0; i<values.length; i++)
@@ -168,14 +168,14 @@ public class XSLTransformer
                 System.err.println("   output disabled");
             }
         }
-    }    
-    
+    }
+
     // --- XActiveDataSink        xistream = aStream;
     public void setInputStream(XInputStream aStream)
     {
         xistream = aStream;
     }
-    
+
     public com.sun.star.io.XInputStream getInputStream()
     {
         return xistream;
@@ -187,13 +187,13 @@ public class XSLTransformer
         xostream = aStream;
         ostream = new BufferedOutputStream(
             new XOutputStreamToOutputStreamAdapter(xostream), STREAM_BUFFER_SIZE);
-        
+
     }
     public com.sun.star.io.XOutputStream getOutputStream()
     {
         return xostream;
     }
-    
+
     // --- XActiveDataControl
     public void addListener(XStreamListener aListener)
     {
@@ -201,15 +201,15 @@ public class XSLTransformer
             listeners.add(aListener);
         }
     }
-            
+
     public void removeListener(XStreamListener aListener)
     {
         if (aListener != null ) {
             listeners.removeElement(aListener);
         }
-        
+
     }
-    
+
     public void start()
     {
         // notify listeners
@@ -221,13 +221,13 @@ public class XSLTransformer
                     {
                         XStreamListener l = (XStreamListener)e.nextElement();
                         l.started();
-                    }                        
-                    StreamSource stylesource = new StreamSource(stylesheeturl);                    
-                    
+                    }
+                    StreamSource stylesource = new StreamSource(stylesheeturl);
+
                     // buffer input and modify doctype declaration
                     // remove any dtd references but keep localy defined
                     // entities
-                    
+
                     ByteArrayOutputStream bufstream = new ByteArrayOutputStream();
                     final int bsize = 2000;
                     int rbytes = 0;
@@ -236,7 +236,7 @@ public class XSLTransformer
                     XSeekable xseek = (XSeekable)UnoRuntime.queryInterface(XSeekable.class, xistream);
                     if (xseek != null) {
                         xseek.seek(0);
-                    }                        
+                    }
                     while ((rbytes = xistream.readSomeBytes(byteBuffer, bsize)) != 0)
                         bufstream.write(byteBuffer[0], 0, rbytes);
 
@@ -244,7 +244,7 @@ public class XSLTransformer
                     // into the buffer so it won't keep the content open until it
                     // gets finalized by the java GC
                     xistream.closeInput();
-                    
+
                     String xmlFile = bufstream.toString("UTF-8");
                     if (xmlFile.indexOf("<!DOCTYPE")!=-1){
                         String tag = xmlFile.substring(xmlFile.lastIndexOf("/")+1,
@@ -255,31 +255,37 @@ public class XSLTransformer
                                 xmlFile.indexOf(">",xmlFile.indexOf("<!DOCTYPE"))){
                                     entities = xmlFile.substring(
                                         xmlFile.indexOf("[",xmlFile.indexOf("<!DOCTYPE")),
-                                        xmlFile.indexOf("]",xmlFile.indexOf("<!DOCTYPE"))+1);     
+                                        xmlFile.indexOf("]",xmlFile.indexOf("<!DOCTYPE"))+1);
                             }
                         }
-                        String newDocType = 
+                        String newDocType =
                             "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<!DOCTYPE "
                             +tag+" "+entities+">";
                         xmlFile= xmlFile.substring(
-                            xmlFile.indexOf("<"+tag,0), 
+                            xmlFile.indexOf("<"+tag,0),
                             xmlFile.lastIndexOf(">")+1);
                         xmlFile= newDocType.concat(xmlFile);
-                    }                    
+                    }
                     StreamSource xmlsource = new StreamSource(
                         new ByteArrayInputStream(xmlFile.getBytes("UTF-8")));
-                    
-                    ByteArrayOutputStream resultbuf = new ByteArrayOutputStream();                    
-                    StreamResult xmlresult = new StreamResult(resultbuf);                    
+
+                    ByteArrayOutputStream resultbuf = new ByteArrayOutputStream();
+                    StreamResult xmlresult = new StreamResult(resultbuf);
                     TransformerFactory tfactory = TransformerFactory.newInstance();
                     Transformer transformer = tfactory.newTransformer(stylesource);
 
-                    transformer.setParameter("sourceURL", sourceurl);
-                    transformer.setParameter("targetURL", targeturl);
-                    transformer.setParameter("targetBaseURL", targetbaseurl);
-                    transformer.setParameter("publicType", pubtype);
-                    transformer.setParameter("systemType", systype);
-                                                            
+                    // invalid to set 'null' as parameter as 'null' is not a valid Java object
+                    if(sourceurl != null)
+                        transformer.setParameter("sourceURL", sourceurl);
+                    if(targeturl != null)
+                        transformer.setParameter("targetURL", targeturl);
+                    if(targetbaseurl != null)
+                        transformer.setParameter("targetBaseURL", targetbaseurl);
+                    if(pubtype != null)
+                        transformer.setParameter("publicType", pubtype);
+                    if(systype != null)
+                        transformer.setParameter("systemType", systype);
+
                     long tstart = System.currentTimeMillis();
                     transformer.transform(xmlsource, xmlresult);
                     long time = System.currentTimeMillis() - tstart;
@@ -288,15 +294,15 @@ public class XSLTransformer
                     }
                     String resultstring = resultbuf.toString();
                     xostream.writeBytes(resultbuf.toByteArray());
-                    xostream.closeOutput(); 
-                    
+                    xostream.closeOutput();
+
                     // notify any listeners about close
                     for (Enumeration e = listeners.elements(); e.hasMoreElements();)
                     {
                         XStreamListener l = (XStreamListener)e.nextElement();
                         l.closed();
                     }
-                    
+
                 } catch (java.lang.Throwable ex)
                 {
                     // notify any listeners about close
@@ -304,18 +310,18 @@ public class XSLTransformer
                     {
                         XStreamListener l = (XStreamListener)e.nextElement();
                         l.error(new com.sun.star.uno.Exception(ex.getClass().getName()+": "+ex.getMessage()));
-                    }                    
+                    }
                     if (statsp != null)
                     {
                             statsp.println(ex.getClass().getName()+": "+ex.getMessage());
                             ex.printStackTrace(statsp);
-                    }                    
-                }      
+                    }
+                }
             }
         };
         t.start();
     }
-    
+
     public void terminate()
     {
         try {
@@ -323,12 +329,12 @@ public class XSLTransformer
                 statsp.println("terminate called");
             }
             if(t.isAlive()){
-                t.interrupt();            
+                t.interrupt();
                 for (Enumeration e = listeners.elements(); e.hasMoreElements();)
                 {
                     XStreamListener l = (XStreamListener)e.nextElement();
                     l.terminated();
-                }                
+                }
             }
         } catch (java.lang.Exception ex) {
             if (statsp != null){
@@ -338,7 +344,7 @@ public class XSLTransformer
         }
     }
 
-    // --- component management interfaces... ---    
+    // --- component management interfaces... ---
     private final static String _serviceName = "com.sun.star.comp.JAXTHelper";
 
     // Implement methods from interface XTypeProvider
@@ -347,7 +353,7 @@ public class XSLTransformer
         byteReturn = new String( "" + this.hashCode() ).getBytes();
         return( byteReturn );
     }
-    
+
     public com.sun.star.uno.Type[] getTypes() {
         Type[] typeReturn = {};
         try {
@@ -365,7 +371,7 @@ public class XSLTransformer
         }
 
         return( typeReturn );
-    }    
+    }
 
     // --- Implement method from interface XServiceName ---
     public String getServiceName() {
@@ -388,7 +394,7 @@ public class XSLTransformer
 
     // --- component registration methods ---
     public static XSingleServiceFactory __getServiceFactory(
-        String implName, XMultiServiceFactory multiFactory, XRegistryKey regKey) 
+        String implName, XMultiServiceFactory multiFactory, XRegistryKey regKey)
     {
         XSingleServiceFactory xSingleServiceFactory = null;
         if (implName.equals(XSLTransformer.class.getName()) ) {
@@ -397,10 +403,10 @@ public class XSLTransformer
         }
         return xSingleServiceFactory;
     }
-    
+
     public static boolean __writeRegistryServiceInfo(XRegistryKey regKey) {
         return FactoryHelper.writeRegistryServiceInfo(XSLTransformer.class.getName(),
         _serviceName, regKey);
     }
-   
+
 }
