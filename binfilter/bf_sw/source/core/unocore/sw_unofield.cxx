@@ -2,9 +2,9 @@
  *
  *  $RCSfile: sw_unofield.cxx,v $
  *
- *  $Revision: 1.4 $
+ *  $Revision: 1.5 $
  *
- *  last change: $Author: hr $ $Date: 2004-08-03 18:10:04 $
+ *  last change: $Author: vg $ $Date: 2005-03-08 13:38:01 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -241,7 +241,7 @@
 #ifndef _DDEFLD_HXX
 #include <ddefld.hxx>
 #endif
-#ifndef _DATETIME_HXX 
+#ifndef _DATETIME_HXX
 #include <tools/datetime.hxx>
 #endif
 #define _SVSTDARR_STRINGS
@@ -262,7 +262,7 @@
 #include <unofldmid.h>
 #endif
 namespace binfilter {
-String& GetString( const ::com::sun::star::uno::Any& rAny, String& rStr ); //STRIP008 
+String& GetString( const ::com::sun::star::uno::Any& rAny, String& rStr ); //STRIP008
 using namespace ::com::sun::star;
 using namespace ::com::sun::star::uno;
 using namespace ::com::sun::star::lang;
@@ -1289,9 +1289,9 @@ SwXTextField::SwXTextField(sal_uInt16 nServiceId) :
     m_bCallUpdate(sal_False)
 {
     //Set visible as default!
-    if(SW_SERVICE_FIELDTYPE_SET_EXP == nServiceId || 
-            SW_SERVICE_FIELDTYPE_DATABASE_SET_NUM == nServiceId || 
-            SW_SERVICE_FIELDTYPE_DATABASE == nServiceId || 
+    if(SW_SERVICE_FIELDTYPE_SET_EXP == nServiceId ||
+            SW_SERVICE_FIELDTYPE_DATABASE_SET_NUM == nServiceId ||
+            SW_SERVICE_FIELDTYPE_DATABASE == nServiceId ||
             SW_SERVICE_FIELDTYPE_DATABASE_NAME == nServiceId  )
         m_pProps->bBool2 = sal_True;
     else if(SW_SERVICE_FIELDTYPE_TABLE_FORMULA == nServiceId)
@@ -1832,12 +1832,12 @@ void SwXTextField::attachToRange(
                 pFld = new SwDropDownField
                     ((SwDropDownFieldType *)
                      pDoc->GetSysFldType(RES_DROPDOWN));
-                    
+
                 ((SwDropDownField *) pFld)->SetItems(m_pProps->aStrings);
                 ((SwDropDownField *) pFld)->SetSelectedItem(m_pProps->sPar1);
                 ((SwDropDownField *) pFld)->SetName(m_pProps->sPar2);
                 break;
-           
+
             case SW_SERVICE_FIELDTYPE_TABLE_FORMULA :
             {
 
@@ -2449,26 +2449,10 @@ sal_uInt16 lcl_GetIdByName( String& rName, String& rTypeName )
         nResId = RES_DDEFLD;
     else if(rTypeName.EqualsAscii("SetExpression"))
     {
-        // build indices do access programmatic names
-        static sal_uInt16 nIds[] =
-        {
-            RES_POOLCOLL_LABEL_DRAWING  - RES_POOLCOLL_EXTRA_BEGIN,
-            RES_POOLCOLL_LABEL_ABB      - RES_POOLCOLL_EXTRA_BEGIN,
-            RES_POOLCOLL_LABEL_TABLE    - RES_POOLCOLL_EXTRA_BEGIN,
-            RES_POOLCOLL_LABEL_FRAME    - RES_POOLCOLL_EXTRA_BEGIN,
-            0
-        };
-        const SvStringsDtor& rExtraArr = SwStyleNameMapper::GetExtraProgNameArray();
-
         nResId = RES_SETEXPFLD;
 
         String sFldTypName( rName.GetToken( 1, '.' ));
-        String sUIName( sFldTypName );
-        if (*rExtraArr[ nIds[0] ] == sUIName ||
-            *rExtraArr[ nIds[1] ] == sUIName ||
-            *rExtraArr[ nIds[2] ] == sUIName ||
-            *rExtraArr[ nIds[3] ] == sUIName)
-            sUIName = SwStyleNameMapper::GetUIName( sFldTypName, GET_POOLID_TXTCOLL );
+        String sUIName( SwStyleNameMapper::GetSpecialExtraUIName( sFldTypName ) );
 
         if( sUIName != sFldTypName )
             rName.SetToken( 1, '.', sUIName );
@@ -2538,8 +2522,7 @@ sal_Bool SwXTextFieldMasters::getInstanceName(
     case RES_SETEXPFLD:
         rName.AppendAscii( RTL_CONSTASCII_STRINGPARAM( COM_TEXT_FLDMASTER ));
         rName.AppendAscii( RTL_CONSTASCII_STRINGPARAM( "SetExpression."));
-        rName += String(SwStyleNameMapper::GetProgName( rFldType.GetName(),
-                                                        GET_POOLID_TXTCOLL ));
+        rName += String( SwStyleNameMapper::GetSpecialExtraProgName( rFldType.GetName() ) );
         break;
 
     case RES_DBFLD:
