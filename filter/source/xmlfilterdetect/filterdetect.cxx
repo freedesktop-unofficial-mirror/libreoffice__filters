@@ -2,9 +2,9 @@
  *
  *  $RCSfile: filterdetect.cxx,v $
  *
- *  $Revision: 1.3 $
+ *  $Revision: 1.4 $
  *
- *  last change: $Author: hr $ $Date: 2003-04-04 16:30:48 $
+ *  last change: $Author: vg $ $Date: 2003-06-12 09:16:32 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -55,7 +55,7 @@
  *  All Rights Reserved.
  *
  *  Contributor(s): Aidan Butler (aidan.butler@sun.com)
- *                  
+ *
  *
  *
  ************************************************************************/
@@ -205,10 +205,9 @@ Reference< com::sun::star::frame::XModel > xModel;
         const PropertyValue * pValue = aArguments.getConstArray();
         sal_Int32 nLength;
         ::rtl::OString resultString;
-       
-        sal_Int32 location=0; 
-       
+
         nLength = aArguments.getLength();
+        sal_Int32 location=nLength;
         for ( sal_Int32 i = 0 ; i < nLength; i++)
         {
               //OSL_ENSURE( sal_False, ::rtl::OUStringToOString(pValue[i].Name,RTL_TEXTENCODING_ASCII_US).getStr() );
@@ -217,23 +216,23 @@ Reference< com::sun::star::frame::XModel > xModel;
                   //pValue[i].Value >>= originalTypeName;
                     location=i;
                    // OSL_ENSURE( sal_False, ::rtl::OUStringToOString(sTypeName,RTL_TEXTENCODING_ASCII_US).getStr() );
-                 
+
             }
             else if ( pValue[i].Name.equalsAsciiL ( RTL_CONSTASCII_STRINGPARAM ( "URL" ) ) )
             {
-                
+
                 pValue[i].Value >>= sUrl;
                    //OSL_ENSURE( sal_False, ::rtl::OUStringToOString(sUrl,RTL_TEXTENCODING_ASCII_US).getStr() );
-                
+
             }
             else if ( pValue[i].Name.equalsAsciiL ( RTL_CONSTASCII_STRINGPARAM ( "InputStream" ) ) )
-            {   
+            {
                 pValue[i].Value >>= xInStream ;
             }
-            
-            
+
+
         }
-        try{ 
+        try{
             Reference< com::sun::star::ucb::XCommandEnvironment > xEnv;
             if (!xInStream.is())
              {
@@ -249,21 +248,21 @@ Reference< com::sun::star::frame::XModel > xModel;
             xInStream->skipBytes (0);
             long bytestRead =xInStream->readBytes (aData,  1000);
             resultString=::rtl::OString((const sal_Char *)aData.getConstArray(),bytestRead) ;
-           
+
 
              // test typedetect code
-        
-                 
+
+
             Reference <XNameAccess> xTypeCont(mxMSF->createInstance(OUString::createFromAscii("com.sun.star.document.TypeDetection")),UNO_QUERY);
             Sequence < ::rtl::OUString > myTypes= xTypeCont->getElementNames();
             nLength = myTypes.getLength();
-       
+
 
             sal_Int32 new_nlength=0;
             sal_Int32 i = 0 ;
              while(  (i < nLength) && (sTypeName.equalsAscii("")))
             {
-             
+
                 Any elem = xTypeCont->getByName(myTypes[i]);
                 elem >>=lProps;
                 new_nlength = lProps.getLength();
@@ -281,35 +280,40 @@ Reference< com::sun::star::frame::XModel > xModel;
             i++;
         }
         //end test
-           
+
         }
         catch(Exception &)
         {
                  OSL_ENSURE( sal_False, "An Exception occured while opening File stream" );
         }
-      
+
         if(sTypeName.equalsAscii(""))
         {
             //sTypeName=::rtl::OUString::createFromAscii("writer_Flat_XML_File");
         }
         else
-           {
-             aArguments[location].Value <<=sTypeName;
-            
+        {
+            if ( location == aArguments.getLength() )
+            {
+                aArguments.realloc(nLength+1);
+                aArguments[location].Name = ::rtl::OUString::createFromAscii( "TypeName" );
+            }
+
+            aArguments[location].Value <<=sTypeName;
         }
        // OSL_ENSURE( sal_False, ::rtl::OUStringToOString(sTypeName,RTL_TEXTENCODING_ASCII_US).getStr() );
-      
-    
+
+
     return sTypeName;
 }
 
 
 
-::rtl::OUString SAL_CALL supportedByType( const ::rtl::OUString clipBoardFormat ,  const ::rtl::OString resultString, const ::rtl::OUString checkType) 
+::rtl::OUString SAL_CALL supportedByType( const ::rtl::OUString clipBoardFormat ,  const ::rtl::OString resultString, const ::rtl::OUString checkType)
 {
     sal_Int32 i=0;
     sal_Int32 checked =0;
-    ::rtl::OUString sTypeName= OUString::createFromAscii("");                                  
+    ::rtl::OUString sTypeName= OUString::createFromAscii("");
     if((clipBoardFormat.match(OUString::createFromAscii("doctype:"))))
     {
             ::rtl::OString tryStr = ::rtl::OUStringToOString(clipBoardFormat.copy(8),RTL_TEXTENCODING_ASCII_US).getStr();
@@ -323,13 +327,13 @@ Reference< com::sun::star::frame::XModel > xModel;
                 }
                 checked++;
             }
-    } 
+    }
     return sTypeName;
 }
 
 // XInitialization
 
-void SAL_CALL FilterDetect::initialize( const Sequence< Any >& aArguments ) 
+void SAL_CALL FilterDetect::initialize( const Sequence< Any >& aArguments )
     throw (Exception, RuntimeException)
 {
     Sequence < PropertyValue > aAnySeq;
@@ -340,24 +344,24 @@ void SAL_CALL FilterDetect::initialize( const Sequence< Any >& aArguments )
         nLength = aAnySeq.getLength();
         for ( sal_Int32 i = 0 ; i < nLength; i++)
         {
-          
+
             if ( pValue[i].Name.equalsAsciiL ( RTL_CONSTASCII_STRINGPARAM ( "Type" ) ) )
             {
                  pValue[i].Value >>= msFilterName;
-                 
+
             }
             else if ( pValue[i].Name.equalsAsciiL ( RTL_CONSTASCII_STRINGPARAM ( "UserData" ) ) )
             {
-                
+
                 pValue[i].Value >>= msUserData;
-                
+
             }
             else if ( pValue[i].Name.equalsAsciiL ( RTL_CONSTASCII_STRINGPARAM ( "TemplateName" ) ) )
             {
-            
+
               pValue[i].Value>>=msTemplateName;
             }
-            
+
         }
     }
 }
@@ -371,12 +375,12 @@ OUString FilterDetect_getImplementationName ()
 }
 #define SERVICE_NAME1 "com.sun.star.document.ExtendedTypeDetection"
 
-sal_Bool SAL_CALL FilterDetect_supportsService( const OUString& ServiceName ) 
+sal_Bool SAL_CALL FilterDetect_supportsService( const OUString& ServiceName )
     throw (RuntimeException)
 {
     return ServiceName.equalsAsciiL( RTL_CONSTASCII_STRINGPARAM ( SERVICE_NAME1 ) );
 }
-Sequence< OUString > SAL_CALL FilterDetect_getSupportedServiceNames(  ) 
+Sequence< OUString > SAL_CALL FilterDetect_getSupportedServiceNames(  )
     throw (RuntimeException)
 {
     Sequence < OUString > aRet(2);
@@ -394,17 +398,17 @@ Reference< XInterface > SAL_CALL FilterDetect_createInstance( const Reference< X
 }
 
 // XServiceInfo
-OUString SAL_CALL FilterDetect::getImplementationName(  ) 
+OUString SAL_CALL FilterDetect::getImplementationName(  )
     throw (RuntimeException)
 {
     return FilterDetect_getImplementationName();
 }
-sal_Bool SAL_CALL FilterDetect::supportsService( const OUString& rServiceName ) 
+sal_Bool SAL_CALL FilterDetect::supportsService( const OUString& rServiceName )
     throw (RuntimeException)
 {
     return FilterDetect_supportsService( rServiceName );
 }
-Sequence< OUString > SAL_CALL FilterDetect::getSupportedServiceNames(  ) 
+Sequence< OUString > SAL_CALL FilterDetect::getSupportedServiceNames(  )
     throw (RuntimeException)
 {
     return FilterDetect_getSupportedServiceNames();
