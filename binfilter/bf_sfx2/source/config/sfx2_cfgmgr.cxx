@@ -2,9 +2,9 @@
  *
  *  $RCSfile: sfx2_cfgmgr.cxx,v $
  *
- *  $Revision: 1.5 $
+ *  $Revision: 1.6 $
  *
- *  last change: $Author: hr $ $Date: 2004-08-03 14:35:41 $
+ *  last change: $Author: vg $ $Date: 2005-02-21 16:32:45 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -143,45 +143,21 @@ static const char pStorageName[] = "Configurations";
 /*N*/ 	, bModified( FALSE )
 /*N*/ {
 /*N*/ 	DBG_CTOR(SfxConfigManager, 0);
-/*N*/ 
+/*N*/
 /*N*/     // configuration stored in any storage
 /*N*/     pItemArr = new SfxConfigItemArr_Impl;
-/*N*/ 
+/*N*/
 /*N*/ 	if ( !pStorage )
 /*N*/ 	{
 /*N*/ 		// default config manager
-/*N*/         {
-/*N*/             // first check the upper layers of configuration
-/*N*/             String aPathes = SvtPathOptions().GetUIConfigPath();
-/*N*/             sal_uInt16 i, nIdx=0, nCount=aPathes.GetTokenCount( ';' );
-/*N*/             for ( i=0; i<nCount; ++i )
-/*N*/ 			{
-/*?*/                 String aPathToken = aPathes.GetToken( 0, ';', nIdx );
-/*?*/                 INetURLObject aPath( aPathToken );
-/*?*/                 String aCfgFileName;
-/*?*/                 aPath.insertName( String::CreateFromAscii("soffice.cfg") );
-/*?*/                 aCfgFileName = aPath.GetMainURL( INetURLObject::NO_DECODE );
-/*?*/                 SotStorageRef xStorage( GetStorage( aCfgFileName, STREAM_STD_READ ) );
-/*?*/ 
-/*?*/                 // load all the items, user layer will overwrite them if necessary
-/*?*/                 // every item from the upper layer will reference xStorage
-/*?*/                 if ( !xStorage->GetError() )
-/*?*/                     LoadConfiguration( *xStorage );
-/*N*/             }
-/*N*/         }
-/*N*/ 
-/*N*/         String aCfgFileName;
-/*N*/         INetURLObject aPath( SvtPathOptions().GetUserConfigPath() );
-/*N*/         aPath.insertName( String::CreateFromAscii("soffice.cfg") );
-/*N*/         aCfgFileName = aPath.GetMainURL( INetURLObject::NO_DECODE );
-/*N*/         pStorage = GetStorage( aCfgFileName, STREAM_STD_READWRITE );
+/*N*/         pStorage = new SotStorage( String() );
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/     if ( !pStorage->IsOLEStorage() )
 /*N*/ 	{
 /*N*/ 		// take the storage ( otherwise no configitems could be loaded )
 /*N*/ 		m_xStorage = pStorage;
-/*N*/ 
+/*N*/
 /*N*/         // any other configuration storage or document in 6.0 format
 /*N*/         // read directory information
 /*N*/         if ( !LoadConfiguration( *pStorage ) )
@@ -192,7 +168,7 @@ static const char pStorageName[] = "Configurations";
 /*N*/         // any other configuration storage or document in 5.0 format
 /*?*/         // create temporary storage for the converted data in 6.0 format
 /*?*/         m_xStorage = new SotStorage( TRUE, String(), STREAM_STD_READWRITE, STORAGE_TRANSACTED );
-/*?*/ 
+/*?*/
 /*?*/         // convert 5.0 configuration into own 6.0 storage
 /*?*/ 		SfxConfigManagerImExport_Impl aImporter( pObjShell, pItemArr );
 /*?*/         nErrno = aImporter.Import( pStorage, m_xStorage );
@@ -205,23 +181,23 @@ static const char pStorageName[] = "Configurations";
 /*N*/ 	, bModified( FALSE )
 /*N*/ {
 /*N*/ 	DBG_CTOR(SfxConfigManager, 0);
-/*N*/ 
+/*N*/
 /*N*/     // configuration stored in a document or template
 /*N*/     pItemArr = new SfxConfigItemArr_Impl;
-/*N*/ 
+/*N*/
 /*N*/     // create temporary storage
 /*N*/     m_xStorage = new SotStorage( TRUE, String(), STREAM_STD_READWRITE, STORAGE_TRANSACTED );
-/*N*/ 
+/*N*/
 /*N*/     SotStorageRef xStorage = pObjShell->GetStorage();
 /*N*/     if ( !xStorage->IsOLEStorage() )
 /*N*/ 	{
 /*?*/ 		// use the configuration substorage of the document
 /*?*/ 		SotStorageRef xCfgStorage = xStorage->OpenSotStorage( String::CreateFromAscii(pStorageName), STREAM_STD_READWRITE );
-/*?*/ 
+/*?*/
 /*?*/ 		// copy data, using the original storage is only possible for SvPersist objects
 /*?*/ 		// the retransfer of the data is organized by the document
 /*?*/ 		xCfgStorage->CopyTo( m_xStorage );
-/*?*/ 
+/*?*/
 /*?*/         // read directory information
 /*?*/         if ( !LoadConfiguration( *m_xStorage ) )
 /*?*/             nErrno = ERR_READ;
@@ -232,7 +208,7 @@ static const char pStorageName[] = "Configurations";
 /*N*/ 		SfxConfigManagerImExport_Impl aImporter( pObjShell, pItemArr );
 /*N*/         nErrno = aImporter.Import( xStorage, m_xStorage );
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/     rShell.SetConfigManager( this );
 /*N*/ }
 
@@ -248,7 +224,7 @@ static const char pStorageName[] = "Configurations";
 /*N*/         }
 /*N*/ 		delete pItem;
 /*N*/     }
-/*N*/ 
+/*N*/
 /*N*/     delete pItemArr;
 /*N*/ }
 
@@ -265,13 +241,13 @@ static const char pStorageName[] = "Configurations";
 /*?*/         return pObjShell->GetMedium()->GetName();
 /*?*/     else if ( m_xStorage.Is() )
 /*?*/         return m_xStorage->GetName();
-/*?*/ 
+/*?*/
 /*?*/     DBG_ERROR("No storage!")
 /*?*/     return String();
 /*?*/ }
 
 /*?*/ void SfxConfigManager::SetModified(BOOL bMod)
-/*?*/ {DBG_BF_ASSERT(0, "STRIP"); //STRIP001 
+/*?*/ {DBG_BF_ASSERT(0, "STRIP"); //STRIP001
 //STRIP001 	bModified = bMod;
 //STRIP001 	if ( bMod && pObjShell)
 //STRIP001 		pObjShell->SetModified( TRUE );
@@ -295,7 +271,7 @@ static const char pStorageName[] = "Configurations";
 /*N*/ {
 /*N*/     // for the case that there are several layers of configuration
 /*N*/     USHORT nOldCount = pItemArr->Count();
-/*N*/ 
+/*N*/
 /*N*/     SvStorageInfoList aList;
 /*N*/     rStorage.FillInfoList( &aList );
 /*N*/     for( USHORT i = 0; i < aList.Count(); i++ )
@@ -307,7 +283,7 @@ static const char pStorageName[] = "Configurations";
 /*?*/             SfxConfigItem_Impl* pItem = NULL;
 /*?*/             String aStreamName = rInfo.GetName();
 /*?*/             USHORT nType = SfxConfigManagerImExport_Impl::GetType( aStreamName );
-/*?*/ 
+/*?*/
 /*?*/             // check items from upper layers if one of them is of the same type
 /*?*/             for ( USHORT nPos=0; nPos<nOldCount; nPos++ )
 /*?*/             {
@@ -317,7 +293,7 @@ static const char pStorageName[] = "Configurations";
 /*?*/                     break;
 /*?*/                 }
 /*?*/             }
-/*?*/ 
+/*?*/
 /*?*/             if ( !pItem )
 /*?*/             {
 /*?*/                 // new item
@@ -325,16 +301,16 @@ static const char pStorageName[] = "Configurations";
 /*?*/                 pItemArr->Insert( pItem, pItemArr->Count() );
 /*?*/                 pItem->aStreamName = aStreamName;
 /*?*/                 pItem->nType = nType;
-/*?*/ 
+/*?*/
 /*?*/                 // compatibility for 5.0 format
 /*?*/                 pItem->bDefault = FALSE;
 /*?*/             }
-/*?*/ 
+/*?*/
 /*?*/             // every item will hold a reference to its storage
 /*?*/             pItem->xStorage = &rStorage;
 /*?*/         }
 /*N*/     }
-/*N*/ 
+/*N*/
 /*N*/     return TRUE;
 /*N*/ }
 
@@ -366,7 +342,7 @@ static const char pStorageName[] = "Configurations";
 /*?*/                 nErrno = aExporter.Export( m_xStorage, pDocumentStorage );
 /*?*/                 bRet = ( nErrno == ERR_NO );
 /*?*/             }
-/*?*/ 
+/*?*/
 /*?*/             if ( bRet )
 /*?*/             {
 /*?*/                 // can't commit changes if the documents' storage is under control of the document
@@ -380,7 +356,7 @@ static const char pStorageName[] = "Configurations";
 /*?*/                 }
 /*?*/             }
 /*N*/         }
-/*N*/ 
+/*N*/
 /*N*/         if ( bRet && !pStorage || pStorage == (SotStorage*) m_xStorage )
 /*N*/         {
 /*N*/             // only storing into own storage was requested
@@ -390,10 +366,10 @@ static const char pStorageName[] = "Configurations";
 /*N*/     }
 /*N*/ 	else
 /*?*/ 		DBG_ASSERT( pStorage, "Can't save configuration!" );
-/*?*/ 
+/*?*/
 /*?*/     if ( !bRet || !pStorage )
 /*?*/ 		return FALSE;
-/*?*/ 
+/*?*/
 /*?*/     // store also into storage passed as parameter, but don't commit the changes,  because this will be done by the caller
 /*?*/     if ( !pStorage->IsOLEStorage() )
 /*?*/ 	{
@@ -415,15 +391,15 @@ static const char pStorageName[] = "Configurations";
 /*?*/         nErrno = aExporter.Export( m_xStorage, pStorage );
 /*?*/         bRet = ( nErrno == ERR_NO );
 /*?*/ 	}
-/*?*/ 
+/*?*/
 /*?*/ 	bModified = !bRet;
 /*?*/     return bRet;
 /*N*/ }
 
 /*?*/ BOOL SfxConfigManager::StoreConfiguration_Impl( SotStorage* pStorage )
-/*?*/ {DBG_BF_ASSERT(0, "STRIP"); //STRIP001 
+/*?*/ {DBG_BF_ASSERT(0, "STRIP"); //STRIP001
 /*?*/     BOOL bRet = TRUE;
-//STRIP001 
+//STRIP001
 //STRIP001     // store directly into the destination storage
 //STRIP001     USHORT nCount = pItemArr->Count();
 //STRIP001     for ( USHORT nPos=0; bRet && nPos<nCount; nPos++ )
@@ -432,7 +408,7 @@ static const char pStorageName[] = "Configurations";
 //STRIP001         SfxConfigItem* pCItem = pItem->pCItem;
 //STRIP001         if ( pCItem && pCItem->IsModified() )
 //STRIP001 			pItem->bDefault = pCItem->IsDefault();
-//STRIP001 
+//STRIP001
 //STRIP001         if ( pItem->bDefault )
 //STRIP001         {
 //STRIP001             // elements with default configuration will not be stored
@@ -449,11 +425,11 @@ static const char pStorageName[] = "Configurations";
 //STRIP001                 	pItem->xStorage = m_xStorage;
 //STRIP001 			}
 //STRIP001         }
-//STRIP001 
+//STRIP001
 //STRIP001 		if ( pCItem )
 //STRIP001 			pCItem->SetModified( FALSE );
 //STRIP001     }
-//STRIP001 
+//STRIP001
 /*?*/     return bRet;
 /*?*/ }
 
@@ -482,7 +458,7 @@ static const char pStorageName[] = "Configurations";
 /*N*/             return;
 /*N*/         }
 /*N*/     }
-/*N*/ 
+/*N*/
 /*N*/     SfxConfigItem_Impl* pItem = new SfxConfigItem_Impl( &rCItem );
 /*N*/     pItemArr->Insert( pItem, pItemArr->Count() );
 /*N*/     pItem->bDefault = rCItem.IsDefault();
@@ -516,11 +492,11 @@ static const char pStorageName[] = "Configurations";
 /*N*/ 						break;
 /*N*/ 					}
 /*N*/ 			}
-/*N*/ 
+/*N*/
 /*N*/             return;
 /*N*/         }
 /*N*/     }
-/*N*/ 
+/*N*/
 /*N*/     DBG_ERROR( "Item not registered!" );
 /*N*/ }
 
@@ -532,14 +508,14 @@ static const char pStorageName[] = "Configurations";
 /*N*/         if ( pItem->nType == nType )
 /*N*/             return TRUE;
 /*N*/     }
-/*N*/ 
+/*N*/
 /*N*/     return FALSE;
 /*N*/ }
 
 /*N*/ BOOL SfxConfigManager::LoadConfigItem( SfxConfigItem& rCItem )
 /*N*/ {
 /*N*/     DBG_ASSERT( m_xStorage.Is(), "No storage for configurations!" );
-/*N*/ 
+/*N*/
 /*N*/     // search for item
 /*N*/     for( USHORT i = 0; i < pItemArr->Count(); ++i )
 /*N*/     {
@@ -551,15 +527,15 @@ static const char pStorageName[] = "Configurations";
 /*N*/             SfxConfigItem* pCfgItem = NULL;
 /*N*/             if ( pItem->pCItem && pItem->pCItem->IsModified() )
 /*N*/                 pCfgItem = pItem->pCItem;
-/*N*/ 
+/*N*/
 /*N*/             USHORT nCount = pItem->aItems.Count();
 /*N*/             for ( USHORT nItem=0; nItem<nCount; nItem++ )
 /*N*/                 if ( pItem->aItems[nItem]->IsModified() )
 /*N*/                     pCfgItem = pItem->aItems[nItem];
-/*N*/ 
+/*N*/
 /*N*/             if ( pCfgItem )
 /*?*/                 pCfgItem->StoreConfig();
-/*N*/ 
+/*N*/
 /*N*/             if ( pItem->bDefault )
 /*N*/             {
 /*N*/                 // no configuration in storage
@@ -577,23 +553,23 @@ static const char pStorageName[] = "Configurations";
 /*N*/                 rCItem.UseDefault();
 /*N*/                 return FALSE;
 /*N*/             }
-/*N*/ 
+/*N*/
 /*N*/             return TRUE;
 /*N*/         }
 /*N*/     }
-/*N*/ 
+/*N*/
 /*N*/     DBG_ERROR("ItemType not registered!");
 /*N*/     return FALSE;
 /*N*/ }
 
 /*?*/ BOOL SfxConfigManager::StoreConfigItem( SfxConfigItem& rCItem )
-/*?*/ {DBG_BF_ASSERT(0, "STRIP");return FALSE;//STRIP001 
+/*?*/ {DBG_BF_ASSERT(0, "STRIP");return FALSE;//STRIP001
 //STRIP001     DBG_ASSERT( m_xStorage.Is(), "No storage for configurations!" );
 //STRIP001     if ( !m_xStorage.Is() )
 //STRIP001         return FALSE;
-//STRIP001 
+//STRIP001
 //STRIP001 	BOOL bRet = TRUE;
-//STRIP001 
+//STRIP001
 //STRIP001     // search for item
 //STRIP001     for( USHORT i = 0; i < pItemArr->Count(); ++i )
 //STRIP001     {
@@ -616,14 +592,14 @@ static const char pStorageName[] = "Configurations";
 //STRIP001                     bRet = rCItem.Store( *m_xStorage );
 //STRIP001 				}
 //STRIP001             }
-//STRIP001 
+//STRIP001
 //STRIP001             if ( rCItem.GetConfigManager() == this  )
 //STRIP001 				rCItem.SetModified( FALSE );
-//STRIP001 
+//STRIP001
 //STRIP001 			break;
 //STRIP001         }
 //STRIP001     }
-//STRIP001 
+//STRIP001
 //STRIP001     DBG_ASSERT( i<pItemArr->Count(), "Item not registered!" );
 //STRIP001     return bRet;
 /*?*/ }
@@ -633,9 +609,9 @@ static const char pStorageName[] = "Configurations";
 //STRIP001     DBG_ASSERT( m_xStorage.Is(), "No storage for configurations!" );
 //STRIP001     if ( !m_xStorage.Is() )
 //STRIP001         return FALSE;
-//STRIP001 
+//STRIP001
 //STRIP001 	BOOL bRet = TRUE;
-//STRIP001 
+//STRIP001
 //STRIP001     // search for item
 //STRIP001     for( USHORT i = 0; i < pItemArr->Count(); ++i )
 //STRIP001     {
@@ -644,22 +620,22 @@ static const char pStorageName[] = "Configurations";
 //STRIP001         {
 //STRIP001             pItem->bDefault = FALSE;
 //STRIP001             pItem->xStorage = m_xStorage;
-//STRIP001 
+//STRIP001
 //STRIP001             // store all items that have not been stored before
 //STRIP001             bRet = rCItem.Store( *m_xStorage );
-//STRIP001 
+//STRIP001
 //STRIP001             if ( rCItem.GetConfigManager() == this  )
 //STRIP001 				rCItem.SetModified( FALSE );
-//STRIP001 
+//STRIP001
 //STRIP001 			break;
 //STRIP001 		}
 //STRIP001 	}
-//STRIP001 
+//STRIP001
 //STRIP001 	return bRet;
 //STRIP001 }
 
 /*?*/ void SfxConfigManager::CopyConfigItem( SfxConfigManager& rMgr, USHORT nType )
-/*?*/ {DBG_BF_ASSERT(0, "STRIP"); //STRIP001 
+/*?*/ {DBG_BF_ASSERT(0, "STRIP"); //STRIP001
 //STRIP001 	BOOL bIsDefault = TRUE;
 //STRIP001 	for( USHORT i = 0; i < rMgr.pItemArr->Count(); ++i )
 //STRIP001     {
@@ -670,16 +646,16 @@ static const char pStorageName[] = "Configurations";
 //STRIP001 			{
 //STRIP001 				rMgr.m_xStorage->CopyTo( pItem->aStreamName, m_xStorage, pItem->aStreamName );
 //STRIP001 				bIsDefault = FALSE;
-//STRIP001 
+//STRIP001
 //STRIP001 				// Important: Set modified flag, because SfxConfigManager is modified due to CopyTo!
 //STRIP001 				// Otherwise StoreConfiguration doesn't call Commit() which is needed to write back to the storage.
 //STRIP001 				SetModified( TRUE );
 //STRIP001 			}
-//STRIP001 
+//STRIP001
 //STRIP001 			break;
 //STRIP001 		}
 //STRIP001 	}
-//STRIP001 
+//STRIP001
 //STRIP001     for( USHORT n = 0; n < pItemArr->Count(); ++n )
 //STRIP001     {
 //STRIP001         SfxConfigItem_Impl* pItem = (*pItemArr)[n];
@@ -693,7 +669,7 @@ static const char pStorageName[] = "Configurations";
 //STRIP001 			return;
 //STRIP001 		}
 //STRIP001 	}
-//STRIP001 
+//STRIP001
 //STRIP001 	if ( !bIsDefault )
 //STRIP001 	{
 //STRIP001 		SfxConfigItem_Impl* pItem = new SfxConfigItem_Impl;
