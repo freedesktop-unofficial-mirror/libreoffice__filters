@@ -2,9 +2,9 @@
  *
  *  $RCSfile: document.cxx,v $
  *
- *  $Revision: 1.7 $
+ *  $Revision: 1.8 $
  *
- *  last change: $Author: lo $ $Date: 2004-03-02 12:41:12 $
+ *  last change: $Author: obo $ $Date: 2004-11-16 12:20:31 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -410,7 +410,8 @@ namespace DOM
             return importedNode;
 
         Reference< XNode > aNode;
-        switch (importedNode->getNodeType())
+        NodeType aNodeType = importedNode->getNodeType();
+        switch (aNodeType)
         {
         case NodeType_ATTRIBUTE_NODE:
         {
@@ -444,7 +445,20 @@ namespace DOM
         case NodeType_ELEMENT_NODE:
         {
             Reference< XElement > element(importedNode, UNO_QUERY);
-            Reference< XElement > newElement(createElement(element->getTagName()));
+            OUString aNsUri = importedNode->getNamespaceURI();
+            OUString aNsPrefix = importedNode->getPrefix();            
+            OUString aQName = element->getTagName();
+            Reference< XElement > newElement;
+            if (aNsUri.getLength() > 0)
+            {
+                
+                if (aNsPrefix.getLength() > 0) 
+                    aQName = aNsPrefix + OUString::createFromAscii(":") + aQName;
+                newElement = createElementNS(aNsUri, aQName);
+            } 
+            else
+                newElement = createElement(aQName);
+
             // get attributes
             if (element->hasAttributes())
             {
@@ -453,7 +467,17 @@ namespace DOM
                 for (sal_Int32 i = 0; i < attribs->getLength(); i++)
                 {
                     curAttr = Reference< XAttr >(attribs->item(i), UNO_QUERY);
-                    newElement->setAttributeNS(curAttr->getNamespaceURI(), curAttr->getNodeName(), curAttr->getValue());
+                    OUString aAttrUri = curAttr->getNamespaceURI();
+                    OUString aAttrPrefix = curAttr->getPrefix();
+                    OUString aAttrName = curAttr->getName();
+                    if (aAttrUri.getLength() > 0) 
+                    {
+                        if (aAttrPrefix.getLength() > 0)
+                            aAttrName = aAttrPrefix + OUString::createFromAscii(":") + aAttrName;                                        
+                        newElement->setAttributeNS(aAttrUri, aAttrName, curAttr->getValue());
+                    } 
+                    else
+                        newElement->setAttribute(aAttrName, curAttr->getValue());
                 }
             }
             aNode.set(newElement, UNO_QUERY);
@@ -497,8 +521,7 @@ namespace DOM
             Reference< XNode > child = importedNode->getFirstChild();
             if (child.is()) 
             {
-                Reference< XNode > ic = _import_siblings(child, aNode, this);                
-                aNode->appendChild(ic);
+                _import_siblings(child, aNode, this);                
             }
         }        
 
