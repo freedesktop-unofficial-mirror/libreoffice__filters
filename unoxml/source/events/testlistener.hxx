@@ -2,9 +2,9 @@
  *
  *  $RCSfile: testlistener.hxx,v $
  *
- *  $Revision: 1.2 $
+ *  $Revision: 1.3 $
  *
- *  last change: $Author: lo $ $Date: 2004-02-27 17:14:27 $
+ *  last change: $Author: obo $ $Date: 2004-11-16 12:29:26 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
