@@ -2,9 +2,9 @@
  *
  *  $RCSfile: fontmap.cpp,v $
  *
- *  $Revision: 1.1 $
+ *  $Revision: 1.2 $
  *
- *  last change: $Author: dvo $ $Date: 2003-10-15 14:38:55 $
+ *  last change: $Author: vg $ $Date: 2005-02-16 18:14:28 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -68,6 +68,12 @@
 #include <string.h>
 #endif
 
+// #i42367# prevent MS compiler from using system locale for parsing
+#ifdef _MSC_VER
+#pragma setlocale("C")
+#endif
+
+
 struct FontEntry
 {
     const char *familyname;
@@ -78,7 +84,7 @@ struct FontEntry
  * ratio는 한글 70%, 숫자 10% 영문 20%의 비율로 구성되었다는 가정하에 정해진다.
  */
 const struct FontEntry FontMapTab[] =
-{ 
+{
     {"명조",0, 0.97},
     {"고딕",1, 0.97},
     {"샘물",1, 0.97},
