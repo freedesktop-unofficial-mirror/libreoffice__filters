@@ -66,6 +66,8 @@ import org.openoffice.xmerge.util.IntArrayList;
 
 import org.openoffice.xmerge.converter.xml.sxc.SpreadsheetEncoder;
 import org.openoffice.xmerge.converter.xml.sxc.Format;
+import org.openoffice.xmerge.converter.xml.sxc.BookSettings;
+import org.openoffice.xmerge.converter.xml.sxc.SheetSettings;
 import org.openoffice.xmerge.converter.xml.sxc.NameDefinition;
 import org.openoffice.xmerge.converter.xml.OfficeConstants;
 import org.openoffice.xmerge.converter.xml.sxc.pexcel.records.Workbook;
@@ -260,7 +262,19 @@ final class PocketExcelEncoder extends SpreadsheetEncoder {
         nd.setDefinition(parseFormula(parsedName));
 
         wb.addNameDefinition(nd);
-    }     
+    }  
+    
+     /**
+     *  Set the width of the columns in the WorkBook.
+     *
+     *  @param  columnWidths  An <code>IntArrayList</code> of column
+     *                        widths.
+     */
+    public void addSettings(BookSettings s) throws IOException {
+
+        wb.addSettings(s);
+    }
+    
     /**
      *  This method sets the format of a cell to <i>string</i>.
      *

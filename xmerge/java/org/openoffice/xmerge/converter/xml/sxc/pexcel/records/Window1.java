@@ -89,6 +89,24 @@ public class Window1 implements BIFFRecord {
     public Window1(InputStream is) throws IOException{
         read(is);	
     }
+    
+    /**
+     * Set the number of the active sheet
+     *
+     * @param activeSheet number of the active sheet 
+     */
+    public void setActiveSheet(int activeSheet) {
+        itabCur = EndianConverter.writeShort((short) activeSheet);
+    }
+    
+    /**
+     * Get the number of the active sheet 
+     *
+     * @return 	 number of the active sheet
+     */
+    public int getActiveSheet() {
+        return EndianConverter.readShort(itabCur);
+    }	
 
     /**
      * Get the hex code for this particular <code>BIFFRecord</code> 
