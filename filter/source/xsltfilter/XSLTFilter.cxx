@@ -72,7 +72,12 @@ private:
     oslCondition  m_cTransformed;
     sal_Bool m_bError;
     sal_Bool m_bTerminated;
+    
+    OUString m_aExportBaseUrl;
+    OUString m_aOldBaseUrl;
+    
     OUString rel2abs(const OUString&);
+    
 public:
 
     // ctor...
@@ -130,6 +135,7 @@ XSLTFilter::XSLTFilter( const Reference< XMultiServiceFactory > &r )
 void XSLTFilter::disposing(const EventObject& e) throw (RuntimeException)
 {
 }
+
 void XSLTFilter::started() throw (RuntimeException)
 {
     osl_resetCondition(m_cTransformed);
@@ -141,12 +147,12 @@ void XSLTFilter::error(const Any& a) throw (RuntimeException)
 }
 void XSLTFilter::closed() throw (RuntimeException)
 {
-    osl_setCondition(m_cTransformed);
+    osl_setCondition(m_cTransformed);    
 }
 void XSLTFilter::terminated() throw (RuntimeException)
 {
     m_bTerminated = sal_True;
-    osl_setCondition(m_cTransformed);
+    osl_setCondition(m_cTransformed);    
 }
 
 OUString XSLTFilter::rel2abs(const OUString& s)
@@ -329,9 +335,9 @@ sal_Bool XSLTFilter::exporter(
     nv.Name = OUString::createFromAscii("TargetBaseURL");
     INetURLObject ineturl(sURL);
     ineturl.removeSegment();
-    nv.Value <<= OUString(ineturl.GetMainURL(INetURLObject::NO_DECODE));
-    args[3] <<= nv;    
-
+    m_aExportBaseUrl = ineturl.GetMainURL(INetURLObject::NO_DECODE);
+    nv.Value <<= m_aExportBaseUrl;
+    args[3] <<= nv;
 
     m_tcontrol = Reference< XActiveDataControl >(m_rServiceFactory->createInstanceWithArguments(
         OUString::createFromAscii("com.sun.star.comp.JAXTHelper"), args), UNO_QUERY);
