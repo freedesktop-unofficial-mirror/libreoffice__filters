@@ -2,9 +2,9 @@
  *
  *  $RCSfile: forms_FormComponent.cxx,v $
  *
- *  $Revision: 1.4 $
+ *  $Revision: 1.5 $
  *
- *  last change: $Author: hr $ $Date: 2004-08-03 10:49:09 $
+ *  last change: $Author: vg $ $Date: 2005-02-16 17:38:14 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -108,7 +108,7 @@
 #ifndef _FRM_SERVICES_HXX_
 #include "services.hxx"
 #endif
-#ifndef _RTL_LOGFILE_HXX_ 
+#ifndef _RTL_LOGFILE_HXX_
 #include <rtl/logfile.hxx>
 #endif
 
@@ -1506,10 +1506,10 @@ void SAL_CALL OBoundControlModel::loaded(const com::sun::star::lang::EventObject
                 _onValueChanged();
         }
     }
-    
+
     if ( xOldField != m_xField )
     {
-        Any aNewValue; aNewValue <<= m_xField;	
+        Any aNewValue; aNewValue <<= m_xField;
         Any aOldValue; aOldValue <<= xOldField;
         sal_Int32 nHandle = PROPERTY_ID_BOUNDFIELD;
         OPropertySetHelper::fire(&nHandle, &aNewValue, &aOldValue, 1, sal_False);
@@ -1652,7 +1652,7 @@ void OBoundControlModel::reset() throw (RuntimeException)
             {
                 _reset();	// setzen der Werte,
                 _commit();	// uebertragen der Werte ins Feld
-                            // fuer das zuruecksetzen des modifyflags ist das Formular zuständig
+                            // fuer das zuruecksetzen des modifyflags ist das Formular zustaendig
             }
             else
                 _onValueChanged();
@@ -1684,7 +1684,7 @@ void OBoundControlModel::setField( const Reference< XPropertySet>& _rxField,sal_
             sal_Int32 nHandle = PROPERTY_ID_BOUNDFIELD;
             OPropertySetHelper::fire(&nHandle, &aNewValue, &aOldValue, 1, sal_False);
         }
-    }	
+    }
 }
 // -----------------------------------------------------------------------------
 
