@@ -2,9 +2,9 @@
  *
  *  $RCSfile: svx_scene3d.cxx,v $
  *
- *  $Revision: 1.4 $
+ *  $Revision: 1.5 $
  *
- *  last change: $Author: hr $ $Date: 2004-08-03 15:41:52 $
+ *  last change: $Author: vg $ $Date: 2005-02-16 17:41:53 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -196,16 +196,16 @@ namespace binfilter {
 /*N*/ #define SC_FPEXCEPTIONS_OFF()	_control87( MCW_EM, MCW_EM )
 /*N*/ 	SC_FPEXCEPTIONS_OFF();
 /*N*/ #endif
-/*N*/ 
+/*N*/
 /*N*/ 	// Fuer WIN95/NT die FP-Exceptions abschalten
 /*N*/ #if defined(WNT) || defined(WIN)
 /*N*/ #define SC_FPEXCEPTIONS_ON()	_control87( _MCW_EM, 0 )
 /*N*/ #define SC_FPEXCEPTIONS_OFF()	_control87( _MCW_EM, _MCW_EM )
 /*N*/ 	SC_FPEXCEPTIONS_OFF();
 /*N*/ #endif
-/*N*/ 
+/*N*/
 /*N*/ 	// Defaults setzen
-/*N*/ 
+/*N*/
 /*N*/ 	// set defaults for LightGroup from ItemPool
 /*N*/ 	aLightGroup.SetModelTwoSide(GetTwoSidedLighting());
 /*N*/ 	aLightGroup.SetIntensity( GetLightColor1(), Base3DMaterialDiffuse, Base3DLight0);
@@ -233,9 +233,9 @@ namespace binfilter {
 /*N*/ 	aLightGroup.SetDirection( GetLightDirection6(), Base3DLight5);
 /*N*/ 	aLightGroup.SetDirection( GetLightDirection7(), Base3DLight6);
 /*N*/ 	aLightGroup.SetDirection( GetLightDirection8(), Base3DLight7);
-/*N*/ 
+/*N*/
 /*N*/ 	bDither = rDefault.GetDefaultDither();
-/*N*/ 
+/*N*/
 /*N*/ 	// Alte Werte initialisieren
 /*N*/ 	aCamera.SetViewWindow(-2, -2, 4, 4);
 /*N*/ 	aCameraSet.SetDeviceRectangle(-2, 2, -2, 2);
@@ -243,7 +243,7 @@ namespace binfilter {
 /*N*/ 	Rectangle aRect(0, 0, 10, 10);
 /*N*/ 	aCameraSet.SetViewportRectangle(aRect);
 /*N*/ 	nSortingMode = E3D_SORT_FAST_SORTING | E3D_SORT_IN_PARENTS | E3D_SORT_TEST_LENGTH;
-/*N*/ 
+/*N*/
 /*N*/ 	// set defaults for Camera from ItemPool
 /*N*/ 	aCamera.SetProjection(GetPerspective());
 /*N*/ 	Vector3D aActualPosition = aCamera.GetPosition();
@@ -273,30 +273,30 @@ namespace binfilter {
 //STRIP001 BOOL E3dScene::AreThereTransparentParts() const
 //STRIP001 {
 //STRIP001 	BOOL bRetval(FALSE);
-//STRIP001 
+//STRIP001
 //STRIP001 	SdrObjListIter a3DIterator(*pSub, IM_DEEPWITHGROUPS);
 //STRIP001 	while ( !bRetval && a3DIterator.IsMore() )
 //STRIP001 	{
 //STRIP001 		SdrObject* pObj = a3DIterator.Next();
-//STRIP001 
+//STRIP001
 //STRIP001 		// Nur darstellbare Objekte bewerten
 //STRIP001 		if(pObj->ISA(E3dCompoundObject))
 //STRIP001 		{
 //STRIP001 			// get const ItemSet reference
 //STRIP001 			const SfxItemSet& rSet = pObj->GetItemSet();
-//STRIP001 
+//STRIP001
 //STRIP001 			// Flaechenattribut testen
 //STRIP001 			UINT16 nFillTrans = ((const XFillTransparenceItem&)(rSet.Get(XATTR_FILLTRANSPARENCE))).GetValue();
 //STRIP001 			if(nFillTrans != 0)
 //STRIP001 				bRetval = TRUE;
-//STRIP001 
+//STRIP001
 //STRIP001 			if(!bRetval)
 //STRIP001 			{
 //STRIP001 				// Linienattribut testen
 //STRIP001 				UINT16 nLineTransparence = ((const XLineTransparenceItem&)(rSet.Get(XATTR_LINETRANSPARENCE))).GetValue();
 //STRIP001 				if(nLineTransparence != 0)
 //STRIP001 					bRetval = TRUE;
-//STRIP001 
+//STRIP001
 //STRIP001 				if(!bRetval)
 //STRIP001 				{
 //STRIP001 					// test FloatTransparence
@@ -408,28 +408,28 @@ namespace binfilter {
 /*N*/ 	aCamera = rNewCamera;
 /*N*/ 	ImpSetSceneItemsFromCamera();
 /*N*/ 	SetRectsDirty();
-/*N*/ 
+/*N*/
 /*N*/ 	// Neue Kamera aus alter fuellen
 /*N*/ 	Camera3D& rCam = (Camera3D&)GetCamera();
-/*N*/ 
+/*N*/
 /*N*/ 	// Ratio abschalten
 /*N*/ 	if(rCam.GetAspectMapping() == AS_NO_MAPPING)
 /*N*/ 		GetCameraSet().SetRatio(0.0);
-/*N*/ 
+/*N*/
 /*N*/ 	// Abbildungsgeometrie setzen
 /*N*/ 	Vector3D aVRP = rCam.GetViewPoint();
 /*N*/ 	Vector3D aVPN = aVRP - rCam.GetVRP();
 /*N*/ 	Vector3D aVUV = rCam.GetVUV();
-/*N*/ 	
+/*N*/
 /*N*/ 	// #91047# use SetViewportValues() to set VRP, VPN and VUV as vectors, too.
 /*N*/ 	// Else these values would not be exported/imported correctly.
 /*N*/ 	//GetCameraSet().SetOrientation(aVRP, aVPN, aVUV);
 /*N*/ 	GetCameraSet().SetViewportValues(aVRP, aVPN, aVUV);
-/*N*/ 
+/*N*/
 /*N*/ 	// Perspektive setzen
 /*N*/ 	GetCameraSet().SetPerspective(rCam.GetProjection() == PR_PERSPECTIVE);
 /*N*/ 	GetCameraSet().SetViewportRectangle((Rectangle&)rCam.GetDeviceWindow());
-/*N*/ 
+/*N*/
 /*N*/ 	// E3dLabel-Objekte muessen neu an die Projektion angepasst werden
 /*N*/ 	if ( aLabelList.Count() > 0 )
 /*N*/ 	{
@@ -447,24 +447,24 @@ namespace binfilter {
 /*N*/ void E3dScene::NewObjectInserted(const E3dObject* p3DObj)
 /*N*/ {
 /*N*/ 	E3dObject::NewObjectInserted(p3DObj);
-/*N*/ 
+/*N*/
 /*N*/ 	if ( p3DObj == this )
 /*N*/ 		return;
-/*N*/ 
+/*N*/
 /*N*/ 	if ( p3DObj->ISA(E3dLabelObj) )
 /*N*/ 	{
 /*N*/ 		aLabelList.Insert((E3dLabelObj*) p3DObj, LIST_APPEND);
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	// falls Unterobjekte vorhanden sind, auch diese pruefen
 /*N*/ 	if ( p3DObj->IsGroupObject() )
 /*N*/ 	{
 /*N*/ 		SdrObjListIter a3DIterator(*p3DObj, IM_DEEPWITHGROUPS);
-/*N*/ 
+/*N*/
 /*N*/ 		while ( a3DIterator.IsMore() )
 /*N*/ 		{
 /*N*/ 			SdrObject* pObj = a3DIterator.Next();
-/*N*/ 
+/*N*/
 /*N*/ 			if ( pObj->ISA(E3dLabelObj) )
 /*N*/ 			{
 /*N*/ 				aLabelList.Insert((E3dLabelObj*) pObj, LIST_APPEND);
@@ -542,24 +542,24 @@ namespace binfilter {
 /*N*/ 	// Alter Kram
 /*N*/ 	Matrix4D aFullTrans = GetFullTransform();
 /*N*/ 	aCamera.FitViewToVolume(GetBoundVolume(), aFullTrans);
-/*N*/ 
+/*N*/
 /*N*/ 	// Neuer Kram
 /*N*/ 	// Maximas holen in Augkoordinaten zwecks Z-Werten
 /*N*/ 	Volume3D aNewVol;
 /*N*/ 	Vector3D aTfVec;
 /*N*/ 	Vol3DPointIterator aIter(GetBoundVolume());
-/*N*/ 
+/*N*/
 /*N*/ 	GetCameraSet().SetObjectTrans(aFullTrans);
 /*N*/ 	while ( aIter.Next(aTfVec) )
 /*N*/ 	{
 /*N*/ 		aTfVec = GetCameraSet().ObjectToEyeCoor(aTfVec);
 /*N*/ 		aNewVol.Union(aTfVec);
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	// ... und merken
 /*N*/ 	double fZMin = -aNewVol.MaxVec().Z();
 /*N*/ 	double fZMax = -aNewVol.MinVec().Z();
-/*N*/ 
+/*N*/
 /*N*/ 	// Jetzt XY-Werte projizieren auf Projektionsflaeche
 /*N*/ 	// in Device-Koordinaten
 /*N*/ 	Matrix4D aWorldToDevice = GetCameraSet().GetOrientation();
@@ -575,7 +575,7 @@ namespace binfilter {
 /*N*/ 		aTfVec *= aWorldToDevice;
 /*N*/ 		aNewVol.Union(aTfVec);
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	// Labels behandeln
 /*N*/ 	ULONG nLabelCnt = aLabelList.Count();
 /*N*/ 	if ( nLabelCnt > 0 )
@@ -589,45 +589,45 @@ namespace binfilter {
 /*N*/ 		else
 /*N*/ 			aMatWorldToView.Ortho(aNewVol.MinVec().X(), aNewVol.MaxVec().X(),
 /*N*/ 			aNewVol.MinVec().Y(), aNewVol.MaxVec().Y(), fZMin, fZMax);
-/*N*/ 
+/*N*/
 /*N*/ 		// Logische Abmessungen der Szene holen
 /*N*/ 		Rectangle aSceneRect = GetSnapRect();
-/*N*/ 
+/*N*/
 /*N*/ 		// Matrix DeviceToView aufbauen
 /*N*/ 		Vector3D aTranslate, aScale;
-/*N*/ 
+/*N*/
 /*N*/ 		aTranslate[0] = (double)aSceneRect.Left() + (aSceneRect.GetWidth() / 2.0);
 /*N*/ 		aTranslate[1] = (double)aSceneRect.Top() + (aSceneRect.GetHeight() / 2.0);
 /*N*/ 		aTranslate[2] = ZBUFFER_DEPTH_RANGE / 2.0;
-/*N*/ 
+/*N*/
 /*N*/ 		// Skalierung
 /*N*/ 		aScale[0] = (aSceneRect.GetWidth() - 1) / 2.0;
 /*N*/ 		aScale[1] = (aSceneRect.GetHeight() - 1) / -2.0;
 /*N*/ 		aScale[2] = ZBUFFER_DEPTH_RANGE / 2.0;
-/*N*/ 
+/*N*/
 /*N*/ 		aMatWorldToView.Scale(aScale);
 /*N*/ 		aMatWorldToView.Translate(aTranslate);
-/*N*/ 
+/*N*/
 /*N*/ 		// Inverse Matrix ViewToDevice aufbauen
 /*N*/ 		Matrix4D aMatViewToWorld(aMatWorldToView);
 /*N*/ 		aMatViewToWorld.Invert();
-/*N*/ 
+/*N*/
 /*N*/ 		for (ULONG i = 0; i < nLabelCnt; i++)
 /*N*/ 		{
 /*N*/ 			E3dLabelObj* p3DObj = aLabelList.GetObject(i);
 /*N*/ 			const SdrObject* pObj = p3DObj->Get2DLabelObj();
-/*N*/ 
+/*N*/
 /*N*/ 			// View- Abmessungen des Labels holen
 /*N*/ 			const Rectangle& rObjRect = pObj->GetLogicRect();
-/*N*/ 
+/*N*/
 /*N*/ 			// Position des Objektes in Weltkoordinaten ermitteln
 /*N*/ 			Matrix4D aObjTrans = p3DObj->GetFullTransform();
 /*N*/ 			Vector3D aObjPos = aObjTrans * p3DObj->GetPosition();
-/*N*/ 
+/*N*/
 /*N*/ 			// View-Position des Objektes feststellen
 /*N*/ 			// nach ViewKoordinaten
 /*N*/ 			aObjPos *= aMatWorldToView;
-/*N*/ 
+/*N*/
 /*N*/ 			// Relative Position des Labels in View-Koordinaten
 /*N*/ 			Vector3D aRelPosOne(pObj->GetRelativePos(), aObjPos.Z());
 /*N*/ 			aRelPosOne.X() += aObjPos.X();
@@ -635,23 +635,23 @@ namespace binfilter {
 /*N*/ 			Vector3D aRelPosTwo(aRelPosOne);
 /*N*/ 			aRelPosTwo.X() += rObjRect.GetWidth();
 /*N*/ 			aRelPosTwo.Y() += rObjRect.GetHeight();
-/*N*/ 
+/*N*/
 /*N*/ 			// Jetzt Eckpunkte in DeviceKoordinaten bestimmen und
 /*N*/ 			// den Abmessungen hinzufuegen
 /*N*/ 			aRelPosOne *= aMatViewToWorld;
 /*N*/ 			aRelPosOne *= aWorldToDevice;
 /*N*/ 			aNewVol.Union(aRelPosOne);
-/*N*/ 
+/*N*/
 /*N*/ 			aRelPosTwo *= aMatViewToWorld;
 /*N*/ 			aRelPosTwo *= aWorldToDevice;
 /*N*/ 			aNewVol.Union(aRelPosTwo);
 /*N*/ 		}
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	// Z-Werte eintragen
 /*N*/ 	aNewVol.MinVec().Z() = fZMin;
 /*N*/ 	aNewVol.MaxVec().Z() = fZMax;
-/*N*/ 
+/*N*/
 /*N*/ 	// Rueckgabewert setzen
 /*N*/ 	return aNewVol;
 /*N*/ }
@@ -679,17 +679,17 @@ namespace binfilter {
 /*N*/ void E3dScene::InitTransformationSet()
 /*N*/ {
 /*N*/ 	Rectangle aBound(GetSnapRect());
-/*N*/ 
+/*N*/
 /*N*/ 	// GeometricSet reset und mit pBase3D assoziieren
 /*N*/ 	B3dCamera& rSet = GetCameraSet();
-/*N*/ 
+/*N*/
 /*N*/ 	// Transformation auf Weltkoordinaten holen
 /*N*/ 	Matrix4D mTransform = GetFullTransform();
 /*N*/ 	rSet.SetObjectTrans(mTransform);
-/*N*/ 
+/*N*/
 /*N*/ 	// 3D Ausgabe vorbereiten, Maximas holen in DeviceKoordinaten
 /*N*/ 	Volume3D aVolume = FitInSnapRect();
-/*N*/ 
+/*N*/
 /*N*/ 	// Maximas fuer Abbildung verwenden
 /*N*/ 	rSet.SetDeviceVolume(aVolume, FALSE);
 /*N*/ 	rSet.SetViewportRectangle(aBound);
@@ -716,10 +716,10 @@ namespace binfilter {
 /*N*/ 		// Hier die Lichtobjekte erzeugen, um im alten Format schreiben zu koennen
 /*N*/ 		((E3dScene*)(this))->CreateLightObjectsFromLightGroup();
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	// Schreiben
 /*N*/ 	E3dObject::WriteData(rOut);
-/*N*/ 
+/*N*/
 /*N*/ 	if(nVersion < 3830)
 /*N*/ 	{
 /*N*/ 		// Lichtobjekte wieder wegnehmen
@@ -734,16 +734,16 @@ namespace binfilter {
 /*N*/ #endif
 /*N*/ 		// LightGroup schreiben
 /*N*/ 		aLightGroup.WriteData(rOut);
-/*N*/ 
+/*N*/
 /*N*/ #endif
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ #ifdef E3D_STREAMING
 /*N*/ 	SdrDownCompat aCompat(rOut, STREAM_WRITE);
 /*N*/ #ifdef DBG_UTIL
 /*N*/ 	aCompat.SetID("E3dScene");
 /*N*/ #endif
-/*N*/ 
+/*N*/
 /*N*/ 	DBG_ASSERT (rOut.GetVersion(),"3d-Engine: Keine Version am Stream gesetzt!");
 /*N*/ 	if (rOut.GetVersion() < 3560) // FG: Das ist der Zeitpunkt der Umstellung
 /*N*/ 	{
@@ -753,19 +753,19 @@ namespace binfilter {
 /*N*/ 	{
 /*N*/ 		aCamera.WriteData(rOut);
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	rOut << BOOL(bDoubleBuffered);
 /*N*/ 	rOut << BOOL(bClipping);
 /*N*/ 	rOut << BOOL(bFitInSnapRect);
 /*N*/ 	rOut << nSortingMode;
-/*N*/ 
+/*N*/
 /*N*/ 	// neu ab 377:
 /*N*/ 	Vector3D aPlaneDirection = GetShadowPlaneDirection();
 /*N*/ 	rOut << aPlaneDirection;
-/*N*/ 
+/*N*/
 /*N*/ 	// neu ab 383:
 /*N*/ 	rOut << (BOOL)bDither;
-/*N*/ 
+/*N*/
 /*N*/ 	// neu ab 384:
 /*N*/ 	sal_uInt16 nShadeMode = GetShadeMode();
 /*N*/ 	if(nShadeMode == 0)
@@ -775,7 +775,7 @@ namespace binfilter {
 /*N*/ 	else
 /*N*/ 		rOut << (sal_uInt16)Base3DSmooth;
 /*N*/ 	rOut << (BOOL)(nShadeMode > 2);
-/*N*/ 
+/*N*/
 /*N*/ #endif
 /*N*/ #endif	// #ifndef SVX_LIGHT
 /*N*/ }
@@ -791,7 +791,7 @@ namespace binfilter {
 /*N*/ 	if (ImpCheckSubRecords (rHead, rIn))
 /*N*/ 	{
 /*N*/ 		E3dObject::ReadData(rHead, rIn);
-/*N*/ 
+/*N*/
 /*N*/ 		if(CountNumberOfLights())
 /*N*/ 		{
 /*N*/ 			// An dieser Stelle die gelesenen Lampen ausmerzen
@@ -812,15 +812,15 @@ namespace binfilter {
 /*N*/ 				aLightGroup.ReadData(rIn);
 /*N*/ 			}
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		SdrDownCompat aCompat(rIn, STREAM_READ);
 /*N*/ #ifdef DBG_UTIL
 /*N*/ 		aCompat.SetID("E3dScene");
 /*N*/ #endif
 /*N*/ 		BOOL bTmp;
-/*N*/ 
+/*N*/
 /*N*/ 		DBG_ASSERT (rIn.GetVersion(),"3d-Engine: Keine Version am Stream gesetzt!");
-/*N*/ 
+/*N*/
 /*N*/ 		if ((rIn.GetVersion() < 3560) || (rHead.GetVersion() <= 12))
 /*N*/ 		{
 /*N*/ 			rIn >> aCamera;
@@ -829,33 +829,33 @@ namespace binfilter {
 /*N*/ 		{
 /*N*/ 			aCamera.ReadData(rHead, rIn);
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		// Neue Kamera aus alter fuellen
 /*N*/ 		Camera3D& rCam = (Camera3D&)GetCamera();
-/*N*/ 
+/*N*/
 /*N*/ 		// Ratio abschalten
 /*N*/ 		if(rCam.GetAspectMapping() == AS_NO_MAPPING)
 /*N*/ 			GetCameraSet().SetRatio(0.0);
-/*N*/ 
+/*N*/
 /*N*/ 		// Abbildungsgeometrie setzen
 /*N*/ 		Vector3D aVRP = rCam.GetViewPoint();
 /*N*/ 		Vector3D aVPN = aVRP - rCam.GetVRP();
 /*N*/ 		Vector3D aVUV = rCam.GetVUV();
 /*N*/ 		GetCameraSet().SetOrientation(aVRP, aVPN, aVUV);
-/*N*/ 
+/*N*/
 /*N*/ 		// Perspektive setzen
 /*N*/ 		GetCameraSet().SetPerspective(rCam.GetProjection() == PR_PERSPECTIVE);
 /*N*/ 		GetCameraSet().SetViewportRectangle((Rectangle&)rCam.GetDeviceWindow());
-/*N*/ 
+/*N*/
 /*N*/ 		rIn >> bTmp; bDoubleBuffered = bTmp;
 /*N*/ 		rIn >> bTmp; bClipping = bTmp;
 /*N*/ 		rIn >> bTmp; bFitInSnapRect = bTmp;
-/*N*/ 
+/*N*/
 /*N*/ 		if (aCompat.GetBytesLeft() >= sizeof(UINT32))
 /*N*/ 		{
 /*N*/ 			rIn >> nSortingMode;
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		// neu ab 377:
 /*N*/ 		if (aCompat.GetBytesLeft() >= sizeof(Vector3D))
 /*N*/ 		{
@@ -863,13 +863,13 @@ namespace binfilter {
 /*N*/ 			rIn >> aShadowVec;
 /*N*/ 			SetShadowPlaneDirection(aShadowVec);
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		// neu ab 383:
 /*N*/ 		if (aCompat.GetBytesLeft() >= sizeof(BOOL))
 /*N*/ 		{
 /*N*/ 			rIn >> bTmp; bDither = bTmp;
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		// neu ab 384:
 /*N*/ 		if (aCompat.GetBytesLeft() >= sizeof(UINT16))
 /*N*/ 		{
@@ -888,16 +888,16 @@ namespace binfilter {
 /*N*/ 			if(bTmp)
 /*N*/ 				mpObjectItemSet->Put(Svx3DShadeModeItem(3));
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		// SnapRects der Objekte ungueltig
 /*N*/ 		SetRectsDirty();
-/*N*/ 
+/*N*/
 /*N*/ 		// Transformationen initialisieren, damit bei RecalcSnapRect()
 /*N*/ 		// richtig gerechnet wird
 /*N*/ 		InitTransformationSet();
-/*N*/ 
+/*N*/
 /*N*/ 		RebuildLists();
-/*N*/ 
+/*N*/
 /*N*/ 		// set items from combined read objects like lightgroup and camera
 /*N*/ 		ImpSetLightItemsFromLightGroup();
 /*N*/ 		ImpSetSceneItemsFromCamera();
@@ -914,12 +914,12 @@ namespace binfilter {
 /*N*/ {
 /*N*/ 	Vector3D aTfVec;
 /*N*/ 	Volume3D aFitVol;
-/*N*/ 
+/*N*/
 /*N*/ 	SetBoundVolInvalid();
 /*N*/ 	Matrix4D aTransform = GetFullTransform() * aCamera.GetViewTransform();
 /*N*/ 	Vol3DPointIterator aIter(GetBoundVolume(), &aTransform);
 /*N*/ 	Rectangle aRect;
-/*N*/ 
+/*N*/
 /*N*/ 	while ( aIter.Next(aTfVec) )
 /*N*/ 	{
 /*N*/ 		aCamera.DoProjection(aTfVec);
@@ -931,7 +931,7 @@ namespace binfilter {
 /*N*/ 	aCamera.SetViewWindow(aFitVol.MinVec().X(), aFitVol.MinVec().Y(),
 /*N*/ 		aFitVol.GetWidth(), aFitVol.GetHeight());
 /*N*/ 	SetSnapRect(aRect);
-/*N*/ 
+/*N*/
 /*N*/ 	// Die SnapRects aller beteiligten Objekte muessen auf dieser
 /*N*/ 	// veraenderten Basis aufgebaut werden, invalidiere diese. Das
 /*N*/ 	// eigene kann auch invalidiert werden, da ein RecalcSnapRect
@@ -950,17 +950,17 @@ namespace binfilter {
 /*N*/ {
 /*N*/ 	// SnapRects der Objekte ungueltig
 /*N*/ 	SetRectsDirty();
-/*N*/ 
+/*N*/
 /*N*/ 	// SnapRect anpassen, invalidiert auch die SnapRects
 /*N*/ 	// der enthaltenen Objekte
 /*N*/ 	FitSnapRectToBoundVol();
-/*N*/ 
+/*N*/
 /*N*/ 	// Neues BoundVolume der Kamera holen
 /*N*/ 	Volume3D aVolume = FitInSnapRect();
-/*N*/ 
+/*N*/
 /*N*/ 	// Neues BoundVolume an der Kamera setzen
 /*N*/ 	GetCameraSet().SetDeviceVolume(aVolume, FALSE);
-/*N*/ 
+/*N*/
 /*N*/ 	// Danach noch die SnapRects der enthaltenen Objekte
 /*N*/ 	// invalidieren, um diese auf der neuen Grundlage berechnen
 /*N*/ 	// zu lassen (falls diese von FitInSnapRect() berechnet wurden)
@@ -976,26 +976,26 @@ namespace binfilter {
 //STRIP001 void E3dScene::operator=(const SdrObject& rObj)
 //STRIP001 {
 //STRIP001 	E3dObject::operator=(rObj);
-//STRIP001 
+//STRIP001
 //STRIP001 	const E3dScene& r3DObj = (const E3dScene&) rObj;
 //STRIP001 	aCamera			 = r3DObj.aCamera;
 //STRIP001 	bDoubleBuffered  = r3DObj.bDoubleBuffered;
 //STRIP001 	bClipping		 = r3DObj.bClipping;
 //STRIP001 	bFitInSnapRect	 = r3DObj.bFitInSnapRect;
 //STRIP001 	nSortingMode     = r3DObj.nSortingMode;
-//STRIP001 
+//STRIP001
 //STRIP001 	// neu ab 377:
 //STRIP001 	aCameraSet = r3DObj.aCameraSet;
 //STRIP001 	ImpSetSceneItemsFromCamera();
-//STRIP001 
+//STRIP001
 //STRIP001 	// neu ab 383:
 //STRIP001 	aLightGroup = r3DObj.aLightGroup;
 //STRIP001 	ImpSetLightItemsFromLightGroup();
 //STRIP001 	bDither = r3DObj.bDither;
-//STRIP001 
+//STRIP001
 //STRIP001 	bBoundVolValid = FALSE;
 //STRIP001 	RebuildLists();
-//STRIP001 
+//STRIP001
 //STRIP001 	SetRectsDirty();
 //STRIP001 }
 
@@ -1010,9 +1010,9 @@ namespace binfilter {
 /*N*/ 	// zuerst loeschen
 /*N*/ 	aLabelList.Clear();
 /*N*/ 	SdrLayerID nLayerID = GetLayer();
-/*N*/ 
+/*N*/
 /*N*/ 	SdrObjListIter a3DIterator(*pSub, IM_FLAT);
-/*N*/ 
+/*N*/
 /*N*/ 	// dann alle Objekte in der Szene pruefen
 /*N*/ 	while ( a3DIterator.IsMore() )
 /*N*/ 	{
@@ -1020,7 +1020,7 @@ namespace binfilter {
 /*N*/ 		p3DObj->NbcSetLayer(nLayerID);
 /*N*/ 		NewObjectInserted(p3DObj);
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ }
 
 /*************************************************************************
@@ -1043,7 +1043,7 @@ namespace binfilter {
 /*?*/ void E3dScene::SaveGeoData(SdrObjGeoData& rGeo) const
 /*?*/ {
 /*?*/ 	E3dObject::SaveGeoData (rGeo);
-/*?*/ 
+/*?*/
 /*?*/ 	((E3DSceneGeoData &) rGeo).aCamera                = aCamera;
 /*?*/ 	((E3DSceneGeoData &) rGeo).aLabelList             = aLabelList;
 /*?*/ }
@@ -1057,7 +1057,7 @@ namespace binfilter {
 /*?*/ void E3dScene::RestGeoData(const SdrObjGeoData& rGeo)
 /*?*/ {
 /*?*/ 	E3dObject::RestGeoData (rGeo);
-/*?*/ 
+/*?*/
 /*?*/ 	aLabelList = ((E3DSceneGeoData &) rGeo).aLabelList;
 /*?*/ 	SetCamera (((E3DSceneGeoData &) rGeo).aCamera);
 /*?*/ 	FitSnapRectToBoundVol();
@@ -1099,10 +1099,10 @@ namespace binfilter {
 /*N*/ {
 /*N*/ 	E3dObjList* pOL = pSub;
 /*N*/ 	ULONG nObjCnt = pOL->GetObjCount();
-/*N*/ 
+/*N*/
 /*N*/ 	for ( ULONG i = 0; i < nObjCnt; i++ )
 /*?*/ 		pOL->GetObj(i)->NbcSetStyleSheet(pNewStyleSheet, bDontRemoveHardAttr);
-/*N*/ 
+/*N*/
 /*N*/ 	StructureChanged(this);
 /*N*/ }
 
@@ -1117,11 +1117,11 @@ namespace binfilter {
 /*N*/ 	E3dObjList    *pOL          = pSub;
 /*N*/ 	ULONG         nObjCnt       = pOL->GetObjCount();
 /*N*/ 	SfxStyleSheet *pRet         = 0;
-/*N*/ 
+/*N*/
 /*N*/ 	for ( ULONG i = 0; i < nObjCnt; i++ )
 /*N*/ 	{
 /*N*/ 		SfxStyleSheet *pSheet =	pOL->GetObj(i)->GetStyleSheet();
-/*N*/ 
+/*N*/
 /*N*/ 		if (!pRet)
 /*N*/ 			pRet = pSheet;
 /*N*/ 		else if (pSheet)
@@ -1140,17 +1140,17 @@ namespace binfilter {
 //STRIP001 void E3dScene::RotateScene (const Point& rRef, long nWink, double sn, double cs)
 //STRIP001 {
 //STRIP001 	Point UpperLeft, LowerRight, Center, NewCenter;
-//STRIP001 
+//STRIP001
 //STRIP001 	UpperLeft = aOutRect.TopLeft();
 //STRIP001 	LowerRight = aOutRect.BottomRight();
-//STRIP001 
+//STRIP001
 //STRIP001 	long dxOutRectHalf = labs(UpperLeft.X() - LowerRight.X());
 //STRIP001 	dxOutRectHalf /= 2;
 //STRIP001 	long dyOutRectHalf = labs(UpperLeft.Y() - LowerRight.Y());
 //STRIP001 	dyOutRectHalf /= 2;
-//STRIP001 
+//STRIP001
 //STRIP001 	Rectangle RectQuelle(aOutRect), RectZiel(aOutRect);
-//STRIP001 
+//STRIP001
 //STRIP001 	   // Nur der Mittelpunkt wird bewegt. Die Ecken werden von NbcMove bewegt.
 //STRIP001 	   // Fuer das Drehen wird von mir ein kartesisches Koordinatensystem verwendet in dem der Drehpunkt
 //STRIP001 	   // der Nullpunkt ist und die Y- Achse nach oben ansteigt, die X-Achse nach rechts.
@@ -1158,13 +1158,13 @@ namespace binfilter {
 //STRIP001 	Center.X() = (UpperLeft.X() + dxOutRectHalf) - rRef.X();
 //STRIP001 	Center.Y() = -((UpperLeft.Y() + dyOutRectHalf) - rRef.Y());
 //STRIP001 				  // Ein paar Spezialfaelle zuerst abhandeln (n*90 Grad n ganzzahlig)
-//STRIP001 	if (sn==1.0 && cs==0.0) { // 90ø
+//STRIP001  if (sn==1.0 && cs==0.0) { // 90deg
 //STRIP001 		NewCenter.X() = -Center.Y();
 //STRIP001 		NewCenter.Y() = -Center.X();
-//STRIP001 	} else if (sn==0.0 && cs==-1.0) { // 180ø
+//STRIP001  } else if (sn==0.0 && cs==-1.0) { // 180deg
 //STRIP001 		NewCenter.X() = -Center.X();
 //STRIP001 		NewCenter.Y() = -Center.Y();
-//STRIP001 	} else if (sn==-1.0 && cs==0.0) { // 270ø
+//STRIP001  } else if (sn==-1.0 && cs==0.0) { // 270deg
 //STRIP001 		NewCenter.X() =  Center.Y();
 //STRIP001 		NewCenter.Y() = -Center.X();
 //STRIP001 	}
@@ -1176,7 +1176,7 @@ namespace binfilter {
 //STRIP001 		NewCenter.X() = (long) (Center.X() * cs - Center.Y() * sn);
 //STRIP001 		NewCenter.Y() = (long) (Center.X() * sn + Center.Y() * cs);
 //STRIP001 	}
-//STRIP001 
+//STRIP001
 //STRIP001 	Size Differenz;
 //STRIP001 	Point DiffPoint = (NewCenter - Center);
 //STRIP001 	Differenz.Width() = DiffPoint.X();
@@ -1193,7 +1193,7 @@ namespace binfilter {
 //STRIP001 void E3dScene::TakeObjNameSingul(XubString& rName) const
 //STRIP001 {
 //STRIP001 	rName=ImpGetResStr(STR_ObjNameSingulScene3d);
-//STRIP001 
+//STRIP001
 //STRIP001 	String aName( GetName() );
 //STRIP001 	if(aName.Len())
 //STRIP001 	{
@@ -1217,7 +1217,7 @@ namespace binfilter {
 
 /*************************************************************************
 |*
-|* Die NbcRotate-Routine überlädt die des SdrObject. Die Idee ist die Scene
+|* Die NbcRotate-Routine ueberlaedt die des SdrObject. Die Idee ist die Scene
 |* drehen zu koennen und relativ zur Lage der Scene dann auch die Objekte
 |* in der Scene
 |*
@@ -1229,14 +1229,14 @@ namespace binfilter {
 //STRIP001 		// werden die Klebepunkte relativ zur Seite definiert. Sie nehmen an der Drehung der Szene noch nicht Teil
 //STRIP001 		// dafuer gibt es den
 //STRIP001 	SetGlueReallyAbsolute(TRUE);
-//STRIP001 
+//STRIP001
 //STRIP001 		// So dass war die Szene, ab jetzt kommen die Objekte in der Szene
-//STRIP001 		// 3D-Objekte gibt es nur ein einziges das kann zwar mehrere Flächen haben aber die Flaechen
+//STRIP001      // 3D-Objekte gibt es nur ein einziges das kann zwar mehrere Flaechen haben aber die Flaechen
 //STRIP001 		// muessen ja nicht zusammenhaengend sein
 //STRIP001 		// es ermoeglicht den Zugriff auf Kindobjekte
 //STRIP001 		// Ich gehe also die gesamte Liste durch und rotiere um die Z-Achse die durch den
 //STRIP001 		// Mittelpunkt von aOutRect geht (Satz von Steiner), also RotateZ
-//STRIP001 
+//STRIP001
 //STRIP001 	RotateScene (rRef, nWink, sn, cs);  // Rotiert die Szene
 //STRIP001 	double fWinkelInRad = nWink/100 * F_PI180;
 //STRIP001 	NbcRotateZ(fWinkelInRad);
@@ -1288,7 +1288,7 @@ namespace binfilter {
 /*N*/ 		const Color& rAmbient = aLightGroup.GetGlobalAmbientLight();
 /*N*/ 		if(rAmbient != Color(COL_BLACK))
 /*N*/ 			Insert3DObj(new E3dLight(Vector3D(), rAmbient, 1.0));
-/*N*/ 
+/*N*/
 /*N*/ 		// Andere Lichter
 /*N*/ 		for(UINT16 a=0;a<BASE3D_MAX_NUMBER_LIGHTS;a++)
 /*N*/ 		{
@@ -1323,15 +1323,15 @@ namespace binfilter {
 /*N*/ {
 /*N*/ 	SdrObjList* pSubList = GetSubList();
 /*N*/ 	BOOL bLampFound = FALSE;
-/*N*/ 
+/*N*/
 /*N*/ 	if(pSubList)
 /*N*/ 	{
 /*N*/ 		SdrObjListIter a3DIterator(*pSubList, IM_DEEPWITHGROUPS);
 /*N*/ 		Base3DLightNumber eLight = Base3DLight0;
-/*N*/ 
+/*N*/
 /*N*/ 		// AmbientLight aus
 /*N*/ 		aLightGroup.SetGlobalAmbientLight(Color(COL_BLACK));
-/*N*/ 
+/*N*/
 /*N*/ 		while ( a3DIterator.IsMore() )
 /*N*/ 		{
 /*N*/ 			E3dObject* pObj = (E3dObject*) a3DIterator.Next();
@@ -1340,7 +1340,7 @@ namespace binfilter {
 /*N*/ 			{
 /*N*/ 				E3dLight* pLight = (E3dLight*)pObj;
 /*N*/ 				bLampFound = TRUE;
-/*N*/ 
+/*N*/
 /*N*/ 				// pLight in Base3D Konvention aktivieren
 /*N*/ 				if(pLight->IsOn())
 /*N*/ 				{
@@ -1354,10 +1354,10 @@ namespace binfilter {
 /*?*/ 						aLightGroup.SetIntensity(Color(COL_WHITE), Base3DMaterialSpecular, eLight);
 /*?*/ 						Vector3D aPos = pLight->GetPosition();
 /*?*/ 						aLightGroup.SetPosition(aPos, eLight);
-/*?*/ 
+/*?*/
 /*?*/ 						// Lichtquelle einschalten
 /*?*/ 						aLightGroup.Enable(TRUE, eLight);
-/*?*/ 
+/*?*/
 /*?*/ 						// Naechstes Licht in Base3D
 /*?*/ 						eLight = (Base3DLightNumber)(eLight + 1);
 /*?*/ 					}
@@ -1371,10 +1371,10 @@ namespace binfilter {
 /*N*/ 						aLightGroup.SetIntensity(Color(COL_WHITE), Base3DMaterialSpecular, eLight);
 /*N*/ 						Vector3D aDir = ((E3dDistantLight *)pLight)->GetDirection();
 /*N*/ 						aLightGroup.SetDirection(aDir, eLight);
-/*N*/ 
+/*N*/
 /*N*/ 						// Lichtquelle einschalten
 /*N*/ 						aLightGroup.Enable(TRUE, eLight);
-/*N*/ 
+/*N*/
 /*N*/ 						// Naechstes Licht in Base3D
 /*N*/ 						eLight = (Base3DLightNumber)(eLight + 1);
 /*N*/ 					}
@@ -1390,7 +1390,7 @@ namespace binfilter {
 /*N*/ 				}
 /*N*/ 			}
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		// Alle anderen Lichter ausschalten
 /*N*/ 		while(eLight <= Base3DLight7)
 /*N*/ 		{
@@ -1398,7 +1398,7 @@ namespace binfilter {
 /*N*/ 			eLight = (Base3DLightNumber)(eLight + 1);
 /*N*/ 		}
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	// Beleuchtung einschalten, falls Lampen vorhanden
 /*N*/ 	aLightGroup.EnableLighting(bLampFound);
 /*N*/ }
@@ -1412,7 +1412,7 @@ namespace binfilter {
 /*N*/ UINT16 E3dScene::CountNumberOfLights()
 /*N*/ {
 /*N*/ 	UINT16 nNumLights = 0;
-/*N*/ 
+/*N*/
 /*N*/ 	SdrObjList* pSubList = GetSubList();
 /*N*/ 	if(pSubList)
 /*N*/ 	{
@@ -1464,10 +1464,10 @@ namespace binfilter {
 /*N*/ void E3dScene::ImpSetLightItemsFromLightGroup()
 /*N*/ {
 /*N*/ 	ImpForceItemSet();
-/*N*/ 
+/*N*/
 /*N*/ 	// TwoSidedLighting
 /*N*/ 	mpObjectItemSet->Put(Svx3DTwoSidedLightingItem(aLightGroup.GetModelTwoSide()));
-/*N*/ 
+/*N*/
 /*N*/ 	// LightColors
 /*N*/ 	mpObjectItemSet->Put(Svx3DLightcolor1Item(aLightGroup.GetIntensity(Base3DMaterialDiffuse, Base3DLight0)));
 /*N*/ 	mpObjectItemSet->Put(Svx3DLightcolor2Item(aLightGroup.GetIntensity(Base3DMaterialDiffuse, Base3DLight1)));
@@ -1477,10 +1477,10 @@ namespace binfilter {
 /*N*/ 	mpObjectItemSet->Put(Svx3DLightcolor6Item(aLightGroup.GetIntensity(Base3DMaterialDiffuse, Base3DLight5)));
 /*N*/ 	mpObjectItemSet->Put(Svx3DLightcolor7Item(aLightGroup.GetIntensity(Base3DMaterialDiffuse, Base3DLight6)));
 /*N*/ 	mpObjectItemSet->Put(Svx3DLightcolor8Item(aLightGroup.GetIntensity(Base3DMaterialDiffuse, Base3DLight7)));
-/*N*/ 
+/*N*/
 /*N*/ 	// AmbientColor
 /*N*/ 	mpObjectItemSet->Put(Svx3DAmbientcolorItem(aLightGroup.GetGlobalAmbientLight()));
-/*N*/ 
+/*N*/
 /*N*/ 	// LightOn
 /*N*/ 	mpObjectItemSet->Put(Svx3DLightOnOff1Item(aLightGroup.IsEnabled(Base3DLight0)));
 /*N*/ 	mpObjectItemSet->Put(Svx3DLightOnOff2Item(aLightGroup.IsEnabled(Base3DLight1)));
@@ -1490,7 +1490,7 @@ namespace binfilter {
 /*N*/ 	mpObjectItemSet->Put(Svx3DLightOnOff6Item(aLightGroup.IsEnabled(Base3DLight5)));
 /*N*/ 	mpObjectItemSet->Put(Svx3DLightOnOff7Item(aLightGroup.IsEnabled(Base3DLight6)));
 /*N*/ 	mpObjectItemSet->Put(Svx3DLightOnOff8Item(aLightGroup.IsEnabled(Base3DLight7)));
-/*N*/ 
+/*N*/
 /*N*/ 	// LightDirection
 /*N*/ 	mpObjectItemSet->Put(Svx3DLightDirection1Item(aLightGroup.GetDirection( Base3DLight0 )));
 /*N*/ 	mpObjectItemSet->Put(Svx3DLightDirection2Item(aLightGroup.GetDirection( Base3DLight1 )));
@@ -1506,13 +1506,13 @@ namespace binfilter {
 /*N*/ {
 /*N*/ 	ImpForceItemSet();
 /*N*/ 	Camera3D aSceneCam (GetCamera());
-/*N*/ 
+/*N*/
 /*N*/ 	// ProjectionType
 /*N*/ 	mpObjectItemSet->Put(Svx3DPerspectiveItem((UINT16)aSceneCam.GetProjection()));
-/*N*/ 
+/*N*/
 /*N*/ 	// CamPos
 /*N*/ 	mpObjectItemSet->Put(Svx3DDistanceItem((UINT32)(aSceneCam.GetPosition().Z() + 0.5)));
-/*N*/ 
+/*N*/
 /*N*/ 	// FocalLength
 /*N*/ 	mpObjectItemSet->Put(Svx3DFocalLengthItem((UINT32)((aSceneCam.GetFocalLength() * 100.0) + 0.5)));
 /*N*/ }
@@ -1532,7 +1532,7 @@ namespace binfilter {
 /*N*/ 	}
 /*N*/ 	else
 /*N*/ 		((E3dScene*)this)->ImpForceItemSet();
-/*N*/ 
+/*N*/
 /*N*/ 	// collect all ItemSets in mpGroupItemSet
 /*N*/ 	sal_uInt32 nCount(pSub->GetObjCount());
 /*N*/ 	for(sal_uInt32 a(0); a < nCount; a++)
@@ -1540,18 +1540,18 @@ namespace binfilter {
 /*N*/ 		const SfxItemSet& rSet = pSub->GetObj(a)->GetItemSet();
 /*N*/ 		SfxWhichIter aIter(rSet);
 /*N*/ 		sal_uInt16 nWhich(aIter.FirstWhich());
-/*N*/ 
+/*N*/
 /*N*/ 		while(nWhich)
 /*N*/ 		{
 /*N*/ 			if(SFX_ITEM_DONTCARE == rSet.GetItemState(nWhich, FALSE))
 /*N*/ 				mpObjectItemSet->InvalidateItem(nWhich);
 /*N*/ 			else
 /*N*/ 				mpObjectItemSet->MergeValue(rSet.Get(nWhich), TRUE);
-/*N*/ 
+/*N*/
 /*N*/ 			nWhich = aIter.NextWhich();
 /*N*/ 		}
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	return *mpObjectItemSet;
 /*N*/ }
 
@@ -1563,12 +1563,12 @@ namespace binfilter {
 /*N*/ 	// handle local value change
 /*N*/ 	if(!nWhich || (nWhich >= SDRATTR_3DSCENE_FIRST && nWhich <= SDRATTR_3DSCENE_LAST))
 /*N*/ 		SdrAttrObj::ItemChange(nWhich, pNewItem);
-/*N*/ 
+/*N*/
 /*N*/ 	// ItemChange at all contained objects
 /*N*/ 	List aPostItemChangeList;
 /*N*/ 	sal_uInt32 nCount(pSub->GetObjCount());
         sal_uInt32 a;
-/*N*/ 
+/*N*/
 /*N*/ 	for( a=0; a < nCount; a++)
 /*N*/ 	{
 /*N*/ 		SdrObject* pObj = pSub->GetObj(a);
@@ -1578,7 +1578,7 @@ namespace binfilter {
 /*N*/ 			aPostItemChangeList.Insert((void*)pObj, LIST_APPEND);
 /*N*/ 		}
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	for(a = 0; a < aPostItemChangeList.Count(); a++)
 /*N*/ 	{
 /*N*/ 		SdrObject* pObj = (SdrObject*)aPostItemChangeList.GetObject(a);
@@ -1591,10 +1591,10 @@ namespace binfilter {
 /*N*/ 	// call parent
 /*N*/ 	if(!nWhich || (nWhich >= SDRATTR_3DSCENE_FIRST && nWhich <= SDRATTR_3DSCENE_LAST))
 /*N*/ 		SdrAttrObj::PostItemChange(nWhich);
-/*N*/ 
+/*N*/
 /*N*/ 	// local changes
 /*N*/ 	StructureChanged(this);
-/*N*/ 
+/*N*/
 /*N*/ 	switch(nWhich)
 /*N*/ 	{
 /*N*/ 		case SDRATTR_3DSCENE_PERSPECTIVE			:
@@ -1606,14 +1606,14 @@ namespace binfilter {
 /*N*/ 			// since SetCamera() sets all three back to the ItemSet
 /*N*/ 			Camera3D aSceneCam(GetCamera());
 /*N*/ 			BOOL bChange(FALSE);
-/*N*/ 
+/*N*/
 /*N*/ 			// for SDRATTR_3DSCENE_PERSPECTIVE:
 /*N*/ 			if(aSceneCam.GetProjection() != GetPerspective())
 /*N*/ 			{
 /*N*/ 				aSceneCam.SetProjection(GetPerspective());
 /*N*/ 				bChange = TRUE;
 /*N*/ 			}
-/*N*/ 
+/*N*/
 /*N*/ 			// for SDRATTR_3DSCENE_DISTANCE:
 /*N*/ 			Vector3D aActualPosition = aSceneCam.GetPosition();
 /*N*/ 			double fNew = GetDistance();
@@ -1622,7 +1622,7 @@ namespace binfilter {
 /*N*/ 				aSceneCam.SetPosition( Vector3D( aActualPosition.X(), aActualPosition.Y(), fNew) );
 /*N*/ 				bChange = TRUE;
 /*N*/ 			}
-/*N*/ 
+/*N*/
 /*N*/ 			// for SDRATTR_3DSCENE_FOCAL_LENGTH:
 /*N*/ 			fNew = GetFocalLength() / 100.0;
 /*N*/ 			if(aSceneCam.GetFocalLength() != fNew)
@@ -1630,11 +1630,11 @@ namespace binfilter {
 /*N*/ 				aSceneCam.SetFocalLength(fNew);
 /*N*/ 				bChange = TRUE;
 /*N*/ 			}
-/*N*/ 
+/*N*/
 /*N*/ 			// for all
 /*N*/ 			if(bChange)
 /*N*/ 				SetCamera(aSceneCam);
-/*N*/ 
+/*N*/
 /*N*/ 			break;
 /*N*/ 		}
 /*N*/ 		case SDRATTR_3DSCENE_TWO_SIDED_LIGHTING		:
@@ -1777,7 +1777,7 @@ namespace binfilter {
 /*N*/ {
 /*N*/ 	// call parent
 /*N*/ 	E3dObject::ItemSetChanged( rSet );
-/*N*/ 
+/*N*/
 /*N*/ 	// set at all contained objects
 /*N*/ 	sal_uInt32 nCount(pSub->GetObjCount());
 /*N*/ 	for(sal_uInt32 a(0); a < nCount; a++)
@@ -1791,7 +1791,7 @@ namespace binfilter {
 /*N*/ {
 /*N*/ 	// call parent
 /*N*/ 	E3dObject::PreSave();
-/*N*/ 
+/*N*/
 /*N*/ 	// set at all contained objects
 /*N*/ 	sal_uInt32 nCount(pSub->GetObjCount());
 /*N*/ 	for(sal_uInt32 a(0); a < nCount; a++)
@@ -1802,7 +1802,7 @@ namespace binfilter {
 /*N*/ {
 /*N*/ 	// call parent
 /*N*/ 	E3dObject::PostSave();
-/*N*/ 
+/*N*/
 /*N*/ 	// set at all contained objects
 /*N*/ 	sal_uInt32 nCount(pSub->GetObjCount());
 /*N*/ 	for(sal_uInt32 a(0); a < nCount; a++)
@@ -1845,7 +1845,7 @@ namespace binfilter {
 /*N*/ 	{
 /*N*/ 		// call parent
 /*N*/ 		E3dObject::MigrateItemPool(pSrcPool, pDestPool, pNewModel);
-/*N*/ 
+/*N*/
 /*N*/ 		// own reaction, but only with outmost scene
 /*N*/ 		SdrObjList* pSubList = GetSubList();
 /*N*/ 		if(pSubList && GetScene() == this)
