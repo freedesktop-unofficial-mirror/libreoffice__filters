@@ -2,9 +2,9 @@
  *
  *  $RCSfile: sfx2_appinit.cxx,v $
  *
- *  $Revision: 1.6 $
+ *  $Revision: 1.7 $
  *
- *  last change: $Author: vg $ $Date: 2004-12-23 11:30:39 $
+ *  last change: $Author: vg $ $Date: 2005-02-21 16:32:26 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -171,7 +171,7 @@
 #include "sfxpicklist.hxx"
 
 #ifndef _LEGACYBINFILTERMGR_HXX
-#include <legacysmgr/legacy_binfilters_smgr.hxx>	//STRIP002 
+#include <legacysmgr/legacy_binfilters_smgr.hxx>	//STRIP002
 #endif
 
 #ifndef _VOS_MUTEX_HXX_
@@ -220,7 +220,7 @@ public:
 /*N*/     Reference< XDesktop > xDesktop( aEvent.Source, UNO_QUERY );
 /*N*/     if( xDesktop.is() == sal_True )
 /*N*/         xDesktop->removeTerminateListener( this );
-/*N*/ 
+/*N*/
 /*N*/     ::vos::OGuard aGuard( Application::GetSolarMutex() );
 /*N*/     SfxApplication* pApp = SFX_APP();
 /*N*/     pApp->Get_Impl()->aLateInitTimer.Stop();
@@ -241,53 +241,53 @@ public:
 /*N*/ #if SUPD>637
 /*N*/ 	RTL_LOGFILE_CONTEXT( aLog, "sfx2 (mb93783) ::SfxApplication::Initialize_Impl" );
 /*N*/ #endif
-/*N*/ 
+/*N*/
 /*N*/ #ifdef TLX_VALIDATE
 /*N*/ 	StgIo::SetErrorLink( LINK( this, SfxStorageErrHdl, Error ) );
 /*N*/ #endif
-/*N*/ 
+/*N*/
 /*N*/ //!	FSysEnableSysErrorBox( FALSE ); (pb) replaceable?
-/*N*/ 
+/*N*/
 /*N*/     Reference < XDesktop > xDesktop ( ::legacy_binfilters::getLegacyProcessServiceFactory()->createInstance( DEFINE_CONST_UNICODE("com.sun.star.frame.Desktop") ), UNO_QUERY );
 /*N*/     xDesktop->addTerminateListener( new SfxTerminateListener_Impl() );
-/*N*/ 
+/*N*/
 /*N*/     if( !CheckTryBuy_Impl() )
 /*N*/     {
 /*?*/         exit(-1);
 /*N*/         return FALSE;;
 /*N*/     }
-/*N*/ 
+/*N*/
 /*N*/ 	Application::EnableAutoHelpId();
-/*N*/ 
+/*N*/
 /*N*/ 	pAppData_Impl->pAppDispatch = new SfxStatusDispatcher;
 /*N*/ 	pAppData_Impl->pAppDispatch->acquire();
-/*N*/ 
+/*N*/
 /*N*/ 	// SV-Look
 /*N*/ 	Help::EnableContextHelp();
 /*N*/ 	Help::EnableExtHelp();
-/*N*/ 
+/*N*/
 /*N*/ 	SvtLocalisationOptions aLocalisation;
 /*N*/ 	Application::EnableAutoMnemonic	( aLocalisation.IsAutoMnemonic() );
 /*N*/ 	Application::SetDialogScaleX	( (short)(aLocalisation.GetDialogScale()) );
-/*N*/ 
+/*N*/
 /*N*/     // StarObjects initialisieren
 /*N*/ 	if ( !SvFactory::Init() )
 /*N*/ 		ErrorBox( 0, SfxResId(MSG_ERR_SOINIT) ).Execute();
-/*N*/ 
+/*N*/
 /*N*/ 	// Factory f"ur das SfxFrameObject anlegen; da der Pointer in den AppDaten
 /*N*/ 	// liegt, dieser aber nicht exportierbar ist, mu\s ein exportierbarer
 /*N*/ 	// Wrapper angelegt werden
 /*N*/ 	pAppData_Impl->pSfxFrameObjectFactoryPtr = new SfxFrameObjectFactoryPtr;
 /*N*/ 	pAppData_Impl->pSfxFrameObjectFactoryPtr->pSfxFrameObjectFactory = SfxFrameObject::ClassFactory();
 /*N*/ 	SvBindStatusCallback::SetProgressCallback( STATIC_LINK( 0, SfxProgress, DefaultBindingProgress ) );
-/*N*/ 
+/*N*/
 /*N*/ 	// merken, falls Applikation normal gestartet wurde
 //STRIP007 	if ( pAppData_Impl->bDirectAliveCount )
 //STRIP007 		SvFactory::IncAliveCount();
-/*N*/ 
+/*N*/
 /*N*/ 	pImp->pEventHdl = new UniqueIndex( 1, 4, 4 );
 /*N*/     //InitializeDisplayName_Impl();
-/*N*/ 
+/*N*/
 /*N*/ #ifdef DBG_UTIL
 /*N*/ 	// Der SimplerErrorHandler dient Debugzwecken. In der Product werden
 /*N*/ 	// nichtgehandelte Fehler durch Errorcode 1 an SFX gegeben.
@@ -300,13 +300,13 @@ public:
 /*N*/ 		(RID_SJ_START +1), ERRCODE_AREA_JAVA, ERRCODE_AREA_JAVA_END);
 /*N*/ 	new SfxErrorHandler(
 /*N*/ 		RID_BASIC_START, ERRCODE_AREA_SBX, ERRCODE_AREA_SBX_END );
-/*N*/ 
+/*N*/
 /*N*/ 	// diverse Pointer
 /*N*/ 	pImp->pAutoSaveTimer = new Timer;
 /*N*/ 	SfxPickList::GetOrCreate( SvtHistoryOptions().GetSize( ePICKLIST ) );
-/*N*/ 
+/*N*/
 /*N*/ 	/////////////////////////////////////////////////////////////////
-/*N*/ 
+/*N*/
 /*N*/ 	DBG_ASSERT( !pAppDispat, "AppDispatcher already exists" );
 /*N*/ 	pAppDispat = new SfxDispatcher((SfxDispatcher*)0);
 /*N*/ 	pSlotPool = new SfxSlotPool;
@@ -319,24 +319,24 @@ public:
 /*N*/ 	nInterfaces = SFX_INTERFACE_APP+8;
 /*N*/ 	pInterfaces = new SfxInterface*[nInterfaces];
 /*N*/ 	memset( pInterfaces, 0, sizeof(SfxInterface*) * nInterfaces );
-/*N*/ 
+/*N*/
 /*N*/     pAcceleratorMgr = new SfxAcceleratorManager( pCfgMgr );
-/*N*/ 
+/*N*/
 /*N*/ 	pImageMgr = new SfxImageManager( NULL );
 /*N*/     SfxNewHdl* pNewHdl = SfxNewHdl::GetOrCreate();
-/*N*/ 
+/*N*/
 /*N*/ 	// Die Strings muessen leider zur Laufzeit gehalten werden, da wir bei
 /*N*/ 	// einer ::com::sun::star::uno::Exception keine Resourcen mehr laden duerfen.
 /*N*/ 	pImp->aMemExceptionString = pNewHdl->GetMemExceptionString();
 /*N*/ 	pImp->aResWarningString       = String( SfxResId( STR_RESWARNING ) );
 /*N*/ 	pImp->aResExceptionString     = String( SfxResId( STR_RESEXCEPTION ) );
 /*N*/ 	pImp->aSysResExceptionString  = String( SfxResId( STR_SYSRESEXCEPTION ) );
-/*N*/ 
+/*N*/
 /*N*/ 	Registrations_Impl();
-/*N*/ 
+/*N*/
 /*N*/ //    ::vos::OGuard aGuard( Application::GetSolarMutex() );
 /*N*/ 	ResStringArray aEventNames( SfxResId( EVENT_NAMES_ARY ) );
-/*N*/ 
+/*N*/
 /*N*/ 	SfxEventConfiguration::RegisterEvent(SFX_EVENT_STARTAPP,		String(SfxResId(STR_EVENT_STARTAPP)),	aEventNames.GetString( 0 ) );
 /*N*/ 	SfxEventConfiguration::RegisterEvent(SFX_EVENT_CLOSEAPP,		String(SfxResId(STR_EVENT_CLOSEAPP)),	aEventNames.GetString( 1 ) );
 /*N*/ 	SfxEventConfiguration::RegisterEvent(SFX_EVENT_CREATEDOC,		String(SfxResId(STR_EVENT_CREATEDOC)),	aEventNames.GetString( 2 ) );
@@ -351,90 +351,33 @@ public:
 /*N*/ 	SfxEventConfiguration::RegisterEvent(SFX_EVENT_DEACTIVATEDOC,	String(SfxResId(STR_EVENT_DEACTIVATEDOC)),	aEventNames.GetString( 11 ) );
 /*N*/ 	SfxEventConfiguration::RegisterEvent(SFX_EVENT_PRINTDOC,		String(SfxResId(STR_EVENT_PRINTDOC)),		aEventNames.GetString( 12 ) );
 /*N*/ 	SfxEventConfiguration::RegisterEvent(SFX_EVENT_MODIFYCHANGED,	String(SfxResId(STR_EVENT_MODIFYCHANGED)), aEventNames.GetString( 13 ) );
-/*N*/ 
+/*N*/
 /*N*/ 	// Subklasse initialisieren
 /*N*/ 	bDowning = sal_False;
 /*N*/ 	bInInit = sal_True;
 /*N*/ 	Init();
-/*N*/ 
+/*N*/
 /*N*/ 	// get CHAOS item pool...
 /*N*/ 	pAppData_Impl->pPool = NoChaos::GetItemPool();
 /*N*/ 	SetPool( pAppData_Impl->pPool );
-/*N*/ 
-/*N*/ 	InsertLateInitHdl( LINK(pNewHdl, SfxNewHdl, InitMem_Impl) );
-/*N*/ 	InsertLateInitHdl( LINK(this, SfxApplication,SpecialService_Impl) );
-/*N*/     InsertLateInitHdl( STATIC_LINK( pAppData_Impl, SfxAppData_Impl, CreateDocumentTemplates ) );
-/*N*/ 
+/*N*/
+/*N*/     //InsertLateInitHdl( STATIC_LINK( pAppData_Impl, SfxAppData_Impl, CreateDocumentTemplates ) );
+/*N*/
 /*N*/ 	bInInit = sal_False;
 /*N*/ 	if ( bDowning )
 /*N*/ 		return sal_False;
-/*N*/ 
+/*N*/
 /*N*/ 	// App-Dispatcher aufbauen
 /*N*/ 	pAppDispat->Push(*this);
 /*N*/     pAppDispat->Flush();
 /*N*/ 	pAppDispat->DoActivate_Impl( sal_True );
-/*N*/ 
-/*N*/     SvtSaveOptions aSaveOptions;
-/*N*/     pImp->pAutoSaveTimer->SetTimeout( aSaveOptions.GetAutoSaveTime() * 60000 );
-/*N*/ 	pImp->pAutoSaveTimer->SetTimeoutHdl( LINK( pApp, SfxApplication, AutoSaveHdl_Impl ) );
-/*N*/ 
-/*N*/ //(dv)	if ( !pAppData_Impl->bBean )
-/*N*/ //(mba)        doFirstTimeInit();
-/*N*/ 
-/*N*/ //    Application::PostUserEvent( LINK( this, SfxApplication, OpenClients_Impl ) );
-/*N*/ 
-/*N*/ //	DELETEZ(pImp->pIntro);
-/*N*/ 
+/*N*/
 /*N*/     // start LateInit
-/*N*/     SfxAppData_Impl *pAppData = Get_Impl();
-/*N*/     pAppData->aLateInitTimer.SetTimeout( 250 );
-/*N*/     pAppData->aLateInitTimer.SetTimeoutHdl( LINK( this, SfxApplication, LateInitTimerHdl_Impl ) );
-/*N*/     pAppData->aLateInitTimer.Start();
-/*N*/ 
+/*N*/     //SfxAppData_Impl *pAppData = Get_Impl();
+/*N*/     //pAppData->aLateInitTimer.SetTimeout( 250 );
+/*N*/     //pAppData->aLateInitTimer.SetTimeoutHdl( LINK( this, SfxApplication, LateInitTimerHdl_Impl ) );
+/*N*/     //pAppData->aLateInitTimer.Start();
+/*N*/
 /*N*/     return sal_True;
 /*N*/ }
-
-/*N*/ IMPL_LINK( SfxApplication, SpecialService_Impl, void*, pVoid )
-/*N*/ {
-/*N*/ 	if ( pAppData_Impl->bBean )
-/*N*/ 			return 0;
-/*N*/ 
-/*N*/ #if SUPD<613//MUSTINI
-/*N*/ 	String aWizard = GetIniManager()->Get( DEFINE_CONST_UNICODE("Common"), 0, 0, DEFINE_CONST_UNICODE("RunWizard") );
-/*N*/ 	sal_Bool bRunWizard = (sal_Bool) (sal_uInt16) aWizard.ToInt32();
-/*N*/     if ( bRunWizard )
-/*N*/ 	{
-/*N*/ 		SfxStringItem aReferer( SID_REFERER, DEFINE_CONST_UNICODE("private:user") );
-/*N*/ 		SfxStringItem aMacro( SID_FILE_NAME, DEFINE_CONST_UNICODE("macro://#InternetSetup.Run.Main()") );
-/*N*/ //(mba)        pAppDispat->Execute( SID_OPENDOC, SFX_CALLMODE_ASYNCHRON, &aMacro, &aReferer, 0L );
-/*N*/         GetIniManager()->DeleteKey( DEFINE_CONST_UNICODE("Common"), DEFINE_CONST_UNICODE("RunWizard") );
-/*N*/         GetIniManager()->Flush();
-/*N*/ 	}
-/*N*/     else if ( !pAppData_Impl->bBean )
-/*N*/ 	{
-/*N*/ 		// StarOffice registration
-/*N*/ 		INetURLObject aORegObj( GetIniManager()->Get( SFX_KEY_USERCONFIG_PATH ), INET_PROT_FILE );
-/*N*/ 		aORegObj.insertName( DEFINE_CONST_UNICODE( "oreg.ini" ) );
-/*N*/         Config aCfg( aORegObj.PathToFileName() );
-/*N*/         aCfg.SetGroup( "reg" );
-/*N*/         sal_uInt16 nRegKey = (sal_uInt16) aCfg.ReadKey( "registration", "0" ).ToInt32();
-/*N*/         if( nRegKey == 0 )
-/*N*/             GetAppDispatcher_Impl()->Execute(SID_ONLINE_REGISTRATION_DLG, SFX_CALLMODE_ASYNCHRON);
-/*N*/ 	}
-/*N*/ #else
-/*N*/     if ( !pAppData_Impl->bBean )
-/*N*/ 	{
-/*N*/ 		// StarOffice registration
-/*N*/ 		INetURLObject aORegObj( SvtPathOptions().GetUserConfigPath(), INET_PROT_FILE );
-/*N*/ 		aORegObj.insertName( DEFINE_CONST_UNICODE( "oreg.ini" ) );
-/*N*/         Config aCfg( aORegObj.PathToFileName() );
-/*N*/         aCfg.SetGroup( "reg" );
-/*N*/         sal_uInt16 nRegKey = (sal_uInt16) aCfg.ReadKey( "registration", "0" ).ToInt32();
-/*N*/         if( nRegKey == 0 )
-/*N*/             GetAppDispatcher_Impl()->Execute(SID_ONLINE_REGISTRATION_DLG, SFX_CALLMODE_ASYNCHRON);
-/*N*/ 	}
-/*N*/ #endif
-/*N*/ 	return 0;
-/*N*/ }
-
 }
