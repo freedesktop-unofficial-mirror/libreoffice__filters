@@ -2,9 +2,9 @@
  *
  *  $RCSfile: sw_thints.cxx,v $
  *
- *  $Revision: 1.4 $
+ *  $Revision: 1.5 $
  *
- *  last change: $Author: rt $ $Date: 2004-05-05 16:41:11 $
+ *  last change: $Author: obo $ $Date: 2004-05-13 12:56:47 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -226,7 +226,7 @@ using namespace ::com::sun::star::i18n;
 /*N*/ 	// das neue Attribut im Pool anlegen
 /*N*/ 	const SfxPoolItem& rNew = bPool ? GetDoc()->GetAttrPool().Put( rAttr ) :
 /*N*/ 							  rAttr;
-/*N*/ 
+/*N*/
 /*N*/ 	SwTxtAttr* pNew = 0;
 /*N*/ 	switch( rNew.Which() )
 /*N*/ 	{
@@ -270,7 +270,7 @@ using namespace ::com::sun::star::i18n;
 /*N*/ 			SwFmtCharFmt &rFmtCharFmt = (SwFmtCharFmt&) rNew;
 /*N*/ 			if( !rFmtCharFmt.GetCharFmt() )
 /*?*/ 				rFmtCharFmt.SetCharFmt( GetDoc()->GetDfltCharFmt() );
-/*N*/ 
+/*N*/
 /*N*/ 			pNew = new SwTxtCharFmt( rFmtCharFmt, nStt, nEnd );
 /*N*/ 		}
 /*N*/ 		break;
@@ -342,24 +342,24 @@ using namespace ::com::sun::star::i18n;
 /*N*/ 					pDoc->DelLayoutFmt( (SwFlyFrmFmt*)pFmt );
 /*N*/ 			}
 /*N*/ 			break;
-/*N*/ 
+/*N*/
 /*N*/ 		case RES_TXTATR_FTN:
 /*N*/ 			((SwTxtFtn*)pAttr)->SetStartNode( 0 );
 /*N*/ 			nDelMsg = RES_FOOTNOTE_DELETED;
 /*N*/ 			break;
-/*N*/ 
+/*N*/
 /*N*/ 		case RES_TXTATR_FIELD:
 /*N*/ 			if( !pDoc->IsInDtor() )
 /*N*/ 			{
 /*N*/ 				// Wenn wir ein HiddenParaField sind, dann muessen wir
 /*N*/ 				// ggf. fuer eine Neuberechnung des Visible-Flags sorgen.
 /*N*/ 				const SwField* pFld = pAttr->GetFld().GetFld();
-/*N*/ 
+/*N*/
 /*N*/ 				//JP 06-08-95: DDE-Felder bilden eine Ausnahme
 /*N*/ 				ASSERT( RES_DDEFLD == pFld->GetTyp()->Which() ||
 /*N*/ 						this == ((SwTxtFld*)pAttr)->GetpTxtNode(),
 /*N*/ 						"Wo steht denn dieses Feld?" )
-/*N*/ 
+/*N*/
 /*N*/ 				// bestimmte Felder mussen am Doc das Calculations-Flag updaten
 /*N*/ 				switch( pFld->GetTyp()->Which() )
 /*N*/ 				{
@@ -385,22 +385,22 @@ using namespace ::com::sun::star::i18n;
 /*N*/ 			}
 /*N*/ 			nDelMsg = RES_FIELD_DELETED;
 /*N*/ 			break;
-/*N*/ 
+/*N*/
 /*N*/ 		case RES_TXTATR_TOXMARK:
 /*N*/ 			nDelMsg = RES_TOXMARK_DELETED;
 /*N*/ 			break;
-/*N*/ 
+/*N*/
 /*N*/ 		case RES_TXTATR_REFMARK:
 /*N*/ 			nDelMsg = RES_REFMARK_DELETED;
 /*N*/ 			break;
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		if( nDelMsg && !pDoc->IsInDtor() && GetNodes().IsDocNodes() )
 /*N*/ 		{
 /*N*/ 			SwPtrMsgPoolItem aMsgHint( nDelMsg, (void*)&pAttr->GetAttr() );
 /*N*/ 			pDoc->GetUnoCallBack()->Modify( &aMsgHint, &aMsgHint );
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		pAttr->RemoveFromPool( pDoc->GetAttrPool() );
 /*N*/ 		delete pAttr;
 /*N*/ 	}
@@ -424,9 +424,9 @@ using namespace ::com::sun::star::i18n;
 /*N*/ BOOL SwTxtNode::Insert( SwTxtAttr *pAttr, USHORT nMode )
 /*N*/ {
 /*N*/ 	BOOL bHiddenPara = FALSE;
-/*N*/ 
+/*N*/
 /*N*/ 	ASSERT( *pAttr->GetStart() <= Len(), "StartIdx hinter Len!" );
-/*N*/ 
+/*N*/
 /*N*/ 	if( !pAttr->GetEnd() )
 /*N*/ 	{
 /*N*/ 		USHORT nInsMode = nMode;
@@ -447,11 +447,11 @@ using namespace ::com::sun::star::i18n;
 /*N*/ 					const SwFmtAnchor* pAnchor = 0;
 /*N*/ 					pFmt->GetItemState( RES_ANCHOR, FALSE,
 /*N*/ 											(const SfxPoolItem**)&pAnchor );
-/*N*/ 
+/*N*/
 /*N*/ 					SwIndex aIdx( this, *pAttr->GetStart() );
 /*N*/ 					Insert( GetCharOfTxtAttr(*pAttr), aIdx );
 /*N*/ 					nInsMode |= SETATTR_NOTXTATRCHR;
-/*N*/ 
+/*N*/
 /*N*/ 					if( pAnchor && FLY_IN_CNTNT == pAnchor->GetAnchorId() &&
 /*N*/ 						pAnchor->GetCntntAnchor() &&
 /*N*/ 						pAnchor->GetCntntAnchor()->nNode == *this &&
@@ -459,12 +459,12 @@ using namespace ::com::sun::star::i18n;
 /*N*/ 						((SwIndex&)pAnchor->GetCntntAnchor()->nContent)--;
 /*N*/ 				}
 /*N*/ 				pFly->SetAnchor( this );
-/*N*/ 
+/*N*/
 /*N*/ 				// Format-Pointer kann sich im SetAnchor geaendert haben!
 /*N*/ 				// (Kopieren in andere Docs!)
 /*N*/ 				pFmt = pAttr->GetFlyCnt().GetFrmFmt();
 /*N*/ 				SwDoc *pDoc = pFmt->GetDoc();
-/*N*/ 
+/*N*/
 /*N*/                 // OD 26.06.2003 #108784# - allow drawing objects in header/footer.
 /*N*/                 // But don't allow control objects in header/footer
 /*N*/                 if( RES_DRAWFRMFMT == pFmt->Which() &&
@@ -509,7 +509,7 @@ using namespace ::com::sun::star::i18n;
 /*N*/ 				// CntntNode erzeugen und in die Inserts-Section stellen
 /*N*/ 				SwDoc *pDoc = GetDoc();
 /*N*/ 				SwNodes &rNodes = pDoc->GetNodes();
-/*N*/ 
+/*N*/
 /*N*/ 				// FussNote in nicht Content-/Redline-Bereich einfuegen ??
 /*N*/ 				if( StartOfSectionIndex() < rNodes.GetEndOfAutotext().GetIndex() )
 /*N*/ 				{
@@ -533,7 +533,7 @@ using namespace ::com::sun::star::i18n;
 /*?*/ 					DestroyAttr( pAttr );
 /*?*/ 					return FALSE;
 /*N*/ 				}
-/*N*/ 
+/*N*/
 /*N*/ 				// wird eine neue Fussnote eingefuegt ??
 /*N*/ 				BOOL bNewFtn = 0 == ((SwTxtFtn*)pAttr)->GetStartNode();
 /*N*/ 				if( bNewFtn )
@@ -549,7 +549,7 @@ using namespace ::com::sun::star::i18n;
 /*N*/ 						if( 0 != ( pCNd = rNodes[ nSttIdx ]->GetCntntNode() ))
 /*N*/ 							pCNd->DelFrms();
 /*N*/ 				}
-/*N*/ 
+/*N*/
 /*N*/ 				if( !(SETATTR_NOTXTATRCHR & nInsMode) )
 /*N*/ 				{
 /*N*/ 					// Wir muessen zuerst einfuegen, da sonst gleiche Indizes
@@ -559,7 +559,7 @@ using namespace ::com::sun::star::i18n;
 /*N*/ 					Insert( GetCharOfTxtAttr(*pAttr), aNdIdx );
 /*N*/ 					nInsMode |= SETATTR_NOTXTATRCHR;
 /*N*/ 				}
-/*N*/ 
+/*N*/
 /*N*/ 				// Wir tragen uns am FtnIdx-Array des Docs ein ...
 /*N*/ 				SwTxtFtn* pTxtFtn = 0;
 /*N*/ 				if( !bNewFtn )
@@ -579,11 +579,11 @@ using namespace ::com::sun::star::i18n;
 /*N*/ 				}
 /*N*/ 				if( !pTxtFtn )
 /*N*/ 					pTxtFtn = (SwTxtFtn*)pAttr;
-/*N*/ 
+/*N*/
 /*N*/ 				// fuers Update der Nummern und zum Sortieren
 /*N*/ 				// muss der Node gesetzt sein.
 /*N*/ 				((SwTxtFtn*)pAttr)->ChgTxtNode( this );
-/*N*/ 
+/*N*/
 /*N*/ 				// FussNote im Redline-Bereich NICHT ins FtnArray einfuegen!
 /*N*/ 				if( StartOfSectionIndex() > rNodes.GetEndOfRedlines().GetIndex() )
 /*N*/ 				{
@@ -600,7 +600,7 @@ using namespace ::com::sun::star::i18n;
 /*N*/ 				((SwTxtFtn*)pAttr)->SetSeqRefNo();
 /*N*/ 			}
 /*N*/ 			break;
-/*N*/ 
+/*N*/
 /*N*/ 			case RES_TXTATR_FIELD:
 /*N*/ 				{
 /*N*/ 					// fuer HiddenParaFields Benachrichtigungsmechanismus
@@ -610,7 +610,7 @@ using namespace ::com::sun::star::i18n;
 /*N*/ 					bHiddenPara = TRUE;
 /*N*/ 				}
 /*N*/ 				break;
-/*N*/ 
+/*N*/
 /*N*/ 		}
 /*N*/ 		// Fuer SwTxtHints ohne Endindex werden CH_TXTATR_..
 /*N*/ 		// eingefuegt, aStart muss danach um einen zurueckgesetzt werden.
@@ -624,19 +624,19 @@ using namespace ::com::sun::star::i18n;
 /*N*/ 	}
 /*N*/ 	else
 /*N*/ 		ASSERT( *pAttr->GetEnd() <= Len(), "EndIdx hinter Len!" );
-/*N*/ 
+/*N*/
 /*N*/ 	if ( !pSwpHints )
 /*N*/ 		pSwpHints = new SwpHints();
-/*N*/ 
+/*N*/
 /*N*/ 	// 4263: AttrInsert durch TextInsert => kein Adjust
 /*N*/ 	pSwpHints->Insert( pAttr, *this, nMode );
-/*N*/ 
+/*N*/
 /*N*/ 	// 47375: In pSwpHints->Insert wird u.a. Merge gerufen und das Hints-Array
 /*N*/ 	// von ueberfluessigen Hints befreit, dies kann u.U. sogar der frisch
 /*N*/ 	// eingefuegte Hint pAttr sein, der dann zerstoert wird!!
 /*N*/ 	if( USHRT_MAX == pSwpHints->GetPos( pAttr ) )
 /*N*/ 		return FALSE;
-/*N*/ 
+/*N*/
 /*N*/ 	if(bHiddenPara)
 /*N*/ 		SetCalcVisible();
 /*N*/ 	return TRUE;
@@ -670,11 +670,11 @@ using namespace ::com::sun::star::i18n;
 /*?*/ 			pAttr->RemoveFromPool( GetDoc()->GetAttrPool() );
 /*?*/ 			delete pAttr;
 /*?*/ 			SwModify::Modify( 0, &aHint );	   // die Frames benachrichtigen
-/*?*/ 
+/*?*/
 /*?*/ 			if( pSwpHints && pSwpHints->CanBeDeleted() )
 /*?*/ 				DELETEZ( pSwpHints );
 /*?*/ 		}
-/*?*/ 
+/*?*/
 /*?*/ 		return;
 /*N*/ 	}
 /*N*/ 	Delete( pAttr->Which(), *pAttr->GetStart(), *pAttr->GetAnyEnd() );
@@ -688,11 +688,11 @@ using namespace ::com::sun::star::i18n;
 /*N*/ {
 /*N*/ 	if ( !pSwpHints )
 /*N*/ 		return;
-/*N*/ 
+/*N*/
 /*N*/ 	const xub_StrLen *pEndIdx;
 /*N*/ 	const xub_StrLen *pSttIdx;
 /*N*/ 	SwTxtAttr* pTxtHt;
-/*N*/ 
+/*N*/
 /*N*/ 	for( USHORT nPos = 0; pSwpHints && nPos < pSwpHints->Count(); nPos++ )
 /*N*/ 	{
 /*N*/ 		pTxtHt = pSwpHints->GetHt( nPos );
@@ -701,7 +701,7 @@ using namespace ::com::sun::star::i18n;
 /*N*/ 			*( pSttIdx = pTxtHt->GetStart()) == nStart )
 /*N*/ 		{
 /*N*/ 			pEndIdx = pTxtHt->GetEnd();
-/*N*/ 
+/*N*/
 /*N*/ 			// Text-Attribute sind voellig dynamisch, so dass diese nur
 /*N*/ 			// mit ihrer Start-Position verglichen werden.
 /*N*/ 			if( !pEndIdx )
@@ -754,11 +754,11 @@ using namespace ::com::sun::star::i18n;
 /*N*/ {
 /*N*/ 	if( !rSet.Count() )
 /*N*/ 		return FALSE;
-/*N*/ 
+/*N*/
 /*N*/ 	// teil die Sets auf (fuer Selektion in Nodes)
 /*N*/ 	const SfxItemSet* pSet = &rSet;
 /*N*/ 	SfxItemSet aTxtSet( *rSet.GetPool(), RES_TXTATR_BEGIN, RES_TXTATR_END-1 );
-/*N*/ 
+/*N*/
 /*N*/ 	// gesamter Bereich
 /*N*/ 	if( !nStt && nEnd == aText.Len() && !(nMode & SETATTR_NOFORMATATTR ) )
 /*N*/ 	{
@@ -772,7 +772,7 @@ using namespace ::com::sun::star::i18n;
 /*N*/ 					bHasCharFmts = TRUE;
 /*N*/ 					break;
 /*N*/ 				}
-/*N*/ 
+/*N*/
 /*N*/ 		if( !bHasCharFmts )
 /*N*/ 		{
 /*N*/ 			aTxtSet.Put( rSet );
@@ -785,10 +785,10 @@ using namespace ::com::sun::star::i18n;
 /*N*/ 			pSet = &aTxtSet;
 /*N*/ 		}
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	if ( !pSwpHints )
 /*N*/ 		pSwpHints = new SwpHints();
-/*N*/ 
+/*N*/
 /*N*/ 	USHORT nWhich, nCount = 0;
 /*N*/ 	SwTxtAttr* pNew;
 /*N*/ 	SfxItemIter aIter( *pSet );
@@ -827,10 +827,10 @@ using namespace ::com::sun::star::i18n;
 /*N*/ 			break;
 /*?*/ 		pItem = aIter.NextItem();
 /*N*/ 	} while( TRUE );
-/*N*/ 
+/*N*/
 /*N*/ 	if( pSwpHints && pSwpHints->CanBeDeleted() )
 /*?*/ 		DELETEZ( pSwpHints );
-/*N*/ 
+/*N*/
 /*N*/ 	return nCount ? TRUE : FALSE;
 /*N*/ }
 
@@ -883,7 +883,7 @@ using namespace ::com::sun::star::i18n;
  /*
  ????? JP 31.01.95 ????	wie jetzt ???
              rSet.MergeValues( aTmpSet );
- 
+
              // jetzt alle zusammen "mergen"
              rSet.Differentiate( aTmpSet );
  */
@@ -891,7 +891,7 @@ using namespace ::com::sun::star::i18n;
 /*N*/ #endif
 /*N*/ 		}
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	// aufnehmen als MergeWert (falls noch nicht gesetzt neu setzen!)
 /*N*/ #if 0
  /* wenn mehrere Attribute ueberlappen werden diese gemergt !!
@@ -936,21 +936,21 @@ using namespace ::com::sun::star::i18n;
           * nichts tun:
           * 		das Attribut liegt ausserhalb des Bereiches
           */
-/*N*/ 
+/*N*/
 /*N*/ 		void (*fnMergeAttr)( SfxItemSet&, const SfxPoolItem& )
 /*N*/ 			= bGetFromChrFmt ? &lcl_MergeAttr_ExpandChrFmt
 /*N*/ 							 : &lcl_MergeAttr;
-/*N*/ 
+/*N*/
 /*N*/ 		// dann besorge mal die Auto-(Fmt)Attribute
 /*N*/ 		SfxItemSet aFmtSet( *rSet.GetPool(), rSet.GetRanges() );
 /*N*/ 		if( !bOnlyTxtAttr )
 /*N*/ 			SwCntntNode::GetAttr( aFmtSet );
-/*N*/ 
+/*N*/
 /*N*/ 		const USHORT nSize = pSwpHints->Count();
 /*N*/ 		register USHORT n;
 /*N*/ 	    register xub_StrLen nAttrStart;
 /*N*/ 		register const xub_StrLen* pAttrEnd;
-/*N*/ 
+/*N*/
 /*N*/ 		if( nStart == nEnd )				// kein Bereich:
 /*N*/ 		{
 /*N*/ 			for( n = 0; n < nSize; ++n )		//
@@ -959,10 +959,10 @@ using namespace ::com::sun::star::i18n;
 /*N*/ 				nAttrStart = *pHt->GetStart();
 /*N*/ 				if( nAttrStart > nEnd ) 		// ueber den Bereich hinaus
 /*N*/ 					break;
-/*N*/ 
+/*N*/
 /*N*/ 				if( 0 == ( pAttrEnd = pHt->GetEnd() ))		// nie Attribute ohne Ende
 /*N*/ 					continue;
-/*N*/ 
+/*N*/
 /*N*/ 				if( ( nAttrStart < nStart &&
 /*N*/ 						( pHt->DontExpand() ? nStart < *pAttrEnd
 /*N*/ 											: nStart <= *pAttrEnd )) ||
@@ -977,23 +977,23 @@ using namespace ::com::sun::star::i18n;
 /*N*/ 			const USHORT coArrSz = RES_TXTATR_WITHEND_END - RES_CHRATR_BEGIN +
 /*N*/ 									( RES_UNKNOWNATR_END -
 /*N*/ 													RES_UNKNOWNATR_BEGIN );
-/*N*/ 
+/*N*/
 /*N*/ 			for( n = 0; n < nSize; ++n )
 /*N*/ 			{
 /*N*/ 				const SwTxtAttr* pHt = (*pSwpHints)[n];
 /*N*/ 				nAttrStart = *pHt->GetStart();
 /*N*/ 				if( nAttrStart > nEnd ) 		// ueber den Bereich hinaus
 /*N*/ 					break;
-/*N*/ 
+/*N*/
 /*N*/ 				if( 0 == ( pAttrEnd = pHt->GetEnd() ))		// nie Attribute ohne Ende
 /*N*/ 					continue;
-/*N*/ 
+/*N*/
 /*N*/ 				BOOL bChkInvalid = FALSE;
 /*N*/ 				if( nAttrStart <= nStart )		// vor oder genau Start
 /*N*/ 				{
 /*N*/ 					if( *pAttrEnd <= nStart )	// liegt davor
 /*N*/ 						continue;
-/*N*/ 
+/*N*/
 /*N*/ 					if( nEnd <= *pAttrEnd )		// hinter oder genau Ende
 /*N*/ 						(*fnMergeAttr)( aFmtSet, pHt->GetAttr() );
 /*N*/ 					else
@@ -1004,7 +1004,7 @@ using namespace ::com::sun::star::i18n;
 /*N*/ 				else if( nAttrStart < nEnd 		// reicht in den Bereich
 /*N*/ )//						 && pHt->GetAttr() != aFmtSet.Get( pHt->Which() ) )
 /*N*/ 					bChkInvalid = TRUE;
-/*N*/ 
+/*N*/
 /*N*/ 				if( bChkInvalid )
 /*N*/ 				{
 /*?*/ 					// uneindeutig ?
@@ -1013,7 +1013,7 @@ using namespace ::com::sun::star::i18n;
 /*?*/ 						aAttrArr = new SwTxtAttr* [ coArrSz ];
 /*?*/ 						memset( aAttrArr, 0, sizeof( SwTxtAttr* ) * coArrSz );
 /*?*/ 					}
-/*?*/ 
+/*?*/
 /*?*/ 					const SwTxtAttr** ppPrev;
 /*?*/ 					if( RES_CHRATR_BEGIN <= pHt->Which() &&
 /*?*/ 						pHt->Which() < RES_TXTATR_WITHEND_END )
@@ -1027,7 +1027,7 @@ using namespace ::com::sun::star::i18n;
 /*?*/ 											RES_CHRATR_BEGIN ) ];
 /*?*/ 					else
 /*?*/ 						ppPrev = 0;
-/*?*/ 
+/*?*/
 /*?*/ 					if( !*ppPrev )
 /*?*/ 					{
 /*?*/ 						if( nAttrStart > nStart )
@@ -1066,7 +1066,7 @@ using namespace ::com::sun::star::i18n;
 /*?*/ 							nWh = n - ( RES_TXTATR_WITHEND_END -
 /*?*/ 												  RES_CHRATR_BEGIN ) +
 /*?*/ 												RES_UNKNOWNATR_BEGIN;
-/*?*/ 
+/*?*/
 /*?*/ 						if( nEnd <= *pAttr->GetEnd() )	// hinter oder genau Ende
 /*?*/ 						{
 /*?*/ 							if( pAttr->GetAttr() != aFmtSet.Get( nWh ) )
@@ -1090,7 +1090,7 @@ using namespace ::com::sun::star::i18n;
 /*N*/ 	else if( !bOnlyTxtAttr )
 /*N*/ 		// dann besorge mal die Auto-(Fmt)Attribute
 /*N*/ 		SwCntntNode::GetAttr( rSet );
-/*N*/ 
+/*N*/
 /*N*/ 	return rSet.Count() ? TRUE : FALSE;
 /*N*/ }
 
@@ -1103,7 +1103,7 @@ using namespace ::com::sun::star::i18n;
 //STRIP001 		const SwTxtAttr *pOther = rHints[ i ];
 //STRIP001 		if( *pOther->GetStart() )
 //STRIP001 			break;
-//STRIP001 
+//STRIP001
 //STRIP001 		if( pOther->GetEnd() &&
 //STRIP001 			*pOther->GetEnd() == nEnd &&
 //STRIP001 			( pOther->IsCharFmtAttr() || pOther->Which() == rItem.Which() ) )
@@ -1120,10 +1120,10 @@ using namespace ::com::sun::star::i18n;
 /*N*/ 	SfxItemSet aThisSet( GetDoc()->GetAttrPool(), aCharFmtSetRange );
 /*N*/ 	if( GetpSwAttrSet() && GetpSwAttrSet()->Count() )
 /*?*/ 		aThisSet.Put( *GetpSwAttrSet() );
-/*N*/ 
+/*N*/
 /*N*/ 	if ( !pSwpHints )
 /*N*/ 		pSwpHints = new SwpHints();
-/*N*/ 
+/*N*/
 /*N*/ 	if( pNd == this )
 /*N*/ 	{
 /*?*/ 		if( aThisSet.Count() )
@@ -1138,23 +1138,23 @@ using namespace ::com::sun::star::i18n;
 //STRIP001 /*?*/ 							MakeTxtAttr( *pItem, 0, GetTxt().Len() ) );
 //STRIP001 /*?*/ 					GetpSwAttrSet()->ClearItem( pItem->Which() );
 //STRIP001 /*?*/ 				}
-//STRIP001 /*?*/ 
+//STRIP001 /*?*/
 //STRIP001 /*?*/ 				if( aIter.IsAtEnd() )
 //STRIP001 /*?*/ 					break;
 //STRIP001 /*?*/ 				pItem = aIter.NextItem();
 /*?*/ 			}
 /*?*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 	}
 /*N*/ 	else
 /*N*/ 	{
 /*N*/ 		SfxItemSet aNdSet( pNd->GetDoc()->GetAttrPool(), aCharFmtSetRange );
 /*N*/ 		if( pNd->GetpSwAttrSet() && pNd->GetpSwAttrSet()->Count() )
 /*?*/ 			aNdSet.Put( *pNd->GetpSwAttrSet() );
-/*N*/ 
+/*N*/
 /*N*/ 		if ( !pNd->pSwpHints )
 /*N*/ 			pNd->pSwpHints = new SwpHints();
-/*N*/ 
+/*N*/
 /*N*/ 		if( aThisSet.Count() )
 /*N*/ 		{
 /*?*/ 			DBG_BF_ASSERT(0, "STRIP"); //STRIP001 SfxItemIter aIter( aThisSet );
@@ -1170,13 +1170,13 @@ using namespace ::com::sun::star::i18n;
 //STRIP001 /*?*/ 					GetpSwAttrSet()->ClearItem( pItem->Which() );
 //STRIP001 /*?*/ 				}
 //STRIP001 /*?*/ 				aNdSet.ClearItem( pItem->Which() );
-//STRIP001 /*?*/ 
+//STRIP001 /*?*/
 //STRIP001 /*?*/ 				if( aIter.IsAtEnd() )
 //STRIP001 /*?*/ 					break;
 //STRIP001 /*?*/ 				pItem = aIter.NextItem();
 //STRIP001 /*?*/ 			}
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		if( aNdSet.Count() )
 /*N*/ 		{
 /*?*/ 			SfxItemIter aIter( aNdSet );
@@ -1187,17 +1187,17 @@ using namespace ::com::sun::star::i18n;
 //STRIP001 /*?*/ 					pNd->pSwpHints->SwpHintsArr::Insert(
 //STRIP001 /*?*/ 							pNd->MakeTxtAttr( *pItem, 0, pNd->GetTxt().Len() ) );
 //STRIP001 /*?*/ 				pNd->GetpSwAttrSet()->ClearItem( pItem->Which() );
-//STRIP001 /*?*/ 
+//STRIP001 /*?*/
 //STRIP001 /*?*/ 				if( aIter.IsAtEnd() )
 //STRIP001 /*?*/ 					break;
 //STRIP001 /*?*/ 				pItem = aIter.NextItem();
 /*?*/ 			}
-/*?*/ 
+/*?*/
 /*?*/ 			SwFmtChg aTmp1( pNd->GetFmtColl() );
 /*?*/ 			pNd->SwModify::Modify( &aTmp1, &aTmp1 );
 /*N*/ 		}
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	if( pNd->pSwpHints->CanBeDeleted() )
 /*N*/ 		DELETEZ( pNd->pSwpHints );
 /*N*/ }
@@ -1244,12 +1244,12 @@ using namespace ::com::sun::star::i18n;
 /*N*/ 	BOOL   			bNewVis  = TRUE;
 /*N*/ 	const USHORT	nSize = Count();
 /*N*/ 	const SwTxtAttr *pTxtHt;
-/*N*/ 
+/*N*/
 /*N*/ 	for( USHORT nPos = 0; nPos < nSize; ++nPos )
 /*N*/ 	{
 /*N*/ 		pTxtHt = (*this)[ nPos ];
 /*N*/ 		const USHORT nWhich = pTxtHt->Which();
-/*N*/ 
+/*N*/
 /*N*/ 		if( RES_TXTATR_FIELD == nWhich )
 /*N*/ 		{
 /*N*/ 			const SwFmtFld& rFld = pTxtHt->GetFld();
@@ -1282,7 +1282,7 @@ using namespace ::com::sun::star::i18n;
 /*N*/ BOOL SwpHints::Resort( const USHORT nPos )
 /*N*/ {
 /*N*/ 	const SwTxtAttr *pTmp;
-/*N*/ 
+/*N*/
 /*N*/ 	if ( ( nPos+1 < Count() &&
 /*N*/ 		   *(*this)[nPos]->GetStart() > *(*this)[nPos+1]->GetStart() ) ||
 /*N*/ 		 ( nPos > 0 &&
@@ -1336,7 +1336,7 @@ using namespace ::com::sun::star::i18n;
 /*N*/ 				SwTxtAttr *pOther = GetHt(j);
 /*N*/ 				if ( *pOther->GetStart() > *pHt->GetStart() )
 /*N*/ 					break;
-/*N*/ 
+/*N*/
 /*N*/ 				if( pOther->Which() == nWhich || pOther->IsCharFmtAttr() )
 /*N*/ 				{
 /*N*/ 					//JP 03.10.95: nicht zusammenfassen, zu kompliziert
@@ -1503,7 +1503,7 @@ using namespace ::com::sun::star::i18n;
 /*N*/                 {
 /*N*/                     if ( pPrev == pNext )
 /*N*/                         pPrev = NULL;
-/*N*/ 
+/*N*/
 /*?*/                     if( pHistory )
 /*?*/                     {
 /*?*/                         pHistory->Add( pAttr );
@@ -1544,7 +1544,7 @@ using namespace ::com::sun::star::i18n;
 /*N*/ 				SwTxtAttr *pOther = GetHt(j);
 /*N*/ 				if ( *pOther->GetStart() > *pEnd )
 /*N*/ 					break;	 // keine beruehrenden Attribute mehr vorhanden
-/*N*/ 
+/*N*/
 /*N*/ 				if( *pOther->GetStart() == *pEnd &&
 /*N*/ 					 ( pOther->Which() == nWhich ||
 /*N*/ 					   pOther->IsCharFmtAttr() ||
@@ -1629,13 +1629,13 @@ using namespace ::com::sun::star::i18n;
 //STRIP001 			break;
 //STRIP001 		const USHORT nWhch = pHt->Which();
 //STRIP001 		const xub_StrLen *pEnd = pHt->GetEnd();
-//STRIP001 
+//STRIP001
 //STRIP001         // Check if we already have an attribute of type nWhich with the
 //STRIP001         // same range as the new attribute. We only consider attributes
 //STRIP001         // which are not included in rExclude.
 //STRIP001 		if ( pEnd && *pEnd == nEnd &&
 //STRIP001 			 ( nWhch == nWhich ||
-//STRIP001              ( pHt->IsCharFmtAttr() && lcl_Included( nWhich, pHt ) ) ) && 
+//STRIP001              ( pHt->IsCharFmtAttr() && lcl_Included( nWhich, pHt ) ) ) &&
 //STRIP001 			 ( ! pExcludes ||
 //STRIP001 			   pExcludes->end() == std::find( pExcludes->begin(), pExcludes->end(), pHt ) ) )
 //STRIP001         {
@@ -1663,16 +1663,16 @@ using namespace ::com::sun::star::i18n;
 /*N*/ 	// Irgendwann ist immer Schluss
 /*N*/     if( USHRT_MAX == Count() )
 /*N*/ 		return;
-/*N*/ 
+/*N*/
 /*N*/ 	// Felder bilden eine Ausnahme:
 /*N*/ 	// 1) Sie koennen nie ueberlappen
 /*N*/ 	// 2) Wenn zwei Felder genau aneinander liegen,
 /*N*/ 	//	  sollen sie nicht zu einem verschmolzen werden.
 /*N*/ 	// Wir koennen also auf die while-Schleife verzichten
-/*N*/ 
+/*N*/
 /*N*/ 	xub_StrLen *pHtEnd = pHint->GetEnd();
 /*N*/ 	USHORT nWhich = pHint->Which();
-/*N*/ 
+/*N*/
 /*N*/ 	switch( nWhich )
 /*N*/ 	{
 /*N*/ 	case RES_TXTATR_CHARFMT:
@@ -1691,7 +1691,7 @@ using namespace ::com::sun::star::i18n;
 /*N*/ 			((SwTxtFld*)pHint)->ChgTxtNode( &rNode );
 /*N*/ 			SwDoc* pDoc = rNode.GetDoc();
 /*N*/ 			const SwField* pFld = ((SwTxtFld*)pHint)->GetFld().GetFld();
-/*N*/ 
+/*N*/
 /*N*/ 			if( !pDoc->IsNewFldLst() )
 /*N*/ 			{
 /*N*/ 				// was fuer ein Feld ist es denn ??
@@ -1717,7 +1717,7 @@ using namespace ::com::sun::star::i18n;
 /*?*/ 					break;
 /*N*/ 				}
 /*N*/ 			}
-/*N*/ 
+/*N*/
 /*N*/ 			// gehts ins normale Nodes-Array?
 /*N*/ 			if( rNode.GetNodes().IsDocNodes() )
 /*N*/ 			{
@@ -1745,7 +1745,7 @@ using namespace ::com::sun::star::i18n;
 /*N*/ 				case RES_USERFLD:
 /*N*/ 					bInsFldType = ((SwUserFieldType*)pFld->GetTyp())->IsDeleted();
 /*N*/ 					break;
-/*N*/ 
+/*N*/
 /*N*/ 				case RES_DDEFLD:
 /*N*/ 					if( pDoc->IsNewFldLst() )
 /*N*/ 						((SwDDEFieldType*)pFld->GetTyp())->IncRefCnt();
@@ -1781,20 +1781,20 @@ using namespace ::com::sun::star::i18n;
 //STRIP001 /*?*/ 					{
 //STRIP001 /*?*/ 					case POS_BEFORE:
 //STRIP001 /*?*/ 					case POS_BEHIND:	bDelOld = FALSE; break;
-//STRIP001 /*?*/ 
+//STRIP001 /*?*/
 //STRIP001 /*?*/ 					case POS_OUTSIDE:	bChgStart = bChgEnd = TRUE; break;
-//STRIP001 /*?*/ 
+//STRIP001 /*?*/
 //STRIP001 /*?*/ 					case POS_COLLIDE_END:
 //STRIP001 /*?*/ 					case POS_OVERLAP_BEFORE:	bChgStart = TRUE; break;
 //STRIP001 /*?*/ 					case POS_COLLIDE_START:
 //STRIP001 /*?*/ 					case POS_OVERLAP_BEHIND:    bChgEnd = TRUE; break;
 //STRIP001 /*?*/ 					}
-//STRIP001 /*?*/ 
+//STRIP001 /*?*/
 //STRIP001 /*?*/ 					if( bChgStart )
 //STRIP001 /*?*/ 						*pHint->GetStart() = *pHt->GetStart();
 //STRIP001 /*?*/ 					if( bChgEnd )
 //STRIP001 /*?*/ 						*pHintEnd = *pHtEnd;
-//STRIP001 /*?*/ 
+//STRIP001 /*?*/
 //STRIP001 /*?*/ 					if( bDelOld )
 //STRIP001 /*?*/ 					{
 //STRIP001 /*?*/ 						if( pHistory )
@@ -1808,7 +1808,7 @@ using namespace ::com::sun::star::i18n;
 /*N*/ 	case RES_TXTATR_TOXMARK:
 /*N*/ 		((SwTxtTOXMark*)pHint)->ChgTxtNode( &rNode );
 /*N*/ 		break;
-/*N*/ 
+/*N*/
 /*N*/ 	case RES_TXTATR_CJK_RUBY:
 /*N*/ 		{
                 DBG_BF_ASSERT(0, "STRIP"); //STRIP001 /*?*/ 			((SwTxtRuby*)pHint)->ChgTxtNode( &rNode );
@@ -1818,10 +1818,10 @@ using namespace ::com::sun::star::i18n;
 /*N*/ 		}
 /*N*/ 		break;
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	if( SETATTR_DONTEXPAND & nMode )
 /*N*/ 		pHint->SetDontExpand( TRUE );
-/*N*/ 
+/*N*/
 /*N*/ 	// SwTxtAttrs ohne Ende werden sonderbehandelt:
 /*N*/ 	// Sie werden natuerlich in das Array insertet, aber sie werden nicht
 /*N*/ 	// in die pPrev/Next/On/Off-Verkettung aufgenommen.
@@ -1843,28 +1843,28 @@ using namespace ::com::sun::star::i18n;
 /*N*/ 		}
 /*N*/ 		return;
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	// ----------------------------------------------------------------
 /*N*/ 	// Ab hier gibt es nur noch pHint mit einem EndIdx !!!
-/*N*/ 
+/*N*/
 /*N*/     SwTxtAttr *pMerge = pHint; // For a smarter Merge-function
-/*N*/ 
+/*N*/
 /*N*/     BOOL bResort = FALSE;
-/*N*/ 
+/*N*/
 /*N*/ 	if( *pHtEnd < nHtStart )
 /*N*/ 	{
 /*?*/ 		ASSERT( *pHtEnd >= nHtStart,
 /*?*/ 					"+SwpHints::Insert: invalid hint, end < start" );
-/*?*/ 
+/*?*/
 /*?*/ 		// Wir drehen den Quatsch einfach um:
 /*?*/ 		*pHint->GetStart() = *pHtEnd;
 /*?*/ 		*pHtEnd = nHtStart;
 /*?*/ 		nHtStart = *pHint->GetStart();
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	// AMA: Damit wir endlich mit ueberlappenden Hints fertig werden ...
 /*N*/ 	// 		das neue Verfahren:
-/*N*/ 
+/*N*/
 /*N*/ 	if( !(SETATTR_NOHINTADJUST & nMode) && !pHint->IsOverlapAllowedAttr() )
 /*N*/ 	{
 /*N*/ 		const SfxPoolItem* pParaItem;
@@ -1874,8 +1874,12 @@ using namespace ::com::sun::star::i18n;
 /*N*/ 			( SFX_ITEM_SET == rNode.GetpSwAttrSet()->GetItemState( nWhich,
 /*N*/ 				FALSE, &pParaItem ) ) && ( pParaItem == &pHint->GetAttr() );
 /*N*/ 		BOOL bReplace = !( SETATTR_DONTREPLACE & nMode );
+#if defined(_MSC_VER) && (_MSC_VER >= 1310 )
+            ::binfilter::SwpHtStart_SAR *pTmpHints = 0;
+#else
 /*N*/ 		SwpHtStart_SAR *pTmpHints = 0;
-/*N*/ 
+#endif
+/*N*/
 /*N*/ 		USHORT i;
 /*N*/ 		// Wir wollen zwar von nHtStart bis nMaxEnd, muessen aber ggf.
 /*N*/ 		// stueckeln (Attribute duerfen keine Zeichenvorlagen ueberlappen).
@@ -1897,7 +1901,7 @@ using namespace ::com::sun::star::i18n;
 /*?*/ 												nHtStart, nMaxEnd );
 /*?*/ 					nHtEnd = *pHint->GetEnd();
 /*N*/ 				}
-/*N*/ 
+/*N*/
 /*N*/ 				for ( i = 0; i < Count(); i++)
 /*N*/ 				{
 /*N*/ 					SwTxtAttr *pOther = GetHt(i);
@@ -1940,7 +1944,7 @@ using namespace ::com::sun::star::i18n;
 /*N*/ 				}
 /*N*/ 				*pHint->GetEnd() = nHtEnd;
 /*N*/ 			}
-/*N*/ 
+/*N*/
 /*N*/ 			i = 0;
 /*N*/ 			while(i < Count())
 /*N*/ 			{
@@ -1949,7 +1953,7 @@ using namespace ::com::sun::star::i18n;
 /*N*/ 				BOOL bCheckInclude = pHint->IsCharFmtAttr() &&
 /*N*/ 									 pOther->IsCharFmtAttr() &&
 /*N*/ 									 nWhich != nOtherWhich;
-/*N*/ 
+/*N*/
 /*N*/ 				BOOL bOtherCharFmt = RES_TXTATR_CHARFMT == nOtherWhich;
 /*N*/ 				if( nOtherWhich == nWhich || bCheckInclude )
 /*N*/ 				{
@@ -1974,7 +1978,7 @@ using namespace ::com::sun::star::i18n;
 /*N*/ 						const Range aHintRg( nHtStart, nHtEnd );
 /*N*/ 						const Range aOtherRg( *pOther->GetStart(),
 /*N*/ 												*pOther->GetEnd() );
-/*N*/ 
+/*N*/
 /*N*/ 						if( aOtherRg.IsInside( aHintRg.Min() ) ||
 /*N*/ 							aHintRg.IsInside( aOtherRg.Min() ) )
 /*N*/ 						{
@@ -1982,21 +1986,21 @@ using namespace ::com::sun::star::i18n;
 /*N*/ 							const Range aBig(
 /*N*/ 									Min( aHintRg.Min(), aOtherRg.Min()),
 /*N*/ 									Max( aHintRg.Max(), aOtherRg.Max()));
-/*N*/ 
+/*N*/
 /*N*/ 							// Gleiches Attribut
 /*N*/ 							// oder Zeichenvorlage:
 /*N*/ 							//		Bereiche duerfen nicht ueberlappen.
-/*N*/ 
+/*N*/
 /*N*/ 							// Zuerst wurde geprueft, ob sich der neue mit dem
 /*N*/ 							// alten ueberschneidet, danach gibt es nur noch
 /*N*/ 							// drei Faelle zu beachten:
 /*N*/ 							// 1) der neue umschliesst den alten
 /*N*/ 							// 2) der neue ueberlappt den alten hinten
 /*N*/ 							// 3) der neue ueberlappt den alten vorne
-/*N*/ 
+/*N*/
 /*N*/ 							BOOL bNoINet = RES_TXTATR_INETFMT != nOtherWhich ||
 /*N*/ 										   nWhich == nOtherWhich;
-/*N*/ 
+/*N*/
 /*N*/ 							// 1) der neue umschliesst den alten
 /*N*/ 							if( aBig == aHintRg )
 /*N*/ 							{
@@ -2051,7 +2055,11 @@ using namespace ::com::sun::star::i18n;
 /*N*/ 									// Beim Einfuegen spaltet es sich selbst.
 /*?*/ 										if( pHistory ) pHistory->Add( pOther );
 /*?*/ 										if( !pTmpHints )
+#if defined(_MSC_VER) && (_MSC_VER >= 1310 )
+                                                pTmpHints = new ::binfilter::SwpHtStart_SAR();
+#else
 /*?*/ 											pTmpHints = new SwpHtStart_SAR();
+#endif
 /*?*/ 										pTmpHints->C40_INSERT( SwTxtAttr, pOther,
 /*?*/ 											pTmpHints->Count() );
 /*?*/ 										Cut( i );
@@ -2072,16 +2080,16 @@ using namespace ::com::sun::star::i18n;
 /*N*/ 										( !bCheckInclude && !bOtherCharFmt ) )
 /*N*/ 									{
 /*N*/ 										if( pHistory ) pHistory->Add( pOther );
-/*N*/ 
+/*N*/
 /*N*/ 										*pOther->GetStart() = nHtEnd;
-/*N*/ 
+/*N*/
 /*N*/ 										if( pHistory ) pHistory->Add( pOther, TRUE );
 /*N*/ 										// ChainDelStart( pOther );
 /*N*/ 										// ChainStarts( pOther );
-/*N*/ 
+/*N*/
 /*N*/ 										// nehme die History weg, damit beim Resort
 /*N*/ 										// nicht doppelt eingetragen wird!
-/*N*/ 
+/*N*/
 /*N*/ 										SwRegHistory * pSave = pHistory;
 /*N*/ 										pHistory = 0;
 /*N*/ 										const BOOL bOk = Resort(i);
@@ -2100,7 +2108,11 @@ using namespace ::com::sun::star::i18n;
 /*?*/ 									// Beim Einfuegen spaltet es sich selbst.
 /*?*/ 										if( pHistory ) pHistory->Add( pOther );
 /*?*/ 										if( !pTmpHints )
+#if defined(_MSC_VER) && (_MSC_VER >= 1310 )
+                                                pTmpHints = new ::binfilter::SwpHtStart_SAR();
+#else
 /*?*/ 											pTmpHints = new SwpHtStart_SAR();
+#endif
 /*?*/ 										pTmpHints->C40_INSERT( SwTxtAttr, pOther,
 /*?*/ 											pTmpHints->Count() );
 /*?*/ 										Cut( i );
@@ -2115,7 +2127,7 @@ using namespace ::com::sun::star::i18n;
 /*N*/ 				}
 /*N*/ 				++i;
 /*N*/ 			}
-/*N*/ 
+/*N*/
 /*N*/ 			ClearDummies( rNode );
 /*N*/ 			// Nur wenn wir nicht sowieso schon durch die Absatzattribute
 /*N*/ 			// gueltig sind, werden wir eingefuegt ...
@@ -2132,7 +2144,7 @@ using namespace ::com::sun::star::i18n;
 /*N*/                 bResort = FALSE;
 /*N*/ 			}
 /*N*/ 			// InsertChain( pHint );
-/*N*/ 
+/*N*/
 /*N*/ 			// ... und die Abhaengigen benachrichtigen
 /*N*/ 			if ( rNode.GetDepends() )
 /*N*/ 			{
@@ -2159,10 +2171,10 @@ using namespace ::com::sun::star::i18n;
 /*?*/ 				pTmpHints = NULL;
 /*?*/ 			}
 /*N*/ 		} while ( TRUE );
-/*N*/ 
+/*N*/
 /*N*/         if( bResort )
 /*?*/             SwpHintsArr::Resort();
-/*N*/ 
+/*N*/
 /*N*/ 		// Jetzt wollen wir mal gucken, ob wir das SwpHintsArray nicht
 /*N*/ 		// etwas vereinfachen koennen ...
 /*N*/         Merge( rNode, pMerge );
@@ -2173,7 +2185,7 @@ using namespace ::com::sun::star::i18n;
 /*N*/ 		if ( pHistory )
 /*N*/ 			pHistory->Add( pHint, TRUE );
 /*N*/ 		// InsertChain( pHint );
-/*N*/ 
+/*N*/
 /*N*/ 		// ... und die Abhaengigen benachrichtigen
 /*N*/ 		if ( rNode.GetDepends() )
 /*N*/ 		{
@@ -2198,7 +2210,7 @@ using namespace ::com::sun::star::i18n;
 /*N*/ 	// ChainDelete( pHint );
 /*N*/ 	if( pHistory ) pHistory->Add( pHint );
 /*N*/ 	SwpHintsArr::DeleteAtPos( nPos );
-/*N*/ 
+/*N*/
 /*N*/ 	if( RES_TXTATR_FIELD == pHint->Which() )
 /*N*/ 	{
 /*N*/ 		SwFieldType* pFldTyp = ((SwTxtFld*)pHint)->GetFld().GetFld()->GetTyp();
@@ -2243,7 +2255,7 @@ using namespace ::com::sun::star::i18n;
 //STRIP001 				case RES_TXTATR_FLYCNT:
 //STRIP001 				case RES_TXTATR_FTN:
 //STRIP001 					break;
-//STRIP001 
+//STRIP001
 //STRIP001 				case RES_TXTATR_FIELD:
 //STRIP001 				case RES_TXTATR_HARDBLANK:
 //STRIP001 					if( bDelFields )
@@ -2271,7 +2283,7 @@ using namespace ::com::sun::star::i18n;
 //STRIP001 		return RTL_TEXTENCODING_SYMBOL == ((SvxFontItem&)aSet.Get( RES_CHRATR_FONT ))
 //STRIP001 									.GetCharSet();
 //STRIP001 	return FALSE;
-//STRIP001 
+//STRIP001
 //STRIP001 //JP 07.10.95: waere so auch nicht schlecht!
 //STRIP001 //	SwTxtFrmInfo aFInfo( GetFrm() );
 //STRIP001 //	return aFInfo.IsBullet( nPos );
@@ -2291,13 +2303,13 @@ using namespace ::com::sun::star::i18n;
 /*N*/ #ifdef VERTICAL_LAYOUT
 /*N*/         if ( ! nScript )
 /*N*/             nScript = pBreakIt->GetRealScriptOfText( aText, nBegin );
-/*N*/ 
+/*N*/
 /*N*/         nWhichId = GetWhichOfScript( nWhichId, nScript );
 /*N*/ #else
 /*N*/ 		nWhichId = GetWhichOfScript( nWhichId,
 /*N*/ 						pBreakIt->GetRealScriptOfText( aText, nBegin ));
 /*N*/ #endif
-/*N*/ 
+/*N*/
 /*N*/ 		xub_StrLen nEnd = nBegin + nLen;
 /*N*/ 		for( USHORT i = 0, nSize = pSwpHints->Count(); i < nSize; ++i )
 /*N*/ 		{
@@ -2306,15 +2318,15 @@ using namespace ::com::sun::star::i18n;
 /*N*/ 			xub_StrLen nAttrStart = *pHt->GetStart();
 /*N*/ 			if( nEnd < nAttrStart )
 /*N*/ 				break;
-/*N*/ 
+/*N*/
 /*N*/ 			const USHORT nWhich = pHt->Which();
-/*N*/ 
+/*N*/
 /*N*/ 			if( ( pHt->IsCharFmtAttr() && lcl_Included( nWhichId, pHt ) )
 /*N*/ 				|| nWhichId == nWhich )
 /*N*/ 			{
 /*N*/ 				const xub_StrLen *pEndIdx = pHt->GetEnd();
 /*N*/ 				// Ueberlappt das Attribut den Bereich?
-/*N*/ 
+/*N*/
 /*N*/ 				if( pEndIdx &&
 /*N*/ 					nLen ? ( nAttrStart < nEnd && nBegin < *pEndIdx )
 /*N*/ 					 	: (( nAttrStart < nBegin &&
@@ -2330,9 +2342,9 @@ using namespace ::com::sun::star::i18n;
 /*?*/ 						pItem = &((SwTxtINetFmt*)pHt)->GetCharFmt()->GetAttr( nWhichId );
 /*N*/ 					else
 /*N*/ 						pItem = &pHt->GetAttr();
-/*N*/ 
+/*N*/
 /*N*/ 					USHORT nLng = ((SvxLanguageItem*)pItem)->GetLanguage();
-/*N*/ 
+/*N*/
 /*N*/ 					// Umfasst das Attribut den Bereich komplett?
 /*N*/ 					if( nAttrStart <= nBegin && nEnd <= *pEndIdx )
 /*N*/ 						nRet = nLng;
@@ -2347,7 +2359,7 @@ using namespace ::com::sun::star::i18n;
 /*N*/ 		if( !pSwpHints )
 /*N*/ 			nWhichId = GetWhichOfScript( RES_CHRATR_LANGUAGE,
 /*N*/                         pBreakIt->GetRealScriptOfText( aText, nBegin ));
-/*N*/ 
+/*N*/
 /*N*/ 		nRet = ((SvxLanguageItem&)GetSwAttrSet().Get( nWhichId )).GetLanguage();
 /*N*/ 		if( LANGUAGE_DONTKNOW == nRet )
 /*N*/ 			nRet = GetAppLanguage();
@@ -2363,14 +2375,14 @@ using namespace ::com::sun::star::i18n;
 /*N*/ 	{
 /*N*/ 	case RES_TXTATR_REFMARK:
 /*N*/ 	case RES_TXTATR_TOXMARK:
-/*N*/ 
+/*N*/
 /*N*/ //	case RES_TXTATR_FIELD: 			??????
 /*N*/ //	case RES_TXTATR_FLYCNT,								// 29
-/*N*/ 
+/*N*/
 /*N*/ 	case RES_TXTATR_FTN:
 /*N*/ 		cRet = CH_TXTATR_INWORD;
 /*N*/ 		break;
-/*N*/ 
+/*N*/
 /*N*/ 		// depends on the character ??
 /*N*/ //	case RES_TXTATR_HARDBLANK:
 /*N*/ //		cRet = CH_TXTATR_INWORD;
