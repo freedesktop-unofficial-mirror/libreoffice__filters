@@ -1,5 +1,7 @@
 /************************************************************************
  *
+ *  PocketWordConstants.java
+ *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
  *
@@ -44,7 +46,7 @@
  *
  *  The Initial Developer of the Original Code is: Sun Microsystems, Inc.
  *
- *  Copyright: 2000 by Sun Microsystems, Inc.
+ *  Copyright: 2001 by Sun Microsystems, Inc.
  *
  *  All Rights Reserved.
  *
@@ -53,73 +55,44 @@
  *
  ************************************************************************/
 
-package org.openoffice.xmerge.converter.xml.sxc.pexcel.records;
 
-import java.io.DataInputStream;
-import java.io.OutputStream;
-import java.io.InputStream;
-import java.io.IOException;
+package org.openoffice.xmerge.converter.xml.sxc.pexcel;
 
-import org.openoffice.xmerge.util.Debug;
-import org.openoffice.xmerge.util.EndianConverter;
-import org.openoffice.xmerge.converter.xml.sxc.pexcel.PocketExcelConstants;
 
 /**
- * Represents a BIFF record defiuning the default row height 
+ * Interface defining constants for Pocket Excel attributes.
+ *
+ * @author	Martin Maher 
  */
-public class DefRowHeight implements BIFFRecord {
+public interface PocketExcelConstants {
+    /** File extension for Pocket Word files. */
+    public static final String FILE_EXTENSION = ".pxl";
 
-    private byte[] unknown1 = new byte[2];
-    private byte[] unknown2 = new byte[2];
-    
-    /**
-      * Constructs a pocket Excel Document from the
-      * <code>InputStream</code> and assigns it the document name passed in
-      *
-      * @param	is InputStream containing a Pocket Excel Data file.
-      */
-    public DefRowHeight() {
-        unknown1 = new byte[] {(byte)0x00, (byte)0x00};
-        unknown2 = new byte[] {(byte)0xFF, (byte)0x00};
-    }
+    /** Constants for pexcel BIFF records */
+    public static final int BLANK_CELL         = 0x01;
+    public static final int NUMBER_CELL        = 0x03;
+    public static final int LABEL_CELL         = 0x04;
+    public static final int BOOLERR_CELL       = 0x05;
+    public static final int FORMULA_CELL       = 0x06;
+    public static final int FORMULA_STRING     = 0x07;
+    public static final int ROW_DESCRIPTION    = 0x08;
+    public static final int BOF_RECORD         = 0x09;
+    public static final int EOF_MARKER         = 0x0A;
+    public static final int DEFINED_NAME       = 0x18;
+    public static final int CURRENT_SELECTION  = 0x1D;
+    public static final int NUMBER_FORMAT      = 0x1E;
+    public static final int DEFAULT_ROW_HEIGHT = 0x25;
+    public static final int FONT_DESCRIPTION   = 0x31;
+    public static final int WINDOW_INFO        = 0x3D;
+    public static final int SHEET_WINDOW_INFO  = 0x3E;
+    public static final int PANE_INFO          = 0x41;
+    public static final int CODEPAGE           = 0x42;
+    public static final int DEF_COL_WIDTH      = 0x55;
+    public static final int COLINFO            = 0x7D;
+    public static final int BOUND_SHEET        = 0x85;
+    public static final int EXTENDED_FORMAT    = 0xE0;  
 
-    /**
-      * Constructs a DefRowHeight from the <code>InputStream</code> 
-      *
-      * @param	is InputStream containing a Pocket Excel Data file.
-      */
-    public DefRowHeight(InputStream is) throws IOException {
-        read(is);
-    }
-
-    /**
-     * Get the hex code for this particular <code>BIFFRecord</code> 
-     *
-     * @return the hex code for <code>DefRowHeight</code>
-     */
-    public short getBiffType() {
-        return PocketExcelConstants.DEFAULT_ROW_HEIGHT;
-    }
-    
-    public int read(InputStream input) throws IOException {
-
-        int numOfBytesRead  = input.read(unknown1);
-        numOfBytesRead		+= input.read(unknown2);
-
-        Debug.log(Debug.TRACE,"\tunknown1 : "+ EndianConverter.readShort(unknown1) + 
-                            " unknown2 : " + EndianConverter.readShort(unknown2));        
-        return numOfBytesRead;
-    }
-    
-    public void write(OutputStream output) throws IOException {
-
-        output.write(getBiffType());
-        output.write(unknown1);
-        output.write(unknown2);
-
-        Debug.log(Debug.TRACE,"Writing DefRowHeight record");
-
-    
-    }
-    
+    /** Colour lookup table for mapping pexcel color values 
+        (See util/ColourConverter.java */
+    public short cLookup[] = { 0, 14, 15, 1, 2, 3, 4, 7, 6, 5, 8, 9, 10, 13, 12, 11 };
 }
