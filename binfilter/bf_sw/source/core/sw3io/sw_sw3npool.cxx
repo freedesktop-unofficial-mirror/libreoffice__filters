@@ -2,9 +2,9 @@
  *
  *  $RCSfile: sw_sw3npool.cxx,v $
  *
- *  $Revision: 1.7 $
+ *  $Revision: 1.8 $
  *
- *  last change: $Author: rt $ $Date: 2005-01-11 11:44:36 $
+ *  last change: $Author: rt $ $Date: 2005-01-27 11:08:32 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -130,6 +130,9 @@
 #ifndef _FMTCNTNT_HXX //autogen
 #include <fmtcntnt.hxx>
 #endif
+#ifndef _FMTFSIZE_HXX //autogen
+#include <fmtfsize.hxx>
+#endif
 #ifndef _FMTPDSC_HXX //autogen
 #include <fmtpdsc.hxx>
 #endif
@@ -231,9 +234,9 @@ namespace binfilter {
 /*N*/ 		// Nur 3.1/4.0-Export
 /*N*/ 		ASSERT( SOFFICE_FILEFORMAT_40 >= rStrm.GetVersion(),
 /*N*/ 				"SwFmtAnchor:: FF-Version und Item-Version passen nicht" );
-/*N*/ 
+/*N*/
 /*N*/ 		Sw3IoImp* pIo = Sw3IoImp::GetCurrentIo();
-/*N*/ 
+/*N*/
 /*N*/ 		if( pIo->IsSw31Export() && pIo->pExportInfo &&
 /*N*/ 			pIo->pExportInfo->bDrwFrmFmt31 &&
 /*N*/ 			FLY_IN_CNTNT==GetAnchorId() )
@@ -295,7 +298,7 @@ namespace binfilter {
 /*N*/ 		rStrm << (BYTE) GetAnchorId();
 /*N*/ 		Sw3IoImp::OutULong( rStrm, nIndex );
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	return rStrm;
 /*N*/ }
 
@@ -316,10 +319,10 @@ namespace binfilter {
 /*N*/ 	Sw3IoImp* pIo = Sw3IoImp::GetCurrentIo();
 /*N*/ 	SvStream* p = pIo->pStrm;
 /*N*/ 	pIo->pStrm = (SvStorageStream*) &rStrm;
-/*N*/ 
+/*N*/
 /*N*/ 	USHORT eSave_StartNodeType = pIo->eStartNodeType;
 /*N*/ 	pIo->eStartNodeType = SwHeaderStartNode;
-/*N*/ 
+/*N*/
 /*N*/ 	SwFmtHeader* pAttr;
 /*N*/ 	if( pIo->Peek() == SWG_FREEFMT )
 /*N*/ 	{
@@ -336,7 +339,7 @@ namespace binfilter {
 /*N*/ 	else pAttr = new SwFmtHeader( BOOL( FALSE ) );
 /*N*/ 	pIo->pStrm = p;
 /*N*/ 	pIo->eStartNodeType = eSave_StartNodeType;
-/*N*/ 
+/*N*/
 /*N*/ 	return pAttr;
 /*N*/ }
 
@@ -363,17 +366,29 @@ namespace binfilter {
 /*N*/ 	Sw3IoImp* pIo = Sw3IoImp::GetCurrentIo();
 /*N*/ 	SvStream* p = pIo->pStrm;
 /*N*/ 	pIo->pStrm = (SvStorageStream*) &rStrm;
-/*N*/ 
+/*N*/
 /*N*/ 	USHORT eSave_StartNodeType = pIo->eStartNodeType;
 /*N*/ 	pIo->eStartNodeType = SwFooterStartNode;
-/*N*/ 
+/*N*/
 /*N*/ 	SwFmtFooter* pAttr;
 /*N*/ 	if( pIo->Peek() == SWG_FREEFMT )
 /*N*/ 	{
 /*N*/ 		SwFrmFmt* pFmt = (SwFrmFmt*) pIo->InFormat( SWG_FREEFMT, NULL );
 /*N*/ 		if( pFmt )
 /*N*/ 		{
-/*N*/ 			pAttr = new SwFmtFooter( pFmt );
+/*N*/           // --> FME 2005-01-18 #b6218408#
+/*N*/           // Emulate 5.2 footer size bug:
+/*N*/           if ( pIo->IsVersion( SWG_MAJORVERSION_50 ) )
+/*N*/           {
+/*N*/               SwFmtFrmSize aSize = pFmt->GetFrmSize( FALSE );
+/*N*/               if ( ATT_MIN_SIZE == aSize.GetSizeType() )
+/*N*/               {
+/*N*/                   aSize.SetHeight( 0 );
+/*N*/                   pFmt->SetAttr( aSize );
+/*N*/               }
+/*N*/           }
+/*N*/           // <--
+/*N*/           pAttr = new SwFmtFooter( pFmt );
 /*N*/ 			pAttr->SetActive( BOOL( bActive ) );
 /*N*/ 		}
 /*N*/ 		else
@@ -383,7 +398,7 @@ namespace binfilter {
 /*N*/ 	else pAttr = new SwFmtFooter( BOOL( FALSE ) );
 /*N*/ 	pIo->pStrm = p;
 /*N*/ 	pIo->eStartNodeType = eSave_StartNodeType;
-/*N*/ 
+/*N*/
 /*N*/ 	return pAttr;
 /*N*/ }
 
@@ -476,7 +491,7 @@ namespace binfilter {
 /*N*/ {
 /*N*/ 	ASSERT( IVER_FMTPAGEDESC_NOAUTO != nVersion,
 /*N*/ 			"SwFmtPageDesc: Export der Item-Version wird nicht unterstuetzt" );
-/*N*/ 
+/*N*/
 /*N*/ 	Sw3IoImp* pIo = Sw3IoImp::GetCurrentIo();
 /*N*/ 	const SwPageDesc* pDesc = GetPageDesc();
 /*N*/ 	USHORT nIdx = IDX_NO_VALUE;
@@ -486,7 +501,7 @@ namespace binfilter {
 /*N*/ 	// Eventuell das Header-Bit setzen, dass Seitennummern vorkommen
 /*N*/ 	if( nOff )
 /*N*/ 		pIo->nFileFlags |= SWGF_HAS_PGNUMS;
-/*N*/ 
+/*N*/
 /*N*/ 	if( nVersion < IVER_FMTPAGEDESC_LONGPAGE )
 /*N*/ 	{
 /*N*/ 		rStrm << (BYTE) 0x01		// nicht mehr bei IVER_..._NOAUTO
@@ -506,10 +521,10 @@ namespace binfilter {
 /*N*/ 	Sw3IoImp* pIo = Sw3IoImp::GetCurrentIo();
 /*N*/ 	SvStream* p = pIo->pStrm;
 /*N*/ 	pIo->pStrm = (SvStorageStream*) &rStrm;
-/*N*/ 
+/*N*/
 /*N*/ 	USHORT eSave_StartNodeType = pIo->eStartNodeType;
 /*N*/ 	pIo->eStartNodeType = SwFlyStartNode;
-/*N*/ 
+/*N*/
 /*N*/ 	SwFrmFmt* pTmpFmt = NULL;
 /*N*/ 	BYTE cKind = pIo->Peek();
 /*N*/ 	if( SWG_SDRFMT==cKind )
@@ -528,13 +543,13 @@ namespace binfilter {
 /*N*/ 	{
 /*N*/ 		pTmpFmt = (SwFrmFmt*) pIo->InFormat( SWG_FLYFMT, NULL );
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	pIo->pStrm = p;
 /*N*/ 	pIo->eStartNodeType = eSave_StartNodeType;
-/*N*/ 
+/*N*/
 /*N*/ 	if(	pTmpFmt )
 /*N*/ 		return new SwFmtFlyCnt( pTmpFmt );
-/*N*/ 
+/*N*/
 /*?*/ 	if( !pIo->bInsIntoHdrFtr || SWG_SDRFMT!=cKind )
 /*?*/ 		pIo->Error();
 /*?*/ 	return NULL;
@@ -671,7 +686,7 @@ const bool SwFmtFlyCnt::Sw3ioExportAllowed() const
 /*N #i27164#*/ 										(ScriptType)nScriptType ) );
 /*N*/ 		}
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	return pNew;
 /*N*/ }
 
@@ -679,7 +694,7 @@ const bool SwFmtFlyCnt::Sw3ioExportAllowed() const
 /*N*/ {
 /*N*/ 	ASSERT( nIVer != USHRT_MAX,
 /*N*/ 			"SwFmtINetFmt: Wer faengt da Version USHRT_MAX nicht ab?" );
-/*N*/ 
+/*N*/
 /*N*/ 	UINT16 nId1 = IDX_NO_VALUE;
 /*N*/ 	UINT16 nId2 = IDX_NO_VALUE;
 /*N*/ 	Sw3IoImp* pIo = Sw3IoImp::GetCurrentIo();
@@ -693,7 +708,7 @@ const bool SwFmtFlyCnt::Sw3ioExportAllowed() const
 /*N*/ 						   rStrm.GetStreamCharSet() );
 /*N*/   	rStrm.WriteByteString( aTargetFrame, rStrm.GetStreamCharSet() );
 /*N*/ 	rStrm << nId1 << nId2;
-/*N*/ 
+/*N*/
 /*N*/ 	USHORT nCnt = pMacroTbl ? (USHORT)pMacroTbl->Count() : 0, nMax = nCnt;
 /*N*/ 	if( nCnt )
 /*N*/ 	{
@@ -701,9 +716,9 @@ const bool SwFmtFlyCnt::Sw3ioExportAllowed() const
 /*?*/ 			if( STARBASIC != pMac->GetScriptType() )
 /*?*/ 				--nCnt;
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	rStrm << nCnt;
-/*N*/ 
+/*N*/
 /*N*/ 	if( nCnt )
 /*N*/ 	{
 /*N*/ 		// erstmal nur die BasicMacros schreiben, die konnte der 3. noch
@@ -717,17 +732,17 @@ const bool SwFmtFlyCnt::Sw3ioExportAllowed() const
 /*?*/ 									   rStrm.GetStreamCharSet() );
 /*?*/ 			}
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	if( nIVer >= 1 )
 /*N*/ 		rStrm.WriteByteString( GetName(), rStrm.GetStreamCharSet() );
-/*N*/ 
+/*N*/
 /*N*/ 	if( nIVer >= 2 )
 /*N*/ 	{
 /*N*/ 		// ab der 4.0 ( nach Technical Beta ) kennen wir auch JavaScript
 /*N*/ 		// also noch alle JavaScript-Macros schreiben
 /*N*/ 		nCnt = nMax - nCnt;
 /*N*/ 		rStrm << nCnt;
-/*N*/ 
+/*N*/
 /*N*/ 		if( nCnt )
 /*N*/ 		{
 /*?*/ 			for( SvxMacro* pMac = pMacroTbl->First(); pMac; pMac = pMacroTbl->Next() )
@@ -742,7 +757,7 @@ const bool SwFmtFlyCnt::Sw3ioExportAllowed() const
 /*N*/ 				}
 /*N*/ 		}
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	return rStrm;
 /*N*/ }
 
@@ -762,7 +777,7 @@ const bool SwFmtFlyCnt::Sw3ioExportAllowed() const
 /*N*/ 	UINT16 nNumber;
 /*N*/ 	rStrm >> nNumber;
 /*N*/ 	rStrm.ReadByteString( aNumber, rStrm.GetStreamCharSet() );
-/*N*/ 
+/*N*/
 /*N*/ 	// Die Section fuer den Text erzeugen
 /*N*/ 	Sw3IoImp* pIo = Sw3IoImp::GetCurrentIo();
 /*N*/ 	SwNodes& rNodes = pIo->pDoc->GetNodes();
@@ -774,7 +789,7 @@ const bool SwFmtFlyCnt::Sw3ioExportAllowed() const
 /*N*/ #endif
 /*N*/ 	SwStartNode* pSttNd = rNodes.MakeEmptySection( aStart,SwFootnoteStartNode );
 /*N*/ 	aStart = *pSttNd->EndOfSectionNode();
-/*N*/ 
+/*N*/
 /*N*/ 	if( pIo->bInsert )
 /*N*/ 	{
 /*?*/ 		if( !pIo->pSectionDepths )
@@ -790,7 +805,7 @@ const bool SwFmtFlyCnt::Sw3ioExportAllowed() const
 /*?*/ 				"section depth stack is empty" );
 /*?*/ 		pIo->pSectionDepths->Remove( pIo->pSectionDepths->Count() - 1U );
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	// die Seq-Nummer einlesen - fuer die Querverweise auf Fussnoten
 /*N*/ 	USHORT nSeqNo;
 /*N*/ 	BOOL bEndNote = FALSE;
@@ -804,11 +819,11 @@ const bool SwFmtFlyCnt::Sw3ioExportAllowed() const
 /*N*/ 		rStrm >> nFlags;
 /*N*/ 		bEndNote = (nFlags & 0x01) != 0;
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	SwFmtFtn aFtn( bEndNote );
 /*N*/ 	aFtn.SetNumStr( aNumber );
 /*N*/ 	aFtn.SetNumber( nNumber );
-/*N*/ 
+/*N*/
 /*N*/ 	// Das Fussnoten-Attribut liest seine Section "auf der Wiese" ein.
 /*N*/ 	// Hier muss also der Start errechnet und eingetragen werden.
 /*N*/ 	SwFmtFtn& rNew = (SwFmtFtn&)pIo->pDoc->GetAttrPool().Put( aFtn );
@@ -817,16 +832,16 @@ const bool SwFmtFlyCnt::Sw3ioExportAllowed() const
 /*N*/ 	pAttr->SetStartNode( &aStart );
 /*N*/ 	if( 1 <= nIVer )
 /*N*/ 		pAttr->SetSeqNo( nSeqNo );
-/*N*/ 
+/*N*/
 /*N*/ 	return &rNew;
 /*N*/ }
 
 /*N*/ SvStream& SwFmtFtn::Store( SvStream& rStrm, USHORT nIVer ) const
 /*N*/ {
 /*N*/ 	Sw3IoImp* pIo = Sw3IoImp::GetCurrentIo();
-/*N*/ 
+/*N*/
 /*N*/ 	rStrm << (UINT16) GetNumber();
-/*N*/ 
+/*N*/
 /*N*/ 	if( nIVer < 2 && IsEndNote() )
 /*N*/ 	{
 /*N*/ 		// Im SW 4.0 gab es noch keine End-Noten, also
@@ -847,7 +862,7 @@ const bool SwFmtFlyCnt::Sw3ioExportAllowed() const
 /*N*/ 	{
 /*N*/ 		rStrm.WriteByteString( GetNumStr(), rStrm.GetStreamCharSet() );
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	SwNodeIndex* pStart = GetTxtFtn()->GetStartNode();
 /*N*/ 	if( pStart )
 /*N*/ 	{
@@ -861,7 +876,7 @@ const bool SwFmtFlyCnt::Sw3ioExportAllowed() const
 /*N*/ 		rStrm << (USHORT)pTxtAttr->GetSeqRefNo();
 /*N*/ 	if( 2 <= nIVer )
 /*N*/ 		rStrm << (BYTE)(IsEndNote() ? 0x01 : 0x00);
-/*N*/ 
+/*N*/
 /*N*/ 	return rStrm;
 /*N*/ }
 
@@ -885,7 +900,7 @@ const bool SwFmtFlyCnt::Sw3ioExportAllowed() const
 /*N*/ 	pIo->pStrm = p;
 /*N*/ 	if( !pFld )
 /*N*/ 		return NULL;
-/*N*/ 
+/*N*/
 /*N*/ 	SwFmtFld* pAttr = new SwFmtFld;
 /*N*/ 	pAttr->pField = pFld;
 /*N*/ 	return pAttr;
@@ -909,23 +924,23 @@ const bool SwFmtFlyCnt::Sw3ioExportAllowed() const
 /*N*/ 	Sw3IoImp* pIo = Sw3IoImp::GetCurrentIo();
 /*N*/ 	rStrm >> cType
 /*N*/ 		  >> nLevel;
-/*N*/ 
+/*N*/
 /*N*/ 	if( nIVer < IVER_TOXMARK_STRPOOL )
 /*N*/ 		rStrm.ReadByteString( aTypeName, rStrm.GetStreamCharSet() );
 /*N*/ 	else
 /*N*/ 		rStrm >> nStrIdx;
-/*N*/ 
+/*N*/
 /*N*/ 	rStrm.ReadByteString( aAltText, rStrm.GetStreamCharSet() );
 /*N*/ 	rStrm.ReadByteString( aPrimKey, rStrm.GetStreamCharSet() );
 /*N*/ 	rStrm.ReadByteString( aSecKey, rStrm.GetStreamCharSet() );
-/*N*/ 
+/*N*/
 /*N*/ 	BYTE cFlags = 0;
 /*N*/ 	// With the 5.2, there are new tox types.
 /*N*/ 	if( nIVer >= IVER_TOXMARK_NEWTOX )
 /*N*/ 	{
 /*N*/ 		rStrm >> cType >> nStrIdx >> cFlags;
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	TOXTypes eType = (TOXTypes)cType;
 /*N*/ 	if( nIVer >= IVER_TOXMARK_STRPOOL )
 /*N*/ 	{
@@ -934,7 +949,7 @@ const bool SwFmtFlyCnt::Sw3ioExportAllowed() const
 /*N*/ 		else
 /*N*/ 			aTypeName = SwTOXBase::GetTOXName( eType );
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	// Search tox type
 /*N*/ 	const SwTOXType *pType = NULL;
 /*N*/ 	USHORT n = pIo->pDoc->GetTOXTypeCount( eType );
@@ -947,7 +962,7 @@ const bool SwFmtFlyCnt::Sw3ioExportAllowed() const
 /*N*/ 			break;
 /*N*/ 		}
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	// If the tox type is unknown, a new one is created.
 /*N*/ 	if( !pType )
 /*N*/ 	{
@@ -960,7 +975,7 @@ const bool SwFmtFlyCnt::Sw3ioExportAllowed() const
 /*?*/ 		pIo->Error();
 /*N*/ 		return NULL;
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	SwTOXMark* pMark = new SwTOXMark( pType );
 /*N*/ 	pMark->SetAlternativeText( aAltText );
 /*N*/ 	switch( eType )
@@ -984,17 +999,17 @@ const bool SwFmtFlyCnt::Sw3ioExportAllowed() const
 /*?*/ 			delete pMark;
 /*?*/ 			return 0;
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	pMark->SetAutoGenerated( 0 != (cFlags & 0x01) );
 /*N*/ 	pMark->SetMainEntry( 0 != (cFlags & 0x02) );
-/*N*/ 
+/*N*/
 /*N*/ 	return pMark;
 /*N*/ }
 
 /*N*/ SvStream& SwTOXMark::Store( SvStream& rStrm, USHORT nIVer ) const
 /*N*/ {
 /*N*/ 	Sw3IoImp* pIo = Sw3IoImp::GetCurrentIo();
-/*N*/ 
+/*N*/
 /*N*/ 	// Types greater or equal than TOX_ILLUSTRATIONS are new with versuion
 /*N*/ 	// 5.2. That for, they must be mapped to a TOX_USER for the 5.1, but their
 /*N*/ 	// original type has to be written, too. Some attention must be kept to
@@ -1004,7 +1019,7 @@ const bool SwFmtFlyCnt::Sw3ioExportAllowed() const
 /*N*/ 	TOXTypes eOldType = eType >= TOX_ILLUSTRATIONS ? TOX_USER : eType;
 /*N*/ 	rStrm << (BYTE)   eOldType
 /*N*/ 		  << (UINT16) nLevel;
-/*N*/ 
+/*N*/
 /*N*/ 	const String& rTypeName = GetTOXType()->GetTypeName();
 /*N*/ 	if( nIVer < IVER_TOXMARK_STRPOOL )
 /*N*/ 	{
@@ -1040,7 +1055,7 @@ const bool SwFmtFlyCnt::Sw3ioExportAllowed() const
 /*N*/ 			: IDX_NO_VALUE;
 /*N*/ 		rStrm << (BYTE)eType << nStrIdx << cFlags;
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	return rStrm;
 /*N*/ }
 
@@ -1081,7 +1096,7 @@ SvStream& SwFmtRuby::Store( SvStream & rStrm, USHORT nIVer ) const
 /*N*/ 			SOFFICE_FILEFORMAT_40==nFFVer ||
 /*N*/ 			SOFFICE_FILEFORMAT_50==nFFVer,
 /*N*/ 			"SwFmtRuby: Gibt es ein neues Fileformat?" );
-/*N*/ 
+/*N*/
 /*N*/ 	return SOFFICE_FILEFORMAT_50 > nFFVer ? USHRT_MAX : 0;
 /*N*/ }
 
@@ -1222,7 +1237,7 @@ SvStream& SwTextGridItem::Store( SvStream & rStrm, USHORT nIVer ) const
 /*N*/ 			SOFFICE_FILEFORMAT_40==nFFVer ||
 /*N*/ 			SOFFICE_FILEFORMAT_50==nFFVer,
 /*N*/             "SwTextGridItem: Gibt es ein neues Fileformat?" );
-/*N*/ 
+/*N*/
 /*N*/     return USHRT_MAX;
 /*N*/ }
 
