@@ -2,9 +2,9 @@
  *
  *  $RCSfile: typedetection.cxx,v $
  *
- *  $Revision: 1.5 $
+ *  $Revision: 1.6 $
  *
- *  last change: $Author: kz $ $Date: 2004-09-08 10:44:18 $
+ *  last change: $Author: obo $ $Date: 2004-11-17 15:24:46 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -444,8 +444,7 @@ sal_Bool TypeDetection::impl_getPreselectionForDocumentService(const ::rtl::OUSt
                                     ++pFilter                    )
     {
         const ::rtl::OUString sFilter = *pFilter;
-        if (impl_getPreselectionForFilter(sFilter, aParsedURL, rFlatTypes))
-            return sal_True;
+        impl_getPreselectionForFilter(sFilter, aParsedURL, rFlatTypes);
     }
 
     return sal_False;
@@ -545,7 +544,7 @@ void TypeDetection::impl_getPreselection(const css::util::URL&                aP
             ::osl::ResettableMutexGuard aLock(m_aLock);
             CacheItem       aType         = m_rCache->getItem(FilterCache::E_TYPE, sFlatType);
             aLock.clear();
-            
+
             ::rtl::OUString sDetectService;
             aType[PROPNAME_DETECTSERVICE] >>= sDetectService;
 
@@ -627,7 +626,7 @@ void TypeDetection::impl_getPreselection(const css::util::URL&                aP
 
     css::uno::Reference< css::document::XExtendedFilterDetection > xDetector;
     css::uno::Reference< css::lang::XMultiServiceFactory > xServiceManager;
-    
+
     // SAFE ->
     ::osl::ResettableMutexGuard aLock(m_aLock);
     xServiceManager = m_xSMGR;
