@@ -2,9 +2,9 @@
  *
  *  $RCSfile: sfx2_appopen.cxx,v $
  *
- *  $Revision: 1.3 $
+ *  $Revision: 1.4 $
  *
- *  last change: $Author: aw $ $Date: 2003-12-05 15:10:45 $
+ *  last change: $Author: mba $ $Date: 2004-04-02 14:16:28 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -199,7 +199,7 @@
 #include <svtools/svstdarr.hxx>
 
 #ifndef _LEGACYBINFILTERMGR_HXX
-#include <legacysmgr/legacy_binfilters_smgr.hxx>	//STRIP002 
+#include <legacysmgr/legacy_binfilters_smgr.hxx>	//STRIP002
 #endif
 namespace binfilter {
 
@@ -246,15 +246,15 @@ using namespace sfx2;
 //STRIP001     BOOL            bForbidVisible,
 //STRIP001 	const String*   pPostStr
 //STRIP001 )
-//STRIP001 
+//STRIP001
 //STRIP001 /*  [Beschreibung]
-//STRIP001 
+//STRIP001
 //STRIP001     Stellt fest, ob ein Dokument mit dem Namen 'rName' bereits geladen
 //STRIP001     ist und liefert einen Pointer darauf zu"uck.
-//STRIP001 
+//STRIP001
 //STRIP001     Ist das Dokument noch nicht geladen, wird ein 0-Pointer zur"uckgeliefert.
 //STRIP001 */
-//STRIP001 
+//STRIP001
 //STRIP001 {
 //STRIP001     // zu suchenden Namen als URL aufbereiten
 //STRIP001     INetURLObject aUrlToFind( rName );
@@ -262,10 +262,10 @@ using namespace sfx2;
 //STRIP001 	String aPostString;
 //STRIP001 	if (  pPostStr )
 //STRIP001 		aPostString = *pPostStr;
-//STRIP001 
+//STRIP001
 //STRIP001     // noch offen?
 //STRIP001     SfxObjectShellRef xDoc;
-//STRIP001 
+//STRIP001
 //STRIP001     if ( !aUrlToFind.HasError() )
 //STRIP001     {
 //STRIP001 		// dann bei den normal geoeffneten Docs
@@ -291,13 +291,13 @@ using namespace sfx2;
 //STRIP001 			}
 //STRIP001 		}
 //STRIP001     }
-//STRIP001 
+//STRIP001
 //STRIP001     // gefunden?
 //STRIP001     if ( xDoc.Is() && bActivate )
 //STRIP001     {
 //STRIP001         DBG_ASSERT(
 //STRIP001             !bForbidVisible, "Unsichtbares kann nicht aktiviert werden" );
-//STRIP001 
+//STRIP001
 //STRIP001 		SfxTopViewFrame *pFrame;
 //STRIP001         for( pFrame = (SfxTopViewFrame*)
 //STRIP001                  SfxViewFrame::GetFirst( xDoc, TYPE(SfxTopViewFrame) );
@@ -328,18 +328,18 @@ using namespace sfx2;
 //STRIP001     // DocInfo von pDoc 'plattmachen'
 //STRIP001     SfxDocumentInfo &rInfo = pDoc->GetDocInfo();
 //STRIP001     rInfo.Clear();
-//STRIP001 
+//STRIP001
 //STRIP001     // DocInfo vom Template laden
 //STRIP001     SvStorageRef xTemplStor = new SvStorage( rFileName, STREAM_STD_READ );
 //STRIP001     SfxDocumentInfo aTemplInfo;
-//STRIP001 
+//STRIP001
 //STRIP001 	if ( aTemplInfo.Load( xTemplStor ) )
 //STRIP001     	rInfo.SetTemplateDate( aTemplInfo.GetChanged().GetTime() );
-//STRIP001 
+//STRIP001
 //STRIP001     // Template in DocInfo von pDoc eintragen
 //STRIP001     INetURLObject aObj( rFileName );
 //STRIP001     DBG_ASSERT( aObj.GetProtocol() != INET_PROT_NOT_VALID, "Invalid URL" );
-//STRIP001 
+//STRIP001
 //STRIP001     if( ::utl::LocalFileHelper::IsLocalFile( rFileName ) )
 //STRIP001 	{
 //STRIP001         String aFoundName;
@@ -347,14 +347,14 @@ using namespace sfx2;
 //STRIP001         {
 //STRIP001             rInfo.SetTemplateFileName( aObj.GetMainURL(INetURLObject::DECODE_TO_IURI) );
 //STRIP001             rInfo.SetTemplateName( rLongName );
-//STRIP001 
+//STRIP001
 //STRIP001             // wenn schon eine Config da ist, mu\s sie aus dem Template sein
 //STRIP001             BOOL bHasConfig = (pDoc->GetConfigManager() != 0);
 //STRIP001             rInfo.SetTemplateConfig( bHasConfig );
 //STRIP001             pDoc->SetTemplateConfig( bHasConfig );
 //STRIP001         }
 //STRIP001 	}
-//STRIP001 
+//STRIP001
 //STRIP001     // DocInfo in Stream schreiben
 //STRIP001     pDoc->FlushDocInfo();
 //STRIP001 }
@@ -395,40 +395,35 @@ using namespace sfx2;
 /*N*/                 SfxDocumentInfo aInfo;
 /*N*/                 bIsEncrypted = ( aInfo.Load(aRef) && aInfo.IsPasswd() );
 /*N*/             }
-/*N*/ 
+/*N*/
 /*N*/             if ( bIsEncrypted )
-/*N*/             {DBG_ASSERT(0, "STRIP"); //STRIP001 
-//STRIP001 /*?*/                 Window* pWin = pDoc ? pDoc->GetDialogParent( pFile ) : NULL;
-//STRIP001 /*?*/                 if ( pWin )
-//STRIP001 /*?*/                     pWin->Show();
-//STRIP001 /*?*/ 
-//STRIP001 /*?*/ 				nRet = ERRCODE_SFX_CANTGETPASSWD;
-//STRIP001 /*?*/ 
-//STRIP001 /*?*/                 SfxItemSet *pSet = pFile->GetItemSet();
-//STRIP001 /*?*/ 				if( pSet )
-//STRIP001 /*?*/ 				{
-//STRIP001 /*?*/         			Reference< ::com::sun::star::task::XInteractionHandler > xInteractionHandler;
-//STRIP001 /*?*/ 
-//STRIP001 /*?*/ 					SFX_ITEMSET_ARG( pSet, pxInteractionItem, SfxUnoAnyItem, SID_INTERACTIONHANDLER, sal_False );
-//STRIP001 /*?*/ 					if( pxInteractionItem && ( pxInteractionItem->GetValue() >>= xInteractionHandler )
-//STRIP001 /*?*/ 			 		&& xInteractionHandler.is() )
-//STRIP001 /*?*/ 					{
-//STRIP001 /*?*/ 						RequestDocumentPassword* pPasswordRequest = new RequestDocumentPassword(
-//STRIP001 /*?*/ 							::com::sun::star::task::PasswordRequestMode_PASSWORD_ENTER,
-//STRIP001 /*?*/ 							INetURLObject( pFile->GetOrigURL() ).GetName( INetURLObject::DECODE_WITH_CHARSET ) );
-//STRIP001 /*?*/ 
-//STRIP001 /*?*/ 						Reference< XInteractionRequest > rRequest( pPasswordRequest );
-//STRIP001 /*?*/ 						xInteractionHandler->handle( rRequest );
-//STRIP001 /*?*/ 
-//STRIP001 /*?*/ 						if ( pPasswordRequest->isPassword() )
-//STRIP001 /*?*/ 						{
-//STRIP001 /*?*/                     		pSet->Put( SfxStringItem( SID_PASSWORD, pPasswordRequest->getPassword() ) );
-//STRIP001 /*?*/ 							nRet = ERRCODE_NONE;
-//STRIP001 /*?*/ 						}
-//STRIP001 /*?*/ 						else
-//STRIP001 /*?*/ 							nRet = ERRCODE_IO_ABORT;
-//STRIP001 /*?*/ 					}
-//STRIP001 /*?*/ 				}
+/*N*/             {
+                nRet = ERRCODE_SFX_CANTGETPASSWD;
+                SfxItemSet *pSet = pFile->GetItemSet();
+                if( pSet )
+                {
+                    Reference< ::com::sun::star::task::XInteractionHandler > xInteractionHandler;
+
+                    SFX_ITEMSET_ARG( pSet, pxInteractionItem, SfxUnoAnyItem, SID_INTERACTIONHANDLER, sal_False );
+                    if( pxInteractionItem && ( pxInteractionItem->GetValue() >>= xInteractionHandler )
+                     && xInteractionHandler.is() )
+                    {
+                        RequestDocumentPassword* pPasswordRequest = new RequestDocumentPassword(
+                            ::com::sun::star::task::PasswordRequestMode_PASSWORD_ENTER,
+                            INetURLObject( pFile->GetOrigURL() ).GetName( INetURLObject::DECODE_WITH_CHARSET ) );
+
+                        Reference< XInteractionRequest > rRequest( pPasswordRequest );
+                        xInteractionHandler->handle( rRequest );
+
+                        if ( pPasswordRequest->isPassword() )
+                        {
+                            pSet->Put( SfxStringItem( SID_PASSWORD, pPasswordRequest->getPassword() ) );
+                            nRet = ERRCODE_NONE;
+                        }
+                        else
+                            nRet = ERRCODE_IO_ABORT;
+                    }
+                }
 /*?*/             }
 /*N*/         }
 /*N*/     }
@@ -442,29 +437,29 @@ using namespace sfx2;
 //STRIP001 {
 //STRIP001     const SfxFilter* pFilter = NULL;
 //STRIP001     SfxMedium aMedium( rFileName,  ( STREAM_READ | STREAM_SHARE_DENYNONE ), FALSE );
-//STRIP001 
+//STRIP001
 //STRIP001     if ( !aMedium.GetStorage() )
 //STRIP001         aMedium.GetInStream();
-//STRIP001 
+//STRIP001
 //STRIP001     if ( aMedium.GetError() )
 //STRIP001 	{
 //STRIP001 		delete pSet;
 //STRIP001         return aMedium.GetErrorCode();
 //STRIP001 	}
-//STRIP001 
+//STRIP001
 //STRIP001     ULONG nErr = GetFilterMatcher().GuessFilter( aMedium,&pFilter,SFX_FILTER_TEMPLATE, 0 );
 //STRIP001     if ( 0 != nErr)
 //STRIP001     {
 //STRIP001 		delete pSet;
 //STRIP001         return ERRCODE_SFX_NOTATEMPLATE;
 //STRIP001     }
-//STRIP001 
+//STRIP001
 //STRIP001     if( !pFilter || !pFilter->IsAllowedAsTemplate() )
 //STRIP001     {
 //STRIP001 		delete pSet;
 //STRIP001         return ERRCODE_SFX_NOTATEMPLATE;
 //STRIP001     }
-//STRIP001 
+//STRIP001
 //STRIP001 	if ( pFilter->GetFilterFlags() & SFX_FILTER_STARONEFILTER )
 //STRIP001 	{
 //STRIP001 		DBG_ASSERT( !xDoc.Is(), "Sorry, not implemented!" );
@@ -484,7 +479,7 @@ using namespace sfx2;
 //STRIP001 	{
 //STRIP001 		if ( !xDoc.Is() )
 //STRIP001 			xDoc = ((SfxFactoryFilterContainer*)pFilter->GetFilterContainer())->GetFactory().CreateObject();
-//STRIP001 
+//STRIP001
 //STRIP001 		SfxMedium *pMedium = new SfxMedium( rFileName, STREAM_STD_READ, FALSE, pFilter, pSet );
 //STRIP001 		if(!xDoc->DoLoad(pMedium))
 //STRIP001 		{
@@ -494,7 +489,7 @@ using namespace sfx2;
 //STRIP001 			return nErr;
 //STRIP001 		}
 //STRIP001 	}
-//STRIP001 
+//STRIP001
 //STRIP001     if( bCopy )
 //STRIP001     {
 //STRIP001         SvStorageRef aTmpStor = new SvStorage( (xDoc->GetStorage()->GetVersion() >= SOFFICE_FILEFORMAT_60) ,String() );
@@ -512,18 +507,18 @@ using namespace sfx2;
 //STRIP001 			xDoc.Clear();
 //STRIP001 			return aTmpStor->GetErrorCode();
 //STRIP001         }
-//STRIP001 
+//STRIP001
 //STRIP001         SetTemplate_Impl( aTmpStor, rFileName, String(), xDoc );
 //STRIP001     }
 //STRIP001     else
 //STRIP001         SetTemplate_Impl( xDoc->GetStorage(), rFileName, String(), xDoc );
-//STRIP001 
+//STRIP001
 //STRIP001     xDoc->Broadcast( SfxDocumentInfoHint( &xDoc->GetDocInfo() ) );
 //STRIP001     xDoc->SetNoName();
 //STRIP001     xDoc->InvalidateName();
 //STRIP001     xDoc->SetModified(FALSE);
 //STRIP001     xDoc->ResetError();
-//STRIP001 
+//STRIP001
 //STRIP001     ::com::sun::star::uno::Reference< ::com::sun::star::frame::XModel >  xModel ( xDoc->GetModel(), ::com::sun::star::uno::UNO_QUERY );
 //STRIP001     if ( xModel.is() )
 //STRIP001     {
@@ -539,7 +534,7 @@ using namespace sfx2;
 //STRIP001         xModel->attachResource( ::rtl::OUString(), aArgs );
 //STRIP001         delete pNew;
 //STRIP001     }
-//STRIP001 
+//STRIP001
 //STRIP001     return xDoc->GetErrorCode();
 //STRIP001 }
 
@@ -583,9 +578,9 @@ using namespace sfx2;
 //STRIP001 {
 //STRIP001     return InsertDocumentDialog( nFlags, rFact, 0 );
 //STRIP001 }
-//STRIP001 
+//STRIP001
 //STRIP001 //--------------------------------------------------------------------
-//STRIP001 
+//STRIP001
 //STRIP001 SfxMedium* SfxApplication::InsertDocumentDialog
 //STRIP001 (
 //STRIP001     ULONG                   nFlags,
@@ -605,7 +600,7 @@ using namespace sfx2;
 //STRIP001         pMedium = new SfxMedium(
 //STRIP001 				aURL, SFX_STREAM_READONLY, FALSE,
 //STRIP001 				GetFilterMatcher().GetFilter( aFilter ), pSet );
-//STRIP001 
+//STRIP001
 //STRIP001 		pMedium->UseInteractionHandler(TRUE);
 //STRIP001 		LoadEnvironment_ImplRef xLoader = new LoadEnvironment_Impl( pMedium );
 //STRIP001 		SfxFilterMatcher aMatcher( rFact.GetFilterContainer() );
@@ -617,7 +612,7 @@ using namespace sfx2;
 //STRIP001         if( pMedium && CheckPasswd_Impl( 0, SFX_APP()->GetPool(), pMedium ) == ERRCODE_ABORT )
 //STRIP001             pMedium = NULL;
 //STRIP001     }
-//STRIP001 
+//STRIP001
 //STRIP001 	delete pURLList;
 //STRIP001     return pMedium;
 //STRIP001 }
@@ -645,7 +640,7 @@ using namespace sfx2;
 //STRIP001 	        SfxMedium* pMedium = new SfxMedium(
 //STRIP001 					aURL, SFX_STREAM_READONLY, FALSE,
 //STRIP001 					GetFilterMatcher().GetFilter( aFilter ), pSet );
-//STRIP001 
+//STRIP001
 //STRIP001 			pMedium->UseInteractionHandler(TRUE);
 //STRIP001 	        LoadEnvironment_ImplRef xLoader = new LoadEnvironment_Impl( pMedium );
 //STRIP001 			SfxFilterMatcher aMatcher( rFact.GetFilterContainer() );
@@ -662,7 +657,7 @@ using namespace sfx2;
 //STRIP001 				delete pMedium;
 //STRIP001 		}
 //STRIP001     }
-//STRIP001 
+//STRIP001
 //STRIP001 	delete pURLList;
 //STRIP001     return pMediumList;
 //STRIP001 }
@@ -686,13 +681,13 @@ using namespace sfx2;
 //STRIP001 /*
 //STRIP001     // Factory-RegNo kann per Parameter angegeben sein
 //STRIP001     SfxErrorContext aEc(ERRCTX_SFX_NEWDOCDIRECT);
-//STRIP001 
+//STRIP001
 //STRIP001 	SfxFrameSetObjectShell *pDoc =
 //STRIP001 				new SfxFrameSetObjectShell( SFX_CREATE_MODE_STANDARD );
 //STRIP001     SfxObjectShellRef xDoc(pDoc);
 //STRIP001 	pDoc->Initialize( String() );
 //STRIP001     xDoc->SetActivateEvent_Impl( SFX_EVENT_CREATEDOC );
-//STRIP001 
+//STRIP001
 //STRIP001 	SFX_REQUEST_ARG(rReq, pFrameItem, SfxFrameItem,
 //STRIP001 					SID_DOCFRAME, FALSE);
 //STRIP001 	if ( pFrameItem && pFrameItem->GetFrame() )
