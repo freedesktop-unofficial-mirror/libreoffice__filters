@@ -2,9 +2,9 @@
  *
  *  $RCSfile: forms_InterfaceContainer.cxx,v $
  *
- *  $Revision: 1.3 $
+ *  $Revision: 1.4 $
  *
- *  last change: $Author: hr $ $Date: 2004-08-03 10:53:26 $
+ *  last change: $Author: vg $ $Date: 2005-02-16 17:38:57 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -121,7 +121,7 @@
 #include <algorithm>
 #include <memory>
 
-#ifndef _RTL_LOGFILE_HXX_ 
+#ifndef _RTL_LOGFILE_HXX_
 #include <rtl/logfile.hxx>
 #endif
 namespace binfilter {
@@ -189,7 +189,7 @@ void OInterfaceContainer::disposing()
         if (xSet.is())
             xSet->removePropertyChangeListener(PROPERTY_NAME, this);
 
-        // Eventverknüpfungen aufheben
+        // Eventverknuepfungen aufheben
         InterfaceRef  xIfc(xSet, UNO_QUERY);
         m_xEventAttacher->detach(i - 1, xIfc);
         m_xEventAttacher->removeEntry(i - 1);
@@ -496,7 +496,7 @@ void SAL_CALL OInterfaceContainer::read( const Reference< XObjectInputStream >& 
     while (getCount())
         removeByIndex(0);
 
-    // Schreibt nur in Abhaengigkeit der Länge
+    // Schreibt nur in Abhaengigkeit der Laenge
     sal_Int32 nLen = _rxInStream->readLong();
 
     if (nLen)
@@ -775,7 +775,7 @@ void OInterfaceContainer::implInsert(sal_Int32 _nIndex, const Reference< XProper
         // will throw an exception if necessary
         approveNewElement( _rxElement, pElementMetaData );
     }
-    
+
 
     // approveNewElement (no matter if called here or outside) has ensure that all relevant interfaces
     // exist
@@ -958,7 +958,7 @@ void OInterfaceContainer::implRemoveByIndex( const sal_Int32 _nIndex, ::osl::Cle
     m_aItems.erase(i);
     m_aMap.erase(j);
 
-    // Eventverknüpfungen aufheben
+    // Eventverknuepfungen aufheben
     InterfaceRef  xIfc(xElement, UNO_QUERY);// wichtig
     m_xEventAttacher->detach(_nIndex, xIfc);
     m_xEventAttacher->removeEntry(_nIndex);
