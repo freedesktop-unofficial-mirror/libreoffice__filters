@@ -2,9 +2,9 @@
  *
  *  $RCSfile: mzstring.h,v $
  *
- *  $Revision: 1.1 $
+ *  $Revision: 1.2 $
  *
- *  last change: $Author: dvo $ $Date: 2003-10-15 14:38:07 $
+ *  last change: $Author: vg $ $Date: 2005-02-16 18:18:48 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -95,7 +95,7 @@ rather than
 Methods that take an index as parameter all follow this rule: Valid indexes
 go from 0 to length()-1.
 \begin{tabular}{rl}
-Correct: & #foo.substr(0, length()-1);# \\ 
+Correct: & #foo.substr(0, length()-1);# \\
 Wrong:   & #bar.substr(0, length());#
 \end{tabular}
 
@@ -196,7 +196,7 @@ class MzString
         void      append  (const char *s, int n);
         void      append  (const char ch);
 
-/// 스트링의 끝에서 글자를 지운다.
+/** 스트링의 끝에서 글자를 지운다. */
         MzString  &chop(int n = 1);
 
     private:
