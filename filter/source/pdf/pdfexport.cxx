@@ -2,9 +2,9 @@
  *
  *  $RCSfile: pdfexport.cxx,v $
  *
- *  $Revision: 1.8 $
+ *  $Revision: 1.9 $
  *
- *  last change: $Author: ka $ $Date: 2002-08-23 09:21:46 $
+ *  last change: $Author: ka $ $Date: 2002-08-23 09:38:06 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -143,6 +143,7 @@ sal_Bool PDFExport::Export( const OUString& rFile, const Sequence< PropertyValue
             OUString                    aPageRange;
             Any                         aSelection;
             sal_Int32                   nCompressMode = 0;
+            sal_Int32                   nPageCount = 0;
             
             DBG_ASSERT( pOut, "PDFExport::Export: no reference device" );
 
@@ -165,75 +166,81 @@ sal_Bool PDFExport::Export( const OUString& rFile, const Sequence< PropertyValue
                 aSelection = Any();
                 aSelection <<= mxSrcDoc;
             }
-                
-            const sal_Int32 nPageCount = xRenderable->getRendererCount( aSelection, aRenderOptions );
             
-            if( nPageCount && pOut )
+            try
             {
-                const Range     aRange( 1, nPageCount );
-                MultiSelection  aSel;
-
-                try
+                nPageCount = xRenderable->getRendererCount( aSelection, aRenderOptions );
+            
+                if( nPageCount && pOut )
                 {
-                    if( !aPageRange.getLength() )
-                    {
-                        aSel.SetTotalRange( aRange );
-                        aSel.Select( aRange );
-                    }
-                    else
-                    {
-                        aSel = MultiSelection( aPageRange );
-                        aSel.SetTotalRange( aRange );
-                    }
-                        
-                    for( sal_Int32 nSel = aSel.FirstSelected(); nSel != SFX_ENDOFSELECTION; nSel = aSel.NextSelected() )
-                    {
-                        Sequence< PropertyValue >   aRenderer( xRenderable->getRenderer( nSel - 1, aSelection, aRenderOptions ) );
-                        awt::Size                   aPageSize;
-                        sal_Bool                    bProcess = sal_True;
+                    const Range     aRange( 1, nPageCount );
+                    MultiSelection  aSel;
 
-                        for( sal_Int32 nProperty = 0, nPropertyCount = aRenderer.getLength(); nProperty < nPropertyCount; ++nProperty )
+                    try
+                    {
+                        if( !aPageRange.getLength() )
                         {
-                            if( aRenderer[ nProperty ].Name == OUString( RTL_CONSTASCII_USTRINGPARAM( "PageSize" ) ) )
-                                aRenderer[ nProperty].Value >>= aPageSize;
+                            aSel.SetTotalRange( aRange );
+                            aSel.Select( aRange );
                         }
-
-                        if( ( aPageSize.Width > 0 ) && ( aPageSize.Height > 0 ) )
+                        else
                         {
-                            GDIMetaFile	                aMtf;
-                            const MapMode               aMapMode( MAP_100TH_MM );
-                            const Size                  aMtfSize( aPageSize.Width, aPageSize.Height );
-                            VCLXDevice*                 pXDevice = new VCLXDevice;
+                            aSel = MultiSelection( aPageRange );
+                            aSel.SetTotalRange( aRange );
+                        }
+                            
+                        for( sal_Int32 nSel = aSel.FirstSelected(); nSel != SFX_ENDOFSELECTION; nSel = aSel.NextSelected() )
+                        {
+                            Sequence< PropertyValue >   aRenderer( xRenderable->getRenderer( nSel - 1, aSelection, aRenderOptions ) );
+                            awt::Size                   aPageSize;
+                            sal_Bool                    bProcess = sal_True;
 
-                            pOut->Push();
-                            pOut->EnableOutput( FALSE );
-                            pOut->SetMapMode( aMapMode );
+                            for( sal_Int32 nProperty = 0, nPropertyCount = aRenderer.getLength(); nProperty < nPropertyCount; ++nProperty )
+                            {
+                                if( aRenderer[ nProperty ].Name == OUString( RTL_CONSTASCII_USTRINGPARAM( "PageSize" ) ) )
+                                    aRenderer[ nProperty].Value >>= aPageSize;
+                            }
 
-                            aMtf.SetPrefSize( aMtfSize );
-                            aMtf.SetPrefMapMode( aMapMode );
-                            aMtf.Record( pOut );
+                            if( ( aPageSize.Width > 0 ) && ( aPageSize.Height > 0 ) )
+                            {
+                                GDIMetaFile	                aMtf;
+                                const MapMode               aMapMode( MAP_100TH_MM );
+                                const Size                  aMtfSize( aPageSize.Width, aPageSize.Height );
+                                VCLXDevice*                 pXDevice = new VCLXDevice;
 
-                            xRenderable->render( nSel - 1, aSelection, aRenderOptions );
+                                pOut->Push();
+                                pOut->EnableOutput( FALSE );
+                                pOut->SetMapMode( aMapMode );
 
-                            aMtf.Stop();
-                            aMtf.WindStart();
+                                aMtf.SetPrefSize( aMtfSize );
+                                aMtf.SetPrefMapMode( aMapMode );
+                                aMtf.Record( pOut );
 
-                            if( aMtf.GetActionCount() )
-                                bRet = ImplExportPage( *pPDFWriter, aMtf, nCompressMode ) || bRet;
+                                xRenderable->render( nSel - 1, aSelection, aRenderOptions );
 
-                            pOut->Pop();
+                                aMtf.Stop();
+                                aMtf.WindStart();
+
+                                if( aMtf.GetActionCount() )
+                                    bRet = ImplExportPage( *pPDFWriter, aMtf, nCompressMode ) || bRet;
+
+                                pOut->Pop();
+                            }
                         }
                     }
-                }
-                catch( UnknownPropertyException )
-                {
-                }
+                    catch( UnknownPropertyException )
+                    {
+                    }
                 
-                if( bRet )
-                    pPDFWriter->Emit();
-                
-                delete pPDFWriter;
+                    if( bRet )
+                        pPDFWriter->Emit();
+                }
             }
+            catch( RuntimeException )
+            {
+            }
+
+            delete pPDFWriter;
         }
     }
 
