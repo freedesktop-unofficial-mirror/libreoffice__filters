@@ -2,9 +2,9 @@
  *
  *  $RCSfile: node.cxx,v $
  *
- *  $Revision: 1.4 $
+ *  $Revision: 1.5 $
  *
- *  last change: $Author: lo $ $Date: 2004-02-27 16:14:30 $
+ *  last change: $Author: obo $ $Date: 2004-11-16 12:25:15 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -299,32 +299,46 @@ namespace DOM
             }
 
             // check whether this is an attribute node so we remove it's
-            // carrier node
+            // carrier node if it has one
             xmlNodePtr res = NULL;
             if (cur->type == XML_ATTRIBUTE_NODE)
             {
-                if (m_aNodePtr->type != XML_ELEMENT_NODE || cur->parent == NULL 
-                    || strcmp((char*)cur->parent->name, "__private") != NULL)
+                if (cur->parent != NULL)
                 {
-                    DOMException e;
-                    e.Code = DOMExceptionType_HIERARCHY_REQUEST_ERR;
-                    throw e;                
+                    if (m_aNodePtr->type != XML_ELEMENT_NODE ||
+                        strcmp((char*)cur->parent->name, "__private") != NULL)
+                    {
+                        DOMException e;
+                        e.Code = DOMExceptionType_HIERARCHY_REQUEST_ERR;
+                        throw e;                
+                    }
+
+                    xmlNsPtr pAttrNs = cur->ns;
+                    xmlNsPtr pParentNs = xmlSearchNs(m_aNodePtr->doc, m_aNodePtr, pAttrNs->prefix);
+                    if (pParentNs == NULL || strcmp((char*)pParentNs->href, (char*)pAttrNs->href) != 0)                
+                        pParentNs = xmlNewNs(m_aNodePtr, pAttrNs->href, pAttrNs->prefix);
+
+                    if (cur->children != NULL)
+                        res = (xmlNodePtr)xmlNewNsProp(m_aNodePtr, pParentNs, cur->name, cur->children->content);
+                    else
+                        res = (xmlNodePtr)xmlNewProp(m_aNodePtr, cur->name, (xmlChar*) "");
+
+                    xmlFreeNode(cur->parent);
+                    cur->parent = NULL;
                 }
-
-                xmlNsPtr pAttrNs = cur->ns;
-                xmlNsPtr pParentNs = xmlSearchNs(m_aNodePtr->doc, m_aNodePtr, pAttrNs->prefix);
-                if (pParentNs == NULL || strcmp((char*)pParentNs->href, (char*)pAttrNs->href) != 0)                
-                    pParentNs = xmlNewNs(m_aNodePtr, pAttrNs->href, pAttrNs->prefix);
-
-                res = (xmlNodePtr)xmlNewNsProp(
-                    m_aNodePtr, pParentNs, cur->name, cur->children->content);
-                xmlFreeNode(cur->parent);
+                else
+                {
+                    if (cur->children != NULL)
+                        res = (xmlNodePtr)xmlNewProp(m_aNodePtr, cur->name, cur->children->content);
+                    else
+                        res = (xmlNodePtr)xmlNewProp(m_aNodePtr, cur->name, (xmlChar*) "");
+                }
             }
-            else
+            else 
             {
                 res = xmlAddChild(m_aNodePtr, cur);
             }
-            
+
             // libxml can do optimizations, when appending nodes.
             // if res != cur, something was optimized and the newchild-wrapper 
             // should be updated
@@ -457,7 +471,9 @@ namespace DOM
         throw (RuntimeException)
     {
         OUString aURI;
-        if (m_aNodePtr != NULL && m_aNodePtr->ns != NULL)
+        if (m_aNodePtr != NULL && 
+            (m_aNodePtr->type == XML_ELEMENT_NODE || m_aNodePtr->type == XML_ATTRIBUTE_NODE) && 
+            m_aNodePtr->ns != NULL)
         {
             const xmlChar* xHref = m_aNodePtr->ns->href; 
             aURI = OUString((sal_Char*)xHref, strlen((char*)xHref), RTL_TEXTENCODING_UTF8);
@@ -563,7 +579,9 @@ namespace DOM
         throw (RuntimeException)
     {
         OUString aPrefix;
-        if (m_aNodePtr != NULL && m_aNodePtr->ns != NULL)
+        if (m_aNodePtr != NULL && 
+            (m_aNodePtr->type == XML_ELEMENT_NODE || m_aNodePtr->type == XML_ATTRIBUTE_NODE) && 
+            m_aNodePtr->ns != NULL)
         {
             const xmlChar* xPrefix = m_aNodePtr->ns->prefix;
             aPrefix = OUString((sal_Char*)xPrefix, strlen((char*)xPrefix), RTL_TEXTENCODING_UTF8);
@@ -683,8 +701,20 @@ namespace DOM
             throw e;
         }
 
+        Reference<XNode> xReturn( oldChild );
+
         Reference< XUnoTunnel > told(oldChild, UNO_QUERY);
         xmlNodePtr old = (xmlNodePtr)told->getSomething(Sequence< sal_Int8>());
+
+        if( old->type == XML_ATTRIBUTE_NODE )
+        {
+            xmlAttrPtr pAttr = (xmlAttrPtr)told->getSomething(Sequence< sal_Int8 >());
+            xmlRemoveProp( pAttr );
+            xReturn.clear();
+        }
+        else
+        {
+
         xmlNodePtr cur = m_aNodePtr->children;
         //find old node in child list
         while (cur != NULL)
@@ -696,10 +726,14 @@ namespace DOM
                     cur->prev->next = cur->next;
                 if (cur->next != NULL)
                     cur->next->prev = cur->prev;
+                if (cur->parent != NULL && cur->parent->children == cur)
+                    cur->parent->children = cur->next;
                 cur->prev = NULL;
                 cur->next = NULL;
+                cur->parent = NULL;
             }
             cur = cur->next;
+        }
         }
 
         /*DOMNodeRemoved
@@ -720,7 +754,7 @@ namespace DOM
                 OUString(), OUString(), OUString(), (AttrChangeType)0 );
             dispatchEvent(Reference< XEvent >(event, UNO_QUERY));
         }
-        return oldChild;
+        return xReturn;
     }    
 
     /**
@@ -738,14 +772,33 @@ namespace DOM
             e.Code = DOMExceptionType_HIERARCHY_REQUEST_ERR;
             throw e;
         }
-
+        
+/*
         Reference< XNode > aNode = removeChild(oldChild);
         appendChild(newChild);
-/*
+*/
         Reference< XUnoTunnel > tOld(oldChild, UNO_QUERY);
         xmlNodePtr pOld = (xmlNodePtr)tOld->getSomething(Sequence< sal_Int8>());
         Reference< XUnoTunnel > tNew(newChild, UNO_QUERY);
         xmlNodePtr pNew = (xmlNodePtr)tNew->getSomething(Sequence< sal_Int8>());
+
+        if( pOld->type == XML_ATTRIBUTE_NODE )
+        {
+            // can only replace attribute with attribute
+            if ( pOld->type != pNew->type )
+            {
+                DOMException e;
+                e.Code = DOMExceptionType_HIERARCHY_REQUEST_ERR;
+                throw e;
+            }
+
+            xmlAttrPtr pAttr = (xmlAttrPtr)tOld->getSomething(Sequence< sal_Int8 >());
+            xmlRemoveProp( pAttr );
+            appendChild( newChild );
+        }
+        else
+        {
+
         xmlNodePtr cur = m_aNodePtr->children;
         //find old node in child list
         while (cur != NULL)
@@ -759,12 +812,19 @@ namespace DOM
                 pNew->next = pOld->next;
                 if (pNew->next != NULL)
                     pNew->next->prev = pNew;
+                pNew->parent = pOld->parent;
+                if(pNew->parent->children == pOld)
+                    pNew->parent->children = pNew;
+                if(pNew->parent->last == pOld)
+                    pNew->parent->last = pNew;
                 pOld->next = NULL;
                 pOld->prev = NULL;
+                pOld->parent = NULL;
             }
             cur = cur->next;
         }
-*/
+        }
+
         // dispatch DOMSubtreeModified
         // target is _this_ node
         Reference< XDocumentEvent > docevent(getOwnerDocument(), UNO_QUERY); 
@@ -775,7 +835,7 @@ namespace DOM
             OUString(), OUString(), OUString(), (AttrChangeType)0 );
         dispatchEvent(Reference< XEvent >(event, UNO_QUERY));
 
-        return aNode;
+        return oldChild;
     }
 
     /**
