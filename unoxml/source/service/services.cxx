@@ -2,9 +2,9 @@
  *
  *  $RCSfile: services.cxx,v $
  *
- *  $Revision: 1.2 $
+ *  $Revision: 1.3 $
  *
- *  last change: $Author: lo $ $Date: 2004-02-16 16:41:55 $
+ *  last change: $Author: hr $ $Date: 2004-07-23 11:04:04 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
