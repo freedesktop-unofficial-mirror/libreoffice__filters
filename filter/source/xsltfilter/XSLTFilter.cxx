@@ -1,3 +1,64 @@
+/*************************************************************************
+ *
+ *  $RCSfile: XSLTFilter.cxx,v $
+ *
+ *  $Revision: 1.5 $
+ *
+ *  last change: $Author: obo $ $Date: 2005-01-27 12:10:21 $
+ *
+ *  The Contents of this file are made available subject to the terms of
+ *  either of the following licenses
+ *
+ *         - GNU Lesser General Public License Version 2.1
+ *         - Sun Industry Standards Source License Version 1.1
+ *
+ *  Sun Microsystems Inc., October, 2000
+ *
+ *  GNU Lesser General Public License Version 2.1
+ *  =============================================
+ *  Copyright 2000 by Sun Microsystems, Inc.
+ *  901 San Antonio Road, Palo Alto, CA 94303, USA
+ *
+ *  This library is free software; you can redistribute it and/or
+ *  modify it under the terms of the GNU Lesser General Public
+ *  License version 2.1, as published by the Free Software Foundation.
+ *
+ *  This library is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *  Lesser General Public License for more details.
+ *
+ *  You should have received a copy of the GNU Lesser General Public
+ *  License along with this library; if not, write to the Free Software
+ *  Foundation, Inc., 59 Temple Place, Suite 330, Boston,
+ *  MA  02111-1307  USA
+ *
+ *
+ *  Sun Industry Standards Source License Version 1.1
+ *  =================================================
+ *  The contents of this file are subject to the Sun Industry Standards
+ *  Source License Version 1.1 (the "License"); You may not use this file
+ *  except in compliance with the License. You may obtain a copy of the
+ *  License at http://www.openoffice.org/license.html.
+ *
+ *  Software provided under this License is provided on an "AS IS" basis,
+ *  WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING,
+ *  WITHOUT LIMITATION, WARRANTIES THAT THE SOFTWARE IS FREE OF DEFECTS,
+ *  MERCHANTABLE, FIT FOR A PARTICULAR PURPOSE, OR NON-INFRINGING.
+ *  See the License for the specific provisions governing your rights and
+ *  obligations concerning the Software.
+ *
+ *  The Initial Developer of the Original Code is: Sun Microsystems, Inc.
+ *
+ *  Copyright: 2000 by Sun Microsystems, Inc.
+ *
+ *  All Rights Reserved.
+ *
+ *  Contributor(s): _______________________________________
+ *
+ *
+ ************************************************************************/
+
 #include <stdio.h>
 
 #include <cppuhelper/factory.hxx>
@@ -72,12 +133,12 @@ private:
     oslCondition  m_cTransformed;
     sal_Bool m_bError;
     sal_Bool m_bTerminated;
-    
+
     OUString m_aExportBaseUrl;
     OUString m_aOldBaseUrl;
-    
+
     OUString rel2abs(const OUString&);
-    
+
 public:
 
     // ctor...
@@ -93,34 +154,34 @@ public:
 
     // XImportFilter
     virtual sal_Bool SAL_CALL importer(
-            const Sequence<PropertyValue>& aSourceData, 
-            const Reference<XDocumentHandler>& xHandler, 
-            const Sequence<OUString>& msUserData) 
+            const Sequence<PropertyValue>& aSourceData,
+            const Reference<XDocumentHandler>& xHandler,
+            const Sequence<OUString>& msUserData)
         throw(RuntimeException);
 
     // XExportFilter
     virtual sal_Bool SAL_CALL exporter(
-            const Sequence<PropertyValue>& aSourceData, 
-            const Sequence<OUString>& msUserData) 
+            const Sequence<PropertyValue>& aSourceData,
+            const Sequence<OUString>& msUserData)
         throw(RuntimeException);
 
     // XDocumentHandler
-    virtual void SAL_CALL startDocument() 
+    virtual void SAL_CALL startDocument()
         throw (SAXException,RuntimeException);
-    virtual void SAL_CALL endDocument() 
+    virtual void SAL_CALL endDocument()
         throw (SAXException, RuntimeException);
-    virtual void SAL_CALL startElement(const OUString& str, const Reference<XAttributeList>& attriblist) 
+    virtual void SAL_CALL startElement(const OUString& str, const Reference<XAttributeList>& attriblist)
         throw (SAXException,RuntimeException);
-    virtual void SAL_CALL endElement(const OUString& str)  
+    virtual void SAL_CALL endElement(const OUString& str)
         throw (SAXException, RuntimeException);
-    virtual void SAL_CALL characters(const OUString& str)  
+    virtual void SAL_CALL characters(const OUString& str)
         throw (SAXException, RuntimeException);
-    virtual void SAL_CALL ignorableWhitespace(const OUString& str) 
+    virtual void SAL_CALL ignorableWhitespace(const OUString& str)
         throw (SAXException, RuntimeException);
-    virtual void SAL_CALL processingInstruction(const OUString& str, const OUString& str2) 
+    virtual void SAL_CALL processingInstruction(const OUString& str, const OUString& str2)
         throw (com::sun::star::xml::sax::SAXException,RuntimeException);
-    virtual void SAL_CALL setDocumentLocator(const Reference<XLocator>& doclocator) 
-        throw (SAXException,RuntimeException);    
+    virtual void SAL_CALL setDocumentLocator(const Reference<XLocator>& doclocator)
+        throw (SAXException,RuntimeException);
 };
 
 XSLTFilter::XSLTFilter( const Reference< XMultiServiceFactory > &r )
@@ -147,12 +208,12 @@ void XSLTFilter::error(const Any& a) throw (RuntimeException)
 }
 void XSLTFilter::closed() throw (RuntimeException)
 {
-    osl_setCondition(m_cTransformed);    
+    osl_setCondition(m_cTransformed);
 }
 void XSLTFilter::terminated() throw (RuntimeException)
 {
     m_bTerminated = sal_True;
-    osl_setCondition(m_cTransformed);    
+    osl_setCondition(m_cTransformed);
 }
 
 OUString XSLTFilter::rel2abs(const OUString& s)
@@ -164,7 +225,7 @@ OUString XSLTFilter::rel2abs(const OUString& s)
     INetURLObject aObj( aWorkingDir );
     aObj.setFinalSlash();
     bool bWasAbsolute;
-    INetURLObject aURL = aObj.smartRel2Abs( 
+    INetURLObject aURL = aObj.smartRel2Abs(
         s, bWasAbsolute, false, INetURLObject::WAS_ENCODED, RTL_TEXTENCODING_UTF8, true );
     return aURL.GetMainURL(INetURLObject::NO_DECODE);
 }
@@ -172,28 +233,28 @@ OUString XSLTFilter::rel2abs(const OUString& s)
 
 
 sal_Bool XSLTFilter::importer(
-        const Sequence<PropertyValue>& aSourceData, 
-        const Reference<XDocumentHandler>& xHandler, 
-        const Sequence<OUString>& msUserData) 
+        const Sequence<PropertyValue>& aSourceData,
+        const Reference<XDocumentHandler>& xHandler,
+        const Sequence<OUString>& msUserData)
     throw (RuntimeException)
 {
 
 
     OUString udImport = msUserData[2];
     OUString udStyleSheet = rel2abs(msUserData[4]);
-    
+
     // get information from media descriptor
     // the imput stream that represents the imported file
     // is most important here since we need to supply it to
     // the sax parser that drives the supplied document handler
     sal_Int32 nLength = aSourceData.getLength();
     OUString aName, aFileName, aURL;
-    Reference< XInputStream > xInputStream;	
+    Reference< XInputStream > xInputStream;
     for ( sal_Int32 i = 0 ; i < nLength; i++)
     {
         aName = aSourceData[i].Name;
         if (aName.equalsAscii("InputStream"))
-            aSourceData[i].Value >>= xInputStream;        		
+            aSourceData[i].Value >>= xInputStream;
         else if ( aName.equalsAscii("FileName"))
             aSourceData[i].Value >>= aFileName;
         else if ( aName.equalsAscii("URL"))
@@ -201,10 +262,10 @@ sal_Bool XSLTFilter::importer(
     }
     OSL_ASSERT(xInputStream.is());
     if (!xInputStream.is()) return sal_False;
-    
+
     // create SAX parser that will read the document file
     // and provide events to xHandler passed to this call
-    Reference < XParser > xSaxParser( m_rServiceFactory->createInstance( 
+    Reference < XParser > xSaxParser( m_rServiceFactory->createInstance(
         OUString::createFromAscii("com.sun.star.xml.sax.Parser")), UNO_QUERY );
     OSL_ASSERT(xSaxParser.is());
     if(!xSaxParser.is())return sal_False;
@@ -223,7 +284,6 @@ sal_Bool XSLTFilter::importer(
 
     m_tcontrol = Reference< XActiveDataControl >(m_rServiceFactory->createInstanceWithArguments(
         OUString::createFromAscii("com.sun.star.comp.JAXTHelper"), args), UNO_QUERY);
-    m_tcontrol->addListener(Reference< XStreamListener >(this));
 
     OSL_ASSERT(xHandler.is());
     OSL_ASSERT(xInputStream.is());
@@ -231,7 +291,10 @@ sal_Bool XSLTFilter::importer(
     if (xHandler.is() && xInputStream.is() && m_tcontrol.is())
     {
         try
-        {	     
+        {
+            // we want to be notfied when the processing is done...
+            m_tcontrol->addListener(Reference< XStreamListener >(this));
+
             // connect input to transformer
             Reference< XActiveDataSink > tsink(m_tcontrol, UNO_QUERY);
             tsink->setInputStream(xInputStream);
@@ -257,7 +320,7 @@ sal_Bool XSLTFilter::importer(
             // transform
             m_tcontrol->start();
             osl_waitCondition(m_cTransformed, 0);
-            if (!m_bError && !m_bTerminated) 
+            if (!m_bError && !m_bTerminated)
             {
                 // parse the transformed XML buffered in the pipe
                 xSaxParser->parseStream(aInput);
@@ -279,8 +342,8 @@ sal_Bool XSLTFilter::importer(
 }
 
 sal_Bool XSLTFilter::exporter(
-        const Sequence<PropertyValue>& aSourceData, 
-        const Sequence<OUString>& msUserData) 
+        const Sequence<PropertyValue>& aSourceData,
+        const Sequence<OUString>& msUserData)
     throw (RuntimeException)
 {
 
@@ -297,9 +360,9 @@ sal_Bool XSLTFilter::exporter(
     OUString aDoctypePublic;
     OUString aDoctypeSystem;
     // Reference<XOutputStream> rOutputStream;
-    sal_Int32 nLength = aSourceData.getLength();    
+    sal_Int32 nLength = aSourceData.getLength();
     for ( sal_Int32 i = 0 ; i < nLength; i++)
-    {      
+    {
         aName = aSourceData[i].Name;
         if ( aName.equalsAscii("Indent"))
             aSourceData[i].Value >>= bIndent;
@@ -320,18 +383,18 @@ sal_Bool XSLTFilter::exporter(
             OUString::createFromAscii("com.sun.star.xml.sax.Writer")),
                 UNO_QUERY);
     }
-   
+
     // create transformer
     Sequence< Any > args(4);
     NamedValue nv;
     nv.Name = OUString::createFromAscii("StylesheetURL");
     nv.Value <<= udStyleSheet; args[0] <<= nv;
     nv.Name = OUString::createFromAscii("TargetURL");
-    nv.Value <<= sURL; args[1] <<= nv;    
+    nv.Value <<= sURL; args[1] <<= nv;
     nv.Name = OUString::createFromAscii("DoctypeSystem");
-    nv.Value <<= aDoctypeSystem; args[2] <<= nv;    
+    nv.Value <<= aDoctypeSystem; args[2] <<= nv;
     nv.Name = OUString::createFromAscii("DoctypePublic");
-    nv.Value <<= aDoctypePublic; args[3] <<= nv;    
+    nv.Value <<= aDoctypePublic; args[3] <<= nv;
     nv.Name = OUString::createFromAscii("TargetBaseURL");
     INetURLObject ineturl(sURL);
     ineturl.removeSegment();
@@ -391,8 +454,8 @@ void XSLTFilter::endDocument() throw (SAXException,RuntimeException){
     m_rDocumentHandler->endDocument();
     m_tcontrol->start();
     osl_waitCondition(m_cTransformed, 0);
-    if (!m_bError && !m_bTerminated) 
-    {        
+    if (!m_bError && !m_bTerminated)
+    {
         return;
     } else {
         throw RuntimeException();
@@ -400,44 +463,44 @@ void XSLTFilter::endDocument() throw (SAXException,RuntimeException){
 
 }
 
-void XSLTFilter::startElement(const OUString& str, const Reference<XAttributeList>& attriblist) 
+void XSLTFilter::startElement(const OUString& str, const Reference<XAttributeList>& attriblist)
     throw (SAXException, RuntimeException)
 {
     OSL_ASSERT(m_rDocumentHandler.is());
     m_rDocumentHandler->startElement(str, attriblist);
 }
 
-void XSLTFilter::endElement(const OUString& str) 
-    throw (SAXException, RuntimeException) 
+void XSLTFilter::endElement(const OUString& str)
+    throw (SAXException, RuntimeException)
 {
     OSL_ASSERT(m_rDocumentHandler.is());
     m_rDocumentHandler->endElement(str);
 }
 
-void XSLTFilter::characters(const OUString& str) 
-    throw (SAXException, RuntimeException) 
+void XSLTFilter::characters(const OUString& str)
+    throw (SAXException, RuntimeException)
 {
     OSL_ASSERT(m_rDocumentHandler.is());
     m_rDocumentHandler->characters(str);
 }
 
-void XSLTFilter::ignorableWhitespace(const OUString& str) 
+void XSLTFilter::ignorableWhitespace(const OUString& str)
     throw (SAXException, RuntimeException)
-{   
+{
     OSL_ASSERT(m_rDocumentHandler.is());
     if (!m_bPrettyPrint) return;
     m_rDocumentHandler->ignorableWhitespace(str);
 }
-  
-void  XSLTFilter::processingInstruction(const OUString& str, const OUString& str2) 
-    throw (SAXException, RuntimeException) 
+
+void  XSLTFilter::processingInstruction(const OUString& str, const OUString& str2)
+    throw (SAXException, RuntimeException)
 {
     OSL_ASSERT(m_rDocumentHandler.is());
     m_rDocumentHandler->processingInstruction(str, str2);
 }
 
-void XSLTFilter::setDocumentLocator(const Reference<XLocator>& doclocator) 
-    throw (SAXException, RuntimeException) 
+void XSLTFilter::setDocumentLocator(const Reference<XLocator>& doclocator)
+    throw (SAXException, RuntimeException)
 {
     OSL_ASSERT(m_rDocumentHandler.is());
     m_rDocumentHandler->setDocumentLocator(doclocator);
