@@ -65,13 +65,15 @@ namespace DOM { namespace events {
             ListenerMap::const_iterator iter = pMap->find(pNode);
             if( iter == pMap->end() ) return;
             ListenerMap::const_iterator ibound = pMap->upper_bound(pNode);
-            while (iter != ibound)
+            ListenerPairVector lv(iter, ibound);
+            ListenerPairVector::const_iterator liter = lv.begin();
+            while (liter != lv.end())
             {
-                if((iter->second).is())
+                if((liter->second).is())
                 {                    
-                    (iter->second)->handleEvent(xEvent);
+                    (liter->second)->handleEvent(xEvent);
                 }
-                iter++;
+                liter++;
             }
         }
     }
