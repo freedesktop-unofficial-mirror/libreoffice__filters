@@ -1,10 +1,10 @@
 /*************************************************************************
  *
- *  $RCSfile: exporter.hxx,v $
+ *  $RCSfile: tempfile.hxx,v $
  *
- *  $Revision: 1.3 $
+ *  $Revision: 1.1 $
  *
- *  last change: $Author: cl $ $Date: 2002-10-23 19:30:35 $
+ *  last change: $Author: cl $ $Date: 2002-10-23 19:30:45 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -58,44 +58,25 @@
  *
  *
  ************************************************************************/
-#ifndef _PLACEWARE_EXPORTER_HXX
-#define _PLACEWARE_EXPORTER_HXX
 
-#ifndef _COM_SUN_STAR_LANG_XCOMPONENT_HPP_
-#include <com/sun/star/lang/XComponent.hpp>
-#endif
-#ifndef _COM_SUN_STAR_IO_XOUTPUTSTREAM_HPP_
-#include <com/sun/star/io/XOutputStream.hpp>
-#endif
-#ifndef _COM_SUN_STAR_LANG_XMULTISERVICEFACTORY_HPP_
-#include <com/sun/star/lang/XMultiServiceFactory.hpp>
-#endif
-#ifndef _COM_SUN_STAR_DOCUMENT_XEXPORTER_HPP_
-#include <com/sun/star/document/XExporter.hpp>
-#endif
-#ifndef _COM_SUN_STAR_DRAWING_XDRAWPAGE_HPP_
-#include <com/sun/star/drawing/XDrawPage.hpp>
-#endif
-#ifndef _COM_SUN_STAR_TASK_XINTERACTIONHANDLER_HPP_
-#include <com/sun/star/task/XInteractionHandler.hpp>
-#endif
+#ifndef _PLACEWARE_TEMPFILE_HXX_
+#define _PLACEWARE_TEMPFILE_HXX_
 
-class PageEntry;
+#include <osl/file.hxx>
+#include <rtl/ustring.hxx>
 
-class PlaceWareExporter
+class TempFile : public osl::File
 {
 public:
-    PlaceWareExporter( const ::com::sun::star::uno::Reference< ::com::sun::star::lang::XMultiServiceFactory >& rxMSF );
-    ~PlaceWareExporter();
+    TempFile( const rtl::OUString& aURL );
+    ~TempFile();
 
-    sal_Bool doExport( ::com::sun::star::uno::Reference< ::com::sun::star::lang::XComponent > xDoc, ::com::sun::star::uno::Reference < ::com::sun::star::io::XOutputStream > xOutputStream, const rtl::OUString& rURL, ::com::sun::star::uno::Reference < ::com::sun::star::uno::XInterface > xHandler );
+    static rtl::OUString createTempFileURL();
+    rtl::OUString	getFileURL();
 
 private:
-    PageEntry* exportPage( ::com::sun::star::uno::Reference< ::com::sun::star::drawing::XDrawPage >&xDrawPage );
-
-    ::com::sun::star::uno::Reference< ::com::sun::star::lang::XMultiServiceFactory > mxMSF;
-    ::com::sun::star::uno::Reference< ::com::sun::star::document::XExporter > mxGraphicExporter;
-    ::com::sun::star::uno::Reference< ::com::sun::star::task::XInteractionHandler > mxInteractionHandler;
+    rtl::OUString	maURL;
 };
+
 
 #endif

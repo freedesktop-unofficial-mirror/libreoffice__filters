@@ -2,9 +2,9 @@
  *
  *  $RCSfile: zip.hxx,v $
  *
- *  $Revision: 1.1 $
+ *  $Revision: 1.2 $
  *
- *  last change: $Author: cl $ $Date: 2002-10-02 15:43:45 $
+ *  last change: $Author: cl $ $Date: 2002-10-23 19:30:49 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -62,9 +62,13 @@
 #ifndef _SAL_TYPES_H_ 
 #include <sal/types.h>
 #endif
-#ifndef _STRING_HXX
-#include <tools/string.hxx>
+#ifndef _RTL_STRING_HXX_ 
+#include <rtl/string.hxx>
 #endif
+#ifndef _OSL_FILE_HXX_ 
+#include <osl/file.hxx>
+#endif
+
 #include <vector>
 
 struct ZipEntry;
@@ -72,24 +76,27 @@ struct ZipEntry;
 class ZipFile
 {
 public:
-    ZipFile( SvStream& rFile );
+    ZipFile( osl::File& rFile );
     ~ZipFile();
 
-    bool addFile( SvStream& rFile, const ByteString& rName );
+    bool addFile( osl::File& rFile, const rtl::OString& rName );
     bool close();
 
 private:
     void writeShort( sal_Int16 s);
     void writeLong( sal_Int32 l );
 
-    void copyAndCRC( ZipEntry *e, SvStream& rStream );
+    void copyAndCRC( ZipEntry *e, osl::File& rFile );
     void writeDummyLocalHeader(ZipEntry *e);
     void writeLocalHeader(ZipEntry *e);
     void writeCentralDir(ZipEntry *e);
     void writeEndCentralDir(sal_Int32 nCdOffset, sal_Int32 nCdSize);
 
 private:
+    bool isError() const { return osl::File::E_None != mnRC; }
+
+    osl::File::RC mnRC;
     bool mbOpen;
-    SvStream& mrStream;				/* file we're writing to */
+    osl::File& mrFile;				/* file we're writing to */
     std::vector<ZipEntry*> maEntries;
 };
