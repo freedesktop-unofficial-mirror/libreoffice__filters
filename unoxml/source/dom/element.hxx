@@ -2,9 +2,9 @@
  *
  *  $RCSfile: element.hxx,v $
  *
- *  $Revision: 1.2 $
+ *  $Revision: 1.3 $
  *
- *  last change: $Author: lo $ $Date: 2004-02-26 14:43:16 $
+ *  last change: $Author: obo $ $Date: 2004-11-16 12:23:12 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -191,6 +191,12 @@ namespace DOM
         */
         virtual void SAL_CALL setAttributeNS(
                 const OUString& namespaceURI, const OUString& qualifiedName, const OUString& value)
+            throw (DOMException);
+
+        /**
+        sets the element name
+        */
+        virtual void SAL_CALL setElementName(const OUString& elementName)
             throw (DOMException);
 
         // overrides for XNode base
