@@ -2,9 +2,9 @@
  *
  *  $RCSfile: XmlFilterAdaptor.cxx,v $
  *
- *  $Revision: 1.1 $
+ *  $Revision: 1.2 $
  *
- *  last change: $Author: aidan $ $Date: 2002-04-09 09:03:43 $
+ *  last change: $Author: aidan $ $Date: 2002-04-10 13:49:48 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -178,7 +178,7 @@ sal_Bool SAL_CALL XmlFilterAdaptor::importImpl( const Sequence< ::com::sun::star
     nLength = msUserData.getLength();
     for ( sal_Int32 i = 0 ; i < nLength; i++)
     {
-        fprintf(stderr,"UserData :  %s",OUStringToOString( msUserData[i], RTL_TEXTENCODING_ASCII_US ).getStr());
+        fprintf(stderr,"UserData :  %s",::rtl::OUStringToOString( msUserData[i], RTL_TEXTENCODING_ASCII_US ).getStr());
         fprintf(stderr,"\n");
         
     }
@@ -223,7 +223,7 @@ sal_Bool SAL_CALL XmlFilterAdaptor::importImpl( const Sequence< ::com::sun::star
     }
     catch( Exception& e)
       {
-        fprintf(stderr, "Fell into the catch block!: %s\n",OUStringToOString( 
+        fprintf(stderr, "Fell into the catch block!: %s\n",::rtl::OUStringToOString( 
                                          e.Message, RTL_TEXTENCODING_ASCII_US).getStr() );
         fprintf(stderr, "Casting failure!\n");
       }
@@ -266,7 +266,7 @@ sal_Bool SAL_CALL XmlFilterAdaptor::importImpl( const Sequence< ::com::sun::star
     catch( Exception &exc)
     {
             fprintf(stderr,"\nParseStream Exception\n");
-        fprintf(stderr, "Fell into the catch block!: %s\n",OUStringToOString( 
+        fprintf(stderr, "Fell into the catch block!: %s\n",::rtl::OUStringToOString( 
                 exc.Message, RTL_TEXTENCODING_ASCII_US).getStr() );
         bRet = sal_False;
     }
@@ -352,7 +352,7 @@ sal_Bool SAL_CALL XmlFilterAdaptor::exportImpl( const Sequence< ::com::sun::star
       xConverter = Reference< com::sun::star::documentconversion::XConverterBridge > ( xConvBridge, UNO_QUERY );
     }
     catch( Exception& e){
-      fprintf(stderr, "Fell into the catch block!: %s\n",OUStringToOString( 
+      fprintf(stderr, "Fell into the catch block!: %s\n",::rtl::OUStringToOString( 
                                            e.Message, RTL_TEXTENCODING_ASCII_US).getStr() );
       fprintf(stderr, "Casting failure!\n");
     }
