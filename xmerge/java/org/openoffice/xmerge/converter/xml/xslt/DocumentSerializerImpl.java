@@ -191,10 +191,14 @@ public final class DocumentSerializerImpl
         tmpNode = newDoc.importNode(nodeList.item(0),true);
         rootNode.appendChild(tmpNode);
     
-         nodeList= styleDoc.getElementsByTagName("office:styles");
+        nodeList= styleDoc.getElementsByTagName("office:styles");
         tmpNode = newDoc.importNode(nodeList.item(0),true);
         rootNode.appendChild(tmpNode);
-      
+
+        nodeList= styleDoc.getElementsByTagName("office:automatic-styles");
+        tmpNode = newDoc.importNode(nodeList.item(0),true);
+        rootNode.appendChild(tmpNode);
+
         nodeList= domDoc.getElementsByTagName("office:body");
         tmpNode = newDoc.importNode(nodeList.item(0),true);
         rootNode.appendChild(tmpNode);
