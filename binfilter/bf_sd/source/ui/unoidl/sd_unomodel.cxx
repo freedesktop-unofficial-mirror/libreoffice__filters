@@ -2,9 +2,9 @@
  *
  *  $RCSfile: sd_unomodel.cxx,v $
  *
- *  $Revision: 1.2 $
+ *  $Revision: 1.3 $
  *
- *  last change: $Author: mwu $ $Date: 2003-11-06 07:36:51 $
+ *  last change: $Author: aw $ $Date: 2003-12-10 14:08:59 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -59,7 +59,7 @@
  *
  ************************************************************************/
 
-#ifndef _COM_SUN_STAR_LANG_DISPOSEDEXCEPTION_HPP_ 
+#ifndef _COM_SUN_STAR_LANG_DISPOSEDEXCEPTION_HPP_
 #include <com/sun/star/lang/DisposedException.hpp>
 #endif
 #ifndef _COM_SUN_STAR_LANG_SERVICENOTREGISTEREDEXCEPTION_HPP_
@@ -101,7 +101,7 @@
 #include <bf_sfx2/bindings.hxx>
 #endif
 
-#ifndef _SV_SVAPP_HXX 
+#ifndef _SV_SVAPP_HXX
 #include <vcl/svapp.hxx>
 #endif
 
@@ -159,7 +159,7 @@
 #include <bf_svx/eeitem.hxx>
 
 // #99870# Support creation of GraphicObjectResolver and EmbeddedObjectResolver
-#ifndef _XMLEOHLP_HXX 
+#ifndef _XMLEOHLP_HXX
 #include <bf_svx/xmleohlp.hxx>
 #endif
 
@@ -196,7 +196,7 @@
 #include "app.hrc"
 
 #ifndef _LEGACYBINFILTERMGR_HXX
-#include <legacysmgr/legacy_binfilters_smgr.hxx>	//STRIP002 
+#include <legacysmgr/legacy_binfilters_smgr.hxx>	//STRIP002
 #endif
 namespace binfilter {
 
@@ -492,8 +492,8 @@ void SdXImpressDocument::Notify( SfxBroadcaster& rBC, const SfxHint& rHint )
                     if( SvxUnoDrawMSFactory::createEvent( pDoc, pSdrHint, aEvent ) )
                         notifyEvent( aEvent );
                 }
-            }		
-            
+            }
+
             if( pSdrHint->GetKind() == HINT_MODELCLEARED )
             {
                 if( pDoc )
@@ -544,7 +544,7 @@ SdPage* SdXImpressDocument::InsertSdPage( sal_uInt16 nPage, sal_Bool bDuplicate 
     {
         // this is only used for clipboard where we only have one page
         pStandardPage = (SdPage*) pDoc->AllocPage(sal_False);
-        
+
         Size aDefSize(21000, 29700);   // A4-Hochformat
         pStandardPage->SetSize( aDefSize );
         pDoc->InsertPage(pStandardPage, 0);
@@ -665,7 +665,7 @@ void SAL_CALL SdXImpressDocument::unlockControllers(  )
 {
     if( NULL == pDoc )
         throw lang::DisposedException();
-    
+
     if( pDoc->isLocked() )
     {
         pDoc->setLock( sal_False );
@@ -1199,15 +1199,16 @@ sal_Bool SAL_CALL SdXImpressDocument::supportsService( const OUString& ServiceNa
 
 uno::Sequence< OUString > SAL_CALL SdXImpressDocument::getSupportedServiceNames() throw(uno::RuntimeException)
 {
-    uno::Sequence< OUString > aSeq( mbImpressDoc ? 4 : 3 );
+    uno::Sequence< OUString > aSeq( 4 );
     OUString* pServices = aSeq.getArray();
 
     *pServices++ = OUString( RTL_CONSTASCII_USTRINGPARAM("com.sun.star.document.OfficeDocument"));
-    *pServices++ = OUString( RTL_CONSTASCII_USTRINGPARAM("com.sun.star.drawing.DrawingDocument"));
-    *pServices++ = OUString( RTL_CONSTASCII_USTRINGPARAM("com.sun.star.drawing.DrawingDocumentFactory"));
+    *pServices++ = OUString( RTL_CONSTASCII_USTRINGPARAM("com.sun.star.drawing.GenericDrawingDocument"));
 
     if( mbImpressDoc )
         *pServices++ = OUString( RTL_CONSTASCII_USTRINGPARAM("com.sun.star.presentation.PresentationDocument"));
+    else
+        *pServices++ = OUString( RTL_CONSTASCII_USTRINGPARAM("com.sun.star.drawing.DrawingDocument"));
 
     return aSeq;
 }
@@ -1403,7 +1404,7 @@ uno::Reference< ::com::sun::star::ucb::XAnyCompare > SAL_CALL SdXImpressDocument
 
 // XRenderable
 sal_Int32 SAL_CALL SdXImpressDocument::getRendererCount( const uno::Any& rSelection,
-                                                         const uno::Sequence< beans::PropertyValue >& rxOptions ) 
+                                                         const uno::Sequence< beans::PropertyValue >& rxOptions )
     throw (lang::IllegalArgumentException, uno::RuntimeException)
 {
     OGuard      aGuard( Application::GetSolarMutex() );
@@ -1417,27 +1418,27 @@ sal_Int32 SAL_CALL SdXImpressDocument::getRendererCount( const uno::Any& rSelect
     if( pDocShell && pDoc )
     {
         uno::Reference< frame::XModel > xModel;
-        
+
         rSelection >>= xModel;
-        
+
         if( xModel == pDocShell->GetModel() )
             nRet = pDoc->GetSdPageCount( PK_STANDARD );
         else
         {
             uno::Reference< drawing::XShapes > xShapes;
-            
+
             rSelection >>= xShapes;
-            
+
             if( xShapes.is() && xShapes->getCount() )
                 nRet = 1;
         }
     }
-    
+
     return nRet;
 }
 
 uno::Sequence< beans::PropertyValue > SAL_CALL SdXImpressDocument::getRenderer( sal_Int32 nRenderer, const uno::Any& rSelection,
-                                                                                const uno::Sequence< beans::PropertyValue >& rxOptions ) 
+                                                                                const uno::Sequence< beans::PropertyValue >& rxOptions )
     throw (lang::IllegalArgumentException, uno::RuntimeException)
 {
     OGuard aGuard( Application::GetSolarMutex() );
@@ -1522,8 +1523,8 @@ IMPL_LINK( ImplRenderPaintProc, _ImplRenderPaintProc, SdrPaintProcRec*, pRecord 
     return 0;
 }
 
-void SAL_CALL SdXImpressDocument::render( sal_Int32 nRenderer, const uno::Any& rSelection, 
-                                          const uno::Sequence< beans::PropertyValue >& rxOptions ) 
+void SAL_CALL SdXImpressDocument::render( sal_Int32 nRenderer, const uno::Any& rSelection,
+                                          const uno::Sequence< beans::PropertyValue >& rxOptions )
     throw (lang::IllegalArgumentException, uno::RuntimeException)
 {
     OGuard aGuard( Application::GetSolarMutex() );
@@ -1553,25 +1554,25 @@ void SAL_CALL SdXImpressDocument::render( sal_Int32 nRenderer, const uno::Any& r
 //STRIP001                 Rectangle				aVisArea( pDocShell->GetVisArea( ASPECT_DOCPRINT ) );
 //STRIP001         		Region					aRegion( aVisArea );
 //STRIP001                 Point					aOrigin;
-//STRIP001 
+//STRIP001
 //STRIP001 				SdViewShell* pOldViewSh = pDocShell->GetViewShell();
 //STRIP001 				SdView* pOldSdView = pOldViewSh ? pOldViewSh->GetView() : NULL;
 //STRIP001 				ImplRenderPaintProc	aImplRenderPaintProc( pDoc->GetLayerAdmin(),
 //STRIP001 					pOldSdView ? pOldSdView->GetPageViewPvNum( 0 ) : NULL );
 //STRIP001 				const Link aRenderPaintProc( LINK( &aImplRenderPaintProc, ImplRenderPaintProc, _ImplRenderPaintProc ) );
-//STRIP001             
+//STRIP001
 //STRIP001                 pView->SetHlplVisible( sal_False );
 //STRIP001                 pView->SetGridVisible( sal_False );
 //STRIP001 	            pView->SetBordVisible( sal_False );
 //STRIP001 	            pView->SetPageVisible( sal_False );
 //STRIP001 	            pView->SetGlueVisible( sal_False );
-//STRIP001 
+//STRIP001
 //STRIP001                 pOut->SetMapMode( MAP_100TH_MM );
 //STRIP001 	            pOut->IntersectClipRegion( aVisArea );
-//STRIP001 
+//STRIP001
 //STRIP001                 uno::Reference< frame::XModel > xModel;
 //STRIP001                 rSelection >>= xModel;
-//STRIP001         
+//STRIP001
 //STRIP001                 if( xModel == pDocShell->GetModel() )
 //STRIP001                 {
 //STRIP001                     pView->ShowPage( pDoc->GetSdPage( nPageNumber - 1, PK_STANDARD ), aOrigin );
@@ -1582,41 +1583,41 @@ void SAL_CALL SdXImpressDocument::render( sal_Int32 nRenderer, const uno::Any& r
 //STRIP001             	{
 //STRIP001 		            uno::Reference< drawing::XShapes > xShapes;
 //STRIP001 		            rSelection >>= xShapes;
-//STRIP001 		            
+//STRIP001
 //STRIP001 		            if( xShapes.is() && xShapes->getCount() )
 //STRIP001 		            {
 //STRIP001 		               SdrPageView* pPV = NULL;
-//STRIP001 		            
+//STRIP001
 //STRIP001 			            for( sal_uInt32 i = 0, nCount = xShapes->getCount(); i < nCount; i++ )
 //STRIP001 			            {
 //STRIP001 			                uno::Reference< drawing::XShape > xShape;
 //STRIP001 				            xShapes->getByIndex( i ) >>= xShape;
-//STRIP001 				            
+//STRIP001
 //STRIP001 				            if( xShape.is() )
 //STRIP001 				            {
 //STRIP001 					            SvxShape* pShape = SvxShape::getImplementation( xShape );
-//STRIP001 					            
+//STRIP001
 //STRIP001 					            if( pShape )
 //STRIP001 					            {
-//STRIP001 						            SdrObject* pObj = pShape->GetSdrObject();						            
+//STRIP001 						            SdrObject* pObj = pShape->GetSdrObject();
 //STRIP001 						            if( pObj && pObj->GetPage()
 //STRIP001 										&& aImplRenderPaintProc.IsVisible( pObj )
 //STRIP001 											&& aImplRenderPaintProc.IsPrintable( pObj ) )
 //STRIP001 						            {
 //STRIP001 						                if( !pPV )
 //STRIP001                                             pPV = pView->ShowPage( pObj->GetPage(), aOrigin );
-//STRIP001                                         
+//STRIP001
 //STRIP001                                         if( pPV )
 //STRIP001 							                pView->MarkObj( pObj, pPV );
 //STRIP001 							        }
 //STRIP001 					            }
 //STRIP001 				            }
 //STRIP001 			            }
-//STRIP001 			            
+//STRIP001
 //STRIP001                         pView->DrawAllMarked( *pOut, aOrigin );
 //STRIP001 		            }
 //STRIP001 		        }
-//STRIP001 
+//STRIP001
 //STRIP001                 delete pView;
             }
         }

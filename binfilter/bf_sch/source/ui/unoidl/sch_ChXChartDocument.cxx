@@ -2,9 +2,9 @@
  *
  *  $RCSfile: sch_ChXChartDocument.cxx,v $
  *
- *  $Revision: 1.2 $
+ *  $Revision: 1.3 $
  *
- *  last change: $Author: mwu $ $Date: 2003-11-06 07:34:04 $
+ *  last change: $Author: aw $ $Date: 2003-12-10 14:08:57 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -107,7 +107,7 @@
 #include "memchrt.hxx"
 
 // header for SvNumberFormatsSupplierObj
-#ifndef _NUMUNO_HXX 
+#ifndef _NUMUNO_HXX
 #include <svtools/numuno.hxx>
 #endif
 
@@ -132,7 +132,7 @@
 #ifndef _COM_SUN_STAR_CHART_CHARTSERIESADDRESS_HPP_
 #include <com/sun/star/chart/ChartSeriesAddress.hpp>
 #endif
-#ifndef _COM_SUN_STAR_LANG_XINITIALIZATION_HPP_ 
+#ifndef _COM_SUN_STAR_LANG_XINITIALIZATION_HPP_
 #include <com/sun/star/lang/XInitialization.hpp>
 #endif
 #ifndef _COM_SUN_STAR_LANG_XSERVICENAME_HPP_
@@ -1011,7 +1011,7 @@ uno::Reference< drawing::XShape > SAL_CALL ChXChartDocument::getTitle() throw( u
         if (xComponent.is())
             xComponent->addEventListener (this);
     }
-    
+
     return mxMainTitle;
 }
 
@@ -1109,7 +1109,7 @@ void SAL_CALL ChXChartDocument::setDiagram( const uno::Reference< chart::XDiagra
                     xComponent->removeEventListener (this);
                     xComponent->dispose();
                 }
-                    
+
                 ChXDiagram* pDiagram = new ChXDiagram( m_pDocShell, TRUE );
                 pDiagram->SetServiceName( xServiceName->getServiceName() );
                 m_rXDiagram = pDiagram;
@@ -1220,7 +1220,7 @@ void SAL_CALL ChXChartDocument::attachData( const uno::Reference< chart::XChartD
             m_xEventListener = pEvtListener;	// remember Listener as member
         }
     }
-    
+
     // add listener to XChartDataArray
     uno::Reference< chart::XChartDataArray > xChDataArray( _Data, uno::UNO_QUERY );
 
@@ -1498,11 +1498,12 @@ sal_Bool SAL_CALL ChXChartDocument::supportsService( const ::rtl::OUString& Serv
 uno::Sequence< ::rtl::OUString > SAL_CALL ChXChartDocument::getSupportedServiceNames()
     throw( uno::RuntimeException )
 {
-    uno::Sequence< ::rtl::OUString > aSeq( 3 );
+    uno::Sequence< ::rtl::OUString > aSeq( 4 );
     ::rtl::OUString* pStr = aSeq.getArray();
-    pStr[ 0 ] = ::rtl::OUString( RTL_CONSTASCII_USTRINGPARAM( "com.sun.star.chart.ChartDocument" ));
-    pStr[ 1 ] = ::rtl::OUString( RTL_CONSTASCII_USTRINGPARAM( "com.sun.star.chart.ChartTableAddressSupplier" ));
-    pStr[ 2 ] = ::rtl::OUString( RTL_CONSTASCII_USTRINGPARAM( "com.sun.star.xml.UserDefinedAttributeSupplier" ));
+    pStr[ 0 ] = ::rtl::OUString( RTL_CONSTASCII_USTRINGPARAM( "com.sun.star.document.OfficeDocument" ));
+    pStr[ 1 ] = ::rtl::OUString( RTL_CONSTASCII_USTRINGPARAM( "com.sun.star.chart.ChartDocument" ));
+    pStr[ 2 ] = ::rtl::OUString( RTL_CONSTASCII_USTRINGPARAM( "com.sun.star.chart.ChartTableAddressSupplier" ));
+    pStr[ 3 ] = ::rtl::OUString( RTL_CONSTASCII_USTRINGPARAM( "com.sun.star.xml.UserDefinedAttributeSupplier" ));
 
     return aSeq;
 }
@@ -1556,7 +1557,7 @@ void SAL_CALL ChXChartDocument::disposing (const lang::EventObject & Source)
 {
     sal_Bool bChangeProperty = sal_False;
     ::rtl::OUString aProperty;
-    
+
     if (Source.Source == m_rXDiagram)
         m_rXDiagram = NULL;
     else if (Source.Source == mxMainTitle)
@@ -1581,10 +1582,10 @@ void SAL_CALL ChXChartDocument::disposing (const lang::EventObject & Source)
     {
         mxArea = NULL;
     }
-    
+
     if ( ! bChangeProperty)
         return;
-        
+
     //	Inform the document shell of the disposing of Source.Source.
     OGuard aGuard( Application::GetSolarMutex() );
 
