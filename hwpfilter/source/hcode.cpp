@@ -2,9 +2,9 @@
  *
  *  $RCSfile: hcode.cpp,v $
  *
- *  $Revision: 1.1 $
+ *  $Revision: 1.2 $
  *
- *  last change: $Author: dvo $ $Date: 2003-10-15 14:39:30 $
+ *  last change: $Author: vg $ $Date: 2005-02-16 18:15:12 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -595,7 +595,7 @@ static hchar cdkssm2ks_han(hchar kssm)
     unsigned int index;
     unsigned char lo, hi;
 
-// "한"
+/* "한" */
     if (kssm == 0xd3c5)
         return 0xc7d1;
 
@@ -648,43 +648,43 @@ static hchar jaso2ks(hchar hh)
     return 0;
 }
 
-    
+
 //1 00011 00 001 00011
-static hchar choseong_to_unicode[] = 
+static hchar choseong_to_unicode[] =
 {
     0x111e,  0,  0x1100, 0x1101, 0x1102, 0x1103, 0x1104, 0x1105,
     0x1106, 0x1107, 0x1108, 0x1109, 0x110a, 0x110b, 0x110c, 0x110d,
     0x110e, 0x110f, 0x1110, 0x1111, 0x1112, 0x1120, 0x1121, 0x1127,
     0x112b, 0x112d, 0x112f, 0x1132, 0x1136, 0x1140, 0x114c, 0x1158
 };
-// 중성이 0과 1인 곳에는 다른 코드들이 들어가 있다. 이부분에 대한 법칙을 뽑아라.
-static hchar joongseong_to_unicode[] = 
+/* 중성이 0과 1인 곳에는 다른 코드들이 들어가 있다. 이부분에 대한 법칙을 뽑아라. */
+static hchar joongseong_to_unicode[] =
 {
     0, 		0, 	0, 0x1161, 0x1162, 0x1163, 0x1164, 0x1165,
     0, 		0, 0x1166, 0x1167, 0x1168, 0x1169, 0x116a, 0x116b,
-    0, 	0x1188, 0x116c, 0x116d, 0x116e, 0x116f, 0x1170, 0x1171, 
+    0, 	0x1188, 0x116c, 0x116d, 0x116e, 0x116f, 0x1170, 0x1171,
     0x1191, 0x1194, 0x1172, 0x1173, 0x1174, 0x1175, 0x119e, 0x11a1
 };
 
 static hchar jongseong_to_unicode[] =
 {
-    0x11d9,	0  , 0x11a8, 0x11a9, 0x11aa, 0x11ab, 0x11ac, 0x11ad, 
+    0x11d9,	0  , 0x11a8, 0x11a9, 0x11aa, 0x11ab, 0x11ac, 0x11ad,
     0x11ae, 0x11af, 0x11b0, 0x11b1, 0x11b2, 0x11b3, 0x11b4, 0x11b5,
     0x11b6, 0x11b7, 0x11e6, 0x11b8, 0x11b9, 0x11ba, 0x11bb, 0x11bc,
     0x11bd, 0x11be, 0x11bf, 0x11c0, 0x11c1, 0x11c2, 0x11eb, 0x11f0
 };
 
-// 중성이 0과 1인곳
+/* 중성이 0과 1인곳 */
 /* 처음 32개는 자모, 나머지 32개는 조합으로 구성.
  * 0x8000 ~ 0xa413까지 32개 나오고, 0x0400더한 0x8400에서 다시 32개 나오는 식으로 진행된다.
  * 자모영역은 일반 테이블로 나머지는 구조체 매핑테이블로 만든다.
  */
-// 308개.. 1152개에서 308개를 제외한 나머지 844개는 자모조합이다.
-static hchar jamo_to_unicode[] = 
+/* 308개.. 1152개에서 308개를 제외한 나머지 844개는 자모조합이다. */
+static hchar jamo_to_unicode[] =
 {
-    0x3131, 0x3132, 0x3133, 0x3134, 0x3135, 0x3136, 0x3137, 0x3138, 
+    0x3131, 0x3132, 0x3133, 0x3134, 0x3135, 0x3136, 0x3137, 0x3138,
     0x3139, 0x313a, 0x313b, 0x313c, 0x313d, 0x313e, 0x313f, 0x3140,
-    0x3141, 0x3142, 0x3143, 0x3144, 0x3145, 0x3146, 0x3147, 0x3148, 
+    0x3141, 0x3142, 0x3143, 0x3144, 0x3145, 0x3146, 0x3147, 0x3148,
     0x3149, 0x314a, 0x314b, 0x314c, 0x314d, 0x314e, 0x3172, 0x3173,
 
     0x3176, 0x317a, 0x317c, 0x317d, 0x317e, 0x3185, 0x3178, 0x317f,
@@ -699,7 +699,7 @@ static hchar jamo_to_unicode[] =
 
     0x1139, 0x113a, 0x113b, 0x113c, 0x113d, 0x113e, 0x113f, 0x1141,
     0x11ed, 0x1142, 0x1143, 0x1144, 0x1145, 0x1146, 0x1147, 0x1148,
-    0x1149, 0x11ef, 0x114a, 0x114b, 0x11f1, 0x11f2, 0x114d, 0x114e, 
+    0x1149, 0x11ef, 0x114a, 0x114b, 0x11f1, 0x11f2, 0x114d, 0x114e,
     0x114f, 0x1150, 0x1151, 0x1152, 0x1153, 0x1154, 0x1155, 0x1156,
 
     0x1157, 0x11f5, 0x11f6, 0x11f7, 0x11f8, 0x11f9, 0x1176, 0x1177,
@@ -713,8 +713,8 @@ static hchar jamo_to_unicode[] =
     0x11b1, 0x11b2, 0x11b3, 0x11b4, 0x11b5, 0x11b6, 0x11b7, 0x11b8,
 
     0x1108, 0x11b9, 0x11ba, 0x11bb, 0x11bc, 0x11bd, 0x3149, 0x11be,
-    0x11bf, 0x11c0, 0x11c1, 0x11c2, 0x111e, 0x1120, 0x1127, 0x11e7, 
-    0x11e8, 0x11ea, 0x1136, 0x1158, 0x11e6, 0x11eb, 0x11f0, 0x11d9, 
+    0x11bf, 0x11c0, 0x11c1, 0x11c2, 0x111e, 0x1120, 0x1127, 0x11e7,
+    0x11e8, 0x11ea, 0x1136, 0x1158, 0x11e6, 0x11eb, 0x11f0, 0x11d9,
     0x11c3, 0x11c4, 0x11c5, 0x1114, 0x11c6, 0x1116, 0x11c7, 0x11c8,
 
     0x11c9, 0x11ca, 0x11cb, 0x3169, 0x11cd, 0x11ce, 0x11cf, 0x1119,
@@ -724,10 +724,10 @@ static hchar jamo_to_unicode[] =
 
     0x1126, 0x1128, 0x1129, 0x11e4, 0x11e5, 0x112c, 0x112e, 0x1130,
     0x1131, 0x1133, 0x1134, 0x1135, 0x1137, 0x1138, 0x1139, 0x113a,
-    0x113b, 0x113c, 0x113d, 0x113e, 0x113f, 0x11ec, 0x11ed, 0x1142, 
+    0x113b, 0x113c, 0x113d, 0x113e, 0x113f, 0x11ec, 0x11ed, 0x1142,
     0x1143, 0x1144, 0x1145, 0x1146, 0x1147, 0x1148, 0x1149, 0x11ef,
 
-    0x114a, 0x114b, 0x11f1, 0x11f2, 0x114d, 0x114e, 0x114f, 0x1150, 
+    0x114a, 0x114b, 0x11f1, 0x11f2, 0x114d, 0x114e, 0x114f, 0x1150,
     0x1151, 0x1152, 0x1153, 0x1154, 0x1155, 0x1156, 0x1157, 0x11f5,
     0x11f6, 0x11f7, 0x11f8, 0x11f9
 };
@@ -738,8 +738,8 @@ struct JamoComp{
     hchar v2;
     hchar v3;
 };
-// 704 + 12 = 706 개 
-static JamoComp jamocomp1_to_unicode[] = 
+/* 704 + 12 = 706 개  */
+static JamoComp jamocomp1_to_unicode[] =
 {
     {3, 0x1100, 0x1161, 0x11e7}, {3, 0x1100, 0x1161, 0x3167},
     {3, 0x1100, 0x1161, 0x11dd}, {3, 0x1100, 0x1161, 0x11e2},
@@ -790,8 +790,8 @@ static JamoComp jamocomp1_to_unicode[] =
     {2, 0x1101, 0x1176, 0x0000}, {2, 0x1101, 0x117b, 0x0000},
     {2, 0x1101, 0x1189, 0x0000}, {2, 0x1101, 0x118c, 0x0000},
     {2, 0x1101, 0x1198, 0x0000}, {3, 0x1102, 0x1161, 0x11e7},
-    {3, 0x1102, 0x1161, 0x11c4}, {3, 0x1102, 0x1161, 0x11da}, 
-    {3, 0x1102, 0x1161, 0x11dd}, {3, 0x1102, 0x1161, 0x11e2}, 
+    {3, 0x1102, 0x1161, 0x11c4}, {3, 0x1102, 0x1161, 0x11da},
+    {3, 0x1102, 0x1161, 0x11dd}, {3, 0x1102, 0x1161, 0x11e2},
 
     {3, 0x1102, 0x1161, 0x11f9}, {3, 0x1102, 0x1165, 0x11db},
     {3, 0x1102, 0x1165, 0x11dd}, {3, 0x1102, 0x1165, 0x11e3},
@@ -802,9 +802,9 @@ static JamoComp jamocomp1_to_unicode[] =
     {3, 0x1102, 0x116e, 0x11c8}, {3, 0x1102, 0x116e, 0x11dd},
     {3, 0x1102, 0x116e, 0x11e2}, {3, 0x1102, 0x116e, 0x11f5},
 
-    {3, 0x1102, 0x1172, 0x11e2}, {3, 0x1102, 0x1173, 0x11c3}, 
-    {3, 0x1102, 0x1175, 0x11c3}, {3, 0x1102, 0x1175, 0x11dd}, 
-    {3, 0x1102, 0x1175, 0x11e2}, {3, 0x1102, 0x119e, 0x11d7}, 
+    {3, 0x1102, 0x1172, 0x11e2}, {3, 0x1102, 0x1173, 0x11c3},
+    {3, 0x1102, 0x1175, 0x11c3}, {3, 0x1102, 0x1175, 0x11dd},
+    {3, 0x1102, 0x1175, 0x11e2}, {3, 0x1102, 0x119e, 0x11d7},
     {2, 0x1102, 0x1176, 0x0000}, {2, 0x1102, 0x117c, 0x0000},
     {3, 0x1102, 0x117c, 0x11a8}, {2, 0x1102, 0x118c, 0x0000},
     {2, 0x1102, 0x1196, 0x0000}, {2, 0x1102, 0x1197, 0x0000},
@@ -861,7 +861,7 @@ static JamoComp jamocomp1_to_unicode[] =
     {3, 0x1105, 0x119e, 0x11d7}, {3, 0x1105, 0x119e, 0x11dc},
     {3, 0x1105, 0x119e, 0x11dd}, {2, 0x1105, 0x1176, 0x0000},
 
-// -- 여기부터 숫자 안바꿈 즉, 3을 2로 바꾸어 주어야 함.
+/* -- 여기부터 숫자 안바꿈 즉, 3을 2로 바꾸어 주어야 함. */
     {2, 0x1105, 0x1178, 0x0000}, {2, 0x1105, 0x117a, 0x0000},
     {2, 0x1105, 0x117b, 0x0000}, {2, 0x1105, 0x1186, 0x0000},
     {2, 0x1105, 0x1187, 0x0000}, {2, 0x1105, 0x118c, 0x0000},
@@ -988,23 +988,25 @@ int hcharconv(hchar ch, hchar *dest, int codeType)
           dest[0] = ch;
         return 1;
     }
-      // 한자는 0x4000부터 4888가지의 값을 가진다.
+      /* 한자는 0x4000부터 4888가지의 값을 가진다. */
     else if (IsHanja(ch))
     {
-      // 4888이외의 수는 아래한글에서 정의한 확장한자이다. 이것에 대해서는
-      // 유니코드나 완성형코드로의 변환을 위한 매핑테이블어 없는 실정이다.
+        /*  4888이외의 수는 아래한글에서 정의한 확장한자이다. 이것에 대해서는
+            유니코드나 완성형코드로의 변환을 위한 매핑테이블어 없는 실정이다.
+         */
         if ((index = ch - 0x4000) >= 4888)
         {
                 if( codeType == UNICODE )
-                     dest[0]= 0x25A1; 
+                     dest[0]= 0x25A1;
                 else
                      dest[0]= 0xA1E0;
             return 1;
         }
         if (codeType == KS)
         {
- // 한자코드는 상위코드와 하위코드로 나누어지며 하위코드는 0xA1 - 0xFE 까지의 값을 가진다.
- // 즉 하위코드에 올수있는 가지수는 0xFE - 0xA1 +1 가지수이다.
+            /*  한자코드는 상위코드와 하위코드로 나누어지며 하위코드는 0xA1 - 0xFE 까지의 값을 가진다.
+                즉 하위코드에 올수있는 가지수는 0xFE - 0xA1 +1 가지수이다.
+             */
             hi = index / (0xFE - 0xA1 + 1) + 0xCA;
             lo = index % (0xFE - 0xA1 + 1) + 0xA1;
             ch = (hi << 8) | lo;
@@ -1083,7 +1085,7 @@ int hcharconv(hchar ch, hchar *dest, int codeType)
                          dest[0] = ch;
                           return 1;
                      }
-                     // 한글과컴퓨터 : 0x37c0 ~ 0x37c5
+                     /* 한글과컴퓨터 : 0x37c0 ~ 0x37c5 */
                      if( ch2 >= 0x37c0 && ch2 <= 0x37c5 ){
                          if( ch2 == 0x37c0 ) dest[0] = 0xd55c;
                          else if( ch2 == 0x37c1 ) dest[0] = 0xae00;
@@ -1118,7 +1120,7 @@ int hcharconv(hchar ch, hchar *dest, int codeType)
 
         if (ch == 0){ // not '?', but square mark
                 if( codeType == UNICODE )
-                     dest[0] =  0x25A1; 
+                     dest[0] =  0x25A1;
                 else
                      dest[0] =  0xA1E0;
                 return 1;
@@ -1129,7 +1131,7 @@ int hcharconv(hchar ch, hchar *dest, int codeType)
     }
 }
 
-// 한글일 경우.
+/* 한글일 경우. */
 int kssm_hangul_to_ucs2(hchar ch, hchar *dest)
 {
     hchar choseong, joongseong, jongseong;
@@ -1140,13 +1142,13 @@ int kssm_hangul_to_ucs2(hchar ch, hchar *dest)
 
      //printf("kssm_hangul_to_ucs2 : [%d,%d,%d]\n", choseong,joongseong,jongseong);
 
-     if( joongseong < 2 ){ // 조합되지 않은 영역 중성=0,1
-         if( joongseong == 0 && ch < 0xa414 ){ // 고어포함 자모
+     if( joongseong < 2 ){ /* 조합되지 않은 영역 중성=0,1 */
+         if( joongseong == 0 && ch < 0xa414 ){ /* 고어포함 자모 */
              int index = choseong * 32 + jongseong;
              dest[0] = jamo_to_unicode[index];
              return 1;
          }
-         else{ // 고어포함 자모조합 : 테이블 미완성
+         else{ /* 고어포함 자모조합 : 테이블 미완성 */
              int index = choseong * 32 + jongseong - 308;
              if( index < sizeof(jamocomp1_to_unicode)/sizeof(jamocomp1_to_unicode[0])){
                  dest[0] = jamocomp1_to_unicode[index].v1;
@@ -1158,21 +1160,21 @@ int kssm_hangul_to_ucs2(hchar ch, hchar *dest)
              return 1;
          }
      }
-     else if ( choseong == 1 && jongseong == 1 ){ // 모음
+     else if ( choseong == 1 && jongseong == 1 ){ /* 모음 */
          dest[0] = joongseong_to_unicode[joongseong];
          return 1;
      }
-     else if ( joongseong == 2 && jongseong == 1 ){  // 자음
+     else if ( joongseong == 2 && jongseong == 1 ){  /* 자음 */
          dest[0] = choseong_to_unicode[choseong];
        return 1;
     }
-     else if( choseong > 20 || choseong == 0 || 
-             joongseong == 17 || joongseong == 24 || 
+     else if( choseong > 20 || choseong == 0 ||
+             joongseong == 17 || joongseong == 24 ||
              joongseong == 25 || joongseong > 29 ||
              jongseong == 0 || jongseong == 18 ||
-             jongseong > 29 || 
+             jongseong > 29 ||
              choseong == 1 || joongseong == 2  /* 완성되지 않은 한글 */
-             ) { // 고어
+             ) { /* 고어 */
          int count = 0;
          if( choseong != 1 ){
              dest[count] = choseong_to_unicode[choseong];
@@ -1249,7 +1251,7 @@ hchar* hstr2ucsstr(hchar* hstr, hchar* ubuf)
       for( j = 0 ; j < res ; j++)
             tmp[i++] = dest[j];
   }
-  
+
   tmp[i]= '\0';
   return ubuf;
 }
@@ -1319,7 +1321,7 @@ char* Int2Str(int value, const char *format, char *buf)
 }
 
 
-// color인덱스 값과 음영값을 조합하여 스타오피스의 color로 변환
+/* color인덱스 값과 음영값을 조합하여 스타오피스의 color로 변환 */
 char *hcolor2str(uchar color, uchar shade, char *buf, bool bIsChar)
 {
     unsigned short red,green,blue;
@@ -1340,7 +1342,7 @@ char *hcolor2str(uchar color, uchar shade, char *buf, bool bIsChar)
             red =  0xff * (100 - shade ) /100;
                 if( bIsChar )
                      green = 0x80;
-                else 
+                else
                      green = 0xff;
             blue =  0xff * (100 - shade ) /100;
             break;
@@ -1411,7 +1413,7 @@ char *urltounix(const char *src, char *dest )
         return dest;
     }
     else if( !strncmp(src,"http",4)  ) // Start from "http"
-     {  
+     {
         int i;
         for( i = 0 ; i < strlen(src) ; i++ )
         {
@@ -1423,7 +1425,7 @@ char *urltounix(const char *src, char *dest )
         dest[i] = '\0';
         return dest;
     }
-     else 
+     else
     {
         int i, len, srclen;
           srclen = strlen(src);
@@ -1455,7 +1457,7 @@ char *urltounix(const char *src, char *dest )
 char *urltowin(const char *src, char *dest )
 {
     if( !_strnicmp(src, "http", 4))
-     {  
+     {
         int i;
         for( i = 0 ; i < strlen(src) ; i++ )
         {
@@ -1467,7 +1469,7 @@ char *urltowin(const char *src, char *dest )
         dest[i] = '\0';
         return dest;
     }
-     else 
+     else
     {
         int i, len, srclen;
           srclen = strlen(src);
@@ -1557,11 +1559,11 @@ double calcAngle(int x1, int y1, int x2, int y2)
      }
      double angle;
      angle = (180 / PI) * atan( ( y2 - y1 ) * 1.0 / ( x2 - x1 ));
-     if( y2 >= y1 ){ // 1,2사분면
+     if( y2 >= y1 ){ /* 1,2사분면 */
           if( angle < 0. )
                 angle += 180.;
      }
-     else{ // 3, 4 사분면
+     else{ /* 3, 4 사분면 */
           if( angle > 0 )
                 angle += 180.;
           else
