@@ -2,9 +2,9 @@
  *
  *  $RCSfile: element.cxx,v $
  *
- *  $Revision: 1.4 $
+ *  $Revision: 1.5 $
  *
- *  last change: $Author: lo $ $Date: 2004-02-27 16:14:29 $
+ *  last change: $Author: obo $ $Date: 2004-11-16 12:22:50 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -254,8 +254,28 @@ namespace DOM
         {
             Reference< XUnoTunnel > tunnel(oldAttr, UNO_QUERY);
             xmlAttrPtr pAttr = (xmlAttrPtr)tunnel->getSomething(Sequence< sal_Int8 >());
+
+            if (pAttr->parent != m_aNodePtr)
+            {
+                DOMException e;
+                e.Code = DOMExceptionType_HIERARCHY_REQUEST_ERR;
+                throw e;
+            }
+            if (pAttr->doc != m_aNodePtr->doc)
+            {
+                DOMException e;
+                e.Code = DOMExceptionType_WRONG_DOCUMENT_ERR;
+                throw e;
+            }
+
+            if (oldAttr->getNamespaceURI().getLength() > 0)
+                aAttr = oldAttr->getOwnerDocument()->createAttributeNS(
+                    oldAttr->getNamespaceURI(), oldAttr->getName());
+            else
+                aAttr = oldAttr->getOwnerDocument()->createAttribute(oldAttr->getName());
+            aAttr->setValue(oldAttr->getValue());
             xmlRemoveProp(pAttr);
-            aAttr = Reference< XAttr >(static_cast< CAttr* >(CNode::get((xmlNodePtr)pAttr)));
+            
         }
         return aAttr;
     }
@@ -475,4 +495,22 @@ namespace DOM
     {
         return OUString();
     }
+
+    void SAL_CALL CElement::setElementName(const OUString& aName) throw (DOMException)
+    {
+        if (aName.getLength() > 0 && aName.indexOf(OUString::createFromAscii(":")) < 0)
+        {
+            OString oName = OUStringToOString(aName, RTL_TEXTENCODING_UTF8);
+            xmlChar *xName = (xmlChar*)oName.getStr();
+            // xmlFree((void*)m_aNodePtr->name);
+            m_aNodePtr->name = xmlStrdup(xName);
+        }
+        else
+        {
+            DOMException e;
+            e.Code = DOMExceptionType_INVALID_CHARACTER_ERR;
+            throw e;
+        }
+    }
+
 }
