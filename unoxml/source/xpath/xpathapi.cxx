@@ -2,9 +2,9 @@
  *
  *  $RCSfile: xpathapi.cxx,v $
  *
- *  $Revision: 1.1 $
+ *  $Revision: 1.2 $
  *
- *  last change: $Author: lo $ $Date: 2004-01-28 16:32:00 $
+ *  last change: $Author: obo $ $Date: 2004-11-16 12:30:58 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -73,7 +73,12 @@ namespace XPath
     {
         // XXX
         // return static_cast< XXPathAPI* >(new CXPathAPI());
-        return Reference< XInterface >(static_cast<XXPathAPI*>(new CXPathAPI()));
+        return Reference< XInterface >(static_cast<XXPathAPI*>(new CXPathAPI(rSMgr)));
+    }
+
+    CXPathAPI::CXPathAPI(const Reference< XMultiServiceFactory >& rSMgr)
+        : m_aFactory(rSMgr)
+    {
     }
 
     const char* CXPathAPI::aImplementationName = "com.sun.star.comp.xml.xpath.XPathAPI";
@@ -147,6 +152,20 @@ namespace XPath
             p = (xmlChar*)oprefix.getStr();
             u = (xmlChar*)ouri.getStr();
             xmlXPathRegisterNs(ctx, p, u);
+            i++;
+        }
+    }
+
+    static void _registerExtensions(xmlXPathContextPtr ctx, const extensions_t& extensions)
+    {
+        extensions_t::const_iterator i = extensions.begin();
+        while (i != extensions.end())
+        {
+            Libxml2ExtensionHandle aHandle = (*i)->getLibxml2ExtensionHandle();
+            if ( aHandle.functionLookupFunction != 0 )
+                xmlXPathRegisterFuncLookup(ctx, (xmlXPathFuncLookupFunc) aHandle.functionLookupFunction, (void*)(aHandle.functionData));
+            if ( aHandle.variableLookupFunction != 0 )
+                xmlXPathRegisterVariableLookup(ctx, (xmlXPathVariableLookupFunc) aHandle.variableLookupFunction, (void*)(aHandle.variableData));
             i++;
         }
     }
@@ -240,7 +259,11 @@ namespace XPath
         xpathCtx = xmlXPathNewContext(pDoc);
         if (xpathCtx == NULL)throw RuntimeException();
 
+        // set conext node
+        xpathCtx->node = pNode;
+
         _registerNamespaces(xpathCtx, m_nsmap);
+        _registerExtensions(xpathCtx, m_extensions);
         
         OString o1 = OUStringToOString(str, RTL_TEXTENCODING_UTF8);
         xmlChar *xStr = (xmlChar*)o1.getStr();
@@ -264,6 +287,21 @@ namespace XPath
         return Reference< XXPathObject>();
     }
 
+    void SAL_CALL CXPathAPI::registerExtension(const OUString& aName) throw (RuntimeException)
+    {
+        // get extension from service manager
+        Reference< XXPathExtension > aExtension(m_aFactory->createInstance(aName), UNO_QUERY_THROW);
+        m_extensions.push_back( aExtension );
+    }
+
+    void SAL_CALL CXPathAPI::registerExtensionInstance(const Reference< XXPathExtension>& aExtension) throw (RuntimeException)
+    {
+        if (aExtension.is()) {
+            m_extensions.push_back( aExtension );
+        }
+        else
+            throw RuntimeException();
+    }
 
 
 }
