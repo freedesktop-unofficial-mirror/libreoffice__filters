@@ -2,9 +2,9 @@
  *
  *  $RCSfile: processinginstruction.cxx,v $
  *
- *  $Revision: 1.3 $
+ *  $Revision: 1.4 $
  *
- *  last change: $Author: lo $ $Date: 2004-02-27 16:14:30 $
+ *  last change: $Author: obo $ $Date: 2004-11-16 12:26:31 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
