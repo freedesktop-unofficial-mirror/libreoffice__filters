@@ -2,9 +2,9 @@
  *
  *  $RCSfile: forms_Image.cxx,v $
  *
- *  $Revision: 1.3 $
+ *  $Revision: 1.4 $
  *
- *  last change: $Author: hr $ $Date: 2004-08-03 10:50:48 $
+ *  last change: $Author: obo $ $Date: 2004-08-13 14:09:13 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -338,7 +338,7 @@ Reference< XModel >  OImageControl::getXModel(const InterfaceRef& xIface) const
 //------------------------------------------------------------------------------
 // Diese Methode wird auch aus einem Thread gerufen und muss deshalb
 // thread-safe sein.
-void OImageControl::actionPerformed_Impl(sal_Bool bNotifyListener, const MouseEvent& rEvt)
+void OImageControl::actionPerformed_Impl(sal_Bool bNotifyListener, const ::com::sun::star::awt::MouseEvent& rEvt)
 {
     if( bNotifyListener )
     {
@@ -690,7 +690,7 @@ void OImageModel::setFastPropertyValue_NoBroadcast(sal_Int32 nHandle, const Any&
 
         case PROPERTY_ID_DISPATCHURLINTERNAL:
             DBG_ASSERT(rValue.getValueType().getTypeClass() == TypeClass_BOOLEAN, "OImageModel::setFastPropertyValue_NoBroadcast : invalid type !" );
-            rValue >>= m_bDispatchUrlInternal; 
+            rValue >>= m_bDispatchUrlInternal;
             break;
 
         default:
@@ -932,7 +932,7 @@ void OImageModel::_propertyChanged( const PropertyChangeEvent& rEvt )
 void SAL_CALL OImageModel::read(const Reference< XObjectInputStream>& _rxInStream) throw(IOException, RuntimeException)
 {
     OControlModel::read(_rxInStream);
-    m_bDispatchUrlInternal = sal_True;	
+    m_bDispatchUrlInternal = sal_True;
 }
 // -----------------------------------------------------------------------------
 PropertyState OImageModel::getPropertyStateByHandle(sal_Int32 nHandle)
@@ -992,7 +992,7 @@ void OImageControlThread_Impl::processEvent( ::cppu::OComponentHelper *pCompImpl
                                                const Reference<XControl>&,
                                                sal_Bool )
 {
-    ((OImageControl *)pCompImpl)->actionPerformed_Impl( sal_True, *(MouseEvent *)pEvt );
+    ((OImageControl *)pCompImpl)->actionPerformed_Impl( sal_True, *(::com::sun::star::awt::MouseEvent *)pEvt );
 }
 
 //.........................................................................
