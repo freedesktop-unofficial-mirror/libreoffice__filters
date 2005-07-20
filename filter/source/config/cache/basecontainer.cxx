@@ -2,9 +2,9 @@
  *
  *  $RCSfile: basecontainer.cxx,v $
  *
- *  $Revision: 1.4 $
+ *  $Revision: 1.5 $
  *
- *  last change: $Author: hr $ $Date: 2004-07-23 11:11:17 $
+ *  last change: $Author: obo $ $Date: 2005-07-20 09:27:31 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -60,6 +60,7 @@
  ************************************************************************/
 
 #include "basecontainer.hxx"
+#include "constant.hxx"
 
 //_______________________________________________
 // includes
@@ -105,7 +106,7 @@ BaseContainer::BaseContainer()
     , m_lListener  (m_aLock)
 {
     m_rCache->load(FilterCache::E_CONTAINS_STANDARD);
-    
+
     // GLOBAL SAFE (!) -> -----------------------
     // TODO use rtl pattern to create it realy threadsafe!
     ::osl::ResettableMutexGuard aGlobalLock(::osl::Mutex::getGlobalMutex());
@@ -137,6 +138,9 @@ void BaseContainer::init(const css::uno::Reference< css::lang::XMultiServiceFact
     m_lServiceNames       = lServiceNames      ;
     m_xSMGR               = xSMGR              ;
     m_eType               = eType              ;
+    m_xRefreshBroadcaster = css::uno::Reference< css::util::XRefreshable >(
+                                xSMGR->createInstance(SERVICE_FILTERCONFIGREFRESH),
+                                css::uno::UNO_QUERY);
     // <- SAFE
 }
 
@@ -179,7 +183,7 @@ void BaseContainer::impl_loadOnDemand()
 
     m_rCache->load(eRequiredState);
     // <- SAFE
-#endif    
+#endif
 }
 
 /*-----------------------------------------------
@@ -211,6 +215,23 @@ FilterCache* BaseContainer::impl_getWorkingCache() const
     else
         return &(*m_rCache);
     // <- SAFE
+}
+
+//-----------------------------------------------
+sal_Bool BaseContainer::impl_checkIfItemExist(const ::rtl::OUString& sItem)
+{
+    // SAFE ->
+    ::osl::ResettableMutexGuard aLock(m_aLock);
+
+    FilterCache* pCache = impl_getWorkingCache();
+    if ( pCache->hasItem(m_eType, sItem) )
+        return sal_True;
+
+    impl_loadOnDemand();
+    if ( pCache->hasItem(m_eType, sItem) )
+        return sal_True;
+
+    return sal_False;
 }
 
 /*-----------------------------------------------
@@ -287,7 +308,7 @@ void SAL_CALL BaseContainer::insertByName(const ::rtl::OUString& sItem ,
 
     // SAFE -> ----------------------------------
     ::osl::ResettableMutexGuard aLock(m_aLock);
-    
+
     // create write copy of used cache on demand ...
     impl_initFlushMode();
 
@@ -295,7 +316,7 @@ void SAL_CALL BaseContainer::insertByName(const ::rtl::OUString& sItem ,
     if (pCache->hasItem(m_eType, sItem))
         throw css::container::ElementExistException(::rtl::OUString(), static_cast< css::container::XNameContainer* >(this));
     pCache->setItem(m_eType, sItem, aItem);
-    
+
     aLock.clear();
     // <- SAFE ----------------------------------
 }
@@ -312,10 +333,10 @@ void SAL_CALL BaseContainer::removeByName(const ::rtl::OUString& sItem)
 
     // SAFE -> ----------------------------------
     ::osl::ResettableMutexGuard aLock(m_aLock);
-     
+
     // create write copy of used cache on demand ...
     impl_initFlushMode();
-    
+
     FilterCache* pCache = impl_getWorkingCache();
     pCache->removeItem(m_eType, sItem); // throw exceptions automaticly
 
@@ -356,12 +377,12 @@ void SAL_CALL BaseContainer::replaceByName(const ::rtl::OUString& sItem ,
 
     // create write copy of used cache on demand ...
     impl_initFlushMode();
-    
+
     FilterCache* pCache = impl_getWorkingCache();
     if (!pCache->hasItem(m_eType, sItem))
         throw css::container::NoSuchElementException(::rtl::OUString(), static_cast< css::container::XNameContainer* >(this));
     pCache->setItem(m_eType, sItem, aItem);
-    
+
     aLock.clear();
     // <- SAFE ----------------------------------
 }
@@ -381,11 +402,11 @@ css::uno::Any SAL_CALL BaseContainer::getByName(const ::rtl::OUString& sItem)
 
     css::uno::Any aValue;
 
-    impl_loadOnDemand();
+    //impl_loadOnDemand();
 
     // SAFE ->
     ::osl::ResettableMutexGuard aLock(m_aLock);
-        
+
     CacheItem aItem;
     try
     {
@@ -402,7 +423,7 @@ css::uno::Any SAL_CALL BaseContainer::getByName(const ::rtl::OUString& sItem)
         // TODO invalid cache!? How should it be handled right?
         aItem.clear();
     }
-    
+
     aValue <<= aItem.getAsPackedPropertyValueList();
     // <- SAFE
 
@@ -433,9 +454,9 @@ css::uno::Sequence< ::rtl::OUString > SAL_CALL BaseContainer::getElementNames()
         // invalid cache!?
         lNames.realloc(0);
     }
-    
+
     // <- SAFE
-    
+
     return lNames;
 }
 
@@ -446,12 +467,12 @@ sal_Bool SAL_CALL BaseContainer::hasByName(const ::rtl::OUString& sItem)
     throw (css::uno::RuntimeException)
 {
     sal_Bool bHasOne = sal_False;
-    
+
     impl_loadOnDemand();
 
     // SAFE ->
     ::osl::ResettableMutexGuard aLock(m_aLock);
-    
+
     try
     {
         FilterCache* pCache = impl_getWorkingCache();
@@ -462,9 +483,9 @@ sal_Bool SAL_CALL BaseContainer::hasByName(const ::rtl::OUString& sItem)
         // invalid cache!?
         bHasOne = sal_False;
     }
-    
+
     // <- SAFE
-    
+
     return bHasOne;
 }
 
@@ -491,7 +512,7 @@ sal_Bool SAL_CALL BaseContainer::hasElements()
 
     // SAFE ->
     ::osl::ResettableMutexGuard aLock(m_aLock);
-    
+
     try
     {
         FilterCache* pCache = impl_getWorkingCache();
@@ -502,7 +523,7 @@ sal_Bool SAL_CALL BaseContainer::hasElements()
         // invalid cache?!
         bHasSome = sal_False;
     }
-    
+
     // <- SAFE
 
     return bHasSome;
@@ -533,7 +554,7 @@ css::uno::Reference< css::container::XEnumeration > SAL_CALL BaseContainer::crea
 
     // SAFE ->
     ::osl::ResettableMutexGuard aLock(m_aLock);
-    
+
     try
     {
         // convert the given properties first to our internal representation
@@ -578,7 +599,7 @@ void SAL_CALL BaseContainer::flush()
 {
     // SAFE ->
     ::osl::ResettableMutexGuard aLock(m_aLock);
-    
+
     if (!m_pFlushCache)
         throw css::lang::WrappedTargetRuntimeException(
                 ::rtl::OUString::createFromAscii("Cant guarantee cache consistency. Special flush container does not exists!"),
@@ -588,33 +609,37 @@ void SAL_CALL BaseContainer::flush()
     try
     {
         m_pFlushCache->flush();
+        // Take over all changes into the global cache and
+        // forget the clone.
+        /* TODO
+            -think about me
+                If the global cache gets this information via listener,
+                we should remove this method!
+        */
+        m_rCache->takeOver(*m_pFlushCache);
     }
     catch(const css::uno::Exception& ex)
     {
         // Dont remove the clone. May be the outside
         // user whish to repair it now and calls flush()
         // later again ...
-        
+
         throw css::lang::WrappedTargetRuntimeException(
                 ::rtl::OUString::createFromAscii("Flush rejected by internal container."),
                 reinterpret_cast< css::container::XNameAccess* >(this),
                 css::uno::makeAny(ex));
     }
 
-    // Take over all changes into the global cache and
-    // forget the clone.
-    /* TODO
-        -think about me
-            If the global cache gets this information via listener,
-            we should remove this method!
-     */
-    m_rCache->takeOver(*m_pFlushCache);
-    
     delete m_pFlushCache;
     m_pFlushCache = NULL;
-        
+
+    css::uno::Reference< css::util::XRefreshable > xRefreshBroadcaster = m_xRefreshBroadcaster;
+
     aLock.clear();
     // <- SAFE
+
+    if (xRefreshBroadcaster.is())
+        xRefreshBroadcaster->refresh();
 
     // notify listener outside the lock!
     // The used listener helper lives if we live
