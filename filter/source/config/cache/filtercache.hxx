@@ -2,9 +2,9 @@
  *
  *  $RCSfile: filtercache.hxx,v $
  *
- *  $Revision: 1.4 $
+ *  $Revision: 1.5 $
  *
- *  last change: $Author: hr $ $Date: 2004-07-23 11:11:58 $
+ *  last change: $Author: obo $ $Date: 2005-07-20 09:29:19 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -371,12 +371,12 @@ class FilterCache : public BaseLock
         //---------------------------------------
 
         /** @short  creates a copy of this container.
-        
+
             @descr  Such copy can be used then to modify items (add/change/remove)
                     without the risk to damage the original container.
                     After its changed data was flushed to the configuration it can be
                     removed.
-                    
+
                     The original container will get these new data automaticly
                     because it listen for changes on the internal used configuration layer.
                     If the new data are needed immediatly inside the original container,
@@ -389,10 +389,10 @@ class FilterCache : public BaseLock
                     a different one.
 
             @note   The cloned instance is created on the heap. The user of this instance
-                    has to remove it later.                    
+                    has to remove it later.
          */
         virtual FilterCache* clone() const;
-        
+
         //---------------------------------------
 
         /** @short  copy the cache content or rClone back to this instance.
@@ -617,20 +617,28 @@ class FilterCache : public BaseLock
 
         //---------------------------------------
 
+        /** TODO document me ...
+         */
+        virtual void refreshItem(      EItemType        eType,
+                                 const ::rtl::OUString& sItem)
+            throw(css::uno::Exception);
+
+        //---------------------------------------
+
         /** @short      add some implicit properties to the given
                         cache item reference.
-                        
+
             @descr      Such properties can e.g. finalized or mandatory.
                         They are not persistent  and not realy part of e.g. a
                         filter not. But they are attributes of a configuration
                         entry and can influence our container interface.
-                        
+
             @attention  These properties are not part of the normal CacheItem
                         returned by the method getItem(). Because getItem() is
                         used internaly too but these specialized properties
                         are needed at our container services only. So these
                         function sets are different to allow different handling.
-                        
+
             @param      eType
                         specify the sub container of this cache, which should be used for
                         searching. see also EItemType.
@@ -642,7 +650,7 @@ class FilterCache : public BaseLock
                         contains already the normal properties of this item,
                         and will be used as out parameter to add the implicit
                         attributes there.
-                        
+
             @throw      [css::uno::Exception]
                         if an internal error occured.
                         Note: If the item is missing inside the underlying configuration
@@ -651,7 +659,7 @@ class FilterCache : public BaseLock
                         Reason: May be the item cames from the old configuration package and
                         was not migrated to the new one. So we cant provide write access
                         to such items ...
-         */                        
+         */
         virtual void addStatePropsToItem(      EItemType        eType,
                                          const ::rtl::OUString& sItem,
                                                CacheItem&       rItem)
@@ -663,7 +671,7 @@ class FilterCache : public BaseLock
          */
         virtual void removeStatePropsFromItem(CacheItem& aValue)
             throw(css::uno::Exception);
-        
+
         //---------------------------------------
 
         /** @short      force writing of all changes (which was made after
@@ -1046,7 +1054,7 @@ class FilterCache : public BaseLock
         /** TODO */
         void impl_readOldFormat()
             throw(css::uno::Exception);
-            
+
         //---------------------------------------
 
         /** TODO */
@@ -1054,21 +1062,21 @@ class FilterCache : public BaseLock
                                          EItemType                                           eType,
                                    const ::rtl::OUString&                                    sItem)
             throw(css::uno::Exception);
-            
+
         //---------------------------------------
 
         /** TODO */
         void impl_interpretDataVal4Type(const ::rtl::OUString& sValue,
                                               sal_Int32        nProp ,
                                               CacheItem&       rItem );
-                                                
+
         //---------------------------------------
 
         /** TODO */
         void impl_interpretDataVal4Filter(const ::rtl::OUString& sValue,
                                                 sal_Int32        nProp ,
                                                 CacheItem&       rItem );
-                                                
+
         //---------------------------------------
 
         /** TODO */
@@ -1078,9 +1086,9 @@ class FilterCache : public BaseLock
         //---------------------------------------
 
         /** TODO */
-        ::rtl::OUString impl_searchFrameLoaderForType(const ::rtl::OUString& sType) const;                                               
-        ::rtl::OUString impl_searchContentHandlerForType(const ::rtl::OUString& sType) const;                                               
-                                               
+        ::rtl::OUString impl_searchFrameLoaderForType(const ::rtl::OUString& sType) const;
+        ::rtl::OUString impl_searchContentHandlerForType(const ::rtl::OUString& sType) const;
+
         //---------------------------------------
 
         /** @short  convert a list of flag names to its int representation.
