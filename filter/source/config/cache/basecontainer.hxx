@@ -2,9 +2,9 @@
  *
  *  $RCSfile: basecontainer.hxx,v $
  *
- *  $Revision: 1.5 $
+ *  $Revision: 1.6 $
  *
- *  last change: $Author: hr $ $Date: 2004-07-23 11:11:29 $
+ *  last change: $Author: obo $ $Date: 2005-07-20 09:27:45 $
  *
  *  The Contents of this file are made available subject to the terms of
  *  either of the following licenses
@@ -74,6 +74,10 @@
 #include <com/sun/star/lang/XServiceInfo.hpp>
 #endif
 
+#ifndef _COM_SUN_STAR_UTIL_XREFRESHABLE_HPP_
+#include <com/sun/star/util/XRefreshable.hpp>
+#endif
+
 #ifndef _COM_SUN_STAR_LANG_XMULTISERVICEFACTORY_HPP_
 #include <com/sun/star/lang/XMultiServiceFactory.hpp>
 #endif
@@ -100,6 +104,10 @@
 
 #ifndef _CPPUHELPER_IMPLBASE4_HXX_
 #include <cppuhelper/implbase4.hxx>
+#endif
+
+#ifndef _CPPUHELPER_WEAKREF_HXX_
+#include <cppuhelper/weakref.hxx>
 #endif
 
 #ifndef _RTL_USTRING_HXX_
@@ -145,6 +153,9 @@ class BaseContainer : public BaseLock
                     to create own needed services. */
         css::uno::Reference< css::lang::XMultiServiceFactory > m_xSMGR;
 
+        // TODO
+        css::uno::WeakReference< css::util::XRefreshable > m_xRefreshBroadcaster;
+
         /** @short  the implementation name of our derived class, which we provide
                     at the interface XServiceInfo of our class ... */
         ::rtl::OUString m_sImplementationName;
@@ -156,22 +167,22 @@ class BaseContainer : public BaseLock
         /** @short  reference(!) to a singleton filter cache implementation,
                     which is used to work with the underlying configuration. */
         ::salhelper::SingletonRef< FilterCache > m_rCache;
-        
+
         /** @short  local filter cache, which is used to collect changes on the
                     filter configuration first and flush it later.
-                    
+
             @descr  Normaly this member isnt used nor initialized. Thats true,
                     if this container is used for reading only. The first write access
                     (e.g. by calling insertByName()) creates a copy of the current
                     global cache m_rCache to initialize the m_pFlushCache member.
-                    
+
                     Afterwards only the flush cache copy is used. Inside flush() this
                     copy will be removed and m_rCache can be used again.
-                    
+
                     m_pFlushCache and m_rCache must not be synchronized manually here.
                     m_rCache listen on the global configuration, where m_pFlushCache
                     write its data. m_rCache update itself automaticly.
-         */                    
+         */
         FilterCache* m_pFlushCache;
 
         /** @short  specify, which sub container of the used filter cache
@@ -185,7 +196,7 @@ class BaseContainer : public BaseLock
                     prevent he office from unloading this cache if no filter
                     is currently used.*/
         static ::salhelper::SingletonRef< FilterCache >* m_pPerformanceOptimizer;
-        
+
     //-------------------------------------------
     // native interface
 
@@ -260,20 +271,20 @@ class BaseContainer : public BaseLock
         /** @short  it creates the global instance m_pFilterCache, which is a copy
                     of the global instance m_rCache, and will be used to change the
                     configuration.
-                    
+
             @descr  If no exception occures, its guaranteed, that the member m_rFlushCache
-                    was initialized right and can be used further.                      
+                    was initialized right and can be used further.
          */
         void impl_initFlushMode()
             throw (css::uno::RuntimeException);
-        
+
         //---------------------------------------
 
         /** @short  returns a pointer to the current used cache member.
-        
+
             @descr  Its a point to the FilterCache instance behind m_pFlushCache
                     or m_rCache.
-                    
+
             @note   The lifetime of this pointer is restricted to the time, where
                     the mutex of this BaseContainer instance is locked.
                     Otherwhise may be the interface method flush() will destroy
@@ -285,10 +296,15 @@ class BaseContainer : public BaseLock
                             FilterCache* p = impl_getWorkingCache();
                             p->doSomething();
                         aLock.clear();
-                        // after this point p cant b e guaranteed any longer!                         
+                        // after this point p cant b e guaranteed any longer!
          */
         FilterCache* impl_getWorkingCache() const;
-        
+
+        //---------------------------------------
+        // TODO
+
+        sal_Bool impl_checkIfItemExist(const ::rtl::OUString& sItem);
+
     //-------------------------------------------
     // uno interface
 
