@@ -4,9 +4,9 @@
  *
  *  $RCSfile: services.cxx,v $
  *
- *  $Revision: 1.4 $
+ *  $Revision: 1.5 $
  *
- *  last change: $Author: rt $ $Date: 2005-09-09 10:07:34 $
+ *  last change: $Author: rt $ $Date: 2006-05-02 15:39:56 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -41,7 +41,8 @@
 #include <cppuhelper/interfacecontainer.h>
 #include <com/sun/star/lang/XSingleServiceFactory.hpp>
 #include <osl/mutex.hxx>
-#include <sfx2/sfxuno.hxx>
+#include <com/sun/star/registry/XRegistryKey.hpp>
+#include <cppuhelper/factory.hxx>
 
 #include "../dom/documentbuilder.hxx"
 #include "../dom/saxbuilder.hxx"
@@ -58,13 +59,13 @@ using namespace ::com::sun::star::uno;
 using namespace ::com::sun::star::lang;
 using namespace ::com::sun::star::registry;
 
-void SAL_CALL 
+void SAL_CALL
 component_getImplementationEnvironment(const sal_Char **ppEnvironmentTypeName, uno_Environment **ppEnvironment)
 {
     *ppEnvironmentTypeName = CPPU_CURRENT_LANGUAGE_BINDING_NAME ;
 }
 
-sal_Bool SAL_CALL 
+sal_Bool SAL_CALL
 component_writeInfo(void *pServiceManager, void *pRegistryKey)
 {
     Reference< XRegistryKey > xKey(reinterpret_cast< XRegistryKey* >(pRegistryKey));
@@ -77,7 +78,7 @@ component_writeInfo(void *pServiceManager, void *pRegistryKey)
     aImpl += ::rtl::OUString(RTL_CONSTASCII_USTRINGPARAM("/UNO/SERVICES"));
     xNewKey = xKey->createKey(aImpl);
     xNewKey->createKey(CDocumentBuilder::_getSupportedServiceNames()[0]);
-    
+
     // register DOM service
     aImpl =  OUString(RTL_CONSTASCII_USTRINGPARAM("/"));
     aImpl += CSAXDocumentBuilder::_getImplementationName();
@@ -103,7 +104,7 @@ component_writeInfo(void *pServiceManager, void *pRegistryKey)
     return sal_True;
 }
 
-void* SAL_CALL 
+void* SAL_CALL
 component_getFactory(const sal_Char *pImplementationName, void *pServiceManager, void *pRegistryKey)
 {
     void* pReturn = NULL ;
@@ -117,28 +118,28 @@ component_getFactory(const sal_Char *pImplementationName, void *pServiceManager,
         if (CDocumentBuilder::_getImplementationName().compareToAscii( pImplementationName ) == 0 )
         {
             xFactory = Reference< XSingleServiceFactory >(
-                cppu::createOneInstanceFactory( 
+                cppu::createOneInstanceFactory(
                     xServiceManager, CDocumentBuilder::_getImplementationName(),
                     CDocumentBuilder::_getInstance, CDocumentBuilder::_getSupportedServiceNames()));
         }
         else if (CSAXDocumentBuilder::_getImplementationName().compareToAscii( pImplementationName ) == 0 )
         {
             xFactory = Reference< XSingleServiceFactory >(
-                cppu::createSingleFactory( 
+                cppu::createSingleFactory(
                     xServiceManager, CSAXDocumentBuilder::_getImplementationName(),
                     CSAXDocumentBuilder::_getInstance, CSAXDocumentBuilder::_getSupportedServiceNames()));
         }
         else if (CXPathAPI::_getImplementationName().compareToAscii( pImplementationName ) == 0 )
         {
             xFactory = Reference< XSingleServiceFactory >(
-                cppu::createSingleFactory( 
+                cppu::createSingleFactory(
                     xServiceManager, CXPathAPI::_getImplementationName(),
                     CXPathAPI::_getInstance, CXPathAPI::_getSupportedServiceNames()));
         }
         else if (CTestListener::_getImplementationName().compareToAscii( pImplementationName ) == 0 )
         {
             xFactory = Reference< XSingleServiceFactory >(
-                cppu::createSingleFactory( 
+                cppu::createSingleFactory(
                     xServiceManager, CTestListener::_getImplementationName(),
                     CTestListener::_getInstance, CTestListener::_getSupportedServiceNames()));
         }
