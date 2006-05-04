@@ -4,9 +4,9 @@
  *
  *  $RCSfile: typedetection.cxx,v $
  *
- *  $Revision: 1.18 $
+ *  $Revision: 1.19 $
  *
- *  last change: $Author: rt $ $Date: 2006-02-07 10:22:04 $
+ *  last change: $Author: rt $ $Date: 2006-05-04 07:49:19 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -84,6 +84,9 @@ namespace css = ::com::sun::star;
 
 //_______________________________________________
 // definitions
+
+// Use this switch to change the behaviour of preselection DocumentService ... (see using for further informations)
+#define IGNORE_NON_URLMATCHING_TYPES_FOR_PRESELECTION_DOCUMENTSERVICE
 
 /*-----------------------------------------------
     03.07.2003 11:25
@@ -243,7 +246,7 @@ TypeDetection::~TypeDetection()
     // for type/filter name/document service/ etcpp.
     impl_validateAndSetTypeOnDescriptor(stlDescriptor, sType);
     impl_addBestFilter(stlDescriptor, sType);
-    
+
     stlDescriptor >> lDescriptor;
     return sType;
 }
@@ -370,7 +373,7 @@ void TypeDetection::impl_addBestFilter(      ::comphelper::MediaDescriptor& rDes
                 { continue; }
             aLock.clear();
             // <- SAFE
-                    
+
             sFilter = ::rtl::OUString();
         }
 
@@ -405,7 +408,7 @@ sal_Bool TypeDetection::impl_getPreselectionForType(const ::rtl::OUString& sPreS
     // And we must know if a preselection must be preferred, because
     // it matches by it's extension too.
     sal_Bool bMatchByExtension = sal_False;
-    
+
     // If we e.g. collect all filters of a factory (be a forced factory preselection)
     // we should preferr all filters of this factory, where the type match the given URL.
     // All other types (which sorrespond to filters of the same factory - but dont match
@@ -486,13 +489,13 @@ sal_Bool TypeDetection::impl_getPreselectionForType(const ::rtl::OUString& sPreS
 
         /*
             Comment ... why the following line of code should be comened out .-)
-            
+
             This type does not seem to fit the requirements
             But its an existing and well known type.
             At least - [because may be the extension was missing :-( ]
             we should try to detect this type deep ...
             So we accept it here :-)
-        
+
         if (!bBreakDetection)
             sType = ::rtl::OUString();
         */
@@ -506,7 +509,7 @@ sal_Bool TypeDetection::impl_getPreselectionForType(const ::rtl::OUString& sPreS
         aInfo.bMatchByExtension  = bMatchByExtension;
         aInfo.bMatchByPattern    = bMatchByPattern;
         aInfo.bPreselectedAsType = sal_True;
-        
+
         if (bPreferredPreselection)
             rFlatTypes.push_front(aInfo);
         else
@@ -623,7 +626,7 @@ sal_Bool TypeDetection::impl_getPreselectionForDocumentService(const ::rtl::OUSt
         const ::rtl::OUString sFilter = *pFilter;
         impl_getPreselectionForFilter(sFilter, aParsedURL, lPreselections);
     }
-    
+
     // We have to mark all retrieved preselection items as "preselected by document service".
     // Further we must ignore all preselected items, which does not match the URL!
     FlatDetection::iterator pIt;
@@ -632,16 +635,22 @@ sal_Bool TypeDetection::impl_getPreselectionForDocumentService(const ::rtl::OUSt
          ++pIt                          )
     {
         FlatDetectionInfo& rInfo = *pIt;
-        
-        // match preslection the URL?
-        // NO  -> ignore it
-        // YES -> use it
+
+        /*
+            #i60158#
+            Preselection by DocumentService ...
+            How many filters (and corresponding types) must be checked ?
+            All or only the list of filters/types, which match to the given URL too ?
+            There is no final decision about this currently. So we make it "configurable" .-)
+        */
+        #ifdef IGNORE_NON_URLMATCHING_TYPES_FOR_PRESELECTION_DOCUMENTSERVICE
         if (
             (!rInfo.bMatchByExtension) &&
             (!rInfo.bMatchByPattern  )
            )
            continue;
-           
+        #endif
+
         rInfo.bPreselectedAsType            = sal_False;
         rInfo.bPreselectedByFilter          = sal_False;
         rInfo.bPreselectedByDocumentService = sal_True ;
@@ -756,7 +765,24 @@ void TypeDetection::impl_getPreselection(const css::util::URL&                aP
                 // of using the flat type directly.
                 // Here the list of task ID's, which wasrelated to these lines of code:
                 // #i47159#, #i43404#, #i46494#
-                return sFlatType;
+
+                // a flat detected type without the chance for a deep detection ... but preselected by the user
+                // explicitly (means preselected as type or filter ... not as documentservice!)
+                // should be accepted. So the user can overrule our detection.
+                if (
+                    (aFlatTypeInfo.bPreselectedAsType  ) ||
+                    (aFlatTypeInfo.bPreselectedByFilter)
+                   )
+                    return sFlatType;
+
+                // flat detected types without any registered deep detection service and not
+                // preselected by the user can be used as LAST CHANCE in case no other type could
+                // be detected. Of course only the first type without deep detector can be used.
+                // Further ones has to be ignored.
+                if (rLastChance.getLength() < 1)
+                    rLastChance = sFlatType;
+
+                continue;
             }
 
             // dont forget to add every real asked deep detection service here.
@@ -806,7 +832,7 @@ void TypeDetection::impl_getPreselection(const css::util::URL&                aP
         if (sDeepType.getLength())
             return sDeepType;
         lInsideUsedDetectors.push_back(sDetectService);
-    }                     
+    }
 
     // SAFE -> ----------------------------------
     ::osl::ResettableMutexGuard aLock(m_aLock);
