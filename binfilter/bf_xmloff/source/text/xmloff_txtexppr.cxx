@@ -4,9 +4,9 @@
  *
  *  $RCSfile: xmloff_txtexppr.cxx,v $
  *
- *  $Revision: 1.3 $
+ *  $Revision: 1.4 $
  *
- *  last change: $Author: rt $ $Date: 2005-09-09 10:35:49 $
+ *  last change: $Author: obo $ $Date: 2006-07-10 14:49:04 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -33,7 +33,7 @@
  *
  ************************************************************************/
 
-#ifndef _TOOLS_DEBUG_HXX 
+#ifndef _TOOLS_DEBUG_HXX
 #include <tools/debug.hxx>
 #endif
 
@@ -44,10 +44,10 @@
 #ifndef _COM_SUN_STAR_TABLE_BORDERLINE_HPP_
 #include <com/sun/star/table/BorderLine.hpp>
 #endif
-#ifndef _COM_SUN_STAR_TEXT_SIZETYPE_HPP_ 
+#ifndef _COM_SUN_STAR_TEXT_SIZETYPE_HPP_
 #include <com/sun/star/text/SizeType.hpp>
 #endif
-#ifndef _COM_SUN_STAR_TEXT_WRAPTEXTMODE_HPP_ 
+#ifndef _COM_SUN_STAR_TEXT_WRAPTEXTMODE_HPP_
 #include <com/sun/star/text/WrapTextMode.hpp>
 #endif
 #ifndef _COM_SUN_STAR_TEXT_TEXTCONTENTANCHORTYPE_HPP
@@ -65,7 +65,7 @@
 #ifndef _XMLOFF_TXTEXPPR_HXX
 #include "txtexppr.hxx"
 #endif
-#ifndef _XMLOFF_XMLEXP_HXX 
+#ifndef _XMLOFF_XMLEXP_HXX
 #include "xmlexp.hxx"
 #endif
 #ifndef _XMLOFF_XMLSECTIONFOOTNOTECONFIGEXPORT_HXX
@@ -88,7 +88,7 @@ void XMLTextExportPropertySetMapper::handleElementItem(
         const ::std::vector< XMLPropertyState > *pProperties,
         sal_uInt32 nIdx ) const
 {
-    XMLTextExportPropertySetMapper *pThis = 
+    XMLTextExportPropertySetMapper *pThis =
            ((XMLTextExportPropertySetMapper *)this);
 
     switch( getPropertySetMapper()->GetEntryContextId( rProperty.mnIndex ) )
@@ -148,13 +148,13 @@ void XMLTextExportPropertySetMapper::handleElementItem(
 
     case CTF_SECTION_FOOTNOTE_END:
         XMLSectionFootnoteConfigExport::exportXML(rExport, sal_False,
-                                                  pProperties, nIdx, 
+                                                  pProperties, nIdx,
                                                   getPropertySetMapper());
         break;
 
     case CTF_SECTION_ENDNOTE_END:
         XMLSectionFootnoteConfigExport::exportXML(rExport, sal_True,
-                                                  pProperties, nIdx, 
+                                                  pProperties, nIdx,
                                                   getPropertySetMapper());
         break;
 
@@ -172,7 +172,7 @@ void XMLTextExportPropertySetMapper::handleSpecialItem(
         const ::std::vector< XMLPropertyState > *pProperties,
         sal_uInt32 nIdx ) const
 {
-    XMLTextExportPropertySetMapper *pThis = 
+    XMLTextExportPropertySetMapper *pThis =
            ((XMLTextExportPropertySetMapper *)this);
 
     switch( getPropertySetMapper()->GetEntryContextId( rProperty.mnIndex ) )
@@ -224,7 +224,7 @@ XMLTextExportPropertySetMapper::XMLTextExportPropertySetMapper(
     maBackgroundImageExport( rExp )
 {
 }
-    
+
 XMLTextExportPropertySetMapper::~XMLTextExportPropertySetMapper()
 {
 }
@@ -257,7 +257,7 @@ void XMLTextExportPropertySetMapper::ContextFontFilter(
     if( pFontCharsetState && (pFontCharsetState->maValue >>= nTmp ) )
         eEnc = (rtl_TextEncoding)nTmp;
 
-    OUString sName( ((SvXMLExport&)GetExport()).GetFontAutoStylePool()->Find( 
+    OUString sName( ((SvXMLExport&)GetExport()).GetFontAutoStylePool()->Find(
                         sFamilyName, sStyleName, nFamily, nPitch, eEnc ) );
     if( sName.getLength() )
     {
@@ -381,7 +381,7 @@ void XMLTextExportPropertySetMapper::ContextFilter(
     // filter ParaTopMargin/Relative
     XMLPropertyState* pParaBottomMarginState = NULL;
     XMLPropertyState* pParaBottomMarginRelState = NULL;
-    
+
     // filter (Left|Right|Top|Bottom|)BorderWidth
     XMLPropertyState* pAllBorderWidthState = NULL;
     XMLPropertyState* pLeftBorderWidthState = NULL;
@@ -586,7 +586,7 @@ void XMLTextExportPropertySetMapper::ContextFilter(
         else
         {
             pParaLeftMarginState->mnIndex = -1;
-            pParaLeftMarginState->maValue.clear();		
+            pParaLeftMarginState->maValue.clear();
         }
 
     }
@@ -635,7 +635,7 @@ void XMLTextExportPropertySetMapper::ContextFilter(
         else
         {
             pParaTopMarginState->mnIndex = -1;
-            pParaTopMarginState->maValue.clear();		
+            pParaTopMarginState->maValue.clear();
         }
 
     }
@@ -652,7 +652,7 @@ void XMLTextExportPropertySetMapper::ContextFilter(
         else
         {
             pParaBottomMarginState->mnIndex = -1;
-            pParaBottomMarginState->maValue.clear();		
+            pParaBottomMarginState->maValue.clear();
         }
 
     }
@@ -780,7 +780,7 @@ void XMLTextExportPropertySetMapper::ContextFilter(
     {
         sal_Int16 nRel;
         if( (SizeType::MIN != nSizeType) ||
-            ( pHeightMinRelState && 
+            ( pHeightMinRelState &&
               ( !(pHeightMinRelState->maValue >>= nRel) || nRel > 0 ) ) )
         {
             pHeightMinAbsState->mnIndex = -1;
@@ -800,13 +800,19 @@ void XMLTextExportPropertySetMapper::ContextFilter(
         pWrapState->maValue >>= eVal;
         switch( eVal )
         {
+        // --> OD 2006-06-02 #b6432057#
+        // merge fix #i32592# into binfilter module
         case WrapTextMode_NONE:
-        case WrapTextMode_THROUGHT:
-            if( pWrapContourState )
-                pWrapContourState->mnIndex = -1;
+            // no wrapping: disable para-only and contour
             if( pWrapParagraphOnlyState )
                 pWrapParagraphOnlyState->mnIndex = -1;
+            // no break
+        case WrapTextMode_THROUGHT:
+            // wrap through: disable only contour
+            if( pWrapContourState )
+                pWrapContourState->mnIndex = -1;
             break;
+        // <--
         }
         if( pWrapContourModeState  &&
             (!pWrapContourState ||
@@ -841,9 +847,9 @@ void XMLTextExportPropertySetMapper::ContextFilter(
         pHoriOrientRelFrameState->mnIndex = -1;;
 
     if( pVertOrientState && TextContentAnchorType_AT_CHARACTER == eAnchor )
-        pVertOrientState->mnIndex = -1; 
+        pVertOrientState->mnIndex = -1;
     if( pVertOrientAtCharState && TextContentAnchorType_AT_CHARACTER != eAnchor )
-        pVertOrientAtCharState->mnIndex = -1; 
+        pVertOrientAtCharState->mnIndex = -1;
     if( pVertOrientRelState && TextContentAnchorType_AT_PARAGRAPH != eAnchor &&
          TextContentAnchorType_AT_CHARACTER != eAnchor )
         pVertOrientRelState->mnIndex = -1;
