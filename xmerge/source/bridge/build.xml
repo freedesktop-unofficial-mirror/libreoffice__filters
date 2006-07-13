@@ -52,11 +52,11 @@
  #
  #
  -->
-  
+
 <project name="XMergeBridge" default="all" basedir=".">
 
     <property file="../inc/antbuild.properties"/>
-        
+
     <path id="classpath">
         <pathelement location="${build.dir}/xmerge.jar"/>
         <pathelement location="${solar.jar}/unoil.jar"/>
@@ -68,6 +68,9 @@
 
     <target name="init" >
         <mkdir dir="${target.dir}"/>
+        <echo message="--------------------------------------------------------------------------------" />
+        <echo message="debug is ${debug}"/>
+        <echo message="--------------------------------------------------------------------------------" />
     </target>
 
     <!-- compile java sources in ${package} -->
@@ -80,7 +83,7 @@
             <classpath refid="classpath"/>
         </javac>
     </target>
-    
+
     <!-- package to jar -->
     <target name="jar" depends="compile">
         <jar destfile="${target.jar}"
@@ -95,9 +98,9 @@
         <delete dir="${class.dir}"/>
         <delete file="${target.jar}"/>
     </target>
-    
+
     <target name="all" depends="jar">
     </target>
-     
+
 </project>
 
