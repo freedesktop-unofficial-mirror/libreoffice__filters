@@ -96,7 +96,7 @@ import org.openoffice.xmerge.util.XmlUtil;
  */
 public abstract class SxcDocumentSerializer implements OfficeConstants,
     DocumentSerializer {
-  
+
     /**  The cell foreground <code>Color</code>. */
     private Color foreground = Color.black;
 
@@ -105,7 +105,7 @@ public abstract class SxcDocumentSerializer implements OfficeConstants,
 
     /**  The cell format. */
     private long format = 0;
-    
+
     /**  <code>Format</code> object describing the cell. */
     private Format fmt = null;
 
@@ -170,8 +170,8 @@ public abstract class SxcDocumentSerializer implements OfficeConstants,
      *  @throws  IOException       If any I/O error occurs.
      */
     public abstract ConvertData serialize() throws ConvertException,
-        IOException; 
-        
+        IOException;
+
 
     /**
      *  This method traverses <i>office:settings</i> <code>Element</code>.
@@ -182,7 +182,7 @@ public abstract class SxcDocumentSerializer implements OfficeConstants,
      */
     public void traverseSettings(Node node) throws IOException {
         if (node.hasChildNodes()) {
-        
+
             NodeList nodeList = node.getChildNodes();
             int len = nodeList.getLength();
             for (int i = 0; i < len; i++) {
@@ -209,7 +209,7 @@ public abstract class SxcDocumentSerializer implements OfficeConstants,
                         Debug.log(Debug.TRACE, "<OTHERS " + XmlUtil.getNodeInfo(child) + " />");
                     }
                 }
-            }		
+            }
         }
     }
 
@@ -222,10 +222,7 @@ public abstract class SxcDocumentSerializer implements OfficeConstants,
      */
     protected void loadStyles(SxcDocument sxcDoc) {
 
-        org.w3c.dom.Document contentDom = sxcDoc.getContentDOM();
-
         styleCat = new StyleCatalog(25);
-        
         NodeList nl = null;
         String families[] = new String[] {	SxcConstants.COLUMN_STYLE_FAMILY,
                                             SxcConstants.ROW_STYLE_FAMILY,
@@ -233,12 +230,17 @@ public abstract class SxcDocumentSerializer implements OfficeConstants,
         Class classes[]   = new Class[] {	ColumnStyle.class,
                                             RowStyle.class,
                                             CellStyle.class};
-        
         /*
-         * Process the content XML for any other style info.  
-         * Should only be automatic types here.
+         * Process the content XML for any other style info.
          */
+        org.w3c.dom.Document contentDom = sxcDoc.getContentDOM();
         nl = contentDom.getElementsByTagName(TAG_OFFICE_AUTOMATIC_STYLES);
+        if (nl.getLength() != 0) {
+            styleCat.add(nl.item(0), families, classes, null, false);
+        }
+
+        org.w3c.dom.Document stylesDom = sxcDoc.getStyleDOM();
+        nl = stylesDom.getElementsByTagName(TAG_OFFICE_STYLES);
         if (nl.getLength() != 0) {
             styleCat.add(nl.item(0), families, classes, null, false);
         }
@@ -268,16 +270,16 @@ public abstract class SxcDocumentSerializer implements OfficeConstants,
                     String nodeName = searchNode.getNodeName();
 
                     if (nodeName.equals(TAG_NAMED_EXPRESSIONS)) {
-                    
+
                         traverseNamedExpressions(searchNode);
-                        
+
                     } else {
 
                         Debug.log(Debug.TRACE, "Skipping " + XmlUtil.getNodeInfo(searchNode) + " />");
                     }
-                }				
+                }
             }
-            
+
             for (int i = 0; i < len; i++) {
                 Node child = nodeList.item(i);
 
@@ -412,19 +414,19 @@ public abstract class SxcDocumentSerializer implements OfficeConstants,
 
         if (cellAtt != null) {
 
-            Node rowStyle = 
+            Node rowStyle =
                 cellAtt.getNamedItem(ATTRIBUTE_TABLE_STYLE_NAME);
-                
+
             Node tableNumRowRepeatingNode = cellAtt.getNamedItem(ATTRIBUTE_TABLE_NUM_ROWS_REPEATED);
             int repeatedRows = 1;
-        
+
             if(tableNumRowRepeatingNode!=null) {
                 String repeatStr = tableNumRowRepeatingNode.getNodeValue();
                 Debug.log(Debug.TRACE, "traverseTableRow() repeated-rows : " + repeatStr);
                 repeatedRows = Integer.parseInt(repeatStr);
             }
-        
-            String styleName = new String(""); 
+
+            String styleName = new String("");
 
             if ( rowStyle != null) {
                 styleName = rowStyle.getNodeValue();
@@ -435,18 +437,18 @@ public abstract class SxcDocumentSerializer implements OfficeConstants,
 
             } else {
 
-                RowStyle rStyle = (	RowStyle)styleCat.lookup(styleName, 
-                                        SxcConstants.ROW_STYLE_FAMILY, null, 
+                RowStyle rStyle = (	RowStyle)styleCat.lookup(styleName,
+                                        SxcConstants.ROW_STYLE_FAMILY, null,
                                         RowStyle.class);
 
                 int rowHeight = rStyle.getRowHeight();
-            
+
                 Debug.log(Debug.TRACE, "traverseTableRow() Row Height : " + rowHeight);
                 ColumnRowInfo ri = new ColumnRowInfo(	rowHeight,
                                                             repeatedRows,
-                                                            ColumnRowInfo.ROW, 
+                                                            ColumnRowInfo.ROW,
                                                             rowHeight!=0);
-                ColumnRowList.add(ri);	
+                ColumnRowList.add(ri);
             }
 
             // Get the attribute representing the number of rows repeated
@@ -529,7 +531,7 @@ public abstract class SxcDocumentSerializer implements OfficeConstants,
         Node tableStyleNode = cellAtt.getNamedItem(ATTRIBUTE_TABLE_STYLE_NAME);
         Node tableNumColRepeatingNode = cellAtt.getNamedItem(ATTRIBUTE_TABLE_NUM_COLUMNS_REPEATED);
         Node tableDefaultCellStyle = cellAtt.getNamedItem(ATTRIBUTE_DEFAULT_CELL_STYLE);
-        
+
         int repeatedColumns = 1;
         int columnWidth = 0;
         ColumnRowInfo col = new ColumnRowInfo(ColumnRowInfo.COLUMN);
@@ -539,7 +541,7 @@ public abstract class SxcDocumentSerializer implements OfficeConstants,
             repeatedColumns = Integer.parseInt(tableNumColRepeatingNode.getNodeValue());
             col.setRepeated(repeatedColumns);
         }
-        
+
         String cellStyleName = new String("");
 
         if(tableDefaultCellStyle!=null) {
@@ -554,15 +556,15 @@ public abstract class SxcDocumentSerializer implements OfficeConstants,
 
         } else {
 
-            CellStyle cellStyle = (CellStyle)styleCat.lookup(cellStyleName, 
-                                SxcConstants.TABLE_CELL_STYLE_FAMILY, null, 
+            CellStyle cellStyle = (CellStyle)styleCat.lookup(cellStyleName,
+                                SxcConstants.TABLE_CELL_STYLE_FAMILY, null,
                                 CellStyle.class);
             Format defaultFmt = new Format(cellStyle.getFormat());
             col.setFormat(defaultFmt);
         }
 
         String styleName = new String("");
-    
+
         if(tableStyleNode!=null) {
             styleName = tableStyleNode.getNodeValue();
         }
@@ -573,8 +575,8 @@ public abstract class SxcDocumentSerializer implements OfficeConstants,
 
         } else {
 
-            ColumnStyle cStyle = (ColumnStyle)styleCat.lookup(styleName, 
-                                SxcConstants.COLUMN_STYLE_FAMILY, null, 
+            ColumnStyle cStyle = (ColumnStyle)styleCat.lookup(styleName,
+                                SxcConstants.COLUMN_STYLE_FAMILY, null,
                                 ColumnStyle.class);
 
             columnWidth = cStyle.getColWidth();
@@ -582,7 +584,7 @@ public abstract class SxcDocumentSerializer implements OfficeConstants,
             Debug.log(Debug.TRACE, "traverseColumn() Column Width : " + columnWidth);
 
         }
-        ColumnRowList.add(col);			
+        ColumnRowList.add(col);
     }
 
     /**
@@ -624,10 +626,10 @@ public abstract class SxcDocumentSerializer implements OfficeConstants,
             cellAtt.getNamedItem(ATTRIBUTE_TABLE_NUM_COLUMNS_REPEATED);
 
         // Get the style type
-        Node tableStyleNode = 
+        Node tableStyleNode =
             cellAtt.getNamedItem(ATTRIBUTE_TABLE_STYLE_NAME);
-    
-        String styleName = new String(""); 
+
+        String styleName = new String("");
 
         if(tableStyleNode!=null) {
             styleName = tableStyleNode.getNodeValue();
@@ -639,8 +641,8 @@ public abstract class SxcDocumentSerializer implements OfficeConstants,
 
         } else if(styleName.length()!=0) {
 
-            CellStyle cStyle = (CellStyle)styleCat.lookup(styleName, 
-                                SxcConstants.TABLE_CELL_STYLE_FAMILY, null, 
+            CellStyle cStyle = (CellStyle)styleCat.lookup(styleName,
+                                SxcConstants.TABLE_CELL_STYLE_FAMILY, null,
                                 CellStyle.class);
 
             Format definedFormat = cStyle.getFormat();
@@ -660,11 +662,11 @@ public abstract class SxcDocumentSerializer implements OfficeConstants,
             // The cell is not repeated
             colsRepeated = 1;
         }
-    
+
 
         // if there is no style we need to check to see if there is a default
         // cell style defined in the table-column's
-        
+
         if (fmt.isDefault() && styleName.length()==0) {
             int index = 1;
             for(Enumeration e = ColumnRowList.elements();e.hasMoreElements();) {
@@ -677,13 +679,13 @@ public abstract class SxcDocumentSerializer implements OfficeConstants,
                 }
             }
         }
-    
+
 
         // for (int j = 0; j < colsRepeated; j++) {
-    
+
 
         if (tableValueTypeNode != null) {
-            
+
             // Make sure we initialize to 0 the width of the current cell
             displayWidth = 0;
 
@@ -711,7 +713,7 @@ public abstract class SxcDocumentSerializer implements OfficeConstants,
                 fmt.setDecimalPlaces(getDecimalPlaces(node));
                   Node tableValueNode = cellAtt.getNamedItem(ATTRIBUTE_TABLE_VALUE);
                 fmt.setValue(tableValueNode.getNodeValue());
- 
+
 
             } else if (cellType.equalsIgnoreCase(CELLTYPE_TIME)) {
 
@@ -740,7 +742,7 @@ public abstract class SxcDocumentSerializer implements OfficeConstants,
                 fmt.setCategory(CELLTYPE_CURRENCY);
                 fmt.setDecimalPlaces(getDecimalPlaces(node));
                 Node tableValueNode = cellAtt.getNamedItem(ATTRIBUTE_TABLE_VALUE);
-                fmt.setValue(tableValueNode.getNodeValue());                  
+                fmt.setValue(tableValueNode.getNodeValue());
 
             } else if (cellType.equalsIgnoreCase(CELLTYPE_BOOLEAN)) {
 
@@ -767,14 +769,14 @@ public abstract class SxcDocumentSerializer implements OfficeConstants,
                 // Should never get here
 
             }
-        } 
+        }
 
         Node tableFormulaNode = cellAtt.getNamedItem(ATTRIBUTE_TABLE_FORMULA);
 
         if(tableFormulaNode != null)
-        {			
+        {
             if(tableValueTypeNode == null) {			// If there is no value-type Node we must assume string-value
-                fmt.setCategory(CELLTYPE_STRING);	
+                fmt.setCategory(CELLTYPE_STRING);
                 Node tableStringValueNode = cellAtt.getNamedItem(ATTRIBUTE_TABLE_STRING_VALUE);
                 fmt.setValue(tableStringValueNode.getNodeValue());
             }
@@ -803,7 +805,7 @@ public abstract class SxcDocumentSerializer implements OfficeConstants,
             } else if(!fmt.isDefault()) {
                 addCell("");
             }
-        }	
+        }
 
         // Clear out format for current cell after it is written
         format = 0;
@@ -898,7 +900,7 @@ public abstract class SxcDocumentSerializer implements OfficeConstants,
      *  encoding.  This method correctly handles cells that are
      *  repeated in either the row, cell, or both directions.
      *
-     *  @param  cellValue  The contents of the cell we want to add 
+     *  @param  cellValue  The contents of the cell we want to add
      *                     to the spreadsheet <code>Document</code>.
      *
      *  @throws  IOException  If any I/O error occurs.
@@ -922,7 +924,7 @@ public abstract class SxcDocumentSerializer implements OfficeConstants,
 
                 Debug.log(Debug.TRACE, "<TD>");
 
-        
+
                 // Add the cell data to the encoded spreadsheet document
                 encoder.addCell(row, col, fmt, cellValue);
 
@@ -1006,7 +1008,7 @@ public abstract class SxcDocumentSerializer implements OfficeConstants,
      */
     private String getAttribute (Node node, String attribute) {
         NamedNodeMap attrNodes = node.getAttributes();
-        
+
         if (attrNodes != null) {
             Node attr = attrNodes.getNamedItem(attribute);
             if (attr != null) {
