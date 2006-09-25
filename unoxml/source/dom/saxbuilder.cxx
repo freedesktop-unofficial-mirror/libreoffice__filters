@@ -4,9 +4,9 @@
  *
  *  $RCSfile: saxbuilder.cxx,v $
  *
- *  $Revision: 1.4 $
+ *  $Revision: 1.5 $
  *
- *  last change: $Author: hr $ $Date: 2006-06-20 00:48:22 $
+ *  last change: $Author: vg $ $Date: 2006-09-25 13:03:02 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -32,6 +32,9 @@
  *    MA  02111-1307  USA
  *
  ************************************************************************/
+#if defined(_MSC_VER) && (_MSC_VER > 1310)
+#pragma warning(disable : 4701)
+#endif
 
 #include <stdio.h>
 #include "node.hxx"
@@ -102,17 +105,17 @@ namespace DOM
     {
         return m_aState;
     }
-    
+
     void SAL_CALL CSAXDocumentBuilder::reset()
         throw (RuntimeException)
-    {        
+    {
         m_aDocument = Reference< XDocument >();
         m_aFragment = Reference< XDocumentFragment >();
         while (!m_aNodeStack.empty()) m_aNodeStack.pop();
         while (!m_aNSStack.empty()) m_aNSStack.pop();
         m_aState = SAXDocumentBuilderState_READY;
     }
-    
+
     Reference< XDocument > SAL_CALL CSAXDocumentBuilder::getDocument()
         throw (RuntimeException)
     {
@@ -120,7 +123,7 @@ namespace DOM
             throw RuntimeException();
 
         // some debugging...
-        
+
     xmlNodePtr pNode = CNode::getNodePtr(m_aDocument.get());
         if( pNode->type == XML_DOCUMENT_NODE )
         {
@@ -129,10 +132,10 @@ namespace DOM
             xmlDocDump(f, pDoc);
             fclose(f);
         }
-        
+
         return m_aDocument;
     }
-    
+
     Reference< XDocumentFragment > SAL_CALL CSAXDocumentBuilder::getDocumentFragment()
          throw (RuntimeException)
     {
@@ -140,7 +143,7 @@ namespace DOM
             throw RuntimeException();
         return m_aFragment;
     }
-    
+
     void SAL_CALL CSAXDocumentBuilder::startDocumentFragment(const Reference< XDocument >& ownerDoc)
         throw (RuntimeException)
     {
@@ -150,12 +153,12 @@ namespace DOM
             throw RuntimeException();
 
         m_aDocument = ownerDoc;
-        Reference< XDocumentFragment > aFragment = m_aDocument->createDocumentFragment(); 
+        Reference< XDocumentFragment > aFragment = m_aDocument->createDocumentFragment();
         m_aNodeStack.push(Reference< XNode >(aFragment, UNO_QUERY));
         m_aFragment = aFragment;
         m_aState = SAXDocumentBuilderState_BUILDING_FRAGMENT;
     }
-        
+
     void SAL_CALL CSAXDocumentBuilder::endDocumentFragment()
         throw (RuntimeException)
     {
@@ -169,7 +172,7 @@ namespace DOM
         m_aNodeStack.pop();
         m_aState = SAXDocumentBuilderState_FRAGMENT_FINISHED;
     }
-    
+
     // document handler
 
     void SAL_CALL  CSAXDocumentBuilder::startDocument() throw (SAXException)
@@ -185,7 +188,7 @@ namespace DOM
                 OUString::createFromAscii("com.sun.star.xml.dom.DocumentBuilder")), UNO_QUERY_THROW);
         Reference< XDocument > aDocument = aBuilder->newDocument();
         m_aNodeStack.push(Reference< XNode >(aDocument, UNO_QUERY));
-        m_aDocument = aDocument;        
+        m_aDocument = aDocument;
         m_aState = SAXDocumentBuilderState_BUILDING_DOCUMENT;
     }
 
