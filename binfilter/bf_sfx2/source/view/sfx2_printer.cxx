@@ -4,9 +4,9 @@
  *
  *  $RCSfile: sfx2_printer.cxx,v $
  *
- *  $Revision: 1.5 $
+ *  $Revision: 1.6 $
  *
- *  last change: $Author: rt $ $Date: 2005-09-08 03:52:57 $
+ *  last change: $Author: hr $ $Date: 2006-10-24 15:05:49 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -52,7 +52,7 @@
 // auto strip #include <svtools/printoptions.hxx>
 // auto strip #endif
 #include <vector>
-
+#include <iostream>
 #pragma hdrstop
 
 // auto strip #include "printer.hxx"
@@ -105,7 +105,7 @@ namespace binfilter {
 /*N*/ 	BOOL				mbSelection;
 /*N*/ 	BOOL				mbFromTo;
 /*N*/ 	BOOL				mbRange;
-/*N*/ 
+/*N*/
 /*N*/ 	SfxPrinter_Impl() :
 /*N*/ 		mpFonts		( NULL ),
 /*N*/ 		mbAll		( TRUE ),
@@ -123,7 +123,7 @@ namespace binfilter {
 //STRIP001 	HelpButton*		mpHelpBtn;
 //STRIP001 #endif
 //STRIP001 	sal_Bool		mbHelpDisabled;
-//STRIP001 
+//STRIP001
 //STRIP001 	SfxPrintOptDlg_Impl() :
 //STRIP001 #if SUPD <= 640
 //STRIP001 		mpHelpBtn		( NULL ),
@@ -135,11 +135,11 @@ namespace binfilter {
 
 //STRIP001 SfxFontSizeInfo::SfxFontSizeInfo( const SfxFont &rFont,
 //STRIP001 								  const OutputDevice &rDevice ) :
-//STRIP001 
+//STRIP001
 //STRIP001 	pSizes(0),
 //STRIP001 	nSizes(0),
 //STRIP001 	bScalable(TRUE)
-//STRIP001 
+//STRIP001
 //STRIP001 {
 //STRIP001 	if ( 0 == rDevice.GetDevFontCount() )
 //STRIP001 		bScalable = FALSE;
@@ -150,7 +150,7 @@ namespace binfilter {
 //STRIP001 		aFont.SetFamily(rFont.GetFamily());
 //STRIP001 		aFont.SetPitch(rFont.GetPitch());
 //STRIP001 		aFont.SetCharSet(rFont.GetCharSet());
-//STRIP001 
+//STRIP001
 //STRIP001 		// verfuegbare Groessen in die Liste eintragen, Groesse in 10tel Punkt
 //STRIP001 		USHORT nSizeCount = rDev.GetDevFontSizeCount(aFont);
 //STRIP001 		pSizes = NEW_OBJECTS(Size, nSizeCount);
@@ -161,7 +161,7 @@ namespace binfilter {
 //STRIP001 		aMap.SetScaleX(aTen);
 //STRIP001 		aMap.SetScaleY(aTen);
 //STRIP001 		rDev.SetMapMode(aMap);
-//STRIP001 
+//STRIP001
 //STRIP001 		// Es gibt Fonts mit Bitmaps und skalierbaren Groessen
 //STRIP001 		// In diesem Fall wird der Fonts als skalierbar behandelt.
 //STRIP001 		BOOL bFoundScalable = FALSE;
@@ -183,7 +183,7 @@ namespace binfilter {
 //STRIP001 		}
 //STRIP001 		rDev.SetMapMode(aOldMapMode);
 //STRIP001 	}
-//STRIP001 
+//STRIP001
 //STRIP001 	if ( 0 == nSizes )
 //STRIP001 	{
 //STRIP001 		nSizes = sizeof(pStaticSizes) / sizeof(USHORT);
@@ -242,7 +242,7 @@ namespace binfilter {
 /*N*/ 	// JobSetup laden
 /*N*/ 	JobSetup aFileJobSetup;
 /*N*/ 	rStream >> aFileJobSetup;
-/*N*/ 
+/*N*/
 /*N*/ 	// Drucker erzeugen
 /*N*/ 	SfxPrinter *pPrinter = new SfxPrinter( pOptions, aFileJobSetup );
 /*N*/ 	return pPrinter;
@@ -288,20 +288,30 @@ namespace binfilter {
 /*N*/ {
 /*N*/ 	pImpl = new SfxPrinter_Impl;
 /*N*/ 	bKnown = GetName() == rTheOrigJobSetup.GetPrinterName();
-/*N*/ 
-/*N*/ 	if ( bKnown )
+/*N*/
+/*N*/   if ( bKnown )
+        {
 /*N*/ 		SetJobSetup( rTheOrigJobSetup );
+        }
+        
+        // --> FME 2006-09-19 #b6449032# Use old XPrinter emulation. rTheOrigJobSetup
+        // already has this setting (see SfxPrinter::Create()).
+        JobSetup aJobSetup( GetJobSetup() );
+        aJobSetup.SetValue( rtl::OUString( RTL_CONSTASCII_USTRINGPARAM( "StrictSO52Compatibility" ) ),
+                            rtl::OUString( RTL_CONSTASCII_USTRINGPARAM( "true" ) ) );
+        SetJobSetup( aJobSetup );
+        // <--
 /*N*/ }
 
 //--------------------------------------------------------------------
 
 /*N*/ SfxPrinter::SfxPrinter( SfxItemSet* pTheOptions,
 /*N*/ 						const String& rPrinterName ) :
-/*N*/ 
+/*N*/
 /*N*/ 	Printer			( rPrinterName ),
 /*N*/ 	pOptions		( pTheOptions ),
 /*N*/ 	bKnown			( GetName() == rPrinterName )
-/*N*/ 
+/*N*/
 /*N*/ {
 /*N*/ 	pImpl = new SfxPrinter_Impl;
 /*N*/ }
@@ -309,7 +319,7 @@ namespace binfilter {
 //--------------------------------------------------------------------
 
 //STRIP001 SfxPrinter::SfxPrinter( const SfxPrinter& rPrinter ) :
-//STRIP001 
+//STRIP001
 //STRIP001 	Printer	( rPrinter.GetName() ),
 //STRIP001 	pOptions( rPrinter.GetOptions().Clone() ),
 //STRIP001 	bKnown	( rPrinter.IsKnown() )
@@ -317,7 +327,7 @@ namespace binfilter {
 //STRIP001 	SetJobSetup( rPrinter.GetJobSetup() );
 //STRIP001 	SetPrinterProps( &rPrinter );
 //STRIP001 	SetMapMode( rPrinter.GetMapMode() );
-//STRIP001 
+//STRIP001
 //STRIP001 	pImpl = new SfxPrinter_Impl;
 //STRIP001 	pImpl->mbAll = rPrinter.pImpl->mbAll;
 //STRIP001 	pImpl->mbSelection = rPrinter.pImpl->mbSelection;
@@ -366,7 +376,7 @@ namespace binfilter {
 //STRIP001 void SfxPrinter::EnableRange( USHORT nRange )
 //STRIP001 {
 //STRIP001 	PrintDialogRange eRange	= (PrintDialogRange)nRange;
-//STRIP001 
+//STRIP001
 //STRIP001 	if ( eRange == PRINTDIALOG_ALL )
 //STRIP001 		pImpl->mbAll = TRUE;
 //STRIP001 	else if ( eRange == PRINTDIALOG_SELECTION )
@@ -382,7 +392,7 @@ namespace binfilter {
 //STRIP001 void SfxPrinter::DisableRange( USHORT nRange )
 //STRIP001 {
 //STRIP001 	PrintDialogRange eRange	= (PrintDialogRange)nRange;
-//STRIP001 
+//STRIP001
 //STRIP001 	if ( eRange == PRINTDIALOG_ALL )
 //STRIP001 		pImpl->mbAll = FALSE;
 //STRIP001 	else if ( eRange == PRINTDIALOG_SELECTION )
@@ -399,7 +409,7 @@ namespace binfilter {
 //STRIP001 {
 //STRIP001 	PrintDialogRange eRange	= (PrintDialogRange)nRange;
 //STRIP001 	BOOL bRet = FALSE;
-//STRIP001 
+//STRIP001
 //STRIP001 	if ( eRange == PRINTDIALOG_ALL )
 //STRIP001 		bRet = pImpl->mbAll;
 //STRIP001 	else if ( eRange == PRINTDIALOG_SELECTION )
@@ -408,7 +418,7 @@ namespace binfilter {
 //STRIP001 		bRet = pImpl->mbFromTo;
 //STRIP001 	else if ( eRange == PRINTDIALOG_RANGE )
 //STRIP001 		bRet = pImpl->mbRange;
-//STRIP001 
+//STRIP001
 //STRIP001 	return bRet;
 //STRIP001 }
 
@@ -437,16 +447,16 @@ namespace binfilter {
 //STRIP001 {
 //STRIP001 	VirtualDevice *pVirDev = 0;
 //STRIP001 	const OutputDevice *pOut = this;
-//STRIP001 
+//STRIP001
 //STRIP001 		// falls kein Drucker gefunden werden konnte, ein
 //STRIP001 		// temp. Device erzeugen fuer das Erfragen der Fonts
 //STRIP001 	if( !IsValid() )
 //STRIP001 		pOut = pVirDev = new VirtualDevice;
-//STRIP001 
+//STRIP001
 //STRIP001 	const USHORT nCount = pOut->GetDevFontCount();
 //STRIP001 	FONTS() =  new SfxFontArr_Impl((BYTE)nCount);
-//STRIP001 
-//STRIP001 	std::vector< Font > aNonRegularFonts;	
+//STRIP001
+//STRIP001 	std::vector< Font > aNonRegularFonts;
 //STRIP001 	for(USHORT i = 0;i < nCount;++i)
 //STRIP001 	{
 //STRIP001 		Font aFont(pOut->GetDevFont(i));
@@ -467,8 +477,8 @@ namespace binfilter {
 //STRIP001 		}
 //STRIP001 	}
 //STRIP001 	delete pVirDev;
-//STRIP001 	
-//STRIP001 	// Try to add all non-regular fonts. It could be that there was no regular font 
+//STRIP001
+//STRIP001 	// Try to add all non-regular fonts. It could be that there was no regular font
 //STRIP001 	// with the same name added.
 //STRIP001 	std::vector< Font >::const_iterator pIter;
 //STRIP001 	for ( pIter = aNonRegularFonts.begin(); pIter != aNonRegularFonts.end(); pIter++ )
@@ -502,7 +512,7 @@ namespace binfilter {
 //--------------------------------------------------------------------
 
 /*?*/ const SfxFont* SfxPrinter::GetFontByName( const String &rFontName )
-/*?*/ {DBG_BF_ASSERT(0, "STRIP"); return NULL;//STRIP001 
+/*?*/ {DBG_BF_ASSERT(0, "STRIP"); return NULL;//STRIP001
 //STRIP001 	if ( !FONTS() )
 //STRIP001 		UpdateFonts_Impl();
 //STRIP001 	return SfxFindFont_Impl(*FONTS(), rFontName);
@@ -518,20 +528,20 @@ namespace binfilter {
 //STRIP001     const SvtBasePrintOptions*  pPrintFileOpt = &aPrintFileOpt;
 //STRIP001     PrinterOptions              aNewPrinterOptions;
 //STRIP001     BOOL                        bRet = TRUE;
-//STRIP001 
+//STRIP001
 //STRIP001     ( ( IsPrintFileEnabled() && GetPrintFile().Len() ) ? pPrintFileOpt : pPrinterOpt )->GetPrinterOptions( aNewPrinterOptions );
-//STRIP001 
+//STRIP001
 //STRIP001 	if( bDocumentContainsTransparentObjects && !aNewPrinterOptions.IsReduceTransparency() )
 //STRIP001 	{
 //STRIP001 		if ( !Application::IsHeadlessModeEnabled() )
 //STRIP001 		{
 //STRIP001 			SvtPrintWarningOptions aWarnOpt;
-//STRIP001 
+//STRIP001
 //STRIP001 			if( aWarnOpt.IsTransparency() )
 //STRIP001 			{
 //STRIP001 				TransparencyPrintWarningBox	aWarnBox( pUIParent );
 //STRIP001 				const USHORT				nRet = aWarnBox.Execute();
-//STRIP001 
+//STRIP001
 //STRIP001 				if( nRet == RET_CANCEL )
 //STRIP001 					bRet = FALSE;
 //STRIP001 				else
@@ -542,10 +552,10 @@ namespace binfilter {
 //STRIP001 			}
 //STRIP001 		}
 //STRIP001 	}
-//STRIP001 
+//STRIP001
 //STRIP001     if( bRet )
 //STRIP001         SetPrinterOptions( aNewPrinterOptions );
-//STRIP001 
+//STRIP001
 //STRIP001 	return bRet;
 //STRIP001 }
 
@@ -554,9 +564,9 @@ namespace binfilter {
 //STRIP001 SfxPrintOptionsDialog::SfxPrintOptionsDialog( Window *pParent,
 //STRIP001 											  SfxViewShell *pViewShell,
 //STRIP001 											  const SfxItemSet *pSet ) :
-//STRIP001 
+//STRIP001
 //STRIP001 	ModalDialog( pParent, WinBits( WB_STDMODAL | WB_3DLOOK ) ),
-//STRIP001 
+//STRIP001
 //STRIP001 	aOkBtn		( this ),
 //STRIP001 	aCancelBtn	( this ),
 //STRIP001 #if SUPD > 640
@@ -566,20 +576,20 @@ namespace binfilter {
 //STRIP001 	pViewSh		( pViewShell ),
 //STRIP001 	pOptions	( pSet->Clone() ),
 //STRIP001 	pPage		( NULL )
-//STRIP001 
+//STRIP001
 //STRIP001 {
 //STRIP001 #if SUPD <= 640
 //STRIP001 	pDlgImpl->mpHelpBtn = new HelpButton( this );
 //STRIP001 #endif
 //STRIP001 	SetText( SfxResId( STR_PRINT_OPTIONS_TITLE ) );
-//STRIP001 
+//STRIP001
 //STRIP001 	// TabPage einh"angen
 //STRIP001 	pPage = pViewSh->CreatePrintOptionsPage( this, *pOptions );
 //STRIP001 	DBG_ASSERT( pPage, "CreatePrintOptions != SFX_VIEW_HAS_PRINTOPTIONS" );
 //STRIP001 	pPage->Reset( *pOptions );
 //STRIP001 	SetHelpId( pPage->GetHelpId() );
 //STRIP001 	pPage->Show();
-//STRIP001 
+//STRIP001
 //STRIP001 	// Dialoggr"o\se bestimmen
 //STRIP001     Size a6Sz = LogicToPixel( Size( 6, 6 ), MAP_APPFONT );
 //STRIP001 	Size aBtnSz = LogicToPixel( Size( 50, 14 ), MAP_APPFONT );
@@ -592,7 +602,7 @@ namespace binfilter {
 //STRIP001 		// mindestens die H"ohe der 3 Buttons
 //STRIP001 		aOutSz.Height() = 90;
 //STRIP001 	SetOutputSizePixel( aOutSz );
-//STRIP001 
+//STRIP001
 //STRIP001 	// set position and size of the buttons
 //STRIP001     Point aBtnPos( aOutSz.Width() - aBtnSz.Width() - a6Sz.Width(), a6Sz.Height() );
 //STRIP001 	aOkBtn.SetPosSizePixel( aBtnPos, aBtnSz );
@@ -604,7 +614,7 @@ namespace binfilter {
 //STRIP001 #else
 //STRIP001 	pDlgImpl->mpHelpBtn->SetPosSizePixel( aBtnPos, aBtnSz );
 //STRIP001 #endif
-//STRIP001 
+//STRIP001
 //STRIP001 	aCancelBtn.Show();
 //STRIP001 	aOkBtn.Show();
 //STRIP001 #if SUPD > 640
@@ -647,7 +657,7 @@ namespace binfilter {
 //STRIP001 		if ( rNEvt.GetKeyEvent()->GetKeyCode().GetCode() == KEY_F1 && pDlgImpl->mbHelpDisabled )
 //STRIP001 			return 1; // help disabled -> <F1> does nothing
 //STRIP001 	}
-//STRIP001 
+//STRIP001
 //STRIP001 	return ModalDialog::Notify( rNEvt );
 //STRIP001 }
 
@@ -656,7 +666,7 @@ namespace binfilter {
 //STRIP001 void SfxPrintOptionsDialog::DisableHelp()
 //STRIP001 {
 //STRIP001 	pDlgImpl->mbHelpDisabled = sal_True;
-//STRIP001 
+//STRIP001
 //STRIP001 #if SUPD > 640
 //STRIP001 	aHelpBtn.Disable();
 //STRIP001 #else
