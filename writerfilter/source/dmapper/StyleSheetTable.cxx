@@ -1,8 +1,42 @@
+/*************************************************************************
+ *
+ *  OpenOffice.org - a multi-platform office productivity suite
+ *
+ *  $RCSfile: StyleSheetTable.cxx,v $
+ *
+ *  $Revision: 1.2 $
+ *
+ *  last change: $Author: os $ $Date: 2006-11-02 12:37:25 $
+ *
+ *  The Contents of this file are made available subject to
+ *  the terms of GNU Lesser General Public License Version 2.1.
+ *
+ *
+ *    GNU Lesser General Public License Version 2.1
+ *    =============================================
+ *    Copyright 2005 by Sun Microsystems, Inc.
+ *    901 San Antonio Road, Palo Alto, CA 94303, USA
+ *
+ *    This library is free software; you can redistribute it and/or
+ *    modify it under the terms of the GNU Lesser General Public
+ *    License version 2.1, as published by the Free Software Foundation.
+ *
+ *    This library is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *    Lesser General Public License for more details.
+ *
+ *    You should have received a copy of the GNU Lesser General Public
+ *    License along with this library; if not, write to the Free Software
+ *    Foundation, Inc., 59 Temple Place, Suite 330, Boston,
+ *    MA  02111-1307  USA
+ *
+ ************************************************************************/
 #ifndef INCLUDED_STYLESHEETTABLE_HXX
 #include <StyleSheetTable.hxx>
 #endif
 #ifndef INCLUDED_DOMAINMAPPER_HXX
-#include <dmapper/DomainMapper.hxx> 
+#include <dmapper/DomainMapper.hxx>
 #endif
 #ifndef INCLUDED_RESOURCESIDS
 #include <doctok/resourceids.hxx>
@@ -61,7 +95,7 @@ struct StyleSheetTable_Impl
     StyleSheetEntry*                        m_pCurrentEntry;
     StyleSheetTable_Impl(DomainMapper& rDMapper) :
             m_rDMapper( rDMapper ),
-            m_pCurrentEntry(0){}            
+            m_pCurrentEntry(0){}
 };
 /*-- 19.06.2006 12:04:32---------------------------------------------------
 
@@ -89,7 +123,7 @@ void StyleSheetTable::attribute(doctok::Id Name, doctok::Value & val)
     ::rtl::OUString sValue = val.getString();
     switch(Name)
     {
-        case NS_rtf::LN_ISTD: 
+        case NS_rtf::LN_ISTD:
             m_pImpl->m_pCurrentEntry->nStyleIdentifierD = nIntValue;
         break;
 //        case NS_rtf::LN_ISTARTAT: break;
@@ -131,27 +165,27 @@ void StyleSheetTable::attribute(doctok::Id Name, doctok::Value & val)
 //        case NS_rtf::LN_IXCHSZALT: break;
 //        case NS_rtf::LN_PANOSE: break;
 //        case NS_rtf::LN_FS: break;
-        case NS_rtf::LN_STI: 
+        case NS_rtf::LN_STI:
             m_pImpl->m_pCurrentEntry->nStyleIdentifierI = nIntValue;
         break;
-        case NS_rtf::LN_SGC: 
+        case NS_rtf::LN_SGC:
             m_pImpl->m_pCurrentEntry->nStyleTypeCode = (StyleType)nIntValue;
         break;
-        case NS_rtf::LN_ISTDBASE: 
+        case NS_rtf::LN_ISTDBASE:
             m_pImpl->m_pCurrentEntry->nBaseStyleIdentifier = nIntValue;
         break;
-        case NS_rtf::LN_ISTDNEXT: 
+        case NS_rtf::LN_ISTDNEXT:
             m_pImpl->m_pCurrentEntry->nNextStyleIdentifier = nIntValue;
         break;
-        case NS_rtf::LN_FSCRATCH: 
-        case NS_rtf::LN_FINVALHEIGHT: 
-        case NS_rtf::LN_FHASUPE: 
-        case NS_rtf::LN_FMASSCOPY: 
-        case NS_rtf::LN_CUPX: 
-        case NS_rtf::LN_BCHUPE: 
-        case NS_rtf::LN_FAUTOREDEF: 
-        case NS_rtf::LN_FHIDDEN: 
-        case NS_rtf::LN_UNUSED8_3: 
+        case NS_rtf::LN_FSCRATCH:
+        case NS_rtf::LN_FINVALHEIGHT:
+        case NS_rtf::LN_FHASUPE:
+        case NS_rtf::LN_FMASSCOPY:
+        case NS_rtf::LN_CUPX:
+        case NS_rtf::LN_BCHUPE:
+        case NS_rtf::LN_FAUTOREDEF:
+        case NS_rtf::LN_FHIDDEN:
+        case NS_rtf::LN_UNUSED8_3:
             //noone seems to care about it
         break;
         break;
@@ -492,13 +526,13 @@ void StyleSheetTable::attribute(doctok::Id Name, doctok::Value & val)
 //        case NS_rtf::LN_footerr: break;
 //        case NS_rtf::LN_endnote: break;
 //        case NS_rtf::LN_BOOKMARKNAME: break;
-        
+
 //        case NS_rtf::LN_LISTLEVEL: break;
 //        case NS_rtf::LN_LFO: break;
 //        case NS_rtf::LN_F: break;
 //        case NS_rtf::LN_ALTFONTNAME: break;
 //        case NS_rtf::LN_XSZFFN: break;
-        case NS_rtf::LN_XSTZNAME: 
+        case NS_rtf::LN_XSTZNAME:
             m_pImpl->m_pCurrentEntry->sStyleName1 = sValue;
         break;
         case NS_rtf::LN_XSTZNAME1: 

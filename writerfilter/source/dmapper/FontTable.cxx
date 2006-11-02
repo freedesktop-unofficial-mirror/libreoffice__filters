@@ -1,3 +1,38 @@
+/*************************************************************************
+ *
+ *  OpenOffice.org - a multi-platform office productivity suite
+ *
+ *  $RCSfile: FontTable.cxx,v $
+ *
+ *  $Revision: 1.2 $
+ *
+ *  last change: $Author: os $ $Date: 2006-11-02 12:37:24 $
+ *
+ *  The Contents of this file are made available subject to
+ *  the terms of GNU Lesser General Public License Version 2.1.
+ *
+ *
+ *    GNU Lesser General Public License Version 2.1
+ *    =============================================
+ *    Copyright 2005 by Sun Microsystems, Inc.
+ *    901 San Antonio Road, Palo Alto, CA 94303, USA
+ *
+ *    This library is free software; you can redistribute it and/or
+ *    modify it under the terms of the GNU Lesser General Public
+ *    License version 2.1, as published by the Free Software Foundation.
+ *
+ *    This library is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *    Lesser General Public License for more details.
+ *
+ *    You should have received a copy of the GNU Lesser General Public
+ *    License along with this library; if not, write to the Free Software
+ *    Foundation, Inc., 59 Temple Place, Suite 330, Boston,
+ *    MA  02111-1307  USA
+ *
+ ************************************************************************/
+
 #ifndef INCLUDED_FONTTABLE_HXX
 #include <FontTable.hxx>
 #endif
@@ -15,7 +50,7 @@ struct FontTable_Impl
     std::vector< FontEntry >    aFontEntries;
     FontEntry*                  pCurrentEntry;
     FontTable_Impl() :
-            pCurrentEntry(0){}            
+            pCurrentEntry(0){}
 };
 /*-- 19.06.2006 12:04:32---------------------------------------------------
 
@@ -71,31 +106,31 @@ void FontTable::attribute(doctok::Id Name, doctok::Value & val)
 //        case NS_rtf::LN_UNUSED4: break;
 //        case NS_rtf::LN_UNUSED8: break;
 //        case NS_rtf::LN_CLFOLVL: break;
-        case NS_rtf::LN_CBFFNM1: 
+        case NS_rtf::LN_CBFFNM1:
             m_pImpl->pCurrentEntry->sFontName1 = val.getString();
         break;
-        case NS_rtf::LN_PRQ: 
+        case NS_rtf::LN_PRQ:
             m_pImpl->pCurrentEntry->nPitchRequest = static_cast<sal_Int16>( nIntValue );
         break;
-        case NS_rtf::LN_FTRUETYPE: 
+        case NS_rtf::LN_FTRUETYPE:
             m_pImpl->pCurrentEntry->bTrueType = nIntValue == 1 ? true : false;
         break;
         case NS_rtf::LN_UNUSED1_3: //unused
         case NS_rtf::LN_FF: //unused
         case NS_rtf::LN_UNUSED1_7: //unused
         break;
-        case NS_rtf::LN_WWEIGHT: 
+        case NS_rtf::LN_WWEIGHT:
             m_pImpl->pCurrentEntry->nBaseWeight = nIntValue;
         break;
-        case NS_rtf::LN_CHS: 
+        case NS_rtf::LN_CHS:
             m_pImpl->pCurrentEntry->nTextEncoding = nIntValue;
         break;
-        case NS_rtf::LN_IXCHSZALT: 
+        case NS_rtf::LN_IXCHSZALT:
         break;
-        case NS_rtf::LN_PANOSE: 
+        case NS_rtf::LN_PANOSE:
             m_pImpl->pCurrentEntry->sPanose += val.getString();
         break;
-        case NS_rtf::LN_FS: 
+        case NS_rtf::LN_FS:
             m_pImpl->pCurrentEntry->sFontSignature += val.getString();
         break;
 //        case NS_rtf::LN_STI: break;
@@ -448,15 +483,15 @@ void FontTable::attribute(doctok::Id Name, doctok::Value & val)
 //        case NS_rtf::LN_footerr: break;
 //        case NS_rtf::LN_endnote: break;
 //        case NS_rtf::LN_BOOKMARKNAME: break;
-        
+
 //        case NS_rtf::LN_LISTLEVEL: break;
 //        case NS_rtf::LN_LFO: break;
-        case NS_rtf::LN_F: 
-        break;            
-        case NS_rtf::LN_ALTFONTNAME: 
+        case NS_rtf::LN_F:
+        break;
+        case NS_rtf::LN_ALTFONTNAME:
             m_pImpl->pCurrentEntry->sAlternativeFont = val.getString();
         break;
-        case NS_rtf::LN_XSZFFN: 
+        case NS_rtf::LN_XSZFFN:
             m_pImpl->pCurrentEntry->sFontName = val.getString();
         break;
 //        case NS_rtf::LN_XSTZNAME: break;
@@ -472,7 +507,7 @@ void FontTable::attribute(doctok::Id Name, doctok::Value & val)
 //        case NS_rtf::LN_cellLeftColor: break;
 //        case NS_rtf::LN_cellBottomColor: break;
 //        case NS_rtf::LN_cellRightColor: break;
-        
+
 //        case NS_rtf::LN_LISTTABLE: break;
 //        case NS_rtf::LN_LFOTABLE: break;
 //        case NS_rtf::LN_FONTTABLE: break;
@@ -484,7 +519,7 @@ void FontTable::attribute(doctok::Id Name, doctok::Value & val)
             ++nVal;
             //<---- debug
         }
-    }            
+    }
 }
 /*-- 19.06.2006 12:04:33---------------------------------------------------
 

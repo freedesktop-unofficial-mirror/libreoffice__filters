@@ -1,8 +1,42 @@
+/*************************************************************************
+ *
+ *  OpenOffice.org - a multi-platform office productivity suite
+ *
+ *  $RCSfile: ListTable.cxx,v $
+ *
+ *  $Revision: 1.2 $
+ *
+ *  last change: $Author: os $ $Date: 2006-11-02 12:37:24 $
+ *
+ *  The Contents of this file are made available subject to
+ *  the terms of GNU Lesser General Public License Version 2.1.
+ *
+ *
+ *    GNU Lesser General Public License Version 2.1
+ *    =============================================
+ *    Copyright 2005 by Sun Microsystems, Inc.
+ *    901 San Antonio Road, Palo Alto, CA 94303, USA
+ *
+ *    This library is free software; you can redistribute it and/or
+ *    modify it under the terms of the GNU Lesser General Public
+ *    License version 2.1, as published by the Free Software Foundation.
+ *
+ *    This library is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *    Lesser General Public License for more details.
+ *
+ *    You should have received a copy of the GNU Lesser General Public
+ *    License along with this library; if not, write to the Free Software
+ *    Foundation, Inc., 59 Temple Place, Suite 330, Boston,
+ *    MA  02111-1307  USA
+ *
+ ************************************************************************/
 #ifndef INCLUDED_LISTTABLE_HXX
 #include <ListTable.hxx>
 #endif
 #ifndef INCLUDED_DOMAINMAPPER_HXX
-#include <dmapper/DomainMapper.hxx> 
+#include <dmapper/DomainMapper.hxx>
 #endif
 #ifndef INCLUDED_DMAPPER_PROPERTYIDS_HXX
 #include <PropertyIds.hxx>
@@ -47,21 +81,21 @@ sal_Int16 lcl_ConvertNumberingType(sal_Int32 nNFC)
         case 3: nRet = style::NumberingType::CHARS_UPPER_LETTER_N;  break;
         case 4: nRet = style::NumberingType::CHARS_LOWER_LETTER_N;  break;
         case 5: nRet = style::NumberingType::ARABIC;                break;//ORDINAL
-        case 23: 
-        case 25: 
+        case 23:
+        case 25:
             nRet = style::NumberingType::CHAR_SPECIAL;
         break;
         case 255: nRet = style::NumberingType::NUMBER_NONE; break;
         default: nRet = style::NumberingType::ARABIC;
     }
-    return nRet;            
-}            
+    return nRet;
+}
 /*-- 26.06.2006 13:14:29---------------------------------------------------
 
   -----------------------------------------------------------------------*/
 class ListPropertyMap : public PropertyMap
 {
-    friend class ListTable;    
+    friend class ListTable;
 
     sal_Int32                                       nIStartAt;       //LN_ISTARTAT
     sal_Int32                                       nNFC;            //LN_NFC
@@ -74,16 +108,16 @@ class ListPropertyMap : public PropertyMap
     ::rtl::OUString                                 sRGBXchNums;     //LN_RGBXCHNUMS
     sal_Int32                                       nXChFollow;      //LN_IXCHFOLLOW
     PropertyMapPtr                                  pProperties;    //LN_LISTLEVEL
-public: 
-    ListPropertyMap() : 
-        nIStartAt(-1)   
-        ,nNFC(-1)        
-        ,nJC(-1)         
-        ,nFLegal(-1)     
-        ,nFNoRestart(-1) 
-        ,nFPrev(-1)      
-        ,nFPrevSpace(-1) 
-        ,nFWord6(-1)     
+public:
+    ListPropertyMap() :
+        nIStartAt(-1)
+        ,nNFC(-1)
+        ,nJC(-1)
+        ,nFLegal(-1)
+        ,nFNoRestart(-1)
+        ,nFPrev(-1)
+        ,nFPrevSpace(-1)
+        ,nFWord6(-1)
         ,nXChFollow(-1)
         ,pProperties(new PropertyMap)
         {}
@@ -91,7 +125,7 @@ public:
 
     PropertyMapPtr  GetProperties() { return pProperties; }
     uno::Sequence< beans::PropertyValue >  GetPropertyValues();
-};            
+};
 /*-- 26.06.2006 13:44:57---------------------------------------------------
 
   -----------------------------------------------------------------------*/
@@ -106,22 +140,22 @@ uno::Sequence< beans::PropertyValue >  ListPropertyMap::GetPropertyValues()
         text::HoriOrientation::CENTER,
         text::HoriOrientation::RIGHT,
     };
-    
+
     PropertyNameSupplier& aPropNameSupplier = PropertyNameSupplier::GetPropertyNameSupplier();
     vector< beans::PropertyValue > aNumberingProperties;
 
     if( nIStartAt >= 0)
         aNumberingProperties.push_back( MAKE_PROPVAL(PROP_START_WITH, (sal_Int16)nIStartAt) );
-    
+
     if( nNFC >= 0)
         aNumberingProperties.push_back( MAKE_PROPVAL(PROP_NUMBERING_TYPE, lcl_ConvertNumberingType(nNFC)));
 
     if( nJC >= 0 && nJC <= sal::static_int_cast<sal_Int32>(sizeof(aWWToUnoAdjust) / sizeof(sal_Int16)) )
         aNumberingProperties.push_back( MAKE_PROPVAL(PROP_ADJUST, aWWToUnoAdjust[nJC]));
 
-    //TODO: handling of nFLegal?        
+    //TODO: handling of nFLegal?
     //TODO: nFNoRestart lower levels do not restart when higher levels are incremented, like:
-    //1. 
+    //1.
     //1.1
     //2.2
     //2.3
@@ -129,25 +163,25 @@ uno::Sequence< beans::PropertyValue >  ListPropertyMap::GetPropertyValues()
     //
 
     if( nFWord6 > 0) //Word 6 compatibility
-    {        
+    {
         if( nFPrev == 1)
             aNumberingProperties.push_back( MAKE_PROPVAL( PROP_PARENT_NUMBERING, (sal_Int16) NUMBERING_MAX_LEVELS ));
         //TODO: prefixing space     nFPrevSpace;     - has not been used in WW8 filter
     }
 
-//    TODO: sRGBXchNums;     array of inherited numbers 
+//    TODO: sRGBXchNums;     array of inherited numbers
 
 //    TODO: nXChFollow; following character 0 - tab, 1 - space, 2 - nothing
     if(pProperties)
     {
-    
+
         _PropertyMap::const_iterator aMapIter = pProperties->begin();
         _PropertyMap::const_iterator aEndIter = pProperties->end();
         for( ; aMapIter != aEndIter; ++aMapIter )
         {
-            aNumberingProperties.push_back( 
+            aNumberingProperties.push_back(
                     beans::PropertyValue(aMapIter->first, 0, aMapIter->second, beans::PropertyState_DIRECT_VALUE ));
-        }            
+        }
     }
     uno::Sequence< beans::PropertyValue > aRet(aNumberingProperties.size());
     beans::PropertyValue* pValues = aRet.getArray();
@@ -156,7 +190,7 @@ uno::Sequence< beans::PropertyValue >  ListPropertyMap::GetPropertyValues()
     for(sal_uInt32 nIndex = 0; aIt != aEndIt; ++aIt,++nIndex)
     {
         pValues[nIndex] = *aIt;
-    }    
+    }
     return aRet;
 }
 typedef boost::shared_ptr<ListPropertyMap> ListPropertyMapPtr;
@@ -169,12 +203,12 @@ struct ListEntry
     sal_Int32                                       nSimpleList;    //LN_FSIMPLELIST
     sal_Int32                                       nRestart;       //LN_FRESTARTHDN
     sal_Int32                                       nUnsigned;      //LN_UNSIGNED26_2
-    
+
     ::std::vector< ListPropertyMapPtr >             aLevelProperties; //properties of each level
 
-    ListPropertyMapPtr                              pCurrentProperties; 
+    ListPropertyMapPtr                              pCurrentProperties;
     uno::Reference< container::XIndexReplace >      m_xNumRules;
-    
+
     ListEntry();
 
 };
@@ -197,15 +231,15 @@ struct ListTable_Impl
 {
     DomainMapper&                                   m_rDMapper;
     uno::Reference< lang::XMultiServiceFactory >    m_xFactory;
-    
+
     std::vector< ListEntryPtr >                     m_aListEntries;
     ListEntryPtr                                    m_pCurrentEntry;
-    
-    
+
+
     ListTable_Impl(DomainMapper& rDMapper, uno::Reference< lang::XMultiServiceFactory > xFactory) :
             m_rDMapper( rDMapper )
             ,m_xFactory( xFactory )
-            {}            
+            {}
 
     void    AddLevel();
 };
@@ -246,77 +280,77 @@ void ListTable::attribute(doctok::Id Name, doctok::Value & val)
     switch(Name)
     {
 //        case NS_rtf::LN_ISTD: break;
-        case NS_rtf::LN_ISTARTAT: 
-        case NS_rtf::LN_NFC: 
-        case NS_rtf::LN_JC: 
-        case NS_rtf::LN_FLEGAL: 
-        case NS_rtf::LN_FNORESTART: 
-        case NS_rtf::LN_FPREV: 
-        case NS_rtf::LN_FPREVSPACE: 
-        case NS_rtf::LN_FWORD6: 
-        case NS_rtf::LN_RGBXCHNUMS: 
-        case NS_rtf::LN_IXCHFOLLOW: 
+        case NS_rtf::LN_ISTARTAT:
+        case NS_rtf::LN_NFC:
+        case NS_rtf::LN_JC:
+        case NS_rtf::LN_FLEGAL:
+        case NS_rtf::LN_FNORESTART:
+        case NS_rtf::LN_FPREV:
+        case NS_rtf::LN_FPREVSPACE:
+        case NS_rtf::LN_FWORD6:
+        case NS_rtf::LN_RGBXCHNUMS:
+        case NS_rtf::LN_IXCHFOLLOW:
             if(m_pImpl->m_pCurrentEntry->pCurrentProperties.get())
             switch(Name)
             {
-                case NS_rtf::LN_ISTARTAT: 
+                case NS_rtf::LN_ISTARTAT:
                         m_pImpl->m_pCurrentEntry->pCurrentProperties->nIStartAt = nIntValue;
                 break;
-                case NS_rtf::LN_NFC: 
+                case NS_rtf::LN_NFC:
                     m_pImpl->m_pCurrentEntry->pCurrentProperties->nNFC = nIntValue;
                 break;
-                case NS_rtf::LN_JC: 
+                case NS_rtf::LN_JC:
                     m_pImpl->m_pCurrentEntry->pCurrentProperties->nJC = nIntValue;
                 break;
-                case NS_rtf::LN_FLEGAL: 
+                case NS_rtf::LN_FLEGAL:
                     m_pImpl->m_pCurrentEntry->pCurrentProperties->nFLegal = nIntValue;
                 break;
-                case NS_rtf::LN_FNORESTART: 
+                case NS_rtf::LN_FNORESTART:
                     m_pImpl->m_pCurrentEntry->pCurrentProperties->nFNoRestart = nIntValue;
                 break;
-                case NS_rtf::LN_FPREV: 
+                case NS_rtf::LN_FPREV:
                     m_pImpl->m_pCurrentEntry->pCurrentProperties->nFPrev = nIntValue;
                 break;
-                case NS_rtf::LN_FPREVSPACE: 
+                case NS_rtf::LN_FPREVSPACE:
                     m_pImpl->m_pCurrentEntry->pCurrentProperties->nFPrevSpace = nIntValue;
                 break;
-                case NS_rtf::LN_FWORD6: 
+                case NS_rtf::LN_FWORD6:
                     m_pImpl->m_pCurrentEntry->pCurrentProperties->nFWord6 = nIntValue;
                 break;
-                case NS_rtf::LN_RGBXCHNUMS: 
+                case NS_rtf::LN_RGBXCHNUMS:
                     m_pImpl->m_pCurrentEntry->pCurrentProperties->sRGBXchNums += val.getString();
                 break;
-                case NS_rtf::LN_IXCHFOLLOW: 
+                case NS_rtf::LN_IXCHFOLLOW:
                     m_pImpl->m_pCurrentEntry->pCurrentProperties->nXChFollow = nIntValue;
                 break;
-                default: 
+                default:
                     OSL_ASSERT("this line should never be reached");
             }
         break;
-        case NS_rtf::LN_UNUSED5_7: 
+        case NS_rtf::LN_UNUSED5_7:
             //unused
         break;
 //        case NS_rtf::LN_DXASPACE: break;
 //        case NS_rtf::LN_DXAINDENT: break;
 //        case NS_rtf::LN_CBGRPPRLCHPX: break;
 //        case NS_rtf::LN_CBGRPPRLPAPX: break;
-        case NS_rtf::LN_LSID: 
-            m_pImpl->m_pCurrentEntry->nListId = nIntValue; 
+        case NS_rtf::LN_LSID:
+            m_pImpl->m_pCurrentEntry->nListId = nIntValue;
         break;
-        case NS_rtf::LN_TPLC: 
-            m_pImpl->m_pCurrentEntry->nTPLC = nIntValue; 
+        case NS_rtf::LN_TPLC:
+            m_pImpl->m_pCurrentEntry->nTPLC = nIntValue;
         break;
-        case NS_rtf::LN_RGISTD: 
-            m_pImpl->m_pCurrentEntry->sRGISTD += val.getString(); 
+        case NS_rtf::LN_RGISTD:
+            m_pImpl->m_pCurrentEntry->sRGISTD += val.getString();
         break;
-        case NS_rtf::LN_FSIMPLELIST: 
-            m_pImpl->m_pCurrentEntry->nSimpleList = nIntValue; 
+        case NS_rtf::LN_FSIMPLELIST:
+            m_pImpl->m_pCurrentEntry->nSimpleList = nIntValue;
         break;
-        case NS_rtf::LN_FRESTARTHDN: 
-            m_pImpl->m_pCurrentEntry->nRestart = nIntValue; 
+        case NS_rtf::LN_FRESTARTHDN:
+            m_pImpl->m_pCurrentEntry->nRestart = nIntValue;
         break;
-        case NS_rtf::LN_UNSIGNED26_2: 
-            m_pImpl->m_pCurrentEntry->nUnsigned = nIntValue; 
+        case NS_rtf::LN_UNSIGNED26_2:
+            m_pImpl->m_pCurrentEntry->nUnsigned = nIntValue;
         break;
 //        case NS_rtf::LN_ILVL: break;
 //        case NS_rtf::LN_FSTARTAT: break;

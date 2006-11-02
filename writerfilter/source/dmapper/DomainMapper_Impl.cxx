@@ -1,11 +1,48 @@
+/*************************************************************************
+ *
+ *  OpenOffice.org - a multi-platform office productivity suite
+ *
+ *  $RCSfile: DomainMapper_Impl.cxx,v $
+ *
+ *  $Revision: 1.3 $
+ *
+ *  last change: $Author: os $ $Date: 2006-11-02 12:37:24 $
+ *
+ *  The Contents of this file are made available subject to
+ *  the terms of GNU Lesser General Public License Version 2.1.
+ *
+ *
+ *    GNU Lesser General Public License Version 2.1
+ *    =============================================
+ *    Copyright 2005 by Sun Microsystems, Inc.
+ *    901 San Antonio Road, Palo Alto, CA 94303, USA
+ *
+ *    This library is free software; you can redistribute it and/or
+ *    modify it under the terms of the GNU Lesser General Public
+ *    License version 2.1, as published by the Free Software Foundation.
+ *
+ *    This library is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *    Lesser General Public License for more details.
+ *
+ *    You should have received a copy of the GNU Lesser General Public
+ *    License along with this library; if not, write to the Free Software
+ *    Foundation, Inc., 59 Temple Place, Suite 330, Boston,
+ *    MA  02111-1307  USA
+ *
+ ************************************************************************/
 #ifndef INCLUDED_DMAPPER_DOMAINMAPPER_IMPL_HXX
-#include <DomainMapper_Impl.hxx>        
+#include <DomainMapper_Impl.hxx>
 #endif
 #ifndef INCLUDED_DMAPPER_CONVERSIONHELPER_HXX
 #include <ConversionHelper.hxx>
 #endif
 #ifndef INCLUDED_DOMAIN_MAPPER_TABLE_HANDLER_HXX
 #include <DomainMapperTableHandler.hxx>
+#endif
+#ifndef _COM_SUN_STAR_UNO_XCOMPONENTCONTEXT_HPP_
+#include <com/sun/star/uno/XComponentContext.hpp>
 #endif
 #ifndef _COM_SUN_STAR_BEANS_XPROPERTYSET_HPP_
 #include <com/sun/star/beans/XPropertySet.hpp>
@@ -71,216 +108,216 @@ namespace dmapper{
 enum FieldId
 {
     /* ADDRESSBLOCK \d \* MERGEFORMAT -> Addressblock completely unsupported*/
-    FIELD_ADDRESSBLOCK 
+    FIELD_ADDRESSBLOCK
     /* ADVANCE \d downvalue \l leftvalue \r rightvalue \u upvalue \x xvalue \y yvalue -> unsupported*/
-    ,FIELD_ADVANCE  
-    /* ASK bookmarkname "hint" \d defaultanswer \o \* MERGEFORMAT -> 
-     the hint is not always quoted, inputfield with default answer, prompt before merge (\o) 
+    ,FIELD_ADVANCE
+    /* ASK bookmarkname "hint" \d defaultanswer \o \* MERGEFORMAT ->
+     the hint is not always quoted, inputfield with default answer, prompt before merge (\o)
      */
-    ,FIELD_ASK      
-    /* AUTONUM \* Numberingswitch -> 
-     mapped to sequence field "AutoNr"              
+    ,FIELD_ASK
+    /* AUTONUM \* Numberingswitch ->
+     mapped to sequence field "AutoNr"
      */
-    ,FIELD_AUTONUM  
+    ,FIELD_AUTONUM
     /* AUTONUMLGL \* Numberingswitch ->
      mapped to sequence field "AutoNr"
      */
-    ,FIELD_AUTONUMLGL  
-    /* AUTONUMOUT \* Numberingswitch -> 
+    ,FIELD_AUTONUMLGL
+    /* AUTONUMOUT \* Numberingswitch ->
         mapped to sequence field "AutoNr"
      */
-    ,FIELD_AUTONUMOUT 
-    /* AUTHOR NewAuthor \* defaultswitch \* MERGEFORMAT -> 
+    ,FIELD_AUTONUMOUT
+    /* AUTHOR NewAuthor \* defaultswitch \* MERGEFORMAT ->
         mapped to sequence field "AutoNr"
      */
-    ,FIELD_AUTHOR       
-    /* COMMENTS "comment" \* MERGEFORMAT -> 
+    ,FIELD_AUTHOR
+    /* COMMENTS "comment" \* MERGEFORMAT ->
         Docinfo-Comments
      */
-    ,FIELD_COMMENTS     
-    /* CREATEDATE \h \* MERGEFORMAT -> 
+    ,FIELD_COMMENTS
+    /* CREATEDATE \h \* MERGEFORMAT ->
      docinfo-created-date
      */
-    ,FIELD_CREATEDATE   
-    /* DATE \@ "number format" \s \* MERGEFORMAT -> 
+    ,FIELD_CREATEDATE
+    /* DATE \@ "number format" \s \* MERGEFORMAT ->
         ww8filterimprovement: multiple languages now supported
      */
-    ,FIELD_DATE         
-    /* DOCPROPERTY propertyname \* MERGEFORMAT -> 
-        ww8filterimprovement: some fields imported as functionally equivalent fields if possible, 
-        the others imported as UserField 
+    ,FIELD_DATE
+    /* DOCPROPERTY propertyname \* MERGEFORMAT ->
+        ww8filterimprovement: some fields imported as functionally equivalent fields if possible,
+        the others imported as UserField
      */
-    ,FIELD_DOCPROPERTY  
-    /* DOCVARIABLE Name \* MERGEFORMAT -> 
+    ,FIELD_DOCPROPERTY
+    /* DOCVARIABLE Name \* MERGEFORMAT ->
      ww8filterimprovement: now imported as user fields
      */
-    ,FIELD_DOCVARIABLE 
-    /* EDITTIME \# "displayformat" \* Numberingswitch \* MERGEFORMAT -> 
-        DocInfo-Modified-Date 
+    ,FIELD_DOCVARIABLE
+    /* EDITTIME \# "displayformat" \* Numberingswitch \* MERGEFORMAT ->
+        DocInfo-Modified-Date
         ww8filterimprovement: multiple languages now supported
      */
-    ,FIELD_EDITTIME     
-    /* FILLIN "text to fill in" \d defaultanswer \o \* MERGEFORMAT -> 
-        Function-InputField 
+    ,FIELD_EDITTIME
+    /* FILLIN "text to fill in" \d defaultanswer \o \* MERGEFORMAT ->
+        Function-InputField
      */
-    ,FIELD_FILLIN      
-    /* FILENAME \p \* * MERGEFORMAT -> 
+    ,FIELD_FILLIN
+    /* FILENAME \p \* * MERGEFORMAT ->
         file name (\p with path)
      */
-    ,FIELD_FILENAME    
-    /* FILESIZE \* NumberingType \* MERGEFORMAT -> 
+    ,FIELD_FILENAME
+    /* FILESIZE \* NumberingType \* MERGEFORMAT ->
      not imported in old ww8 filter, see lcl_ParseNumberingType
      todo find alternative field
      */
-    ,FIELD_FILESIZE     
-    /* =formula \# "number format"    
+    ,FIELD_FILESIZE
+    /* =formula \# "number format"
      todo find alternative field
      */
-    ,FIELD_FORMULA 
-    /* GOTOBUTTON text \* MERGEFORMAT -> 
+    ,FIELD_FORMULA
+    /* GOTOBUTTON text \* MERGEFORMAT ->
         not imported in old ww8 filter
         todo find alternative field
      */
-    ,FIELD_GOTOBUTTON   
-    /* HYPERLINK "link" \* MERGEFORMAT -> 
+    ,FIELD_GOTOBUTTON
+    /* HYPERLINK "link" \* MERGEFORMAT ->
         not imported in old ww8 filter
         ww8filterimprovement: now imported as hyperlink
      */
-    ,FIELD_HYPERLINK    
-    /* IF condition "then text" "else text" -> 
-        not imported in old ww8 filter 
-        ww8filterimprovement: now imported 
+    ,FIELD_HYPERLINK
+    /* IF condition "then text" "else text" ->
+        not imported in old ww8 filter
+        ww8filterimprovement: now imported
         todo: condition, if text, else text still missing
      */
-    ,FIELD_IF           
-    /* INFO NameOfInfo \* MERGEFORMAT -> old 
+    ,FIELD_IF
+    /* INFO NameOfInfo \* MERGEFORMAT -> old
         todo: filter imports wrong?
      */
-    ,FIELD_INFO        
-    /* INCLUDEPICTURE path \* MERGEFORMAT-> 
+    ,FIELD_INFO
+    /* INCLUDEPICTURE path \* MERGEFORMAT->
      old filter imports an embedded picture
      todo: not yet supported
      */
-    ,FIELD_INCLUDEPICTURE 
-    /* KEYWORDS keyword \* defaultswitch \* Numberingswitch \* MERGEFORMAT -> 
+    ,FIELD_INCLUDEPICTURE
+    /* KEYWORDS keyword \* defaultswitch \* Numberingswitch \* MERGEFORMAT ->
      DocInfo Keywords
      */
-    ,FIELD_KEYWORDS     
-    /* LASTSAVEDBY \* MERGEFORMAT -> 
+    ,FIELD_KEYWORDS
+    /* LASTSAVEDBY \* MERGEFORMAT ->
      DocInfo-Modified-Author
      */
-    ,FIELD_LASTSAVEDBY  
-    /* MACROBUTTON MacroName quick help text -> 
+    ,FIELD_LASTSAVEDBY
+    /* MACROBUTTON MacroName quick help text ->
      Macro field
      */
-    ,FIELD_MACROBUTTON  
-    /* MERGEFIELD ColumName \b prefix \f suffix \* MERGEFORMAT -> 
+    ,FIELD_MACROBUTTON
+    /* MERGEFIELD ColumName \b prefix \f suffix \* MERGEFORMAT ->
         ww8filterimprovement: column-only API now upporterd
      */
-    ,FIELD_MERGEFIELD   
-    /* MERGEREC \* MERGEFORMAT -> 
-     RecordNumber field, maybe without db name 
+    ,FIELD_MERGEFIELD
+    /* MERGEREC \* MERGEFORMAT ->
+     RecordNumber field, maybe without db name
      todo: currently unchecked
      */
-    ,FIELD_MERGEREC     
-    /* MERGESEQ \* MERGEFORMAT -> 
+    ,FIELD_MERGEREC
+    /* MERGESEQ \* MERGEFORMAT ->
      not imported in old ww8 filter
      ww8filterimprovement: now imported
      todo: currently unchecked
      */
-    ,FIELD_MERGESEQ     
-    /* NEXT text -> 
-     Next record 
+    ,FIELD_MERGESEQ
+    /* NEXT text ->
+     Next record
      todo: currently unchecked
      */
-    ,FIELD_NEXT         
+    ,FIELD_NEXT
     /* NEXTIF condition
      todo: condition not imported
      */
-    ,FIELD_NEXTIF       
-    /* PAGE \* Numberingswitch \* MERGEFORMAT -> 
+    ,FIELD_NEXTIF
+    /* PAGE \* Numberingswitch \* MERGEFORMAT ->
      see lcl_ParseNumberingType
      */
-    ,FIELD_PAGE         
-    /* REF targetbkm \f \* MERGEFORMAT -> 
+    ,FIELD_PAGE
+    /* REF targetbkm \f \* MERGEFORMAT ->
         imports a ShowVariable (bookmarkname)?
         todo: not imported yet
      */
-    ,FIELD_REF          // 
-    /* REVNUM \* Numberingswitch \* MERGEFORMAT -> 
+    ,FIELD_REF          //
+    /* REVNUM \* Numberingswitch \* MERGEFORMAT ->
      DocInfo-revision number
      */
-    ,FIELD_REVNUM       
-    /* SAVEDATE \@ "NumberFormat"\* MERGEFORMAT -> 
+    ,FIELD_REVNUM
+    /* SAVEDATE \@ "NumberFormat"\* MERGEFORMAT ->
      DocInfo-modified-date
      */
-    ,FIELD_SAVEDATE     
-    /* SECTION \* NumberFormat \* MERGEFORMAT -> 
+    ,FIELD_SAVEDATE
+    /* SECTION \* NumberFormat \* MERGEFORMAT ->
         not imported in old ww8 filter see lcl_ParseNumberingType
         todo: find alternative
      */
-    ,FIELD_SECTION      
-    /* SECTIONPAGES \* NumberFormat \* MERGEFORMAT -> 
+    ,FIELD_SECTION
+    /* SECTIONPAGES \* NumberFormat \* MERGEFORMAT ->
      not imported in old ww8 filter see lcl_ParseNumberingType
         todo: find alternative
      */
-    ,FIELD_SECTIONPAGES 
-    /* SEQ sequencename \h \c \n \r \s \* MERGEFORMAT -> 
+    ,FIELD_SECTIONPAGES
+    /* SEQ sequencename \h \c \n \r \s \* MERGEFORMAT ->
      number range name:sequencename value:sequencename+1
      todo: only partially implemented, switches unsupported
      */
-    ,FIELD_SEQ           
-    /* SET bookmarkname newtext \* MERGEFORMAT -> 
+    ,FIELD_SEQ
+    /* SET bookmarkname newtext \* MERGEFORMAT ->
      SetVariable bookmarkname = newtext
      todo: not implemented yet
      */
-    ,FIELD_SET          
-    /* SKIPIF condition \* MERGEFORMAT -> 
+    ,FIELD_SET
+    /* SKIPIF condition \* MERGEFORMAT ->
      ??
      todo: not implemented yet
      */
-    ,FIELD_SKIPIF       
-    /* STYLEREF stylename \* MERGEFORMAT -> 
-     not imported in old ww8 filter 
+    ,FIELD_SKIPIF
+    /* STYLEREF stylename \* MERGEFORMAT ->
+     not imported in old ww8 filter
      todo: add an equivalent field type
      */
-    ,FIELD_STYLEREF     
-    /* SUBJECT subject \* Defaultswitch \* MERGEFORMAT -> 
+    ,FIELD_STYLEREF
+    /* SUBJECT subject \* Defaultswitch \* MERGEFORMAT ->
      DocInfo - subject
      */
-    ,FIELD_SUBJECT     
-    /* SYMBOL symbolnumber \* MERGEFORMAT -> 
+    ,FIELD_SUBJECT
+    /* SYMBOL symbolnumber \* MERGEFORMAT ->
      inserts a special char (symbolnumber)
      todo: find alternative
      */
-    ,FIELD_SYMBOL      
+    ,FIELD_SYMBOL
     /* TEMPLATE \* Defaultswitch \* MERGEFORMAT
      TemplateName field
      */
-    ,FIELD_TEMPLATE     
+    ,FIELD_TEMPLATE
     /* TIME \@ "number format" \* MERGEFORMAT
      ww8filterimprovement: multiple languages now supported
      */
-    ,FIELD_TIME         
-    /* TITLE \* Defaultswitch \* MERGEFORMAT -> 
+    ,FIELD_TIME
+    /* TITLE \* Defaultswitch \* MERGEFORMAT ->
      DocInfo-title
      */
-    ,FIELD_TITLE        
-    /* USERINITIALS newinitials \* MERGEFORMAT -> 
+    ,FIELD_TITLE
+    /* USERINITIALS newinitials \* MERGEFORMAT ->
      ExtendedUser field (SHORTCUT)
      */
-    ,FIELD_USERINITIALS 
-    /* USERADDRESS \* MERGEFORMAT -> 
+    ,FIELD_USERINITIALS
+    /* USERADDRESS \* MERGEFORMAT ->
      not imported in old ww8 filter
         todo: find alternative
      */
-    ,FIELD_USERADDRESS  
-    /* USERNAME newusername \* MERGEFORMAT -> 
+    ,FIELD_USERADDRESS
+    /* USERNAME newusername \* MERGEFORMAT ->
      not imported in old ww8 filter
      todo: import as extended user field(s)
      */
-    ,FIELD_USERNAME     
-};        
+    ,FIELD_USERNAME
+};
 struct FieldConversion
 {
     ::rtl::OUString     sWordCommand;
@@ -305,9 +342,9 @@ struct FieldConversionEq
     }
 };
 
-typedef ::std::hash_map< ::rtl::OUString, FieldConversion, FieldConversionHash, FieldConversionEq> 
+typedef ::std::hash_map< ::rtl::OUString, FieldConversion, FieldConversionHash, FieldConversionEq>
             FieldConversionMap_t;
-        
+
 /*-- 18.07.2006 08:56:55---------------------------------------------------
 
   -----------------------------------------------------------------------*/
@@ -317,7 +354,7 @@ sal_Int32 FIB::GetData( doctok::Id nName )
         return aFIBData[nName - NS_rtf::LN_WIDENT];
     OSL_ASSERT("invalid index in FIB");
     return -1;
-}            
+}
 /*-- 18.07.2006 08:56:55---------------------------------------------------
 
   -----------------------------------------------------------------------*/
@@ -326,16 +363,18 @@ void FIB::SetData( doctok::Id nName, sal_Int32 nValue )
     OSL_ENSURE( nName >= NS_rtf::LN_WIDENT && nName <= NS_rtf::LN_LCBSTTBFUSSR, "invalid index in FIB");
     if( nName >= NS_rtf::LN_WIDENT && nName <= NS_rtf::LN_LCBSTTBFUSSR)
         aFIBData[nName - NS_rtf::LN_WIDENT] = nValue;
-}            
+}
 /*-- 01.09.2006 10:22:03---------------------------------------------------
 
   -----------------------------------------------------------------------*/
-DomainMapper_Impl::DomainMapper_Impl( 
+DomainMapper_Impl::DomainMapper_Impl(
             DomainMapper& rDMapper,
-            uno::Reference< lang::XComponent >  xModel ) :
+            uno::Reference < uno::XComponentContext >  xContext,
+            uno::Reference< lang::XComponent >  xModel) :
         m_rDMapper( rDMapper ),
         m_xTextDocument( xModel, uno::UNO_QUERY ),
         m_xTextFactory( xModel, uno::UNO_QUERY ),
+        m_xComponentContext( xContext ),
         m_bFieldMode( false ),
         m_bSetUserFieldContent( false ),
         m_nCurrentTabStopIndex( 0 ),
@@ -351,7 +390,7 @@ DomainMapper_Impl::DomainMapper_Impl(
     m_TableManager.setHandler(pTableHandler);
 
     m_TableManager.startLevel();
-}    
+}
 /*-- 01.09.2006 10:22:28---------------------------------------------------
 
   -----------------------------------------------------------------------*/
@@ -365,12 +404,12 @@ DomainMapper_Impl::~DomainMapper_Impl()
 uno::Reference< container::XNameContainer >    DomainMapper_Impl::GetPageStyles()
 {
     if(!m_xPageStyles.is())
-    {        
+    {
         uno::Reference< style::XStyleFamiliesSupplier > xSupplier( m_xTextDocument, uno::UNO_QUERY );
         xSupplier->getStyleFamilies()->getByName(::rtl::OUString::createFromAscii("PageStyles")) >>= m_xPageStyles;
     }
     return m_xPageStyles;
-}            
+}
 /*-------------------------------------------------------------------------
 
   -----------------------------------------------------------------------*/
@@ -378,8 +417,8 @@ uno::Reference< text::XText > DomainMapper_Impl::GetBodyText()
 {
     if(!m_xBodyText.is() && m_xTextDocument.is())
     {
-        m_xBodyText = m_xTextDocument->getText();    
-    }            
+        m_xBodyText = m_xTextDocument->getText();
+    }
     return m_xBodyText;
 }
 /*-------------------------------------------------------------------------
@@ -392,24 +431,24 @@ void    DomainMapper_Impl::PushProperties(ContextType eId)
     m_aContextStack.push(eId);
 
     m_pTopContext = m_aPropertyStacks[eId].top();
-}        
+}
 /*-------------------------------------------------------------------------
 
   -----------------------------------------------------------------------*/
-void    DomainMapper_Impl::PopProperties(ContextType eId)  
-{ 
+void    DomainMapper_Impl::PopProperties(ContextType eId)
+{
     OSL_ENSURE(!m_aPropertyStacks[eId].empty(), "section stack already empty");
-    m_aPropertyStacks[eId].pop(); 
-    m_aContextStack.pop(); 
+    m_aPropertyStacks[eId].pop();
+    m_aContextStack.pop();
     if(!m_aContextStack.empty() && !m_aPropertyStacks[m_aContextStack.top()].empty())
 
             m_pTopContext = m_aPropertyStacks[m_aContextStack.top()].top();
-    else 
+    else
     {
         OSL_ENSURE(eId == CONTEXT_SECTION, "this should happen at a section context end");
         m_pTopContext.reset();
-    }            
-} 
+    }
+}
 /*-------------------------------------------------------------------------
 
   -----------------------------------------------------------------------*/
@@ -432,10 +471,10 @@ void DomainMapper_Impl::InitTabStopFromStyle( const uno::Sequence< style::TabSto
     for( sal_Int32 nTab = 0; nTab < rInitTabStops.getLength(); ++nTab)
     {
         m_aCurrentTabStops.push_back( DeletableTabStop(rInitTabStops[nTab]) );
-    }            
+    }
 }
 /*-- 29.06.2006 13:35:33---------------------------------------------------
-    
+
   -----------------------------------------------------------------------*/
 void DomainMapper_Impl::ModifyCurrentTabStop( doctok::Id nId, sal_Int32 nValue)
 {
@@ -451,8 +490,8 @@ void DomainMapper_Impl::ModifyCurrentTabStop( doctok::Id nId, sal_Int32 nValue)
         style::TabAlign_RIGHT,
         style::TabAlign_DECIMAL,
         style::TabAlign_LEFT
-    };            
-    static const sal_Unicode aTabFillCharWord[] = 
+    };
+    static const sal_Unicode aTabFillCharWord[] =
     {
         ' ',
         '.',
@@ -460,7 +499,7 @@ void DomainMapper_Impl::ModifyCurrentTabStop( doctok::Id nId, sal_Int32 nValue)
         '_',
         '_',
         0xb7
-    };            
+    };
 
     switch(nId)
     {
@@ -469,7 +508,7 @@ void DomainMapper_Impl::ModifyCurrentTabStop( doctok::Id nId, sal_Int32 nValue)
                     DeletableTabStop(style::TabStop(lcl_convertToMM100(nValue), style::TabAlign_LEFT, ' ', ' ')));
         break;
         case NS_rtf::LN_dxaDel: //deleted tab
-        {    
+        {
             //mark the tab stop at the given position as deleted
             ::std::vector<DeletableTabStop>::iterator aIt = m_aCurrentTabStops.begin();
             ::std::vector<DeletableTabStop>::iterator aEndIt = m_aCurrentTabStops.end();
@@ -477,7 +516,7 @@ void DomainMapper_Impl::ModifyCurrentTabStop( doctok::Id nId, sal_Int32 nValue)
             for( ; aIt != aEndIt; ++aIt)
             {
                 if( aIt->Position == nConverted )
-                {        
+                {
                     aIt->bDeleted = true;
                     break;
                 }
@@ -485,7 +524,7 @@ void DomainMapper_Impl::ModifyCurrentTabStop( doctok::Id nId, sal_Int32 nValue)
         }
         break;
         case NS_rtf::LN_TLC: //tab leading characters - for decimal tabs
-            // 0 - no leader, 1- dotted, 2 - hyphenated, 3 - single line, 4 - heavy line, 5 - middle dot 
+            // 0 - no leader, 1- dotted, 2 - hyphenated, 3 - single line, 4 - heavy line, 5 - middle dot
             if( nValue >= 0 &&  nValue < sal::static_int_cast<sal_Int32>(sizeof(aTabFillCharWord) / sizeof (sal_Unicode)))
                 (m_aCurrentTabStops.begin() + m_nCurrentTabStopIndex)->FillChar = aTabFillCharWord[nValue];
         break;
@@ -494,10 +533,10 @@ void DomainMapper_Impl::ModifyCurrentTabStop( doctok::Id nId, sal_Int32 nValue)
             if( nValue >= 0 && nValue < sal::static_int_cast<sal_Int32>(sizeof(aTabAlignFromWord) / sizeof (style::TabAlign)))
                 (m_aCurrentTabStops.begin() + m_nCurrentTabStopIndex)->Alignment = aTabAlignFromWord[nValue];
         break;
-    }            
+    }
 }
 /*-- 29.06.2006 13:35:33---------------------------------------------------
-    
+
   -----------------------------------------------------------------------*/
 uno::Sequence< style::TabStop > DomainMapper_Impl::GetCurrentTabStopAndClear()
 {
@@ -507,7 +546,7 @@ uno::Sequence< style::TabStop > DomainMapper_Impl::GetCurrentTabStopAndClear()
     ::std::vector<DeletableTabStop>::const_iterator aEndIt = m_aCurrentTabStops.end();
     sal_Int32 nDeleted = 0;
     for(sal_Int32 nIndex = 0; aIt != aEndIt; ++aIt)
-    {        
+    {
         if(!aIt->bDeleted)
             pArray[nIndex++] = *aIt;
         else
@@ -520,7 +559,7 @@ uno::Sequence< style::TabStop > DomainMapper_Impl::GetCurrentTabStopAndClear()
         aRet.realloc( aRet.getLength() - nDeleted);
     }
     return aRet;
-}            
+}
 
 /*-- 17.07.2006 09:08:26---------------------------------------------------
     returns a the value from the current paragraph style - if available
@@ -532,29 +571,29 @@ uno::Any DomainMapper_Impl::GetPropertyFromStyleSheet(PropertyIds eId)
     if( m_bInStyleSheetImport )
         pEntry = GetStyleSheetTable()->FindParentStyleSheet(-1);
     else
-        pEntry = 
+        pEntry =
                 GetStyleSheetTable()->FindStyleSheetByISTD(GetCurrentParaStyleId());
     while(pEntry)
     {
         //is there a tab stop set?
         if(pEntry->pProperties)
         {
-            PropertyMap::const_iterator aPropertyIter = 
+            PropertyMap::const_iterator aPropertyIter =
                     pEntry->pProperties->find(PropertyNameSupplier::GetPropertyNameSupplier().GetName((eId)));
             if( aPropertyIter != pEntry->pProperties->end())
             {
                 return aPropertyIter->second;
-            }            
+            }
         }
         //search until the property is set or no parent is available
         pEntry = GetStyleSheetTable()->FindParentStyleSheet(pEntry->nBaseStyleIdentifier);
-    }            
+    }
     return uno::Any();
 }
 /*-------------------------------------------------------------------------
 
   -----------------------------------------------------------------------*/
-ListTablePtr DomainMapper_Impl::GetListTable() 
+ListTablePtr DomainMapper_Impl::GetListTable()
 {
     if(!m_pListTable)
         m_pListTable.reset(
@@ -568,9 +607,9 @@ void DomainMapper_Impl::finishParagraph( PropertyMapPtr pPropertyMap )
 {
     uno::Reference< text::XTextAppendAndConvert >  xTextAppendAndConvert = m_aTextAppendStack.top();
     if(xTextAppendAndConvert.is() && ! m_TableManager.isIgnore())
-    {        
+    {
         try
-        {  
+        {
             uno::Reference< text::XTextRange > xTextRange =
                 xTextAppendAndConvert->finishParagraph
                 (pPropertyMap->GetPropertyValues());
@@ -579,12 +618,12 @@ void DomainMapper_Impl::finishParagraph( PropertyMapPtr pPropertyMap )
         }
         catch(const lang::IllegalArgumentException& )
         {
-        }            
+        }
         catch(const uno::Exception& )
         {
-        }            
+        }
     }
-}            
+}
 /*-------------------------------------------------------------------------
 
   -----------------------------------------------------------------------*/
@@ -592,9 +631,9 @@ void DomainMapper_Impl::appendTextPortion( const ::rtl::OUString& rString, Prope
 {
     uno::Reference< text::XTextAppendAndConvert >  xTextAppendAndConvert = m_aTextAppendStack.top();
     if(xTextAppendAndConvert.is() && ! m_TableManager.isIgnore())
-    {        
+    {
         try
-        {        
+        {
             uno::Reference< text::XTextRange > xTextRange =
                 xTextAppendAndConvert->appendTextPortion
                 (rString, pPropertyMap->GetPropertyValues());
@@ -603,19 +642,39 @@ void DomainMapper_Impl::appendTextPortion( const ::rtl::OUString& rString, Prope
         }
         catch(const lang::IllegalArgumentException& )
         {
-        }            
+        }
         catch(const uno::Exception& )
         {
-        }            
-    }       
-}   
+        }
+    }
+}
+/*-- 02.11.2006 12:08:33---------------------------------------------------
+
+  -----------------------------------------------------------------------*/
+void DomainMapper_Impl::appendTextContent( const uno::Reference< text::XTextContent > xContent)
+{
+    uno::Reference< text::XTextAppendAndConvert >  xTextAppendAndConvert = m_aTextAppendStack.top();
+    if(xTextAppendAndConvert.is() && ! m_TableManager.isIgnore())
+    {
+        try
+        {
+            xTextAppendAndConvert->appendTextContent( xContent );
+        }
+        catch(const lang::IllegalArgumentException& )
+        {
+        }
+        catch(const uno::Exception& )
+        {
+        }
+    }
+}
 /*-- 24.07.2006 09:41:20---------------------------------------------------
 
   -----------------------------------------------------------------------*/
 ::rtl::OUString lcl_FindUnusedPageStyleName(const uno::Sequence< ::rtl::OUString >& rPageStyleNames)
 {
     static const sal_Char cDefaultStyle[] = "Converted";
-    //find the hightest number x in each style with the name "cDefaultStyle+x" and 
+    //find the hightest number x in each style with the name "cDefaultStyle+x" and
     //return an incremented name
     sal_Int32 nMaxIndex = 0;
     const sal_Int32 nDefaultLength = sizeof(cDefaultStyle)/sizeof(sal_Char) - 1;
@@ -624,18 +683,18 @@ void DomainMapper_Impl::appendTextPortion( const ::rtl::OUString& rString, Prope
     const ::rtl::OUString* pStyleNames = rPageStyleNames.getConstArray();
     for( sal_Int32 nStyle = 0; nStyle < rPageStyleNames.getLength(); ++nStyle)
     {
-        if( pStyleNames[nStyle].getLength() > nDefaultLength && 
+        if( pStyleNames[nStyle].getLength() > nDefaultLength &&
                 !rtl_ustr_compare_WithLength( sDefaultStyle, nDefaultLength, pStyleNames[nStyle], nDefaultLength))
         {
             sal_Int32 nIndex = pStyleNames[nStyle].copy( nDefaultLength ).toInt32();
-            if( nIndex > nMaxIndex) 
+            if( nIndex > nMaxIndex)
                 nMaxIndex = nIndex;
-        }    
-    }            
+        }
+    }
     ::rtl::OUString sRet( sDefaultStyle );
     sRet += rtl::OUString::valueOf( nMaxIndex + 1);
     return sRet;
-}    
+}
 
 void DomainMapper_Impl::PushPageHeader(SectionPropertyMap::PageType eType)
 {
@@ -644,11 +703,11 @@ void DomainMapper_Impl::PushPageHeader(SectionPropertyMap::PageType eType)
     //ask for the header name of the given type
     SectionPropertyMap* pSectionContext = dynamic_cast< SectionPropertyMap* >( pContext.get() );
     if(pSectionContext)
-    {        
+    {
         ::rtl::OUString sPageStyleName = pSectionContext->GetPageStyleName( eType );
         //if there's none create one
         try
-        {        
+        {
             uno::Reference< beans::XPropertySet > xPageStyle;
             if(!sPageStyleName.getLength())
             {
@@ -659,12 +718,12 @@ void DomainMapper_Impl::PushPageHeader(SectionPropertyMap::PageType eType)
                         uno::UNO_QUERY);
                 GetPageStyles()->insertByName( sPageStyleName, uno::makeAny(xPageStyle) );
                 pSectionContext->SetPageStyleName( eType, sPageStyleName );
-            } 
+            }
             else
                 GetPageStyles()->getByName( sPageStyleName ) >>= xPageStyle;
             //switch on header use
             xPageStyle->setPropertyValue(
-                    ::rtl::OUString(RTL_CONSTASCII_USTRINGPARAM("HeaderIsOn")), 
+                    ::rtl::OUString(RTL_CONSTASCII_USTRINGPARAM("HeaderIsOn")),
                     uno::makeAny(sal_True) );
             //set the interface
             uno::Reference< text::XText > xHeaderText;
@@ -673,7 +732,7 @@ void DomainMapper_Impl::PushPageHeader(SectionPropertyMap::PageType eType)
         }
         catch( uno::Exception& )
         {
-        }            
+        }
     }
 }
 /*-- 24.07.2006 09:41:20---------------------------------------------------
@@ -686,11 +745,11 @@ void DomainMapper_Impl::PushPageFooter(SectionPropertyMap::PageType eType)
     //ask for the footer name of the given type
     SectionPropertyMap* pSectionContext = dynamic_cast< SectionPropertyMap* >( pContext.get() );
     if(pSectionContext)
-    {        
+    {
         ::rtl::OUString sPageStyleName = pSectionContext->GetPageStyleName( eType );
         //if there's none create one
         try
-        {        
+        {
             uno::Reference< beans::XPropertySet > xPageStyle;
             if(!sPageStyleName.getLength())
             {
@@ -701,12 +760,12 @@ void DomainMapper_Impl::PushPageFooter(SectionPropertyMap::PageType eType)
                         uno::UNO_QUERY);
                 GetPageStyles()->insertByName( sPageStyleName, uno::makeAny(xPageStyle) );
                 pSectionContext->SetPageStyleName( eType, sPageStyleName );
-            }    
+            }
             else
                 GetPageStyles()->getByName( sPageStyleName ) >>= xPageStyle;
             //switch on footer use
             xPageStyle->setPropertyValue(
-                    ::rtl::OUString(RTL_CONSTASCII_USTRINGPARAM("FooterIsOn")), 
+                    ::rtl::OUString(RTL_CONSTASCII_USTRINGPARAM("FooterIsOn")),
                     uno::makeAny(sal_True) );
             //set the interface
             uno::Reference< text::XText > xFooterText;
@@ -715,40 +774,40 @@ void DomainMapper_Impl::PushPageFooter(SectionPropertyMap::PageType eType)
         }
         catch( uno::Exception& )
         {
-        }            
+        }
     }
 }
 /*-- 24.07.2006 09:41:20---------------------------------------------------
 
   -----------------------------------------------------------------------*/
 void DomainMapper_Impl::PopPageHeaderFooter()
-{        
+{
     m_aTextAppendStack.pop();
 }
 /*-------------------------------------------------------------------------
 
   -----------------------------------------------------------------------*/
 sal_Int32 lcl_convertToMM100(sal_Int32 _t)
-{  
+{
     return TWIP_TO_MM100( _t );
-} 
+}
 /*-- 12.09.2006 08:07:55---------------------------------------------------
 
   -----------------------------------------------------------------------*/
-::rtl::OUString lcl_FindQuotedText( const ::rtl::OUString& rCommand, 
+::rtl::OUString lcl_FindQuotedText( const ::rtl::OUString& rCommand,
                 const sal_Char* cStartQuote, const sal_Unicode uEndQuote )
 {
     ::rtl::OUString sRet;
     ::rtl::OUString sStartQuote( ::rtl::OUString::createFromAscii(cStartQuote) );
     sal_Int32 nStartIndex = rCommand.indexOf( sStartQuote );
     if( nStartIndex >= 0 )
-    {        
+    {
         sal_Int32 nStartLength = sStartQuote.getLength();
         sal_Int32 nEndIndex = rCommand.indexOf( uEndQuote, nStartIndex + nStartLength);
         if( nEndIndex > nStartIndex )
         {
             sRet = rCommand.copy( nStartIndex + nStartLength, nEndIndex - nStartIndex - nStartLength);
-        }            
+        }
     }
     return sRet;
 
@@ -759,19 +818,19 @@ sal_Int32 lcl_convertToMM100(sal_Int32 _t)
 sal_Int16 lcl_ParseNumberingType(::rtl::OUString& rCommand)
 {
     sal_Int16 nRet = style::NumberingType::PAGE_DESCRIPTOR;
-    
+
     //  The command looks like: " PAGE \* Arabic "
     ::rtl::OUString sNumber = lcl_FindQuotedText(rCommand, "\\* ", ' ');
 
     if( sNumber.getLength() )
-    {        
+    {
         //todo: might make sense to hash this list, too
         struct NumberingPairs
         {
             const sal_Char* cWordName;
             sal_Int16       nType;
-        };            
-        static const NumberingPairs aNumberingPairs[] = 
+        };
+        static const NumberingPairs aNumberingPairs[] =
         {
             {"Arabic", style::NumberingType::ARABIC}
             ,{"ROMAN", style::NumberingType::ROMAN_UPPER}
@@ -798,7 +857,7 @@ sal_Int16 lcl_ParseNumberingType(::rtl::OUString& rCommand)
 //            ,{"CHINESENUM3", style::NumberingType::}
             ,{"ArabicAlpha", style::NumberingType::CHARS_ARABIC}
             ,{"ArabicAbjad", style::NumberingType::FULLWIDTH_ARABIC}
-/* possible values: 
+/* possible values:
 style::NumberingType::
 
     CHARS_UPPER_LETTER_N
@@ -834,17 +893,17 @@ style::NumberingType::
     CHARS_CYRILLIC_UPPER_LETTER_N_RU
     CHARS_CYRILLIC_LOWER_LETTER_N_RU*/
 
-        };            
+        };
         for( sal_uInt32 nNum = 0; nNum < sizeof(aNumberingPairs)/sizeof( NumberingPairs ); ++nNum)
         {
             if( /*sCommand*/sNumber.equalsAscii(aNumberingPairs[nNum].cWordName ))
-            {        
-                nRet = aNumberingPairs[nNum].nType; 
+            {
+                nRet = aNumberingPairs[nNum].nType;
                 break;
             }
-        }            
+        }
 
-    }            
+    }
     return nRet;
 }
 /*-- 08.09.2006 13:52:09---------------------------------------------------
@@ -867,7 +926,7 @@ extract a parameter (with or without quotes) between the command and the followi
     {
         nStartIndex = nQuoteIndex + 1;
         nEndIndex = rCommand.indexOf( '\"', nStartIndex + 1) - 1;
-    }            
+    }
     else
     {
         nEndIndex = rCommand.indexOf( ::rtl::OUString::createFromAscii(" \\"), nStartIndex);
@@ -883,7 +942,7 @@ extract a parameter (with or without quotes) between the command and the followi
                     ++nStartIndex;
             while( nEndIndex > nStartIndex && pCommandStr[nEndIndex] == ' ')
                     --nEndIndex;
-        }                
+        }
         sRet = rCommand.copy( nStartIndex, nEndIndex - nStartIndex + 1);
     }
     return sRet;
@@ -912,7 +971,7 @@ extract a parameter (with or without quotes) between the command and the followi
     if( !rHint.getLength() )
         rHint = sRet;
     return sRet;
-}                
+}
 /*-- 01.09.2006 11:48:08---------------------------------------------------
 
   -----------------------------------------------------------------------*/
@@ -923,7 +982,7 @@ void DomainMapper_Impl::CreateField( ::rtl::OUString& rCommand )
     m_bSetUserFieldContent = false;
     if(!bFilled)
     {
-        static const FieldConversion aFields[] = 
+        static const FieldConversion aFields[] =
         {
 //            {::rtl::OUString(RTL_CONSTASCII_USTRINGPARAM("ADDRESSBLOCK")),  "",                         "", FIELD_ADDRESSBLOCK  },
 //            {::rtl::OUString(RTL_CONSTASCII_USTRINGPARAM("ADVANCE")),       "",                         "", FIELD_ADVANCE       },
@@ -973,22 +1032,22 @@ void DomainMapper_Impl::CreateField( ::rtl::OUString& rCommand )
             {::rtl::OUString(RTL_CONSTASCII_USTRINGPARAM("USERINITIALS")),  "ExtendedUser",              "", FIELD_USERINITIALS},
 //            {::rtl::OUString(RTL_CONSTASCII_USTRINGPARAM("USERADDRESS")),   "",                         "", FIELD_USERADDRESS  },
 //            {::rtl::OUString(RTL_CONSTASCII_USTRINGPARAM("USERNAME")),      "ExtendedUser",             "", FIELD_USERNAME     }
-            
+
 //            {::rtl::OUString(RTL_CONSTASCII_USTRINGPARAM("")), "", "", FIELD_},
 
         };
         size_t nConversions = sizeof(aFields)/sizeof(FieldConversion);
         for( size_t nConversion = 0; nConversion < nConversions; ++nConversion)
-        {         
-            aFieldConversionMap.insert( FieldConversionMap_t::value_type( 
+        {
+            aFieldConversionMap.insert( FieldConversionMap_t::value_type(
                     aFields[nConversion].sWordCommand,
                     aFields[nConversion] ));
         }
-            
+
         bFilled = true;
     }
     try
-    {        
+    {
         uno::Reference< uno::XInterface > xFieldInterface;
         //at first determine the field type - skip first space
         ::rtl::OUString sCommand( rCommand.copy(rCommand.getLength() ? 1 : 0) );
@@ -1014,18 +1073,18 @@ void DomainMapper_Impl::CreateField( ::rtl::OUString& rCommand )
             {
                 case FIELD_ADDRESSBLOCK: break;
                 case FIELD_ADVANCE     : break;
-                case FIELD_ASK         : 
-                {    
+                case FIELD_ASK         :
+                {
                     //doesn the command contain a variable name?
                     ::rtl::OUString sVariable, sHint;
-                    
+
                     sVariable = lcl_ExctractAskVariableAndHint( rCommand, sHint );
                     if(sVariable.getLength())
-                    {        
+                    {
                         // determine field master name
-                        uno::Reference< beans::XPropertySet > xMaster = FindOrCreateFieldMaster( 
+                        uno::Reference< beans::XPropertySet > xMaster = FindOrCreateFieldMaster(
                                 "com.sun.star.text.FieldMaster.SetExpression", sVariable );
-                        
+
                         // attach the master to the field
                         uno::Reference< text::XDependentTextField > xDependentField( xFieldInterface, uno::UNO_QUERY_THROW );
                         xDependentField->attachTextFieldMaster( xMaster );
@@ -1035,7 +1094,7 @@ void DomainMapper_Impl::CreateField( ::rtl::OUString& rCommand )
                                 rPropNameSupplier.GetName(PROP_IS_INPUT), uno::makeAny( true ));
                         // set the prompt
                         xFieldProperties->setPropertyValue(
-                                rPropNameSupplier.GetName(PROP_HINT), 
+                                rPropNameSupplier.GetName(PROP_HINT),
                                 uno::makeAny( sHint ));
                     }
                     else
@@ -1043,19 +1102,19 @@ void DomainMapper_Impl::CreateField( ::rtl::OUString& rCommand )
                         //don't insert the field
                         //todo: maybe import a 'normal' input field here?
                         xFieldInterface = 0;
-                    }  
-                }          
+                    }
+                }
                 break;
-                case FIELD_AUTONUM    : 
-                case FIELD_AUTONUMLGL :    
-                case FIELD_AUTONUMOUT :    
-                {    
+                case FIELD_AUTONUM    :
+                case FIELD_AUTONUMLGL :
+                case FIELD_AUTONUMOUT :
+                {
                     //create a sequence field master "AutoNr"
-                    uno::Reference< beans::XPropertySet > xMaster = FindOrCreateFieldMaster( 
-                                "com.sun.star.text.FieldMaster.SetExpression", 
+                    uno::Reference< beans::XPropertySet > xMaster = FindOrCreateFieldMaster(
+                                "com.sun.star.text.FieldMaster.SetExpression",
                                 rtl::OUString(RTL_CONSTASCII_USTRINGPARAM("AutoNr") ));
-                    
-                    xMaster->setPropertyValue( rPropNameSupplier.GetName(PROP_SUB_TYPE), 
+
+                    xMaster->setPropertyValue( rPropNameSupplier.GetName(PROP_SUB_TYPE),
                                 uno::makeAny(text::SetVariableType::SEQUENCE));
 
                     //apply the numbering type
@@ -1067,8 +1126,8 @@ void DomainMapper_Impl::CreateField( ::rtl::OUString& rCommand )
                     xDependentField->attachTextFieldMaster( xMaster );
                 }
                 break;
-                case FIELD_AUTHOR       : 
-                {    
+                case FIELD_AUTHOR       :
+                {
                     xFieldProperties->setPropertyValue( rPropNameSupplier.GetName(PROP_FULL_NAME), uno::makeAny( true ));
                     ::rtl::OUString sParam = lcl_ExtractParameter(rCommand, sizeof(" AUTHOR") );
                     if(sParam.getLength())
@@ -1079,17 +1138,17 @@ void DomainMapper_Impl::CreateField( ::rtl::OUString& rCommand )
                     }
                 }
                 break;
-                case FIELD_DATE: 
-                {    
-                    //not fixed, 
+                case FIELD_DATE:
+                {
+                    //not fixed,
                     xFieldProperties->setPropertyValue(
                         rPropNameSupplier.GetName(PROP_IS_FIXED),
                         uno::makeAny( false ));
                     SetNumberFormat( rCommand, xFieldProperties );
-                }    
+                }
                 break;
-                case FIELD_COMMENTS     : 
-                {    
+                case FIELD_COMMENTS     :
+                {
                     ::rtl::OUString sParam = lcl_ExtractParameter(rCommand, sizeof(" COMMENTS") );
                     if(sParam.getLength())
                     {
@@ -1099,10 +1158,10 @@ void DomainMapper_Impl::CreateField( ::rtl::OUString& rCommand )
                     }
                 }
                 break;
-                case FIELD_CREATEDATE  : 
+                case FIELD_CREATEDATE  :
                 {
                     SetNumberFormat( rCommand, xFieldProperties );
-                }   
+                }
                 break;
                 case FIELD_DOCPROPERTY :
                 {
@@ -1110,7 +1169,7 @@ void DomainMapper_Impl::CreateField( ::rtl::OUString& rCommand )
                     //others should be user fields
                     ::rtl::OUString sParam = lcl_ExtractParameter(rCommand, sizeof(" DOCPROPERTY") );
                     if(sParam.getLength())
-                    {        
+                    {
                         #define SET_ARABIC      0x01
                         #define SET_FULL_NAME   0x02
                         struct DocPropertyMap
@@ -1139,9 +1198,9 @@ void DomainMapper_Impl::CreateField( ::rtl::OUString& rCommand )
 
                             //other available DocProperties:
                             //Bytes, Category, CharactersWithSpaces, Company
-                            //HyperlinkBase,  
-                            //Lines, Manager, NameofApplication, ODMADocId, Pages, 
-                            //Security, 
+                            //HyperlinkBase,
+                            //Lines, Manager, NameofApplication, ODMADocId, Pages,
+                            //Security,
                         };
                         //search for a field mapping
                         ::rtl::OUString sFieldServiceName;
@@ -1156,7 +1215,7 @@ void DomainMapper_Impl::CreateField( ::rtl::OUString& rCommand )
                         }
                         ::rtl::OUString sServiceName(RTL_CONSTASCII_USTRINGPARAM("com.sun.star.text.TextField."));
                         if(sFieldServiceName.getLength())
-                        {        
+                        {
                             sServiceName += sFieldServiceName;
                             xFieldInterface = m_xTextFactory->createInstance(sServiceName);
                             xFieldProperties = uno::Reference< beans::XPropertySet >( xFieldInterface, uno::UNO_QUERY_THROW);
@@ -1165,14 +1224,14 @@ void DomainMapper_Impl::CreateField( ::rtl::OUString& rCommand )
                                     rPropNameSupplier.GetName(PROP_NUMBERING_TYPE),
                                     uno::makeAny( style::NumberingType::ARABIC ));
                             else if(0 != (aDocProperties[nMap].nFlags & SET_FULL_NAME))
-                                xFieldProperties->setPropertyValue( 
+                                xFieldProperties->setPropertyValue(
                                     rPropNameSupplier.GetName(PROP_FULL_NAME), uno::makeAny( true ));
 
                         }
                         else
                         {
                             //create a user field and type
-                            uno::Reference< beans::XPropertySet > xMaster = 
+                            uno::Reference< beans::XPropertySet > xMaster =
                                 FindOrCreateFieldMaster( "com.sun.star.text.FieldMaster.User", sParam );
                             sServiceName += ::rtl::OUString(RTL_CONSTASCII_USTRINGPARAM("User"));
                             xFieldInterface = m_xTextFactory->createInstance(sServiceName);
@@ -1182,32 +1241,32 @@ void DomainMapper_Impl::CreateField( ::rtl::OUString& rCommand )
                             m_bSetUserFieldContent = true;
                         }
                     }
-                }    
-                #undef SET_ARABIC      
-                #undef SET_FULL_NAME   
+                }
+                #undef SET_ARABIC
+                #undef SET_FULL_NAME
                 break;
-                case FIELD_DOCVARIABLE  : 
-                {    
+                case FIELD_DOCVARIABLE  :
+                {
                     ::rtl::OUString sParam = lcl_ExtractParameter(rCommand, sizeof(" DOCVARIABLE") );
                     //create a user field and type
-                    uno::Reference< beans::XPropertySet > xMaster = 
+                    uno::Reference< beans::XPropertySet > xMaster =
                         FindOrCreateFieldMaster( "com.sun.star.text.FieldMaster.User", sParam );
                     uno::Reference< text::XDependentTextField > xDependentField( xFieldInterface, uno::UNO_QUERY_THROW );
                     xDependentField->attachTextFieldMaster( xMaster );
                     m_bSetUserFieldContent = true;
                 }
                 break;
-                case FIELD_EDITTIME     : 
+                case FIELD_EDITTIME     :
                     //it's a numbering type, no number format! SetNumberFormat( rCommand, xFieldProperties );
                 break;
-                case FIELD_FILLIN       : 
-                {    
+                case FIELD_FILLIN       :
+                {
                     sal_Int32 nIndex = 0;
                     xFieldProperties->setPropertyValue(
                             rPropNameSupplier.GetName(PROP_HINT), uno::makeAny( rCommand.getToken( 1, '\"', nIndex)));
                 }
                 break;
-                case FIELD_FILENAME: 
+                case FIELD_FILENAME:
                 {
                     sal_Int32 nNumberingTypeIndex = rCommand.indexOf( ::rtl::OUString(RTL_CONSTASCII_USTRINGPARAM("\\p")));
                     xFieldProperties->setPropertyValue(
@@ -1229,8 +1288,8 @@ void DomainMapper_Impl::CreateField( ::rtl::OUString& rCommand )
                 case FIELD_IF           : break;
                 case FIELD_INFO         : break;
                 case FIELD_INCLUDEPICTURE: break;
-                case FIELD_KEYWORDS     : 
-                {    
+                case FIELD_KEYWORDS     :
+                {
                     ::rtl::OUString sParam = lcl_ExtractParameter(rCommand, sizeof(" KEYWORDS") );
                     if(sParam.getLength())
                     {
@@ -1241,32 +1300,32 @@ void DomainMapper_Impl::CreateField( ::rtl::OUString& rCommand )
                 }
                 break;
                 case FIELD_LASTSAVEDBY  : break;
-                case FIELD_MACROBUTTON: 
+                case FIELD_MACROBUTTON:
                 {
                     //extract macro name
                     sal_Int32 nIndex = sizeof(" MACROBUTTON ");
                     ::rtl::OUString sMacro = rCommand.getToken( 0, ' ', nIndex);
                     xFieldProperties->setPropertyValue(
                             rPropNameSupplier.GetName(PROP_MACRO_NAME), uno::makeAny( sMacro ));
-                    
+
                     //extract quick help text
                     if( rCommand.getLength() > nIndex + 1)
-                    {        
+                    {
                         xFieldProperties->setPropertyValue(
                             rPropNameSupplier.GetName(PROP_HINT),
                             uno::makeAny( rCommand.copy( nIndex )));
                     }
-                }    
+                }
                 break;
-                case FIELD_MERGEFIELD  : 
+                case FIELD_MERGEFIELD  :
                 {
                     //todo: create a database field and fieldmaster pointing to a column, only
                     ::rtl::OUString sParam = lcl_ExtractParameter(rCommand, sizeof(" MERGEFIELD") );
                     //create a user field and type
-                    uno::Reference< beans::XPropertySet > xMaster = 
+                    uno::Reference< beans::XPropertySet > xMaster =
                         FindOrCreateFieldMaster( "com.sun.star.text.FieldMaster.Database", sParam );
 
-/*                    xFieldProperties->setPropertyValue( 
+/*                    xFieldProperties->setPropertyValue(
                              ::rtl::OUString(RTL_CONSTASCII_USTRINGPARAM("FieldCode")),
                              uno::makeAny( rCommand.copy( nIndex + 1 )));
 */
@@ -1279,18 +1338,18 @@ void DomainMapper_Impl::CreateField( ::rtl::OUString& rCommand )
                 case FIELD_MERGESEQ     : break;
                 case FIELD_NEXT         : break;
                 case FIELD_NEXTIF       : break;
-                case FIELD_PAGE        : 
+                case FIELD_PAGE        :
                     xFieldProperties->setPropertyValue(
                         rPropNameSupplier.GetName(PROP_NUMBERING_TYPE),
                         uno::makeAny( lcl_ParseNumberingType(rCommand) ));
                     xFieldProperties->setPropertyValue(
                         rPropNameSupplier.GetName(PROP_SUB_TYPE),
                         uno::makeAny( text::PageNumberType_CURRENT ));
-                    
+
                 break;
                 case FIELD_REF          : break;
                 case FIELD_REVNUM       : break;
-                case FIELD_SAVEDATE     : 
+                case FIELD_SAVEDATE     :
                     SetNumberFormat( rCommand, xFieldProperties );
                 break;
                 case FIELD_SECTION      : break;
@@ -1299,7 +1358,7 @@ void DomainMapper_Impl::CreateField( ::rtl::OUString& rCommand )
                 case FIELD_SET          : break;
                 case FIELD_SKIPIF       : break;
                 case FIELD_STYLEREF     : break;
-                case FIELD_SUBJECT      : 
+                case FIELD_SUBJECT      :
                 {
                     ::rtl::OUString sParam = lcl_ExtractParameter(rCommand, sizeof(" SUBJECT") );
                     if(sParam.getLength())
@@ -1308,14 +1367,14 @@ void DomainMapper_Impl::CreateField( ::rtl::OUString& rCommand )
                                 rPropNameSupplier.GetName( PROP_IS_FIXED ), uno::makeAny( true ));
                         //PROP_CURRENT_PRESENTATION is set later anyway
                     }
-                }        
+                }
                 break;
                 case FIELD_SYMBOL       : break;
                 case FIELD_TEMPLATE: break;
-                case FIELD_TIME         : 
+                case FIELD_TIME         :
                     SetNumberFormat( rCommand, xFieldProperties );
                 break;
-                case FIELD_TITLE        : 
+                case FIELD_TITLE        :
                 {
                     ::rtl::OUString sParam = lcl_ExtractParameter(rCommand, sizeof(" TITLE") );
                     if(sParam.getLength())
@@ -1324,10 +1383,10 @@ void DomainMapper_Impl::CreateField( ::rtl::OUString& rCommand )
                                 rPropNameSupplier.GetName( PROP_IS_FIXED ), uno::makeAny( true ));
                         //PROP_CURRENT_PRESENTATION is set later anyway
                     }
-                }        
+                }
                 break;
-                case FIELD_USERINITIALS: 
-                {    
+                case FIELD_USERINITIALS:
+                {
                     xFieldProperties->setPropertyValue(
                         rPropNameSupplier.GetName(PROP_USER_DATA_TYPE), uno::makeAny( text::UserDataPart::SHORTCUT ));
                     //todo: if initials are provided - set them as fixed content
@@ -1340,17 +1399,17 @@ void DomainMapper_Impl::CreateField( ::rtl::OUString& rCommand )
                     }
                 }
                 break;
-                case FIELD_USERADDRESS  : //todo: user address collects street, city ... 
+                case FIELD_USERADDRESS  : //todo: user address collects street, city ...
                 break;
                 case FIELD_USERNAME     : //todo: user name is firstname + lastname
                 break;
-            }            
-        }            
+            }
+        }
         m_xTextField = uno::Reference< text::XTextField >( xFieldInterface, uno::UNO_QUERY );
     }
     catch( uno::Exception& )
     {
-    }            
+    }
 }
 /*-- 01.09.2006 11:48:09---------------------------------------------------
 
@@ -1358,25 +1417,25 @@ void DomainMapper_Impl::CreateField( ::rtl::OUString& rCommand )
 void DomainMapper_Impl::SetFieldResult( ::rtl::OUString& rResult )
 {
     try
-    {        
+    {
         PropertyNameSupplier& rPropNameSupplier = PropertyNameSupplier::GetPropertyNameSupplier();
         OSL_ENSURE( m_xTextField.is()||m_sHyperlinkURL.getLength(), "DomainMapper_Impl::SetFieldResult: field not created" );
         if(m_xTextField.is())
         {
             try
-            {        
+            {
                 if( m_bSetUserFieldContent )
                 {
-                    // user field content has to be set at the field master 
+                    // user field content has to be set at the field master
                     uno::Reference< text::XDependentTextField > xDependentField( m_xTextField, uno::UNO_QUERY_THROW );
-                    xDependentField->getTextFieldMaster()->setPropertyValue( 
+                    xDependentField->getTextFieldMaster()->setPropertyValue(
                             rPropNameSupplier.GetName(PROP_CONTENT),
                          uno::makeAny( rResult ));
                 }
                 else
                 {
                     uno::Reference< beans::XPropertySet > xFieldProperties( m_xTextField, uno::UNO_QUERY_THROW);
-                    xFieldProperties->setPropertyValue( 
+                    xFieldProperties->setPropertyValue(
                             rPropNameSupplier.GetName(PROP_CURRENT_PRESENTATION),
                          uno::makeAny( rResult ));
                 }
@@ -1384,10 +1443,10 @@ void DomainMapper_Impl::SetFieldResult( ::rtl::OUString& rResult )
             catch( const beans::UnknownPropertyException& )
             {
                 //some fields don't have a CurrentPresentation (DateTime)
-            }        
+            }
             uno::Reference< text::XTextAppendAndConvert >  xTextAppendAndConvert = m_aTextAppendStack.top();
             xTextAppendAndConvert->appendTextContent( uno::Reference<text::XTextContent>(m_xTextField, uno::UNO_QUERY) );
-        }    
+        }
         else if(m_sHyperlinkURL.getLength())
         {
             //insert the string and apply hyperlink attribute to it
@@ -1395,7 +1454,7 @@ void DomainMapper_Impl::SetFieldResult( ::rtl::OUString& rResult )
             if(xTextAppendAndConvert.is())
             {
                 try
-                {        
+                {
                     uno::Sequence< beans::PropertyValue> aLink(1);
                     aLink[0].Name = rPropNameSupplier.GetName(PROP_HYPER_LINK_U_R_L);
                     aLink[0].Value = uno::makeAny(m_sHyperlinkURL);
@@ -1403,17 +1462,17 @@ void DomainMapper_Impl::SetFieldResult( ::rtl::OUString& rResult )
                 }
                 catch(const lang::IllegalArgumentException& )
                 {
-                }            
+                }
                 catch(const uno::Exception& )
                 {
-                }            
+                }
             }
-        }            
+        }
     }
     catch( uno::Exception& )
     {
-        
-    }            
+
+    }
     m_xTextField = 0;
     m_sHyperlinkURL = OUString();
 }
@@ -1443,46 +1502,46 @@ void DomainMapper_Impl::GetCurrentLocale(lang::Locale& rLocale)
         {
             aLocaleIter->second >>= rLocale;
         }
-    }            
+    }
 }
 
 /*-- 14.09.2006 12:52:58---------------------------------------------------
     extract the number format from the command and apply the resulting number
     format to the XPropertySet
   -----------------------------------------------------------------------*/
-void DomainMapper_Impl::SetNumberFormat( const ::rtl::OUString& rCommand, 
+void DomainMapper_Impl::SetNumberFormat( const ::rtl::OUString& rCommand,
                             uno::Reference< beans::XPropertySet >& xPropertySet )
-{        
+{
     OUString sFormatString = lcl_ParseFormat( rCommand );
     // find \h - hijri/luna calendar todo: what about saka/era calendar?
     bool bHijri = 0 < rCommand.indexOf( ::rtl::OUString(RTL_CONSTASCII_USTRINGPARAM("\\h ")));
     lang::Locale aUSLocale;
     aUSLocale.Language = ::rtl::OUString(RTL_CONSTASCII_USTRINGPARAM("en"));
     aUSLocale.Country = ::rtl::OUString(RTL_CONSTASCII_USTRINGPARAM("US"));
-                    
+
     //determine current locale - todo: is it necessary to initialize this locale?
     lang::Locale aCurrentLocale = aUSLocale;
     GetCurrentLocale( aCurrentLocale );
     ::rtl::OUString sFormat = ConversionHelper::ConvertMSFormatStringToSO( sFormatString, aCurrentLocale, bHijri);
-                        
+
     //get the number formatter and convert the string to a format value
     try
-    {        
+    {
         uno::Reference< util::XNumberFormatsSupplier > xNumberSupplier( m_xTextDocument, uno::UNO_QUERY_THROW );
-        long nKey = xNumberSupplier->getNumberFormats()->addNewConverted( sFormat, aUSLocale, aCurrentLocale ); 
+        long nKey = xNumberSupplier->getNumberFormats()->addNewConverted( sFormat, aUSLocale, aCurrentLocale );
         xPropertySet->setPropertyValue(
             PropertyNameSupplier::GetPropertyNameSupplier().GetName(PROP_NUMBER_FORMAT),
             uno::makeAny( nKey ));
     }
     catch(const uno::Exception&)
     {
-    }            
+    }
 }
 
 /*-- 15.09.2006 15:10:20---------------------------------------------------
 
   -----------------------------------------------------------------------*/
-uno::Reference< beans::XPropertySet > DomainMapper_Impl::FindOrCreateFieldMaster( 
+uno::Reference< beans::XPropertySet > DomainMapper_Impl::FindOrCreateFieldMaster(
         const sal_Char* pFieldMasterService, const ::rtl::OUString& rFieldMasterName )
             throw(::com::sun::star::uno::Exception)
 {
@@ -1499,9 +1558,9 @@ uno::Reference< beans::XPropertySet > DomainMapper_Impl::FindOrCreateFieldMaster
     if(xFieldMasterAccess->hasByName(sFieldMasterName))
     {
         //get the master
-        xMaster = uno::Reference< beans::XPropertySet >(xFieldMasterAccess->getByName(sFieldMasterName), 
+        xMaster = uno::Reference< beans::XPropertySet >(xFieldMasterAccess->getByName(sFieldMasterName),
                                                                             uno::UNO_QUERY_THROW);
-    }    
+    }
     else
     {
         //create the master
@@ -1511,22 +1570,22 @@ uno::Reference< beans::XPropertySet > DomainMapper_Impl::FindOrCreateFieldMaster
 //        sal_Int32 nIndex = rtl_str_indexOfStr( pFieldMasterService, "Database" );
 //        if( nIndex < 0 )
             xMaster->setPropertyValue(
-                    PropertyNameSupplier::GetPropertyNameSupplier().GetName(PROP_NAME), 
+                    PropertyNameSupplier::GetPropertyNameSupplier().GetName(PROP_NAME),
                     uno::makeAny(rFieldMasterName));
 //        else
 //        {
 //            xMaster->setPropertyValue(
-//                    PropertyNameSupplier::GetPropertyNameSupplier().GetName(PROP_DATA_COLUMN_NAME), 
+//                    PropertyNameSupplier::GetPropertyNameSupplier().GetName(PROP_DATA_COLUMN_NAME),
 //                    uno::makeAny(rFieldMasterName));
-//        }            
-    }            
+//        }
+    }
     return xMaster;
 }
 
 /*-- 18.09.2006 15:47:09---------------------------------------------------
     the string _can_ be quoted or not be available at all
   -----------------------------------------------------------------------*/
-//void DomainMapper_Impl::ExtractAndSetDocumentInfo( 
+//void DomainMapper_Impl::ExtractAndSetDocumentInfo(
 //        const ::rtl::OUString& rCommand, sal_Int32 nCommandLength, PropertyIds ePropId )
 //{
 //    ::rtl::OUString sParam = lcl_ExtractParameter( rCommand, nCommandLength );
@@ -1539,6 +1598,27 @@ uno::Reference< beans::XPropertySet > DomainMapper_Impl::FindOrCreateFieldMaster
 //    }
 
 //}
+
+/*-- 01.11.2006 14:57:44---------------------------------------------------
+
+  -----------------------------------------------------------------------*/
+GraphicImportPtr DomainMapper_Impl::GetGraphicImport()
+{
+    if(!m_pGraphicImport)
+        m_pGraphicImport.reset( new GraphicImport( m_xComponentContext, m_xTextFactory ) );
+    return m_pGraphicImport;
+}
+/*-- 01.11.2006 09:25:40---------------------------------------------------
+
+  -----------------------------------------------------------------------*/
+void  DomainMapper_Impl::ImportGraphic(doctok::Reference< doctok::Properties >::Pointer_t ref)
+{
+    //create the graphic
+    ref->resolve( *GetGraphicImport() );
+    //insert it into the document at the current cursor position
+    appendTextContent( m_pGraphicImport->GetGraphicObject() );
+    m_pGraphicImport.reset();
+}
 
 
 }

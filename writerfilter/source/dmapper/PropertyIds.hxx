@@ -1,10 +1,44 @@
+/*************************************************************************
+ *
+ *  OpenOffice.org - a multi-platform office productivity suite
+ *
+ *  $RCSfile: PropertyIds.hxx,v $
+ *
+ *  $Revision: 1.2 $
+ *
+ *  last change: $Author: os $ $Date: 2006-11-02 12:37:24 $
+ *
+ *  The Contents of this file are made available subject to
+ *  the terms of GNU Lesser General Public License Version 2.1.
+ *
+ *
+ *    GNU Lesser General Public License Version 2.1
+ *    =============================================
+ *    Copyright 2005 by Sun Microsystems, Inc.
+ *    901 San Antonio Road, Palo Alto, CA 94303, USA
+ *
+ *    This library is free software; you can redistribute it and/or
+ *    modify it under the terms of the GNU Lesser General Public
+ *    License version 2.1, as published by the Free Software Foundation.
+ *
+ *    This library is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *    Lesser General Public License for more details.
+ *
+ *    You should have received a copy of the GNU Lesser General Public
+ *    License along with this library; if not, write to the Free Software
+ *    Foundation, Inc., 59 Temple Place, Suite 330, Boston,
+ *    MA  02111-1307  USA
+ *
+ ************************************************************************/
 #ifndef INCLUDED_DMAPPER_PROPERTYIDS_HXX
 #define INCLUDED_DMAPPER_PROPERTYIDS_HXX
 
 namespace rtl{ class OUString;}
 namespace dmapper{
 enum PropertyIds
-{        
+{
         PROP_ID_START = 1
  /* 1*/ ,PROP_CHAR_WEIGHT = PROP_ID_START
  /* 2*/ ,PROP_CHAR_POSTURE
@@ -22,7 +56,7 @@ enum PropertyIds
  /*14*/ ,PROP_CHAR_HEIGHT_COMPLEX
  /*15*/ ,PROP_CHAR_LOCALE
  /*16*/ ,PROP_CHAR_LOCALE_ASIAN
- /*17*/ ,PROP_CHAR_WEIGHT_COMPLEX 
+ /*17*/ ,PROP_CHAR_WEIGHT_COMPLEX
  /*18*/ ,PROP_CHAR_POSTURE_COMPLEX
  /*19*/ ,PROP_CHAR_AUTO_KERNING
  /*20*/ ,PROP_CHAR_CHAR_KERNING
@@ -42,15 +76,15 @@ enum PropertyIds
 /*34*/ , PROP_CHAR_FONT_PITCH_ASIAN
 /*35*/ , PROP_CHAR_FONT_NAME_COMPLEX
 /*36*/ , PROP_CHAR_FONT_STYLE_COMPLEX
-/*37*/ , PROP_CHAR_FONT_FAMILY_COMPLEX  
+/*37*/ , PROP_CHAR_FONT_FAMILY_COMPLEX
 /*38*/ , PROP_CHAR_FONT_CHAR_SET_COMPLEX
-/*39*/ , PROP_CHAR_FONT_PITCH_COMPLEX           
+/*39*/ , PROP_CHAR_FONT_PITCH_COMPLEX
 /*40*/ , PROP_CHAR_HIDDEN
 /*41*/ , PROP_PARA_STYLE_NAME
 /*42*/ , PROP_CHAR_STYLE_NAME
-/*43*/ , PROP_PARA_ADJUST                 
-/*44*/ , PROP_PARA_LAST_LINE_ADJUST       
-/*45*/ , PROP_PARA_RIGHT_MARGIN           
+/*43*/ , PROP_PARA_ADJUST
+/*44*/ , PROP_PARA_LAST_LINE_ADJUST
+/*45*/ , PROP_PARA_RIGHT_MARGIN
 /*46*/ , PROP_PARA_LEFT_MARGIN
 /*47*/ , PROP_PARA_FIRST_LINE_INDENT
 /*48*/ , PROP_PARA_KEEP_TOGETHER
@@ -70,13 +104,13 @@ enum PropertyIds
 /*62*/ , PROP_LEFT_MARGIN
 /*63*/ , PROP_RIGHT_MARGIN
 /*64*/ , PROP_FIRST_LINE_OFFSET
-/*65*/ , PROP_LEFT_BORDER           
-/*66*/ , PROP_RIGHT_BORDER          
-/*67*/ , PROP_TOP_BORDER            
-/*68*/ , PROP_BOTTOM_BORDER         
-/*69*/ , PROP_LEFT_BORDER_DISTANCE  
-/*70*/ , PROP_RIGHT_BORDER_DISTANCE 
-/*71*/ , PROP_TOP_BORDER_DISTANCE   
+/*65*/ , PROP_LEFT_BORDER
+/*66*/ , PROP_RIGHT_BORDER
+/*67*/ , PROP_TOP_BORDER
+/*68*/ , PROP_BOTTOM_BORDER
+/*69*/ , PROP_LEFT_BORDER_DISTANCE
+/*70*/ , PROP_RIGHT_BORDER_DISTANCE
+/*71*/ , PROP_TOP_BORDER_DISTANCE
 /*72*/ , PROP_BOTTOM_BORDER_DISTANCE
 /*73*/ , PROP_CURRENT_PRESENTATION
 /*74*/ , PROP_IS_FIXED
@@ -109,12 +143,12 @@ struct PropertyNameSupplier_Impl;
 class PropertyNameSupplier
 {
     PropertyNameSupplier_Impl* m_pImpl;
-public:    
+public:
     PropertyNameSupplier();
     ~PropertyNameSupplier();
     const rtl::OUString& GetName( PropertyIds eId );
-    
-    static PropertyNameSupplier& GetPropertyNameSupplier(); 
-};            
+
+    static PropertyNameSupplier& GetPropertyNameSupplier();
+};
 } //namespace dmapper
 #endif

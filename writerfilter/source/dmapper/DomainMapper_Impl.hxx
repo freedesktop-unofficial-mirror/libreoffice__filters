@@ -1,3 +1,37 @@
+/*************************************************************************
+ *
+ *  OpenOffice.org - a multi-platform office productivity suite
+ *
+ *  $RCSfile: DomainMapper_Impl.hxx,v $
+ *
+ *  $Revision: 1.2 $
+ *
+ *  last change: $Author: os $ $Date: 2006-11-02 12:37:24 $
+ *
+ *  The Contents of this file are made available subject to
+ *  the terms of GNU Lesser General Public License Version 2.1.
+ *
+ *
+ *    GNU Lesser General Public License Version 2.1
+ *    =============================================
+ *    Copyright 2005 by Sun Microsystems, Inc.
+ *    901 San Antonio Road, Palo Alto, CA 94303, USA
+ *
+ *    This library is free software; you can redistribute it and/or
+ *    modify it under the terms of the GNU Lesser General Public
+ *    License version 2.1, as published by the Free Software Foundation.
+ *
+ *    This library is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *    Lesser General Public License for more details.
+ *
+ *    You should have received a copy of the GNU Lesser General Public
+ *    License along with this library; if not, write to the Free Software
+ *    Foundation, Inc., 59 Temple Place, Suite 330, Boston,
+ *    MA  02111-1307  USA
+ *
+ ************************************************************************/
 #ifndef INCLUDED_DMAPPER_DOMAINMAPPER_IMPL_HXX
 #define INCLUDED_DMAPPER_DOMAINMAPPER_IMPL_HXX
 
@@ -34,8 +68,12 @@
 #ifndef INCLUDED_STYLESHEETTABLE_HXX
 #include <StyleSheetTable.hxx>
 #endif
+#ifndef INCLUDED_GRAPHICIMPORT_HXX
+#include <GraphicImport.hxx>
+#endif
+
 namespace com{ namespace sun{ namespace star{
-        namespace lang{ 
+        namespace lang{
             class XMultiServiceFactory;
             struct Locale;
         }
@@ -60,12 +98,12 @@ enum ContextType
     CONTEXT_PARAGRAPH,
     CONTEXT_CHARACTER,
     NUMBER_OF_CONTEXTS
-};            
-typedef std::stack<ContextType>                 ContextStack;  
-typedef std::stack<PropertyMapPtr>              PropertyStack;  
+};
+typedef std::stack<ContextType>                 ContextStack;
+typedef std::stack<PropertyMapPtr>              PropertyStack;
 typedef boost::shared_ptr< StyleSheetTable >    StyleSheetTablePtr;
-typedef std::stack< ::com::sun::star::uno::Reference< ::com::sun::star::text::XTextAppendAndConvert > >  
-                                                TextAppendStack;  
+typedef std::stack< ::com::sun::star::uno::Reference< ::com::sun::star::text::XTextAppendAndConvert > >
+                                                TextAppendStack;
 
 /*-- 18.07.2006 08:49:08---------------------------------------------------
 
@@ -74,7 +112,7 @@ class FIB
 {
     sal_Int32   aFIBData[ NS_rtf::LN_LCBSTTBFUSSR - NS_rtf::LN_WIDENT + 1];
     sal_Int32   nLNCHS;
-    public: 
+    public:
         FIB() :
             nLNCHS( 0 )
             {
@@ -104,7 +142,7 @@ struct DeletableTabStop : public ::com::sun::star::style::TabStop
   -----------------------------------------------------------------------*/
 class DomainMapper;
 class DomainMapper_Impl
-{   
+{
 public:
     typedef doctok::TableManager< ::com::sun::star::uno::Reference< ::com::sun::star::text::XTextRange >, PropertyMapPtr > TableManager_t;
     typedef doctok::TableDataHandler< ::com::sun::star::uno::Reference< ::com::sun::star::text::XTextRange >, PropertyMapPtr > TableDataHandler_t;
@@ -113,9 +151,10 @@ private:
     DomainMapper&                                                                   m_rDMapper;
     ::com::sun::star::uno::Reference< ::com::sun::star::text::XTextDocument >       m_xTextDocument;
     ::com::sun::star::uno::Reference < ::com::sun::star::lang::XMultiServiceFactory > m_xTextFactory;
+    ::com::sun::star::uno::Reference < com::sun::star::uno::XComponentContext >     m_xComponentContext;
     ::com::sun::star::uno::Reference< ::com::sun::star::container::XNameContainer > m_xPageStyles;
     ::com::sun::star::uno::Reference< ::com::sun::star::text::XText >               m_xBodyText;
-    
+
     TextAppendStack                                                                 m_aTextAppendStack;
 
     ::com::sun::star::uno::Reference< ::com::sun::star::text::XTextField >          m_xTextField;
@@ -124,7 +163,7 @@ private:
     bool                                                                            m_bSetUserFieldContent;
 
     TableManager_t m_TableManager;
-    
+
     //each context needs a stack of currently used attributes
     FIB                     m_aFIB;
     PropertyStack           m_aPropertyStacks[NUMBER_OF_CONTEXTS];
@@ -133,25 +172,27 @@ private:
     ListTablePtr            m_pListTable;
     LFOTablePtr             m_pLFOTable;
     StyleSheetTablePtr      m_pStyleSheetTable;
+    GraphicImportPtr        m_pGraphicImport;
 
     PropertyMapPtr                  m_pTopContext;
-    
+
     ::std::vector<DeletableTabStop> m_aCurrentTabStops;
     sal_uInt32                      m_nCurrentTabStopIndex;
     sal_Int32                       m_nCurrentParaStyleId;
     bool                            m_bInStyleSheetImport;
 
     void                            GetCurrentLocale(::com::sun::star::lang::Locale& rLocale);
-    void                            SetNumberFormat( const ::rtl::OUString& rCommand, 
+    void                            SetNumberFormat( const ::rtl::OUString& rCommand,
                                         ::com::sun::star::uno::Reference< ::com::sun::star::beans::XPropertySet >& xPropertySet );
-    ::com::sun::star::uno::Reference< ::com::sun::star::beans::XPropertySet > 
-                                    FindOrCreateFieldMaster( const sal_Char* pFieldMasterService, 
+    ::com::sun::star::uno::Reference< ::com::sun::star::beans::XPropertySet >
+                                    FindOrCreateFieldMaster( const sal_Char* pFieldMasterService,
                                                             const ::rtl::OUString& rFieldMasterName )
                                                                 throw(::com::sun::star::uno::Exception);
 
 public:
-    DomainMapper_Impl( 
+    DomainMapper_Impl(
             DomainMapper& rDMapper,
+            uno::Reference < uno::XComponentContext >  xContext,
             uno::Reference< lang::XComponent >  xModel );
     DomainMapper_Impl();
     virtual ~DomainMapper_Impl();
@@ -161,27 +202,28 @@ public:
     ::com::sun::star::uno::Reference< ::com::sun::star::text::XTextDocument >       GetTextDocument()
     {
         return m_xTextDocument;
-    }            
+    }
     void finishParagraph( PropertyMapPtr pPropertyMap );
     void appendTextPortion( const ::rtl::OUString& rString, PropertyMapPtr pPropertyMap );
+    void appendTextContent( const ::com::sun::star::uno::Reference< ::com::sun::star::text::XTextContent > );
 
     FIB&    GetFIB() {return m_aFIB;}
     // push the new properties onto the stack and make it the 'current' property map
     void    PushProperties(ContextType eId);
     void    PopProperties(ContextType eId);
-            
+
     PropertyMapPtr GetTopContext()
             {
                 return m_pTopContext;
-            }        
+            }
     PropertyMapPtr GetTopContextOfType(ContextType eId);
-    FontTablePtr GetFontTable() 
+    FontTablePtr GetFontTable()
             {
                 if(!m_pFontTable)
                     m_pFontTable.reset(new FontTable());
                 return m_pFontTable;
             }
-    StyleSheetTablePtr GetStyleSheetTable() 
+    StyleSheetTablePtr GetStyleSheetTable()
             {
                 if(!m_pStyleSheetTable)
                     m_pStyleSheetTable.reset(new StyleSheetTable( m_rDMapper ));
@@ -194,6 +236,10 @@ public:
                     m_pLFOTable.reset( new LFOTable );
                 return m_pLFOTable;
             }
+    GraphicImportPtr GetGraphicImport();
+    // this method deletes the current m_pGraphicImport after import
+    void    ImportGraphic(doctok::Reference< doctok::Properties>::Pointer_t );
+
     void    InitTabStopFromStyle( const ::com::sun::star::uno::Sequence< ::com::sun::star::style::TabStop >& rInitTabStops );
     void    ModifyCurrentTabStop( doctok::Id nId, sal_Int32 nValue);
     ::com::sun::star::uno::Sequence< ::com::sun::star::style::TabStop >     GetCurrentTabStopAndClear();
@@ -219,6 +265,6 @@ public:
     bool IsFieldAvailable() const;
 
     TableManager_t & getTableManager() { return m_TableManager; }
-};    
+};
 } //namespace dmapper
 #endif

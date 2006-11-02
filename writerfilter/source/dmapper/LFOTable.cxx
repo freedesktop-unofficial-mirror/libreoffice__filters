@@ -1,3 +1,37 @@
+/*************************************************************************
+ *
+ *  OpenOffice.org - a multi-platform office productivity suite
+ *
+ *  $RCSfile: LFOTable.cxx,v $
+ *
+ *  $Revision: 1.2 $
+ *
+ *  last change: $Author: os $ $Date: 2006-11-02 12:37:24 $
+ *
+ *  The Contents of this file are made available subject to
+ *  the terms of GNU Lesser General Public License Version 2.1.
+ *
+ *
+ *    GNU Lesser General Public License Version 2.1
+ *    =============================================
+ *    Copyright 2005 by Sun Microsystems, Inc.
+ *    901 San Antonio Road, Palo Alto, CA 94303, USA
+ *
+ *    This library is free software; you can redistribute it and/or
+ *    modify it under the terms of the GNU Lesser General Public
+ *    License version 2.1, as published by the Free Software Foundation.
+ *
+ *    This library is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *    Lesser General Public License for more details.
+ *
+ *    You should have received a copy of the GNU Lesser General Public
+ *    License along with this library; if not, write to the Free Software
+ *    Foundation, Inc., 59 Temple Place, Suite 330, Boston,
+ *    MA  02111-1307  USA
+ *
+ ************************************************************************/
 #ifndef INCLUDED_LFOTABLE_HXX
 #include <LFOTable.hxx>
 #endif
@@ -17,33 +51,33 @@ struct LFOLevel
     sal_Int32           nFStartAt;
     sal_Int32           nFFormatting;
     ::rtl::OUString     sILevel;
-        
+
     LFOLevel() :
         nIStartAt(-1)
         ,nFStartAt(-1)
         ,nFFormatting(-1)
         {}
-};                
+};
 typedef ::boost::shared_ptr< LFOLevel > LFOLevelPtr;
 struct LFOEntry
 {
     sal_Int32               nListId;
     sal_Int32               nCLFOLevel;
     vector< LFOLevelPtr >      aLFOLevels; //usually empty
-    
+
     LFOEntry() :
         nListId(-1)
         ,nCLFOLevel(-1)
         {}
-};            
+};
 typedef ::boost::shared_ptr<LFOEntry> LFOEntryPtr;
 
 struct LFOTable_Impl
 {
     ::std::vector< LFOEntryPtr >    m_aLFOEntries; //properties of each level
     LFOEntryPtr                     m_pCurrentEntry;
-    
-};            
+
+};
 /*-- 27.06.2006 15:13:03---------------------------------------------------
 
   -----------------------------------------------------------------------*/
@@ -65,35 +99,35 @@ void LFOTable::attribute(doctok::Id Name, doctok::Value & val)
     OSL_ENSURE(m_pImpl->m_pCurrentEntry, "no current entry to write to");
     if(!m_pImpl->m_pCurrentEntry)
         return;
-    
+
     int nIntValue = val.getInt();
     switch( Name )
     {
 //        case NS_rtf::LN_ISTD: break;//index of applied style
-        case NS_rtf::LN_ISTARTAT: 
-        case NS_rtf::LN_ILVL: 
-        case NS_rtf::LN_FSTARTAT: 
-        case NS_rtf::LN_FFORMATTING: 
+        case NS_rtf::LN_ISTARTAT:
+        case NS_rtf::LN_ILVL:
+        case NS_rtf::LN_FSTARTAT:
+        case NS_rtf::LN_FFORMATTING:
             if(m_pImpl->m_pCurrentEntry->aLFOLevels.size())
-            {        
+            {
                 vector< LFOLevelPtr >::reverse_iterator aEndIter = m_pImpl->m_pCurrentEntry->aLFOLevels.rbegin();
                 switch( Name )
-                {        
-                    case NS_rtf::LN_ISTARTAT: 
+                {
+                    case NS_rtf::LN_ISTARTAT:
                         (*aEndIter)->nIStartAt = nIntValue;
                     break;
-                    case NS_rtf::LN_ILVL: 
+                    case NS_rtf::LN_ILVL:
                         (*aEndIter)->sILevel = val.getString();
                     break;
-                    case NS_rtf::LN_FSTARTAT: 
+                    case NS_rtf::LN_FSTARTAT:
                         (*aEndIter)->nFStartAt = nIntValue;
                     break;
-                    case NS_rtf::LN_FFORMATTING: 
+                    case NS_rtf::LN_FFORMATTING:
                         (*aEndIter)->nFFormatting = nIntValue;
                     break;
                     default:;
                 }
-            }    
+            }
         break;
 //        case NS_rtf::LN_NFC: break;
 //        case NS_rtf::LN_JC: break;
@@ -109,7 +143,7 @@ void LFOTable::attribute(doctok::Id Name, doctok::Value & val)
 //        case NS_rtf::LN_DXAINDENT: break;
 //        case NS_rtf::LN_CBGRPPRLCHPX: break;
 //        case NS_rtf::LN_CBGRPPRLPAPX: break;
-        case NS_rtf::LN_LSID: 
+        case NS_rtf::LN_LSID:
             m_pImpl->m_pCurrentEntry->nListId = nIntValue;
         break;
 //        case NS_rtf::LN_TPLC: break;
@@ -118,11 +152,11 @@ void LFOTable::attribute(doctok::Id Name, doctok::Value & val)
 //        case NS_rtf::LN_FRESTARTHDN: break;
 //        case NS_rtf::LN_UNSIGNED26_2: break;
 //        case NS_rtf::LN_UNSIGNED4_6: break;
-        case NS_rtf::LN_UNUSED4: 
-        case NS_rtf::LN_UNUSED8: 
+        case NS_rtf::LN_UNUSED4:
+        case NS_rtf::LN_UNUSED8:
             // as the names state they are unused
         break;
-        case NS_rtf::LN_CLFOLVL: 
+        case NS_rtf::LN_CLFOLVL:
             m_pImpl->m_pCurrentEntry->nCLFOLevel = nIntValue;
         break;
 //        case NS_rtf::LN_CBFFNM1: break;
@@ -486,17 +520,17 @@ void LFOTable::attribute(doctok::Id Name, doctok::Value & val)
 //        case NS_rtf::LN_footerr: break;
 //        case NS_rtf::LN_endnote: break;
 //        case NS_rtf::LN_BOOKMARKNAME: break;
-        
+
 //        case NS_rtf::LN_LISTLEVEL: break;
-        case NS_rtf::LN_LFO: 
-        {    
+        case NS_rtf::LN_LFO:
+        {
             doctok::Reference<Properties>::Pointer_t pProperties;
             if(m_pImpl->m_pCurrentEntry && (pProperties = val.getProperties()).get())
             {
                 LFOLevelPtr pLevel( new LFOLevel );
                 m_pImpl->m_pCurrentEntry->aLFOLevels.push_back(pLevel);
-            }            
-        }    
+            }
+        }
         break;
 //        case NS_rtf::LN_F: break;
 //        case NS_rtf::LN_ALTFONTNAME: break;

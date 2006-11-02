@@ -1,3 +1,37 @@
+/*************************************************************************
+ *
+ *  OpenOffice.org - a multi-platform office productivity suite
+ *
+ *  $RCSfile: ConversionHelper.cxx,v $
+ *
+ *  $Revision: 1.2 $
+ *
+ *  last change: $Author: os $ $Date: 2006-11-02 12:37:23 $
+ *
+ *  The Contents of this file are made available subject to
+ *  the terms of GNU Lesser General Public License Version 2.1.
+ *
+ *
+ *    GNU Lesser General Public License Version 2.1
+ *    =============================================
+ *    Copyright 2005 by Sun Microsystems, Inc.
+ *    901 San Antonio Road, Palo Alto, CA 94303, USA
+ *
+ *    This library is free software; you can redistribute it and/or
+ *    modify it under the terms of the GNU Lesser General Public
+ *    License version 2.1, as published by the Free Software Foundation.
+ *
+ *    This library is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *    Lesser General Public License for more details.
+ *
+ *    You should have received a copy of the GNU Lesser General Public
+ *    License along with this library; if not, write to the Free Software
+ *    Foundation, Inc., 59 Temple Place, Suite 330, Boston,
+ *    MA  02111-1307  USA
+ *
+ ************************************************************************/
 #ifndef INCLUDED_DMAPPER_CONVERSIONHELPER_HXX
 #include <ConversionHelper.hxx>
 #endif
@@ -27,7 +61,7 @@ namespace dmapper{
 #define LINE_WIDTH_3            142
 #define LINE_WIDTH_4            177
 #define LINE_WIDTH_5            18
-    
+
 #define DOUBLE_LINE0_OUT    LINE_WIDTH_0
 #define DOUBLE_LINE0_IN     LINE_WIDTH_0
 #define DOUBLE_LINE0_DIST   LINE_WIDTH_1
@@ -70,20 +104,20 @@ namespace dmapper{
 
 #define DOUBLE_LINE10_OUT   LINE_WIDTH_3
 #define DOUBLE_LINE10_IN    LINE_WIDTH_0
-#define DOUBLE_LINE10_DIST  LINE_WIDTH_2                            
+#define DOUBLE_LINE10_DIST  LINE_WIDTH_2
 
 sal_Int32 ConversionHelper::MakeBorderLine( sal_Int32 nSprmValue, table::BorderLine& rToFill )
 {
-    //Border 
+    //Border
     //borders are defined as:
     // 0x XX XX XX XX
     //    || || || ||
-    //    || || ||  ---- Line width in 1/8 pt 
+    //    || || ||  ---- Line width in 1/8 pt
     //    || || ||
     //    || ||  ------- Line type: 0 - none 1 - single ... 25 - engrave 3D and 64 - 230 page borders
     //    || ||
-    //    ||  ---------- Line color 
-    //    || 
+    //    ||  ---------- Line color
+    //    ||
     //     ------------- seven bits line space
     //    -------------- first bit: with shading
     sal_Int16 nLineThicknessTwip = (sal_Int16)((nSprmValue & 0xff) * 20)/8L ;
@@ -91,9 +125,9 @@ sal_Int32 ConversionHelper::MakeBorderLine( sal_Int32 nSprmValue, table::BorderL
     sal_Int32 nLineColor    = (nSprmValue & 0xff0000)>>16;
     sal_Int32 nLineDistance = (((nSprmValue & 0x3f000000)>>24) * 2540 + 36)/72L;
     sal_Int32 nLineThickness = TWIP_TO_MM100(nLineThicknessTwip);
-            
-    static const sal_Int32 aBorderDefColor[] = 
-    {        
+
+    static const sal_Int32 aBorderDefColor[] =
+    {
         COL_AUTO, COL_BLACK, COL_LIGHTBLUE, COL_LIGHTCYAN, COL_LIGHTGREEN,
         COL_LIGHTMAGENTA, COL_LIGHTRED, COL_YELLOW, COL_WHITE, COL_BLUE,
         COL_CYAN, COL_GREEN, COL_MAGENTA, COL_RED, COL_BROWN, COL_GRAY,
@@ -102,10 +136,10 @@ sal_Int32 ConversionHelper::MakeBorderLine( sal_Int32 nSprmValue, table::BorderL
     //no auto color for borders
     if(!nLineColor)
         ++nLineColor;
-    if(sal::static_int_cast<sal_uInt32>(nLineColor) < 
+    if(sal::static_int_cast<sal_uInt32>(nLineColor) <
        sizeof(aBorderDefColor) / sizeof(nLineColor))
         nLineColor = aBorderDefColor[nLineColor];
-            
+
     enum eBorderCode
     {
         single0, single1, single2, single3, single4, single5,
@@ -113,7 +147,7 @@ sal_Int32 ConversionHelper::MakeBorderLine( sal_Int32 nSprmValue, table::BorderL
         double7, double8, double9, double10,
         none
     } eCodeIdx = none;
-    
+
     // Map to our border types, we should use of one equal line
     // thickness, or one of smaller thickness. If too small we
     // can make the defecit up in additional white space or
