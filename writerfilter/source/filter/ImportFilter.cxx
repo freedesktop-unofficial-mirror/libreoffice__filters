@@ -4,9 +4,9 @@
  *
  *  $RCSfile: ImportFilter.cxx,v $
  *
- *  $Revision: 1.2 $
+ *  $Revision: 1.3 $
  *
- *  last change: $Author: hbrinkm $ $Date: 2006-11-01 09:14:34 $
+ *  last change: $Author: os $ $Date: 2006-11-02 12:48:26 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -58,7 +58,7 @@ using namespace ::com::sun::star;
 /*-- 09.06.2006 10:15:20---------------------------------------------------
 
   -----------------------------------------------------------------------*/
-sal_Bool WriterFilter::filter( const uno::Sequence< beans::PropertyValue >& aDescriptor ) 
+sal_Bool WriterFilter::filter( const uno::Sequence< beans::PropertyValue >& aDescriptor )
    throw (uno::RuntimeException)
 {
     sal_Int32 nLength = aDescriptor.getLength();
@@ -76,10 +76,10 @@ sal_Bool WriterFilter::filter( const uno::Sequence< beans::PropertyValue >& aDes
     //create the tokenizer and domain mapper
     doctok::WW8Stream::Pointer_t pDocStream = doctok::WW8DocumentFactory::createStream(m_xContext, xInputStream);
     doctok::WW8Document::Pointer_t pDocument = doctok::WW8DocumentFactory::createDocument(pDocStream);
-    doctok::Stream::Pointer_t pStream(new dmapper::DomainMapper(m_xDoc));
+    doctok::Stream::Pointer_t pStream(new dmapper::DomainMapper(m_xContext, m_xDoc));
     pDocument->resolve(*pStream);
 
-    return sal_True; 
+    return sal_True;
 }
 /*-- 09.06.2006 10:15:20---------------------------------------------------
 
@@ -156,7 +156,7 @@ uno::Sequence< OUString > WriterFilter_getSupportedServiceNames(  ) throw (uno::
    uno::Sequence < OUString > aRet(2);
    OUString* pArray = aRet.getArray();
    pArray[0] =  OUString ( RTL_CONSTASCII_USTRINGPARAM ( SERVICE_NAME1 ) );
-   pArray[1] =  OUString ( RTL_CONSTASCII_USTRINGPARAM ( SERVICE_NAME2 ) ); 
+   pArray[1] =  OUString ( RTL_CONSTASCII_USTRINGPARAM ( SERVICE_NAME2 ) );
    return aRet;
 }
 #undef SERVICE_NAME2
@@ -165,7 +165,7 @@ uno::Sequence< OUString > WriterFilter_getSupportedServiceNames(  ) throw (uno::
 /*-- 09.06.2006 10:15:20---------------------------------------------------
 
   -----------------------------------------------------------------------*/
-uno::Reference< uno::XInterface > WriterFilter_createInstance( const uno::Reference< uno::XComponentContext >& xContext) 
+uno::Reference< uno::XInterface > WriterFilter_createInstance( const uno::Reference< uno::XComponentContext >& xContext)
                 throw( uno::Exception )
 {
    return (cppu::OWeakObject*) new WriterFilter( xContext );
