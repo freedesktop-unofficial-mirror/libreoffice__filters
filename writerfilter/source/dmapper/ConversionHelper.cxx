@@ -4,9 +4,9 @@
  *
  *  $RCSfile: ConversionHelper.cxx,v $
  *
- *  $Revision: 1.2 $
+ *  $Revision: 1.3 $
  *
- *  last change: $Author: os $ $Date: 2006-11-02 12:37:23 $
+ *  last change: $Author: os $ $Date: 2006-11-06 15:06:27 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -125,7 +125,12 @@ sal_Int32 ConversionHelper::MakeBorderLine( sal_Int32 nSprmValue, table::BorderL
     sal_Int32 nLineColor    = (nSprmValue & 0xff0000)>>16;
     sal_Int32 nLineDistance = (((nSprmValue & 0x3f000000)>>24) * 2540 + 36)/72L;
     sal_Int32 nLineThickness = TWIP_TO_MM100(nLineThicknessTwip);
-
+    return MakeBorderLine( nLineThickness, nLineType, nLineColor, nLineDistance, rToFill);
+}
+sal_Int32 ConversionHelper::MakeBorderLine( sal_Int32 nLineThickness,   sal_Int32 nLineType,
+                                            sal_Int32 nLineColor,       sal_Int32 nLineDistance,
+                                            table::BorderLine& rToFill )
+{
     static const sal_Int32 aBorderDefColor[] =
     {
         COL_AUTO, COL_BLACK, COL_LIGHTBLUE, COL_LIGHTCYAN, COL_LIGHTGREEN,
@@ -284,9 +289,9 @@ sal_Int32 ConversionHelper::MakeBorderLine( sal_Int32 nSprmValue, table::BorderL
         sal_Int16 nOut;
         sal_Int16 nIn;
         sal_Int16 nDist;
-    };    
-    
-    
+    };
+
+
     static const BorderDefinition aLineTab[] =
     {
         /* 0*/  { LINE_WIDTH_0, 0, 0 },
@@ -307,13 +312,13 @@ sal_Int32 ConversionHelper::MakeBorderLine( sal_Int32 nSprmValue, table::BorderL
         /*15*/  { DOUBLE_LINE9_OUT, DOUBLE_LINE9_IN, DOUBLE_LINE9_DIST },
         /*16*/  { DOUBLE_LINE10_OUT,DOUBLE_LINE10_IN,DOUBLE_LINE10_DIST}
     };
-    
+
     rToFill.Color = nLineColor;
     rToFill.InnerLineWidth = aLineTab[eCodeIdx].nIn;
     rToFill.OuterLineWidth = aLineTab[eCodeIdx].nOut;
     rToFill.LineDistance = aLineTab[eCodeIdx].nDist;
     return nLineDistance;
-}    
+}
 
 void lcl_SwapQuotesInField(::rtl::OUString &rFmt)
 {
@@ -430,22 +435,22 @@ bool lcl_IsNotAM(::rtl::OUString& rFmt, sal_Int32 nPos)
         bForceJapanese = true;
 
     if (bForceJapanese)
-    {        
+    {
         rLocale.Language =  ::rtl::OUString::createFromAscii("ja");
         rLocale.Country = ::rtl::OUString::createFromAscii("JP");
     }
 
     if (bForceNatNum)
-    {        
+    {
         aNewFormat.insert( 0, ::rtl::OUString::createFromAscii("[NatNum1][$-411]"));
     }
 
     if (bHijri)
-    {        
+    {
         aNewFormat.insert( 0, ::rtl::OUString::createFromAscii("[~hijri]"));
     }
     return aNewFormat.makeStringAndClear();
-    
+
 }
 
 } //namespace dmapper
