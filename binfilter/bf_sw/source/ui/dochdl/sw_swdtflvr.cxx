@@ -4,9 +4,9 @@
  *
  *  $RCSfile: sw_swdtflvr.cxx,v $
  *
- *  $Revision: 1.9 $
+ *  $Revision: 1.10 $
  *
- *  last change: $Author: rt $ $Date: 2006-10-28 00:09:11 $
+ *  last change: $Author: kz $ $Date: 2006-11-08 12:44:12 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -100,7 +100,6 @@
 
 // #108584#
 
-// #109590# 
 #ifndef _OSL_ENDIAN_H_
 #include <osl/endian.h>
 #endif
@@ -156,20 +155,6 @@ using namespace ::com::sun::star::datatransfer;
 #endif
 
 // helper class for Action and Undo enclosing
-
-
-// -----------------------------------------------------------------------
-
-
-// -----------------------------------------------------------------------
-
-
-// -----------------------------------------------------------------------
-
-
-// -----------------------------------------------------------------------
-
-
 // -----------------------------------------------------------------------
 
 /*N*/  void SwTransferable::InitOle( SvEmbeddedObjectRef rRef, SwDoc& rDoc )
@@ -195,24 +180,6 @@ using namespace ::com::sun::star::datatransfer;
     // 2) we have either a clipboard document (pClpDocFac), or
     //    we have a SwWrtShell (so we can generate a new clipboard document)
 
-// -----------------------------------------------------------------------
-
-
-// -----------------------------------------------------------------------
-
-
-// -----------------------------------------------------------------------
-
-
-// -----------------------------------------------------------------------
-
-
-// -----------------------------------------------------------------------
-
-
-// -----------------------------------------------------------------------
-
-
 /*N*/ static inline Reference < XTransferable > * lcl_getTransferPointer ( Reference < XTransferable > &xRef )
 /*N*/ {
 /*N*/ 	return &xRef;
@@ -226,7 +193,7 @@ using namespace ::com::sun::star::datatransfer;
 /*N*/     // #106503#: If _only_ the internal format can be pasted, this check will
 /*N*/     // yield 'true', while the one below would give a (wrong) result 'false'.
 /*N*/     bool bIsPaste = ( SW_MOD()->pClipboard != NULL );
-/*N*/ 
+/*N*/
 /*N*/     // if it's not our own data, we need to have a closer look:
 /*N*/     if( ! bIsPaste )
 /*N*/     {
@@ -240,7 +207,7 @@ using namespace ::com::sun::star::datatransfer;
 /*N*/ 					   EXCHG_DEST_SWDOC_FREE_AREA_WEB == nDestination )
 /*N*/ 									? EXCHG_IN_ACTION_COPY
 /*N*/                      : EXCHG_IN_ACTION_MOVE);
-/*N*/ 
+/*N*/
 /*N*/         ULONG nFormat;          // output param for GetExchangeAction
 /*N*/         USHORT nEventAction;    // output param for GetExchangeAction
 /*N*/         USHORT nAction = SotExchange::GetExchangeAction(
@@ -250,16 +217,13 @@ using namespace ::com::sun::star::datatransfer;
 /*N*/ 								EXCHG_IN_ACTION_DEFAULT,    /* ?? */
 /*N*/ 								nFormat, nEventAction, 0,
 /*N*/ 								lcl_getTransferPointer ( xTransferable ) );
-/*N*/ 
+/*N*/
 /*N*/         // if we find a suitable action, we can paste!
 /*N*/         bIsPaste = (EXCHG_INOUT_ACTION_NONE != nAction);
 /*N*/     }
-/*N*/ 
+/*N*/
 /*N*/ 	return bIsPaste;
 /*N*/ }
-
-// -----------------------------------------------------------------------
-
 
 // -----------------------------------------------------------------------
 
@@ -270,7 +234,7 @@ using namespace ::com::sun::star::datatransfer;
 /*N*/  											const Point* pPt )
 /*N*/  {
 /*N*/  	USHORT nRet = EXCHG_INOUT_ACTION_NONE;
-/*N*/  
+/*N*/
 /*N*/  	ObjCntType eOType;
 /*N*/  	if( pPt )
 /*N*/  	{
@@ -278,7 +242,7 @@ using namespace ::com::sun::star::datatransfer;
 /*N*/  	}
 /*N*/  	else
 /*N*/  		eOType = rSh.GetObjCntTypeOfSelection();
-/*N*/  
+/*N*/
 /*N*/  	switch( eOType )
 /*N*/  	{
 /*N*/  	case OBJCNT_GRF:
@@ -286,20 +250,21 @@ using namespace ::com::sun::star::datatransfer;
 /*?*/  			DBG_BF_ASSERT(0, "STRIP"); //STRIP001 BOOL bIMap, bLink;
 /*N*/  		}
 /*N*/  		break;
-/*N*/  
+/*N*/
 /*N*/  	case OBJCNT_FLY:
-/*N*/  		if( rSh.GetView().GetDocShell()->ISA(SwWebDocShell) )
-/*N*/  			nRet = EXCHG_DEST_DOC_TEXTFRAME_WEB;
-/*N*/  		else
-/*N*/  			nRet = EXCHG_DEST_DOC_TEXTFRAME;
+/*?*/           DBG_BF_ASSERT(0, "STRIP");
+///*N*/       if( rSh.GetView().GetDocShell()->ISA(SwWebDocShell) )
+///*N*/           nRet = EXCHG_DEST_DOC_TEXTFRAME_WEB;
+///*N*/       else
+/*N*/           nRet = EXCHG_DEST_DOC_TEXTFRAME;
 /*N*/  		break;
 /*N*/  	case OBJCNT_OLE:		nRet = EXCHG_DEST_DOC_OLEOBJ;		break;
-/*N*/  
+/*N*/
 /*N*/  	case OBJCNT_CONTROL:	/* no Action avail */
 /*N*/  	case OBJCNT_SIMPLE:		nRet = EXCHG_DEST_DOC_DRAWOBJ; 		break;
 /*N*/  	case OBJCNT_URLBUTTON:	nRet = EXCHG_DEST_DOC_URLBUTTON; 	break;
 /*N*/  	case OBJCNT_GROUPOBJ:	nRet = EXCHG_DEST_DOC_GROUPOBJ;		break;
-/*N*/  
+/*N*/
 /*N*/  // was mmchen wir bei Mehrfachselektion???
 /*N*/  //	case OBJCNT_DONTCARE:
 /*N*/  	default:
@@ -316,55 +281,13 @@ using namespace ::com::sun::star::datatransfer;
                  nRet = EXCHG_DEST_DOC_URLFIELD;
              else
 */
-/*N*/  			if( rSh.GetView().GetDocShell()->ISA(SwWebDocShell) )
-/*N*/  				nRet = EXCHG_DEST_SWDOC_FREE_AREA_WEB;
-/*N*/  			else
+/*?*/           DBG_BF_ASSERT(0, "STRIP");
 /*N*/  				nRet = EXCHG_DEST_SWDOC_FREE_AREA;
 /*N*/  		}
 /*N*/  	}
-/*N*/  
+/*N*/
 /*N*/  	return nRet;
 /*N*/  }
-
-// -----------------------------------------------------------------------
-
-
-// -----------------------------------------------------------------------
-
-
-// -----------------------------------------------------------------------
-
-
-// -----------------------------------------------------------------------
-
-
-
-// -----------------------------------------------------------------------
-
-
-// -----------------------------------------------------------------------
-
-
-// -----------------------------------------------------------------------
-
-
-// -----------------------------------------------------------------------
-
-
-// -----------------------------------------------------------------------
-
-
-// -----------------------------------------------------------------------
-
-
-// -----------------------------------------------------------------------
-
-
-// -----------------------------------------------------------------------
-
-
-// -----------------------------------------------------------------------
-
 
 // -----------------------------------------------------------------------
 
@@ -444,7 +367,7 @@ using namespace ::com::sun::star::datatransfer;
 /*?*/ 			nResId = STR_PRIVATEOLE;
 /*?*/ 		else
 /*?*/ 			nResId = 0;
-/*?*/ 
+/*?*/
 /*?*/ 		if( nResId )
 /*?*/ 			rToFill.AddClipbrdFormat( SOT_FORMATSTR_ID_EMBED_SOURCE,
 /*?*/ 										SW_RES( nResId ) );
@@ -455,13 +378,13 @@ using namespace ::com::sun::star::datatransfer;
 /*N*/ 		if( rData.HasFormat( SOT_FORMATSTR_ID_OBJECTDESCRIPTOR ) )
 /*N*/ 			((TransferableDataHelper&)rData).GetTransferableObjectDescriptor(
 /*N*/ 								SOT_FORMATSTR_ID_OBJECTDESCRIPTOR, aDesc );
-/*N*/ 
+/*N*/
 /*N*/ 		if( SwTransferable::_TestAllowedFormat( rData, SOT_FORMATSTR_ID_EMBED_SOURCE, nDest ))
 /*N*/ 			rToFill.AddClipbrdFormat( SOT_FORMATSTR_ID_EMBED_SOURCE,
 /*N*/ 											aDesc.maTypeName );
 /*N*/ 		if( SwTransferable::_TestAllowedFormat( rData, SOT_FORMATSTR_ID_LINK_SOURCE, nDest ))
 /*N*/ 			rToFill.AddClipbrdFormat( SOT_FORMATSTR_ID_LINK_SOURCE );
-/*N*/ 
+/*N*/
 /*N*/ 		SotFormatStringId nFormat;
 /*N*/ 		if ( rData.HasFormat(nFormat = SOT_FORMATSTR_ID_EMBED_SOURCE_OLE) || rData.HasFormat(nFormat = SOT_FORMATSTR_ID_EMBEDDED_OBJ_OLE) )
 /*N*/ 		{
@@ -470,14 +393,14 @@ using namespace ::com::sun::star::datatransfer;
 /*N*/ 				rToFill.AddClipbrdFormat( nFormat, sName );
 /*N*/ 		}
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ #ifdef DDE_AVAILABLE
-/*N*/ 
+/*N*/
 /*N*/ 	if( SwTransferable::_TestAllowedFormat( rData, SOT_FORMATSTR_ID_LINK, nDest ))
 /*N*/ 		rToFill.AddClipbrdFormat( SOT_FORMATSTR_ID_LINK, SW_RES(STR_DDEFORMAT) );
-/*N*/ 
+/*N*/
 /*N*/ #endif
-/*N*/ 
+/*N*/
 /*N*/ 	for( USHORT* pIds = aPasteSpecialIds; *pIds; ++pIds )
 /*N*/ 		if( SwTransferable::_TestAllowedFormat( rData, *pIds, nDest ))
 /*N*/ 			rToFill.AddClipbrdFormat( *pIds, aEmptyStr );
@@ -493,11 +416,11 @@ using namespace ::com::sun::star::datatransfer;
 
 // Interfaces for Selection
 
-/*N*/ void SwTransferable::ClearSelection( SwWrtShell& rSh, 
+/*N*/ void SwTransferable::ClearSelection( SwWrtShell& rSh,
 /*N*/ 									 const ViewShell * _pCreatorView)
 /*N*/ {
 /*N*/ 	SwModule *pMod = SW_MOD();
-/*N*/     if( pMod->pXSelection && 
+/*N*/     if( pMod->pXSelection &&
 /*N*/         ((!pMod->pXSelection->pWrtShell) || (pMod->pXSelection->pWrtShell == &rSh)) &&
 /*N*/ 		/* #96392# */
 /*N*/         (!_pCreatorView || (pMod->pXSelection->pCreatorView == _pCreatorView)) )
@@ -519,7 +442,7 @@ using namespace ::com::sun::star::datatransfer;
 /*N*/         rtl_createUuid( reinterpret_cast< sal_uInt8* >( aSeq.getArray() ), 0, sal_True );
 /*N*/     }
 /*N*/     return aSeq;
-/*N*/ }        
+/*N*/ }
 /* -----------------3/31/2003 11:46AM----------------
 
  --------------------------------------------------*/
