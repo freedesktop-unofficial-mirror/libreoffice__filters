@@ -4,9 +4,9 @@
  *
  *  $RCSfile: sw_docdesc.cxx,v $
  *
- *  $Revision: 1.7 $
+ *  $Revision: 1.8 $
  *
- *  last change: $Author: rt $ $Date: 2006-10-27 22:22:39 $
+ *  last change: $Author: kz $ $Date: 2006-11-08 12:28:09 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -79,6 +79,12 @@
 #ifndef _FMTCNTNT_HXX //autogen
 #include <fmtcntnt.hxx>
 #endif
+#ifndef _FMTPDSC_HXX //autogen
+#include <fmtpdsc.hxx>
+#endif
+#ifndef _FTNINFO_HXX //autogen
+#include <ftninfo.hxx>
+#endif
 
 #ifndef _HORIORNT_HXX
 #include <horiornt.hxx>
@@ -103,6 +109,9 @@
 #endif
 #ifndef _DOCARY_HXX
 #include <docary.hxx>
+#endif
+#ifndef _PAGEFRM_HXX
+#include <pagefrm.hxx>  //Fuer DelPageDesc
 #endif
 #ifndef _ROOTFRM_HXX
 #include <rootfrm.hxx>	//Fuer DelPageDesc
@@ -140,9 +149,6 @@
 #ifndef _FLDBAS_HXX
 #include <fldbas.hxx>
 #endif
-#ifndef _SWWAIT_HXX
-#include <swwait.hxx>
-#endif
 #ifndef _GETMETRICVAL_HXX
 #include <GetMetricVal.hxx>
 #endif
@@ -153,7 +159,7 @@
 #include "so3/staticbaseurl.hxx"
 namespace binfilter {
 
-/*N*/ void lcl_DefaultPageFmt( sal_uInt16 nPoolFmtId, SwFrmFmt &rFmt1, 
+/*N*/ void lcl_DefaultPageFmt( sal_uInt16 nPoolFmtId, SwFrmFmt &rFmt1,
 /*N*/ 						 SwFrmFmt &rFmt2, SfxPrinter *pPrt, BOOL bCheck )
 /*N*/ {
 /*N*/ 	//Einstellung von Seitengroesse und Seitenraendern. Dazu wird
@@ -166,7 +172,7 @@ namespace binfilter {
 /*N*/ 	//Wenn der Offset 0 ist, werden eingestellt.
 /*N*/ 	//!!!Die Seitengroesse wird hier im Attribut eingestellt,
 /*N*/ 	//dies wird im Ctor des SwPageFrm beachtet.
-/*N*/ 
+/*N*/
 /*N*/ 	SvxLRSpaceItem aLR;
 /*N*/ 	SvxULSpaceItem aUL;
 /*N*/ 	SwFmtFrmSize aFrmSize( ATT_FIX_SIZE );
@@ -185,22 +191,22 @@ namespace binfilter {
 /*N*/ 			if ( !bSetFmt1 && !bSetFmt2 )
 /*N*/ 				return;
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		//Seitengrosse
 /*N*/ 		//fuer das Erfragen von SV, ob ein Drucker angeschlossen ist,
 /*N*/ 		//werden die SV'ler noch eine Methode anbieten.
 /*N*/ 		const Size aPhysSize( SvxPaperInfo::GetPaperSize( (Printer*)pPrt ));
-/*N*/ 
+/*N*/
 /*N*/ 		//if ( aPhysSize.Width() <= 0 )
 /*N*/ 		//	aPhysSize.Width() = lA4Width;
 /*N*/ 		//if ( aPhysSize.Height() <= 0 )
 /*N*/ 		//	aPhysSize.Height() = lA4Height;
 /*N*/ 		aFrmSize.SetSize( aPhysSize );
-/*N*/ 
+/*N*/
 /*N*/ 		//Raender
 /*N*/ 		Point	aOffst(	pPrt->GetPageOffset() );
 /*N*/         aOffst += pPrt->GetMapMode().GetOrigin();
-/*N*/ 
+/*N*/
 /*N*/ 		//Auf Default-Raender vorbereiten.
 /*N*/ 		//Raender haben eine defaultmaessige Mindestgroesse.
 /*N*/ 		//wenn der Drucker einen groesseren Rand vorgibt, so
@@ -226,11 +232,11 @@ namespace binfilter {
 /*N*/ 			nMinTop = nMinBottom = 1440;	//al la WW: 1Inch
 /*N*/ 			nMinLeft = nMinRight = 1800;	//			1,25 Inch
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		//Raender einstellen.
-/*N*/ 		aUL.SetUpper( static_cast< sal_uInt16 >( 
+/*N*/ 		aUL.SetUpper( static_cast< sal_uInt16 >(
 /*N*/ 						nMinTop > aOffst.Y() ? nMinTop : aOffst.Y() ) );
-/*N*/ 		aUL.SetLower( static_cast< sal_uInt16 >( 
+/*N*/ 		aUL.SetLower( static_cast< sal_uInt16 >(
 /*N*/ 						nMinBottom > aOffst.Y() ? nMinBottom : aOffst.Y() ));
 /*N*/ 		aLR.SetRight( nMinRight > aOffst.X() ? nMinRight : aOffst.X() );
 /*N*/ 		aLR.SetLeft(  nMinLeft > aOffst.X() ? nMinLeft : aOffst.X());
@@ -244,7 +250,7 @@ namespace binfilter {
 /*N*/ 		aLR.SetRight( 0 );
 /*N*/ 		aLR.SetLeft(  0 );
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	if ( bSetFmt1 )
 /*N*/ 	{
 /*N*/ 		rFmt1.SetAttr( aFrmSize );
@@ -299,7 +305,7 @@ namespace binfilter {
 /*N*/ 			}
 /*N*/ 		}
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	// auch Pool-, Hilfe-Id's uebertragen
 /*N*/ 	rDest.SetPoolFmtId( rSource.GetPoolFmtId() );
 /*N*/ 	rDest.SetPoolHelpId( rSource.GetPoolHelpId() );
@@ -310,9 +316,9 @@ namespace binfilter {
 /*N*/ void SwDoc::ChgPageDesc( USHORT i, const SwPageDesc &rChged )
 /*N*/ {
 /*N*/ 	ASSERT( i < aPageDescs.Count(), "PageDescs ueberindiziert." );
-/*N*/ 
+/*N*/
 /*N*/ 	SwPageDesc *pDesc = aPageDescs[i];
-/*N*/ 
+/*N*/
 /*N*/ 	//Als erstes wird ggf. gespiegelt.
 /*N*/ 	if ( rChged.GetUseOn() == PD_MIRROR )
 /*N*/ 		((SwPageDesc&)rChged).Mirror();
@@ -320,7 +326,7 @@ namespace binfilter {
 /*N*/ 		//sonst Werte aus Master nach Left uebertragen.
 /*N*/ 		::binfilter::lcl_DescSetAttr( ((SwPageDesc&)rChged).GetMaster(),
 /*N*/ 					   ((SwPageDesc&)rChged).GetLeft() );
-/*N*/ 
+/*N*/
 /*N*/ 	//NumType uebernehmen.
 /*N*/ 	if( rChged.GetNumType().GetNumberingType() != pDesc->GetNumType().GetNumberingType() )
 /*N*/ 	{
@@ -329,7 +335,7 @@ namespace binfilter {
 /*?*/ 		//		das sich das Num-Format geaendert hat
 /*?*/ 		GetSysFldType( RES_PAGENUMBERFLD )->UpdateFlds();
 /*?*/ 		GetSysFldType( RES_REFPAGEGETFLD )->UpdateFlds();
-/*?*/ 
+/*?*/
 /*?*/ 		// Wenn sich die Numerierungsart geaendert hat, koennte es QuoVadis/
 /*?*/ 		// ErgoSum-Texte geben, die sich auf eine geaenderte Seite beziehen,
 /*?*/ 		// deshalb werden die Fussnoten invalidiert
@@ -341,10 +347,10 @@ namespace binfilter {
 /*?*/ 			pTxtFtn->SetNumber( rFtn.GetNumber(), &rFtn.GetNumStr());
 /*?*/ 		}
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	//Orientierung uebernehmen
 /*N*/ 	pDesc->SetLandscape( rChged.GetLandscape() );
-/*N*/ 
+/*N*/
 /*N*/ 	//Header abgleichen.
 /*N*/ 	const SwFmtHeader &rHead = rChged.GetMaster().GetHeader();
 /*N*/ 	if( DoesUndo() )
@@ -399,18 +405,18 @@ namespace binfilter {
 /*N*/ 							*aRCnt.GetCntntIdx()->GetNode().EndOfSectionNode() );
 /*N*/ 				aTmp = *pSttNd->EndOfSectionNode();
 /*N*/ 				GetNodes()._Copy( aRange, aTmp, FALSE );
-/*N*/ 
+/*N*/
 /*N*/ 				pFmt->SetAttr( SwFmtCntnt( pSttNd ) );
 /*N*/ 				pDesc->GetLeft().SetAttr( SwFmtHeader( pFmt ) );
 /*N*/ 			}
 /*N*/ 			else
 /*N*/ 				::binfilter::lcl_DescSetAttr( *pRight,
 /*N*/ 							   *(SwFrmFmt*)rLeftHead.GetHeaderFmt(), FALSE );
-/*N*/ 
+/*N*/
 /*N*/ 		}
 /*N*/ 	}
 /*N*/ 	pDesc->ChgHeaderShare( rChged.IsHeaderShared() );
-/*N*/ 
+/*N*/
 /*N*/ 	//Footer abgleichen.
 /*N*/ 	const SwFmtFooter &rFoot = rChged.GetMaster().GetFooter();
 /*N*/ 	if( DoesUndo() )
@@ -463,7 +469,7 @@ namespace binfilter {
 /*?*/ 							*aRCnt.GetCntntIdx()->GetNode().EndOfSectionNode() );
 /*?*/ 				aTmp = *pSttNd->EndOfSectionNode();
 /*?*/ 				GetNodes()._Copy( aRange, aTmp, FALSE );
-/*?*/ 
+/*?*/
 /*?*/ 				pFmt->SetAttr( SwFmtCntnt( pSttNd ) );
 /*?*/ 				pDesc->GetLeft().SetAttr( SwFmtFooter( pFmt ) );
 /*?*/ 			}
@@ -473,13 +479,13 @@ namespace binfilter {
 /*?*/ 		}
 /*N*/ 	}
 /*N*/ 	pDesc->ChgFooterShare( rChged.IsFooterShared() );
-/*N*/ 
+/*N*/
 /*N*/ 	if ( pDesc->GetName() != rChged.GetName() )
 /*?*/ 		pDesc->SetName( rChged.GetName() );
-/*N*/ 
+/*N*/
 /*N*/ 	// Dadurch wird ein RegisterChange ausgeloest, wenn notwendig
 /*N*/ 	pDesc->SetRegisterFmtColl( rChged.GetRegisterFmtColl() );
-/*N*/ 
+/*N*/
 /*N*/ 	//Wenn sich das UseOn oder der Follow aendern muessen die
 /*N*/ 	//Absaetze das erfahren.
 /*N*/ 	BOOL bUseOn  = FALSE;
@@ -500,15 +506,15 @@ namespace binfilter {
 /*N*/ 			bFollow = TRUE;
 /*N*/ 		}
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	if ( (bUseOn || bFollow) && GetRootFrm() )
 /*N*/ 		//Layot benachrichtigen!
 /*N*/ 		GetRootFrm()->CheckPageDescs( (SwPageFrm*)GetRootFrm()->Lower() );
-/*N*/ 
+/*N*/
 /*N*/ 	//Jetzt noch die Seiten-Attribute uebernehmen.
 /*N*/ 	::binfilter::lcl_DescSetAttr( rChged.GetMaster(), pDesc->GetMaster() );
 /*N*/ 	::binfilter::lcl_DescSetAttr( rChged.GetLeft(), pDesc->GetLeft() );
-/*N*/ 
+/*N*/
 /*N*/ 	//Wenn sich FussnotenInfo veraendert, so werden die Seiten
 /*N*/ 	//angetriggert.
 /*N*/ 	if( !(pDesc->GetFtnInfo() == rChged.GetFtnInfo()) )
@@ -542,8 +548,102 @@ namespace binfilter {
 |*
 |*************************************************************************/
 
+void lcl_RemoveFrms( SwFrmFmt& rFmt, FASTBOOL& rbFtnsRemoved )
+{
+    SwClientIter aIter( rFmt );
+    SwFrm *pFrm;
+    for( pFrm = (SwFrm*)aIter.First(TYPE(SwFrm)); pFrm;
+            pFrm = (SwFrm*)aIter.Next() )
+        if ( !rbFtnsRemoved && pFrm->IsPageFrm() &&
+                ((SwPageFrm*)pFrm)->IsFtnPage() )
+        {
+            rFmt.GetDoc()->GetRootFrm()->RemoveFtns( 0, FALSE, TRUE );
+            rbFtnsRemoved = TRUE;
+        }
+        else
+        {
+            pFrm->Cut();
+            delete pFrm;
+        }
+}
 
 
+void SwDoc::DelPageDesc( USHORT i )
+{
+    ASSERT( i < aPageDescs.Count(), "PageDescs ueberindiziert." );
+    ASSERT( i != 0, "Default Pagedesc loeschen is nicht." );
+    if ( i == 0 )
+        return;
+
+    SwPageDesc *pDel = aPageDescs[i];
+
+    SwFmtPageDesc aDfltDesc( aPageDescs[0] );
+    SwClientIter aIter( *pDel );
+    SwClient* pLast;
+    while( 0 != ( pLast = aIter.GoRoot() ))
+    {
+        if( pLast->ISA( SwFmtPageDesc ) )
+        {
+            const SwModify* pMod = ((SwFmtPageDesc*)pLast)->GetDefinedIn();
+            if ( pMod )
+            {
+                if( pMod->ISA( SwCntntNode ) )
+                    ((SwCntntNode*)pMod)->SetAttr( aDfltDesc );
+                else if( pMod->ISA( SwFmt ))
+                    ((SwFmt*)pMod)->SetAttr( aDfltDesc );
+                else
+                {
+                    ASSERT( !this, "was ist das fuer ein Mofify-Obj?" );
+                    aPageDescs[0]->Add( pLast );
+                }
+            }
+            else    //Es kann noch eine Undo-Kopie existieren
+                aPageDescs[0]->Add( pLast );
+        }
+
+        BOOL bFtnInf = FALSE;
+        if ( TRUE == (bFtnInf = pLast == pFtnInfo->GetPageDescDep()) ||
+             pLast == pEndNoteInfo->GetPageDescDep() )
+        {
+            aPageDescs[0]->Add( pLast );
+            if ( GetRootFrm() )
+                GetRootFrm()->CheckFtnPageDescs( !bFtnInf );
+        }
+    }
+
+    for ( USHORT j = 0; j < aPageDescs.Count(); ++j )
+    {
+        if ( aPageDescs[j]->GetFollow() == pDel )
+        {
+            aPageDescs[j]->SetFollow( 0 );
+            //Clients des PageDesc sind die Attribute, denen sagen wir bescheid.
+            //die Attribute wiederum reichen die Meldung an die Absaetze weiter.
+
+            //Layot benachrichtigen!
+            if( GetRootFrm() )  // ist nicht immer vorhanden!! (Orginizer)
+                GetRootFrm()->CheckPageDescs( (SwPageFrm*)GetRootFrm()->Lower() );
+        }
+    }
+
+    if( GetRootFrm() )        // ist nicht immer vorhanden!! (Orginizer)
+    {
+        //Wenn jetzt noch irgendwelche Seiten auf die FrmFmt'e (Master und Left)
+        //Zeigen (z.B. irgendwelche Fussnotenseiten), so muessen die Seiten
+        //vernichtet werden.
+
+        // Wenn wir auf Endnotenseiten stossen, schmeissen wir alle Fussnoten weg,
+        // anders kann die Reihenfolge der Seiten (FollowsPageDescs usw.)
+        // nicht garantiert werden.
+        FASTBOOL bFtnsRemoved = FALSE;
+
+        ::binfilter::lcl_RemoveFrms( pDel->GetMaster(), bFtnsRemoved );
+        ::binfilter::lcl_RemoveFrms( pDel->GetLeft(), bFtnsRemoved );
+    }
+
+    aPageDescs.Remove( i );
+    delete pDel;
+    SetModified();
+}
 
 
 
@@ -575,16 +675,16 @@ namespace binfilter {
 /*N*/ 	{
 /*N*/ 		pNew = new SwPageDesc( rName, GetDfltFrmFmt(), this );
 /*N*/ 		//Default-Seitenformat einstellen.
-/*N*/ 		::binfilter::lcl_DefaultPageFmt( USHRT_MAX, pNew->GetMaster(), pNew->GetLeft(), 
+/*N*/ 		::binfilter::lcl_DefaultPageFmt( USHRT_MAX, pNew->GetMaster(), pNew->GetLeft(),
 /*N*/ 							  GetPrt(), FALSE );
-/*N*/ 
+/*N*/
 /*N*/         SvxFrameDirection aFrameDirection = bRegardLanguage ?
 /*N*/             GetDefaultFrameDirection(GetAppLanguage())
 /*N*/             : FRMDIR_HORI_LEFT_TOP;
-/*N*/ 
+/*N*/
 /*N*/ 		pNew->GetMaster().SetAttr( SvxFrameDirectionItem(aFrameDirection) );
 /*N*/ 		pNew->GetLeft().SetAttr( SvxFrameDirectionItem(aFrameDirection) );
-/*N*/ 
+/*N*/
 /*N*/     	if( GetPrt() )
 /*N*/ 			pNew->SetLandscape( ORIENTATION_LANDSCAPE ==
 /*N*/ 								GetPrt()->GetOrientation() );
@@ -598,7 +698,7 @@ namespace binfilter {
 /*N*/ {
 /*N*/ 	SwPageDesc* pRet = 0;
 /*N*/ 	if( pPos ) *pPos = USHRT_MAX;
-/*N*/ 
+/*N*/
 /*N*/ 	for( USHORT n = 0, nEnd = aPageDescs.Count(); n < nEnd; ++n )
 /*N*/ 		if( aPageDescs[ n ]->GetName() == rName )
 /*N*/ 		{
@@ -620,32 +720,28 @@ namespace binfilter {
 /*N*/ void SwDoc::PrtDataChanged()
 /*N*/ {
 /*N*/ //!!!!!!!! Bei Aenderungen hier bitte ggf. InJobSetup im Sw3io mitpflegen
-/*N*/ 
-/*N*/ 	SwWait *pWait = 0;
+/*N*/
 /*N*/ 	BOOL bEndAction = FALSE;
-/*N*/ 
+/*N*/
 /*N*/ 	if( GetDocShell() )
 /*N*/ 		GetDocShell()->UpdateFontList();
-/*N*/ 
+/*N*/
 /*N*/ 	BOOL bDraw = TRUE;
 /*N*/ 	if ( GetRootFrm() )
 /*N*/ 	{
 /*?*/ 		ViewShell *pSh = GetRootFrm()->GetCurrShell();
 /*?*/ 		if( !IsBrowseMode() || ( pSh && pSh->GetViewOptions()->IsPrtFormat() ) )
 /*?*/ 		{
-/*?*/ 			if ( GetDocShell() )
-/*?*/ 				pWait = new SwWait( *GetDocShell(), TRUE );
-/*?*/ 
 /*?*/ 			GetRootFrm()->StartAllAction();
 /*?*/ 			bEndAction = TRUE;
-/*?*/ 
+/*?*/
 /*?*/ 			bDraw = FALSE;
 /*?*/ 			if( pDrawModel )
 /*?*/ 			    pDrawModel->SetRefDevice( _GetRefDev() );
-/*?*/ 
+/*?*/
 /*?*/ 			pFntCache->Flush();
 /*?*/ 			GetRootFrm()->InvalidateAllCntnt();
-/*?*/ 
+/*?*/
 /*?*/ 			if ( pSh )
 /*?*/ 			{
 /*?*/ 				do
@@ -655,17 +751,16 @@ namespace binfilter {
 /*?*/                 }
 /*?*/                 while ( pSh != GetRootFrm()->GetCurrShell() );
 /*?*/ 			}
-/*?*/ 
+/*?*/
 /*?*/ 		}
 /*N*/ 	}
 /*N*/     if ( bDraw && pDrawModel && _GetRefDev() != pDrawModel->GetRefDevice() )
 /*N*/         pDrawModel->SetRefDevice( _GetRefDev() );
-/*N*/ 
+/*N*/
 /*N*/ 	PrtOLENotify( TRUE );
-/*N*/ 
+/*N*/
 /*N*/ 	if ( bEndAction )
 /*?*/ 		GetRootFrm()->EndAllAction();
-/*N*/ 	delete pWait;
 /*N*/ }
 
 //Zur Laufzeit sammeln wir die GlobalNames der Server, die keine
@@ -686,7 +781,7 @@ extern SvPtrarr *pGlobalOLEExcludeList;
 /*?*/ 			{	pSh = (ViewShell*)pSh->GetNext();
 /*?*/ 			} while ( !pSh->ISA(SwFEShell) &&
 /*?*/ 					  pSh != GetRootFrm()->GetCurrShell() );
-/*N*/ 
+/*N*/
 /*N*/ 		if ( pSh->ISA(SwFEShell) )
 /*N*/ 			pShell = (SwFEShell*)pSh;
 /*N*/ 	}
@@ -705,10 +800,10 @@ extern SvPtrarr *pGlobalOLEExcludeList;
 /*N*/ 	{
 /*N*/ 		if ( bAllOLENotify )
 /*N*/ 			bAll = TRUE;
-/*N*/ 
+/*N*/
 /*N*/ 		bOLEPrtNotifyPending = bAllOLENotify = FALSE;
-/*N*/ 
-/*N*/ 
+/*N*/
+/*N*/
 /*N*/ 		SwOLENodes *pNodes = 0;
 /*N*/ 		SwClientIter aIter( *(SwModify*)GetDfltGrfFmtColl() );
 /*N*/ 		for( SwCntntNode* pNd = (SwCntntNode*)aIter.First( TYPE( SwCntntNode ) );
@@ -724,24 +819,24 @@ extern SvPtrarr *pGlobalOLEExcludeList;
 /*N*/ 				pNodes->Insert( pONd, pNodes->Count() );
 /*N*/ 			}
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		if ( pNodes )
 /*N*/ 		{
 /*N*/ 			::binfilter::StartProgress( STR_STATSTR_SWGPRTOLENOTIFY,
 /*N*/ 							 0, pNodes->Count(), GetDocShell());
 /*N*/ 			GetRootFrm()->StartAllAction();
-/*N*/ 
+/*N*/
 /*N*/ 			for( USHORT i = 0; i < pNodes->Count(); ++i )
 /*N*/ 			{
 /*N*/ 				::binfilter::SetProgressState( i, GetDocShell() );
-/*N*/ 
+/*N*/
 /*N*/ 				SwOLENode* pOLENd = (*pNodes)[i];
 /*N*/ 				pOLENd->SetOLESizeInvalid( FALSE );
-/*N*/ 
+/*N*/
 /*N*/ 				//Ersteinmal die Infos laden und festellen ob das Teil nicht
 /*N*/ 				//schon in der Exclude-Liste steht
 /*N*/ 				SvGlobalName aName;
-/*N*/ 
+/*N*/
 /*N*/ 				if ( !pOLENd->GetOLEObj().IsOleRef() )	//Noch nicht geladen
 /*N*/ 				{
 /*N*/ 					String sBaseURL( so3::StaticBaseUrl::GetBaseURL() );
@@ -756,7 +851,7 @@ extern SvPtrarr *pGlobalOLEExcludeList;
 /*N*/ 				}
 /*N*/ 				else
 /*?*/ 					aName = pOLENd->GetOLEObj().GetOleRef()->GetClassName();
-/*N*/ 
+/*N*/
 /*N*/ 				BOOL bFound = FALSE;
 /*N*/ 				for ( USHORT i = 0;
 /*N*/ 					  i < pGlobalOLEExcludeList->Count() && !bFound;
@@ -767,7 +862,7 @@ extern SvPtrarr *pGlobalOLEExcludeList;
 /*N*/ 				}
 /*N*/ 				if ( bFound )
 /*N*/ 					continue;
-/*N*/ 
+/*N*/
 /*N*/ 				//Kennen wir nicht, also muss das Objekt geladen werden.
 /*N*/ 				//Wenn es keine Benachrichtigung wuenscht
 /*N*/ 				SvEmbeddedObjectRef xRef( (SvInPlaceObject*) pOLENd->GetOLEObj().GetOleRef() );
@@ -808,9 +903,9 @@ extern SvPtrarr *pGlobalOLEExcludeList;
 /*N*/ void SwDoc::SetPrt( SfxPrinter *pP, sal_Bool bCallPrtDataChanged )
 /*N*/ {
 /*N*/ 	ASSERT( pP, "Kein Drucker!" );
-/*N*/ 
+/*N*/
 /*N*/ 	const BOOL bInitPageDesc = pPrt == 0;
-/*N*/ 
+/*N*/
 /*N*/ 	if ( (ULONG) pP != (ULONG) pPrt)
 /*N*/ 	{
 /*N*/ 		delete pPrt;
@@ -825,7 +920,7 @@ extern SvPtrarr *pGlobalOLEExcludeList;
 /*N*/         if( pPrt && LONG_MAX == _GetPageDesc( 0 ).GetMaster().GetFrmSize().GetWidth() )
 /*N*/             _GetPageDesc( 0 ).SetLandscape( ORIENTATION_LANDSCAPE ==
 /*N*/                                             pPrt->GetOrientation() );
-/*N*/ 
+/*N*/
 /*N*/         //MA 11. Mar. 97: Das sollten wir fuer alle Formate tun, weil die
 /*N*/         //Werte auf LONG_MAX initalisiert sind (spaetes anlegen des Druckers)
 /*N*/         //und die Reader u.U. "unfertige" Formate stehenlassen.
@@ -836,7 +931,7 @@ extern SvPtrarr *pGlobalOLEExcludeList;
 /*N*/                                   rDesc.GetLeft(), pPrt, TRUE );
 /*N*/         }
 /*N*/     }
-/*N*/ 
+/*N*/
 /*N*/     if ( bCallPrtDataChanged )
 /*N*/ 		PrtDataChanged();
 /*N*/ }
@@ -849,7 +944,7 @@ extern SvPtrarr *pGlobalOLEExcludeList;
 /*N*/         PrtDataChanged();
 /*N*/         SetModified();
 /*N*/     }
-/*N*/ 
+/*N*/
 /*N*/ }
 
 /*
@@ -878,7 +973,7 @@ SwPageDesc& SwDoc::_GetPageDesc( USHORT i ) const
 /*N*/ 	if( pSh )
 /*N*/ 	{
 /*N*/ 		bOLEPrtNotifyPending = bAllOLENotify = FALSE;
-/*N*/ 
+/*N*/
 /*N*/ 		SwOLENodes aOLENodes;
 /*N*/ 		SwClientIter aIter( *(SwModify*)GetDfltGrfFmtColl() );
 /*N*/ 		for( SwCntntNode* pNd = (SwCntntNode*)aIter.First( TYPE( SwCntntNode ) );
@@ -891,21 +986,21 @@ SwPageDesc& SwDoc::_GetPageDesc( USHORT i ) const
 /*N*/ 				aOLENodes.Insert( pONd, aOLENodes.Count() );
 /*N*/ 			}
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		if( aOLENodes.Count() )
 /*N*/ 		{
 /*N*/ 			::binfilter::StartProgress( STR_STATSTR_SWGPRTOLENOTIFY,
 /*N*/ 							 0, aOLENodes.Count(), GetDocShell());
 /*N*/ 			GetRootFrm()->StartAllAction();
 /*N*/ 			SwMsgPoolItem aMsgHint( RES_UPDATE_ATTR );
-/*N*/ 
+/*N*/
 /*N*/ 			for( USHORT i = 0; i < aOLENodes.Count(); ++i )
 /*N*/ 			{
 /*N*/ 				::binfilter::SetProgressState( i, GetDocShell() );
-/*N*/ 
+/*N*/
 /*N*/ 				SwOLENode* pOLENd = aOLENodes[i];
 /*N*/ 				pOLENd->SetOLESizeInvalid( FALSE );
-/*N*/ 
+/*N*/
 /*N*/ 				//Kennen wir nicht, also muss das Objekt geladen werden.
 /*N*/ 				//Wenn es keine Benachrichtigung wuenscht
 /*N*/ 				SvEmbeddedObjectRef xRef( (SvInPlaceObject*)
