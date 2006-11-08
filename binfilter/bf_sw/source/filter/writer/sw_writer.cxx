@@ -4,9 +4,9 @@
  *
  *  $RCSfile: sw_writer.cxx,v $
  *
- *  $Revision: 1.5 $
+ *  $Revision: 1.6 $
  *
- *  last change: $Author: rt $ $Date: 2006-10-27 23:46:28 $
+ *  last change: $Author: kz $ $Date: 2006-11-08 12:38:45 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -42,6 +42,9 @@
 
 #define _SVSTDARR_STRINGSSORTDTOR
 
+ #ifndef _STREAM_HXX //autogen
+ #include <tools/stream.hxx>
+ #endif
 #ifndef _SVX_FONTITEM_HXX //autogen
 #include <bf_svx/fontitem.hxx>
 #endif
@@ -92,10 +95,10 @@ static sal_Char aNToABuf[] = "0000000000000000000000000";
 /*N*/ 	SvStringsSortDtor *pSrcArr, *pDestArr;
 /*N*/ 	SvPtrarr* pFontRemoveLst, *pBkmkArr;
 /*N*/ 	SwBookmarkNodeTable* pBkmkNodePos;
-/*N*/ 
+/*N*/
 /*N*/ 	Writer_Impl( const SwDoc& rDoc );
 /*N*/ 	~Writer_Impl();
-/*N*/ 
+/*N*/
 /*N*/ 	void RemoveFontList( SwDoc& rDoc );
 /*N*/ };
 
@@ -109,7 +112,7 @@ static sal_Char aNToABuf[] = "0000000000000000000000000";
 /*N*/ 	delete pSrcArr;
 /*N*/ 	delete pDestArr;
 /*N*/ 	delete pFontRemoveLst;
-/*N*/ 
+/*N*/
 /*N*/ 	if( pBkmkNodePos )
 /*N*/ 	{
 /*?*/ 		for( SvPtrarr* p = pBkmkNodePos->First(); p; p = pBkmkNodePos->Next() )
@@ -161,7 +164,7 @@ static sal_Char aNToABuf[] = "0000000000000000000000000";
 /*N*/ 	if( pImpl && pImpl->pFontRemoveLst )
 /*N*/ 		pImpl->RemoveFontList( *pDoc );
 /*N*/ 	delete pImpl, pImpl = 0;
-/*N*/ 
+/*N*/
 /*N*/ 	if( pCurPam )
 /*N*/ 	{
 /*N*/ 		while( pCurPam->GetNext() != pCurPam )
@@ -172,7 +175,7 @@ static sal_Char aNToABuf[] = "0000000000000000000000000";
 /*N*/ 	pOrigFileName = 0;
 /*N*/ 	pDoc = 0;
 /*N*/ 	pStrm = 0;
-/*N*/ 
+/*N*/
 /*N*/ 	bShowProgress = bUCS2_WithStartChar = TRUE;
 /*N*/ 	bASCII_NoLastLineEnd = bASCII_ParaAsBlanc = bASCII_ParaAsCR =
 /*N*/ 		bWriteClipboardDoc = bWriteOnlyFirstTable = bBlock =
@@ -186,20 +189,38 @@ static sal_Char aNToABuf[] = "0000000000000000000000000";
 /*N*/ 		*ppPam = pOrigPam;			// wieder auf den Anfangs-Pam setzen
 /*N*/ 		return FALSE;				// Ende vom Ring
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	// ansonsten kopiere den die Werte aus dem naechsten Pam
 /*?*/ 	*ppPam = ((SwPaM*)(*ppPam)->GetNext() );
-/*?*/ 
+/*?*/
 /*?*/ 	*pCurPam->GetPoint() = *(*ppPam)->Start();
 /*?*/ 	*pCurPam->GetMark() = *(*ppPam)->End();
-/*?*/ 
+/*?*/
 /*?*/ 	return TRUE;
 /*N*/ }
 
 // suche die naechste Bookmark-Position aus der Bookmark-Tabelle
 
+ SwPaM* Writer::NewSwPaM( SwDoc & rDoc, ULONG nStartIdx, ULONG nEndIdx,
+                        BOOL bNodesArray ) const
+ {
+    SwNodes* pNds = bNodesArray ? &rDoc.GetNodes() : (SwNodes*)rDoc.GetUndoNds();
 
+    SwNodeIndex aStt( *pNds, nStartIdx );
+    SwCntntNode* pCNode = aStt.GetNode().GetCntntNode();
+    if( !pCNode && 0 == ( pCNode = pNds->GoNext( &aStt )) )
+        ASSERT( !this, "An StartPos kein ContentNode mehr" );
 
+    SwPaM* pNew = new SwPaM( aStt );
+    pNew->SetMark();
+    aStt = nEndIdx;
+    if( 0 == (pCNode = aStt.GetNode().GetCntntNode()) &&
+        0 == (pCNode = pNds->GoPrevious( &aStt )) )
+        ASSERT( !this, "An StartPos kein ContentNode mehr" );
+    pCNode->MakeEndIndex( &pNew->GetPoint()->nContent );
+    pNew->GetPoint()->nNode = aStt;
+    return pNew;
+ }
 
 /////////////////////////////////////////////////////////////////////////////
 
@@ -213,8 +234,52 @@ static sal_Char aNToABuf[] = "0000000000000000000000000";
 /*N*/ #endif
 
 
+SvStream& Writer::OutHex( SvStream& rStrm, ULONG nHex, BYTE nLen )
+{                                                  // in einen Stream aus
+    // Pointer an das Bufferende setzen
+    sal_Char* pStr = aNToABuf + (NTOABUFLEN-1);
+    for( BYTE n = 0; n < nLen; ++n )
+    {
+        *(--pStr) = (sal_Char)(nHex & 0xf ) + 48;
+        if( *pStr > '9' )
+            *pStr += 39;
+        nHex >>= 4;
+    }
+    return rStrm << pStr;
+}
 
+SvStream& Writer::OutLong( SvStream& rStrm, long nVal )
+{
+    // Pointer an das Bufferende setzen
+    sal_Char* pStr = aNToABuf + (NTOABUFLEN-1);
 
+    int bNeg = nVal < 0;
+    if( bNeg )
+        nVal = -nVal;
+
+    do {
+        *(--pStr) = (sal_Char)(nVal % 10 ) + 48;
+        nVal /= 10;
+    } while( nVal );
+
+    // Ist Zahl negativ, dann noch -
+    if( bNeg )
+        *(--pStr) = '-';
+
+    return rStrm << pStr;
+}
+
+SvStream& Writer::OutULong( SvStream& rStrm, ULONG nVal )
+{
+    // Pointer an das Bufferende setzen
+    sal_Char* pStr = aNToABuf + (NTOABUFLEN-1);
+
+    do {
+        *(--pStr) = (sal_Char)(nVal % 10 ) + 48;
+        nVal /= 10;
+    } while ( nVal );
+    return rStrm << pStr;
+}
 
 
 /*N*/ ULONG Writer::Write( SwPaM& rPaM, SvStream& rStrm, const String* pFName )
@@ -223,16 +288,16 @@ static sal_Char aNToABuf[] = "0000000000000000000000000";
 /*N*/ 	pDoc = rPaM.GetDoc();
 /*N*/ 	pOrigFileName = pFName;
 /*N*/ 	pImpl = new Writer_Impl( *pDoc );
-/*N*/ 
+/*N*/
 /*N*/ 	// PaM kopieren, damit er veraendert werden kann
 /*N*/ 	pCurPam = new SwPaM( *rPaM.End(), *rPaM.Start() );
 /*N*/ 	// zum Vergleich auf den akt. Pam sichern
 /*N*/ 	pOrigPam = &rPaM;
-/*N*/ 
+/*N*/
 /*N*/ 	ULONG nRet = WriteStream();
-/*N*/ 
+/*N*/
 /*N*/ 	ResetWriter();
-/*N*/ 
+/*N*/
 /*N*/ 	return nRet;
 /*N*/ }
 
@@ -249,7 +314,7 @@ static sal_Char aNToABuf[] = "0000000000000000000000000";
 /*N*/ {
 /*N*/ 	if( !pImpl )
 /*?*/ 		pImpl = new Writer_Impl( *pDoc );
-/*N*/ 
+/*N*/
 /*N*/ 	// dann gibt es noch in den NumRules ein paar Fonts
 /*N*/ 	// Diese in den Pool putten. Haben sie danach einen RefCount > 1
 /*N*/ 	// kann es wieder entfernt werden - ist schon im Pool
@@ -259,7 +324,7 @@ static sal_Char aNToABuf[] = "0000000000000000000000000";
 /*N*/ 	const SwNumFmt* pFmt;
 /*N*/ 	const Font *pFont, *pDefFont = &SwNumRule::GetDefBulletFont();
 /*N*/ 	BOOL bCheck = FALSE;
-/*N*/ 
+/*N*/
 /*N*/ 	for( USHORT nGet = rListTbl.Count(); nGet; )
 /*N*/ 		if( pDoc->IsUsed( *(pRule = rListTbl[ --nGet ] )))
 /*?*/ 			for( BYTE nLvl = 0; nLvl < MAXLEVEL; ++nLvl )
@@ -268,7 +333,7 @@ static sal_Char aNToABuf[] = "0000000000000000000000000";
 /*?*/ 				{
 /*?*/ 					if( 0 == ( pFont = pFmt->GetBulletFont() ) )
 /*?*/ 						pFont = pDefFont;
-/*?*/ 
+/*?*/
 /*?*/ 					if( bCheck )
 /*?*/ 					{
 /*?*/ 						if( *pFont == *pDefFont )
@@ -276,7 +341,7 @@ static sal_Char aNToABuf[] = "0000000000000000000000000";
 /*?*/ 					}
 /*?*/ 					else if( *pFont == *pDefFont )
 /*?*/ 						bCheck = TRUE;
-/*?*/ 
+/*?*/
 /*?*/ 					_AddFontItem( rPool, SvxFontItem( pFont->GetFamily(),
 /*?*/ 								pFont->GetName(), pFont->GetStyleName(),
 /*?*/ 								pFont->GetPitch(), pFont->GetCharSet() ));
@@ -287,7 +352,7 @@ static sal_Char aNToABuf[] = "0000000000000000000000000";
 /*N*/ {
 /*N*/ 	if( !pImpl )
 /*?*/ 		pImpl = new Writer_Impl( *pDoc );
-/*N*/ 
+/*N*/
 /*N*/ 	SfxItemPool& rPool = pDoc->GetAttrPool();
 /*N*/ 	if( rPool.GetSecondaryPool() )
 /*N*/ 	{
@@ -306,10 +371,10 @@ static sal_Char aNToABuf[] = "0000000000000000000000000";
 /*N*/ {
 /*N*/ 	const SvxFontItem* pFont = (const SvxFontItem*)&rPool.GetDefaultItem( nW );
 /*N*/ 	_AddFontItem( rPool, *pFont );
-/*N*/ 
+/*N*/
 /*N*/ 	if( 0 != ( pFont = (const SvxFontItem*)rPool.GetPoolDefaultItem( nW )) )
 /*N*/ 		_AddFontItem( rPool, *pFont );
-/*N*/ 
+/*N*/
 /*N*/ 	USHORT nMaxItem = rPool.GetItemCount( nW );
 /*N*/ 	for( USHORT nGet = 0; nGet < nMaxItem; ++nGet )
 /*N*/ 		if( 0 != (pFont = (const SvxFontItem*)rPool.GetItem( nW, nGet )) )
@@ -327,14 +392,14 @@ static sal_Char aNToABuf[] = "0000000000000000000000000";
 /*N*/ 	}
 /*N*/ 	else
 /*?*/ 		pItem = (SvxFontItem*)&rPool.Put( rFont );
-/*N*/ 
+/*N*/
 /*N*/ 	if( 1 < pItem->GetRefCount() )
 /*N*/ 		rPool.Remove( *pItem );
 /*N*/ 	else
 /*N*/ 	{
 /*N*/ 		if( !pImpl->pFontRemoveLst )
 /*N*/ 			pImpl->pFontRemoveLst = new SvPtrarr( 0, 10 );
-/*N*/ 
+/*N*/
 /*N*/ 		void* p = (void*)pItem;
 /*N*/ 		pImpl->pFontRemoveLst->Insert( p, pImpl->pFontRemoveLst->Count() );
 /*N*/ 	}
@@ -358,17 +423,17 @@ static sal_Char aNToABuf[] = "0000000000000000000000000";
 /*N*/ 	pDoc = rPaM.GetDoc();
 /*N*/ 	pOrigFileName = pFName;
 /*N*/ 	pImpl = new Writer_Impl( *pDoc );
-/*N*/ 
+/*N*/
 /*N*/ 	// PaM kopieren, damit er veraendert werden kann
 /*N*/ 	pCurPam = new SwPaM( *rPaM.End(), *rPaM.Start() );
 /*N*/ 	// zum Vergleich auf den akt. Pam sichern
 /*N*/ 	pOrigPam = &rPaM;
-/*N*/ 
+/*N*/
 /*N*/ 	ULONG nRet = WriteStorage();
-/*N*/ 
+/*N*/
 /*N*/ 	pStg = NULL;
 /*N*/ 	ResetWriter();
-/*N*/ 
+/*N*/
 /*N*/ 	return nRet;
 /*N*/ }
 
