@@ -4,9 +4,9 @@
  *
  *  $RCSfile: sfx2_appopen.cxx,v $
  *
- *  $Revision: 1.9 $
+ *  $Revision: 1.10 $
  *
- *  last change: $Author: rt $ $Date: 2006-10-27 18:55:26 $
+ *  last change: $Author: kz $ $Date: 2006-11-08 12:25:35 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -164,7 +164,7 @@
 #include "app.hrc"
 #include "topfrm.hxx"
 #include "appimp.hxx"
-#include "sfxuno.hxx"
+#include "appuno.hxx"
 #include "objface.hxx"
 #include "filedlghelper.hxx"
 
@@ -274,7 +274,7 @@ using namespace sfx2;
 /*N*/ 		aFact.Erase( nPos, aFact.Len() );
 /*N*/ 		aParam.Erase(0,1);
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	WildCard aSearchedFac( aFact.EraseAllChars('4').ToUpperAscii() );
 /*N*/     for( USHORT n = SfxObjectFactory::GetObjectFactoryCount_Impl(); !pFactory && n--; )
 /*N*/ 	{
@@ -282,18 +282,18 @@ using namespace sfx2;
 /*?*/ 		if( !aSearchedFac.Matches( String::CreateFromAscii( pFactory->GetShortName() ).ToUpperAscii() ) )
 /*?*/ 			pFactory = 0;
 /*?*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	if( !pFactory )
 /*N*/ 	{
 /*?*/ 		DBG_ERROR("Unknown factory!");
 /*?*/ 		pFactory = &SfxObjectFactory::GetDefaultFactory();
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/     xDoc = pFactory->CreateObject();
 /*N*/     aParam = INetURLObject::decode( aParam, '%', INetURLObject::DECODE_WITH_CHARSET );
 /*N*/ 	if( xDoc.Is() )
 /*N*/ 		xDoc->DoInitNew_Impl( aParam );
-/*N*/ 
+/*N*/
 /*N*/     if ( xDoc.Is() )
 /*N*/     {
 /*N*/ 		if ( pSet )
@@ -302,7 +302,7 @@ using namespace sfx2;
 /*N*/ 			if ( pTitleItem )
 /*?*/ 				xDoc->GetMedium()->GetItemSet()->Put( *pTitleItem );
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/         ::com::sun::star::uno::Reference< ::com::sun::star::frame::XModel >  xModel ( xDoc->GetModel(), ::com::sun::star::uno::UNO_QUERY );
 /*N*/ 		if ( xModel.is() )
 /*N*/ 		{
@@ -310,25 +310,25 @@ using namespace sfx2;
 /*N*/             pNew->ClearItem( SID_PROGRESS_STATUSBAR_CONTROL );
 /*N*/ 			::com::sun::star::uno::Sequence< ::com::sun::star::beans::PropertyValue > aArgs;
 /*N*/             TransformItems( SID_OPENDOC, *pNew, aArgs );
-/*N*/ 
+/*N*/
 /*N*/             sal_Int32 nLength = aArgs.getLength();
 /*N*/             aArgs.realloc( nLength + 1 );
-/*N*/ 
+/*N*/
 /*N*/             aArgs[nLength].Name = DEFINE_CONST_UNICODE("Title");
 /*N*/             aArgs[nLength].Value <<= ::rtl::OUString( xDoc->GetTitle( SFX_TITLE_DETECT ) );
-/*N*/ 
+/*N*/
 /*N*/             xModel->attachResource( ::rtl::OUString(), aArgs );
 /*N*/             delete pNew;
 /*N*/ 		}
 /*N*/     }
-/*N*/ 
+/*N*/
 /*N*/ 	return xDoc;
 /*N*/ }
 
 /*N*/ void SfxApplication::NewDocDirectExec_Impl( SfxRequest& rReq )
 /*N*/ {
 /*N*/     DBG_MEMTEST();
-/*N*/ 
+/*N*/
 /*N*/ 	SFX_REQUEST_ARG(rReq, pHidden, SfxBoolItem, SID_HIDDEN, FALSE);
 //(mba)/task
 /*
@@ -337,7 +337,7 @@ using namespace sfx2;
 */
 /*N*/     SfxObjectShellLock xDoc;
 /*N*/     BOOL bNewView = TRUE;
-/*N*/ 
+/*N*/
 /*N*/     // Factory-RegNo kann per Parameter angegeben sein
 /*N*/     SfxErrorContext aEc(ERRCTX_SFX_NEWDOCDIRECT);
 /*N*/     const SfxItemSet *pArgs = rReq.GetArgs();
@@ -350,7 +350,7 @@ using namespace sfx2;
 /*N*/     else
 /*N*/     {
 /*?*/         SvtModuleOptions aOpt;
-/*?*/ 
+/*?*/
 /*?*/         if (aOpt.IsModuleInstalled(SvtModuleOptions::E_SWRITER))
 /*?*/             aFactory = aOpt.GetFactoryShortName(SvtModuleOptions::E_WRITER);
 /*?*/         else
@@ -372,7 +372,7 @@ using namespace sfx2;
 /*?*/         if (aOpt.IsModuleInstalled(SvtModuleOptions::E_SWRITER))
 /*?*/             aFactory = aOpt.GetFactoryShortName(SvtModuleOptions::E_WRITERWEB);
 /*N*/     }
-/*N*/ 
+/*N*/
 /*N*/     SFX_REQUEST_ARG( rReq, pFileFlagsItem, SfxStringItem, SID_OPTIONS, FALSE);
 /*N*/     if ( pFileFlagsItem )
 /*N*/     {
@@ -390,27 +390,27 @@ using namespace sfx2;
 /*?*/         if ( STRING_NOTFOUND != aFileFlags.Search( 0x0053 ) )               // S = 53h
 /*?*/             rReq.AppendItem( SfxBoolItem( SID_SILENT, TRUE ) );
 /*N*/     }
-/*N*/ 
+/*N*/
 /*N*/ 	xDoc = NewDoc_Impl( aFactory, rReq.GetArgs() );
 /*N*/ 	if ( xDoc.Is() )
 /*N*/ 	{
 /*N*/ 		SFX_REQUEST_ARG(rReq, pReadonly, SfxBoolItem, SID_DOC_READONLY, FALSE);
 /*N*/ 		if ( pReadonly )
 /*?*/ 			xDoc->GetMedium()->GetItemSet()->Put( *pReadonly );
-/*N*/ 
+/*N*/
 /*N*/ 		SFX_REQUEST_ARG(rReq, pPreview, SfxBoolItem, SID_PREVIEW, FALSE);
 /*N*/ 		if ( pPreview )
 /*?*/ 			xDoc->GetMedium()->GetItemSet()->Put( *pPreview );
-/*N*/ 
+/*N*/
 /*N*/         SFX_REQUEST_ARG(rReq, pSilent, SfxBoolItem, SID_SILENT, FALSE);
 /*N*/         if ( pSilent )
 /*?*/             xDoc->GetMedium()->GetItemSet()->Put( *pSilent );
-/*N*/ 
+/*N*/
 /*N*/         SFX_REQUEST_ARG(rReq, pFlags, SfxStringItem, SID_OPTIONS, FALSE);
 /*N*/         if ( pFlags )
 /*?*/             xDoc->GetMedium()->GetItemSet()->Put( *pFlags );
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/     // View erzeugen
 /*N*/ 	SfxViewFrame* pViewFrame = 0;
 /*N*/     if ( xDoc.Is() )
@@ -422,7 +422,7 @@ using namespace sfx2;
 /*N*/ 			xDoc->GetMedium()->GetItemSet()->Put( *pHidden, SID_HIDDEN );
 /*N*/             bHidden = pHidden->GetValue();
 /*N*/         }
-/*N*/ 
+/*N*/
 /*N*/ 		SFX_REQUEST_ARG(rReq, pViewId, SfxUInt16Item, SID_VIEW_ID, FALSE);
 /*N*/         USHORT nViewId = 0;
 /*N*/ 		if ( pViewId )
@@ -430,7 +430,7 @@ using namespace sfx2;
 /*?*/ 			xDoc->GetMedium()->GetItemSet()->Put( *pViewId, SID_VIEW_ID );
 /*?*/             nViewId = pViewId->GetValue();
 /*N*/         }
-/*N*/ 
+/*N*/
 /*N*/ 	    xDoc->SetActivateEvent_Impl( SFX_EVENT_CREATEDOC );
 /*N*/ //		xDoc->Get_Impl()->nLoadedFlags = SFX_LOADED_ALL;
 /*N*/ 		const SfxItemSet* pInternalArgs = rReq.GetInternalArgs_Impl();
@@ -438,7 +438,7 @@ using namespace sfx2;
 /*?*/ 			xDoc->GetMedium()->GetItemSet()->Put( *pInternalArgs );
 /*N*/ 		BOOL bOwnsFrame = FALSE;
 /*N*/         SFX_REQUEST_ARG(rReq, pFrameItem, SfxFrameItem, SID_DOCFRAME, FALSE);
-/*N*/ 
+/*N*/
 /*N*/         SfxFrame* pFrame = NULL;
 /*N*/         if (pFrameItem)
 /*N*/             pFrame = pFrameItem->GetFrame();
@@ -454,7 +454,7 @@ using namespace sfx2;
 /*N*/                     xDoc->OwnerLock( TRUE );
 /*N*/                     xDoc->Get_Impl()->bHiddenLockedByAPI = TRUE;
 /*N*/                 }
-/*N*/ 
+/*N*/
 /*N*/                 if ( pFrame->GetCurrentDocument() != xDoc )
 /*N*/                     pFrame->InsertDocument( xDoc );
 /*N*/                 pViewFrame = pFrame->GetCurrentViewFrame();
@@ -462,10 +462,10 @@ using namespace sfx2;
 /*N*/             else
 /*?*/                 xDoc.Clear();
 /*N*/         }
-/*N*/ 
+/*N*/
 /*N*/         rReq.SetReturnValue( SfxFrameItem( 0, pFrame ) );
 /*N*/     }
-/*N*/ 
+/*N*/
 //(mba)/task
 /*
     if ( !pHidden || !pHidden->GetValue() )
@@ -476,13 +476,13 @@ using namespace sfx2;
 //--------------------------------------------------------------------
 
 /*?*/ void SfxApplication::NewDocExec_Impl( SfxRequest& rReq )
-/*?*/ {DBG_BF_ASSERT(0, "STRIP"); //STRIP001 
+/*?*/ {DBG_BF_ASSERT(0, "STRIP"); //STRIP001
 /*?*/ }
 
 //---------------------------------------------------------------------------
 
 /*?*/ void SfxApplication::OpenDocExec_Impl( SfxRequest& rReq )
-/*?*/ {DBG_BF_ASSERT(0, "STRIP");//STRIP001 
+/*?*/ {DBG_BF_ASSERT(0, "STRIP");//STRIP001
     /* Attention!
             There exist two possibilities to open hyperlinks:
             a) using SID_OPENHYPERLINK (new)
@@ -491,6 +491,5 @@ using namespace sfx2;
 /*?*/ }
 
 //--------------------------------------------------------------------
-
 
 }
