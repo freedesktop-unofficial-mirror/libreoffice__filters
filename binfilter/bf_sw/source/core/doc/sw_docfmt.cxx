@@ -4,9 +4,9 @@
  *
  *  $RCSfile: sw_docfmt.cxx,v $
  *
- *  $Revision: 1.8 $
+ *  $Revision: 1.9 $
  *
- *  last change: $Author: rt $ $Date: 2006-10-27 22:23:36 $
+ *  last change: $Author: kz $ $Date: 2006-11-08 12:28:29 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -139,7 +139,7 @@ SO2_DECL_REF(SvLinkName)
 #include <SwStyleNameMapper.hxx>
 #endif
 #ifndef _LEGACYBINFILTERMGR_HXX
-#include <legacysmgr/legacy_binfilters_smgr.hxx>	//STRIP002 
+#include <legacysmgr/legacy_binfilters_smgr.hxx>	//STRIP002
 #endif
 namespace binfilter {
 using namespace ::com::sun::star::i18n;
@@ -197,14 +197,14 @@ struct ParaRstFmt
 /*N*/ 	{
 /*N*/ 		SwIndex aSt( pTxtNode, 0 );
 /*N*/ 		USHORT nEnd = pTxtNode->Len();
-/*N*/ 
+/*N*/
 /*N*/ 		if( &pPara->pSttNd->nNode.GetNode() == pTxtNode &&
 /*N*/ 			pPara->pSttNd->nContent.GetIndex() )
 /*?*/ 			aSt = pPara->pSttNd->nContent.GetIndex();
-/*N*/ 
+/*N*/
 /*N*/ 		if( &pPara->pEndNd->nNode.GetNode() == rpNd )
 /*N*/ 			nEnd = pPara->pEndNd->nContent.GetIndex();
-/*N*/ 
+/*N*/
 /*N*/ 		if( pPara->pHistory )
 /*N*/ 		{
 /*N*/ 			// fuers Undo alle Attribute sichern
@@ -232,17 +232,17 @@ struct ParaRstFmt
 /*N*/ 		BOOL bLocked = pNode->IsModifyLocked();
 /*N*/ 		pNode->LockModify();
 /*N*/ 		SwDoc* pDoc = pNode->GetDoc();
-/*N*/ 
+/*N*/
 /*N*/ 		SfxItemSet aSet( pDoc->GetAttrPool(),
 /*N*/ 							RES_PAGEDESC, RES_BREAK,
 /*N*/ 							RES_PARATR_NUMRULE, RES_PARATR_NUMRULE,
 /*N*/ 							RES_LR_SPACE, RES_LR_SPACE,
 /*N*/ 							0 );
 /*N*/ 		SwAttrSet* pSet = pNode->GetpSwAttrSet();
-/*N*/ 
+/*N*/
 /*N*/ 		USHORT __READONLY_DATA aSavIds[ 3 ] = { RES_PAGEDESC, RES_BREAK,
 /*N*/ 												RES_PARATR_NUMRULE };
-/*N*/ 
+/*N*/
 /*N*/ 		const SfxPoolItem* pItem;
 /*N*/ 		for( USHORT n = 0; n < 3; ++n )
 /*N*/ 			if( SFX_ITEM_SET == pSet->GetItemState( aSavIds[ n ], FALSE, &pItem ))
@@ -266,14 +266,14 @@ struct ParaRstFmt
 /*?*/ 					pSet->ClearItem( aSavIds[n] );
 /*?*/ 				}
 /*N*/ 			}
-/*N*/ 
+/*N*/
 /*N*/ 		if( !bLocked )
 /*N*/ 			pNode->UnlockModify();
-/*N*/ 
+/*N*/
 /*N*/ 		if( pPara )
 /*N*/ 		{
 /*N*/ 			SwRegHistory aRegH( pNode, *pNode, pPara->pHistory );
-/*N*/ 
+/*N*/
 /*N*/ 			if( pPara->pDelSet && pPara->pDelSet->Count() )
 /*N*/ 			{
 /*?*/ 				SfxItemIter aIter( *pPara->pDelSet );
@@ -293,12 +293,12 @@ struct ParaRstFmt
 /*N*/ 		}
 /*N*/ 		else
 /*?*/ 			pNode->ResetAllAttr();
-/*N*/ 
+/*N*/
 /*N*/ 		if( aSet.Count() )
 /*N*/ 		{
 /*?*/ 			pNode->LockModify();
 /*?*/ 			pNode->SetAttr( aSet );
-/*?*/ 
+/*?*/
 /*?*/ 			if( !bLocked )
 /*?*/ 				pNode->UnlockModify();
 /*N*/ 		}
@@ -315,19 +315,19 @@ struct ParaRstFmt
 /*M*/ 	if( !bTxtAttr && pAttrs && pAttrs->Count() &&
 /*M*/ 		RES_TXTATR_END > (*pAttrs)[ 0 ] )
 /*M*/ 		bTxtAttr = TRUE;
-/*M*/ 
+/*M*/
 /*M*/ 	if( !rRg.HasMark() )
 /*M*/ 	{
 /*M*/ 		SwTxtNode* pTxtNd = rRg.GetPoint()->nNode.GetNode().GetTxtNode();
 /*M*/ 		if( !pTxtNd )
 /*M*/ 			return ;
-/*M*/ 
+/*M*/
 /*M*/ 		pPam = new SwPaM( *rRg.GetPoint() );
-/*M*/ 
+/*M*/
 /*M*/ 		SwIndex& rSt = pPam->GetPoint()->nContent;
 /*M*/ 		USHORT nMkPos, nPtPos = rSt.GetIndex();
 /*M*/ 		const String& rStr = pTxtNd->GetTxt();
-/*M*/ 
+/*M*/
 /*M*/ 		// JP 22.08.96: Sonderfall: steht der Crsr in einem URL-Attribut
 /*M*/ 		//				dann wird dessen Bereich genommen
 /*M*/ 		const SwTxtAttr* pURLAttr;
@@ -339,23 +339,23 @@ struct ParaRstFmt
 /*M*/ 			nPtPos = *pURLAttr->GetEnd();
 /*M*/ 		}
 /*M*/ 		else
-/*M*/ 		{DBG_BF_ASSERT(0, "STRIP"); //STRIP001 
+/*M*/ 		{DBG_BF_ASSERT(0, "STRIP"); //STRIP001
 /*M*/ 		}
-/*M*/ 
+/*M*/
 /*M*/ 		rSt = nMkPos;
 /*M*/ 		pPam->SetMark();
 /*M*/ 		pPam->GetPoint()->nContent = nPtPos;
 /*M*/ 	}
-/*M*/ 
+/*M*/
 /*M*/ 	SwDataChanged aTmp( *pPam, 0 );
 /*M*/ 	SwHistory* pHst = 0;
 /*M*/ 	if( DoesUndo() )
-/*M*/ 	{DBG_BF_ASSERT(0, "STRIP"); //STRIP001 
+/*M*/ 	{DBG_BF_ASSERT(0, "STRIP"); //STRIP001
 /*M*/ 	}
-/*M*/ 
+/*M*/
 /*M*/ 	const SwPosition *pStt = pPam->Start(), *pEnd = pPam->End();
 /*M*/ 	ParaRstFmt aPara( pStt, pEnd, pHst );
-/*M*/ 
+/*M*/
 /*N*/     USHORT __FAR_DATA aResetableSetRange[] = {
 /*N*/         RES_FRMATR_BEGIN, RES_FRMATR_END-1,
 /*N*/         RES_CHRATR_BEGIN, RES_CHRATR_END-1,
@@ -366,23 +366,23 @@ struct ParaRstFmt
 /*N*/         RES_UNKNOWNATR_BEGIN, RES_UNKNOWNATR_END-1,
 /*N*/         0
 /*N*/     };
-/*N*/ 
+/*N*/
 /*N*/ 	SfxItemSet aDelSet( GetAttrPool(), aResetableSetRange );
 /*M*/ 	if( pAttrs && pAttrs->Count() )
 /*M*/ 	{
 /*M*/ 		for( USHORT n = pAttrs->Count(); n; )
 /*M*/ 			if( POOLATTR_END > (*pAttrs)[ --n ] )
 /*M*/ 				aDelSet.Put( *GetDfltAttr( (*pAttrs)[ n ] ));
-/*M*/ 
+/*M*/
 /*M*/ 		if( aDelSet.Count() )
 /*M*/ 			aPara.pDelSet = &aDelSet;
 /*M*/ 	}
-/*M*/ 
+/*M*/
 /*M*/ 	BOOL bAdd = TRUE;
 /*M*/ 	SwNodeIndex aTmpStt( pStt->nNode );
 /*M*/ 	SwNodeIndex aTmpEnd( pEnd->nNode );
 /*M*/ 	if( pStt->nContent.GetIndex() )		// nur ein Teil
-/*M*/ 	{DBG_BF_ASSERT(0, "STRIP"); //STRIP001 
+/*M*/ 	{DBG_BF_ASSERT(0, "STRIP"); //STRIP001
 /*M*/ 	}
 /*M*/ 	if( pEnd->nContent.GetIndex() == pEnd->nNode.GetNode().GetCntntNode()->Len() )
 /*M*/ 		// dann spaeter aufsetzen und alle CharFmtAttr -> TxtFmtAttr
@@ -418,7 +418,7 @@ struct ParaRstFmt
 /*M*/ 			}
 /*M*/ 		}
 /*M*/ 	}
-/*M*/ 
+/*M*/
 /*M*/ 	if( aTmpStt < aTmpEnd )
 /*M*/ 		GetNodes().ForEach( pStt->nNode, aTmpEnd, lcl_RstAttr, &aPara );
 /*M*/ 	else if( !rRg.HasMark() )
@@ -427,17 +427,17 @@ struct ParaRstFmt
 /*M*/ 		::binfilter::lcl_RstAttr( &pStt->nNode.GetNode(), &aPara );
 /*M*/ 		aPara.bResetAll = TRUE;
 /*M*/ 	}
-/*M*/ 
+/*M*/
 /*M*/ 	if( bTxtAttr )
 /*M*/ 	{
 /*M*/ 		if( bAdd )
 /*M*/ 			aTmpEnd++;
 /*M*/ 		GetNodes().ForEach( pStt->nNode, aTmpEnd, lcl_RstTxtAttr, &aPara );
 /*M*/ 	}
-/*M*/ 
+/*M*/
 /*M*/ 	if( pPam != &rRg )
 /*M*/ 		delete pPam;
-/*M*/ 
+/*M*/
 /*M*/ 	SetModified();
 /*M*/ }
 
@@ -454,7 +454,7 @@ struct ParaRstFmt
 /*N*/ 						RES_CHRATR_BEGIN, RES_CHRATR_END-1,
 /*N*/ 						RES_TXTATR_CHARFMT, RES_TXTATR_CHARFMT,
 /*N*/ 						RES_TXTATR_INETFMT, RES_TXTATR_INETFMT,
-/*N*/ 
+/*N*/
 /*N*/ 						RES_UNKNOWNATR_BEGIN, RES_UNKNOWNATR_END-1,
 /*N*/ 						0 );
 /*N*/ 	SfxItemSet aOtherSet( pDoc->GetAttrPool(),
@@ -462,19 +462,19 @@ struct ParaRstFmt
 /*N*/ 						RES_FRMATR_BEGIN, RES_FRMATR_END-1,
 /*N*/ 						RES_GRFATR_BEGIN, RES_GRFATR_END-1,
 /*N*/ 						0 );
-/*N*/ 
+/*N*/
 /*N*/ 	aCharSet.Put( rChgSet );
 /*N*/ 	aOtherSet.Put( rChgSet );
-/*N*/ 
+/*N*/
 /*N*/ 	SwHistory* pHistory = pUndo ? pUndo->GetHistory() : 0;
 /*N*/ 	BOOL bRet = FALSE;
 /*N*/ 	const SwPosition *pStt = rRg.Start(), *pEnd = rRg.End();
 /*N*/ 	SwCntntNode* pNode = pStt->nNode.GetNode().GetCntntNode();
-/*N*/ 
+/*N*/
 /*N*/ 	if( pNode && pNode->IsTxtNode() )
 /*N*/ 	{
 /*N*/ 		const SwIndex& rSt = pStt->nContent;
-/*N*/ 
+/*N*/
 /*N*/ 		// Attribute ohne Ende haben keinen Bereich
 /*N*/ 		{
 /*N*/ 			SfxItemSet aTxtSet( pDoc->GetAttrPool(),
@@ -485,7 +485,7 @@ struct ParaRstFmt
 /*N*/ 				SwRegHistory( (SwTxtNode*)pNode, aTxtSet, rSt.GetIndex(),
 /*N*/ 								rSt.GetIndex(), nFlags, pHistory );
 /*N*/ 				bRet = TRUE;
-/*N*/ 
+/*N*/
 /*N*/ 				if( pDoc->IsRedlineOn() || (!pDoc->IsIgnoreRedline() &&
 /*N*/ 					pDoc->GetRedlineTbl().Count() ))
 /*N*/ 				{
@@ -493,7 +493,7 @@ struct ParaRstFmt
 /*N*/ 				}
 /*N*/ 			}
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		// TextAttribute mit Ende expandieren nie ihren Bereich
 /*N*/ 		{
 /*N*/ 			// CharFmt wird gesondert behandelt !!!
@@ -502,7 +502,7 @@ struct ParaRstFmt
 /*N*/ 								RES_TXTATR_DUMMY4, RES_TXTATR_TOXMARK,
 /*N*/ 								RES_TXTATR_DUMMY5, RES_TXTATR_WITHEND_END-1,
 /*N*/ 								0 );
-/*N*/ 
+/*N*/
 /*N*/ 			aTxtSet.Put( rChgSet );
 /*N*/ 			if( aTxtSet.Count() )
 /*N*/ 			{
@@ -513,7 +513,7 @@ struct ParaRstFmt
 /*N*/ 				SwRegHistory( (SwTxtNode*)pNode, aTxtSet, nInsCnt,
 /*N*/ 								nEnd, nFlags, pHistory );
 /*N*/ 				bRet = TRUE;
-/*N*/ 
+/*N*/
 /*N*/ 				if( pDoc->IsRedlineOn() || (!pDoc->IsIgnoreRedline() &&
 /*N*/ 					 pDoc->GetRedlineTbl().Count() ) )
 /*N*/ 				{
@@ -522,7 +522,7 @@ struct ParaRstFmt
 /*N*/ 			}
 /*N*/ 		}
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	// bei PageDesc's, die am Node gesetzt werden, muss immer das
 /*N*/ 	// Auto-Flag gesetzt werden!!
 /*N*/ 	const SvxLRSpaceItem* pLRSpace = 0;
@@ -539,7 +539,7 @@ struct ParaRstFmt
 /*N*/ 				SwFmtPageDesc aNew( *pDesc );
 /*N*/ 				// Bug 38479: AutoFlag wird jetzt in der WrtShell gesetzt
 /*N*/ 				// aNew.SetAuto();
-/*N*/ 
+/*N*/
 /*N*/ 				// Tabellen kennen jetzt auch Umbrueche
 /*N*/ 				if( 0 == (nFlags & SETATTR_APICALL) &&
 /*N*/ 					0 != ( pTblNd = pNode->FindTableNode() ) )
@@ -559,7 +559,7 @@ struct ParaRstFmt
 /*N*/ 			if( !aOtherSet.Count() )
 /*N*/ 				return TRUE;
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		// Tabellen kennen jetzt auch Umbrueche
 /*N*/ 		const SvxFmtBreakItem* pBreak;
 /*N*/ 		if( pNode && 0 == (nFlags & SETATTR_APICALL) &&
@@ -571,16 +571,16 @@ struct ParaRstFmt
 /*?*/ 			SwFrmFmt* pFmt = pTblNd->GetTable().GetFrmFmt();
 /*?*/ 			SwRegHistory aRegH( pFmt, *pTblNd, pHistory );
 /*?*/ 			pFmt->SetAttr( *pBreak );
-/*?*/ 
+/*?*/
 /*?*/ 			aOtherSet.ClearItem( RES_BREAK );
 /*?*/ 			if( !aOtherSet.Count() )
 /*?*/ 				return TRUE;
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		// fuer Sonderbehandlung von LR-Space innerhalb einer Numerierung !!!
 /*N*/ 		aOtherSet.GetItemState( RES_LR_SPACE, FALSE,
 /*N*/ 								(const SfxPoolItem**)&pLRSpace );
-/*N*/ 
+/*N*/
 /*N*/ 		{
 /*N*/ 			// wenns eine PoolNumRule ist, diese ggfs. anlegen
 /*N*/ 			const SwNumRuleItem* pRule;
@@ -592,14 +592,14 @@ struct ParaRstFmt
 /*N*/ 								GET_POOLID_NUMRULE )) )
 /*?*/ 				pDoc->GetNumRuleFromPool( nPoolId );
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	if( !rRg.HasMark() )		// kein Bereich
 /*N*/ 	{
 /*N*/ 		if( !pNode )
 /*N*/ 			return bRet;
-/*N*/ 
+/*N*/
 /*N*/ 		if( pNode->IsTxtNode() && aCharSet.Count() )
 /*N*/ 		{
 /*?*/ 			DBG_BF_ASSERT(0, "STRIP"); //STRIP001 SwTxtNode* pTxtNd = (SwTxtNode*)pNode;
@@ -612,7 +612,7 @@ struct ParaRstFmt
 /*N*/ 		}
 /*N*/ 		return bRet;
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	if( pDoc->IsRedlineOn() && aCharSet.Count() )
 /*N*/ 	{
 /*?*/ 	DBG_BF_ASSERT(0, "STRIP"); //STRIP001 	if( pUndo )
@@ -620,17 +620,17 @@ struct ParaRstFmt
 
     /* jetzt wenn Bereich */
 /*N*/ 	ULONG nNodes = 0;
-/*N*/ 
+/*N*/
 /*N*/ 	SwNodeIndex aSt( pDoc->GetNodes() );
 /*N*/ 	SwNodeIndex aEnd( pDoc->GetNodes() );
 /*N*/ 	SwIndex aCntEnd( pEnd->nContent );
-/*N*/ 
+/*N*/
 /*N*/ 	if( pNode )
 /*N*/ 	{
 /*N*/ 		USHORT nLen = pNode->Len();
 /*N*/ 		if( pStt->nNode != pEnd->nNode )
 /*N*/ 			aCntEnd.Assign( pNode, nLen );
-/*N*/ 
+/*N*/
 /*N*/ 		if( pStt->nContent.GetIndex() != 0 || aCntEnd.GetIndex() != nLen )
 /*N*/ 		{
 /*N*/ 			// eintragen des Attributes im Node erledigt die SwRegHistory !!
@@ -640,13 +640,13 @@ struct ParaRstFmt
 /*N*/ 								pStt->nContent.GetIndex(), aCntEnd.GetIndex(),
 /*N*/ 								nFlags, pHistory );
 /*N*/ 			}
-/*N*/ 
+/*N*/
 /*N*/ 			if( aOtherSet.Count() )
 /*N*/ 			{
 /*N*/ 				SwRegHistory aRegH( pNode, *pNode, pHistory );
 /*N*/ 				pNode->SetAttr( aOtherSet );
 /*N*/ 			}
-/*N*/ 
+/*N*/
 /*N*/ 			// lediglich Selektion in einem Node.
 /*N*/ 			if( pStt->nNode == pEnd->nNode )
 /*N*/ 				return TRUE;
@@ -659,9 +659,9 @@ struct ParaRstFmt
 /*N*/ 	}
 /*N*/ 	else
 /*N*/ 		aSt.Assign( pStt->nNode.GetNode(), +1 );
-/*N*/ 
+/*N*/
 /*N*/ 	// aSt zeigt jetzt auf den ersten vollen Node
-/*N*/ 
+/*N*/
     /*
       * die Selektion umfasst mehr als einen Node
       */
@@ -679,13 +679,13 @@ struct ParaRstFmt
 /*?*/ 					SwRegHistory( (SwTxtNode*)pNode, aCharSet,
 /*?*/ 									0, aCntEnd.GetIndex(), nFlags, pHistory );
 /*N*/ 				}
-/*N*/ 
+/*N*/
 /*N*/ 				if( aOtherSet.Count() )
 /*N*/ 				{
 /*N*/ 					SwRegHistory aRegH( pNode, *pNode, pHistory );
 /*N*/ 					pNode->SetAttr( aOtherSet );
 /*N*/ 				}
-/*N*/ 
+/*N*/
 /*N*/ 				++nNodes;
 /*N*/ 				aEnd = pEnd->nNode;
 /*N*/ 			}
@@ -697,18 +697,18 @@ struct ParaRstFmt
 /*N*/ 	}
 /*N*/ 	else
 /*N*/ 		aEnd.Assign( pEnd->nNode.GetNode(), +1 );
-/*N*/ 
+/*N*/
 /*N*/ 	// aEnd zeigt jetzt HINTER den letzten voll Node
-/*N*/ 
+/*N*/
 /*N*/ 	/* Bearbeitung der vollstaendig selektierten Nodes. */
 /*N*/ // alle Attribute aus dem Set zuruecksetzen !!
 /*N*/ 	if( aCharSet.Count() && !( SETATTR_DONTREPLACE & nFlags ) )
 /*N*/ 	{
-/*N*/ 
+/*N*/
 /*N*/ 		ParaRstFmt aPara( pStt, pEnd, pHistory, 0, &aCharSet );
 /*N*/ 		pDoc->GetNodes().ForEach( aSt, aEnd, lcl_RstTxtAttr, &aPara );
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ #ifdef USED
 /*N*/ //JP 30.10.96: siehe unten
 /*N*/ 	// sollte ueber mehrere Nodes das SwFmtChrFmt gesetzt werden ??
@@ -718,31 +718,31 @@ struct ParaRstFmt
 /*N*/ 	BOOL bCreateSwpHints =
 /*N*/ 		SFX_ITEM_SET == aCharSet.GetItemState( RES_TXTATR_CHARFMT, FALSE ) ||
 /*N*/ 		SFX_ITEM_SET == aCharSet.GetItemState( RES_TXTATR_INETFMT, FALSE );
-/*N*/ 
+/*N*/
 /*N*/ 	for(; aSt < aEnd; aSt++ )
 /*N*/ 	{
 /*N*/ 		pNode = aSt.GetNode().GetCntntNode();
 /*N*/ 		if( !pNode )
 /*N*/ 			continue;
-/*N*/ 
+/*N*/
 /*N*/ 		SwTxtNode* pTNd = pNode->GetTxtNode();
 /*N*/ 		if( pHistory )
 /*N*/ 		{
 /*N*/ 			SwRegHistory aRegH( pNode, *pNode, pHistory );
 /*N*/ 			SwpHints *pSwpHints;
-/*N*/ 
+/*N*/
 /*N*/ #ifdef USED
 /*N*/ //JP 30.10.96: Das loeschen der Zeichen erledigt schon das SwpHints-Array
 /*N*/ //				Warum dann hier doppelt?
 /*N*/ //				!!	Ausserdem ist die Sonderbehandlung fuer die
 /*N*/ //				!!	Zeichenvorlage/INetAttribut falsch
-/*N*/ 
+/*N*/
 /*N*/ 			// loesche alle Text-Attribute, die durch den Set "ersetzt" werden
 /*N*/ 			if( pTNd && 0 != ( pSwpHints = pTNd->GetpSwpHints() ) &&
 /*N*/ 				pSwpHints->Count() )
 /*N*/ 			{
 /*N*/ 				pSwpHints->Register( &aRegH );
-/*N*/ 
+/*N*/
 /*N*/ 				for( USHORT n = pSwpHints->Count(); n;  )
 /*N*/ 				{
 /*N*/ 					SwTxtAttr* pAttr = pSwpHints->GetHt( --n );
@@ -769,7 +769,7 @@ struct ParaRstFmt
 /*N*/ 											: pTNd->GetpSwpHints();
 /*N*/ 				if( pSwpHints )
 /*N*/ 					pSwpHints->Register( &aRegH );
-/*N*/ 
+/*N*/
 /*N*/ 				pTNd->SetAttr( aCharSet, 0, pTNd->GetTxt().Len(), nFlags );
 /*N*/ 				if( pSwpHints )
 /*N*/ 					pSwpHints->DeRegister();
@@ -786,7 +786,7 @@ struct ParaRstFmt
 /*N*/ 		}
 /*N*/ 		++nNodes;
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	return nNodes != 0;
 /*N*/ }
 
@@ -801,7 +801,7 @@ struct ParaRstFmt
 /*N*/ 		ClearRedo();
 /*N*/ 		pUndoAttr = new SwUndoAttr( rRg, rHt, nFlags );
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	SfxItemSet aSet( GetAttrPool(), rHt.Which(), rHt.Which() );
 /*N*/ 	aSet.Put( rHt );
 /*N*/ 	bRet = InsAttr( this, rRg, aSet, nFlags, pUndoAttr );
@@ -831,7 +831,7 @@ struct ParaRstFmt
 */
 /*N*/ 	if( DoesUndo() )
 /*N*/ 		AppendUndo( pUndoAttr );
-/*N*/ 
+/*N*/
 /*N*/ 	if( bRet )
 /*N*/ 		SetModified();
 /*N*/ 	return bRet;
@@ -846,12 +846,12 @@ struct ParaRstFmt
 /*N*/ 		ClearRedo();
 /*N*/ 		pUndoAttr = new SwUndoAttr( rRg, rSet );
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	BOOL bRet = InsAttr( this, rRg, rSet, nFlags, pUndoAttr );
-/*N*/ 
+/*N*/
 /*N*/ 	if( DoesUndo() )
 /*N*/ 		AppendUndo( pUndoAttr );
-/*N*/ 
+/*N*/
 /*N*/ 	if( bRet )
 /*N*/ 		SetModified();
 /*N*/ 	return bRet;
@@ -893,11 +893,11 @@ struct ParaRstFmt
 /*N*/ 	// 				damit nicht in allen Sets die gleiche Berechnung
 /*N*/ 	//				auf dem gleichen TabStop (gepoolt!) vorgenommen
 /*N*/ 	//				wird. Als Modify wird ein FmtChg verschickt.
-/*N*/ 
+/*N*/
 /*N*/ 	USHORT nOldCnt = rChgTabStop.Count();
 /*N*/ 	if( !nOldCnt || nOldWidth == nNewWidth )
 /*N*/ 		return FALSE;
-/*N*/ 
+/*N*/
 /*N*/ 	// suche den Anfang der Defaults
 /*N*/ 	SvxTabStop* pTabs = ((SvxTabStop*)rChgTabStop.GetStart())
 /*N*/ 						+ (nOldCnt-1);
@@ -924,7 +924,7 @@ struct ParaRstFmt
 /*N*/ {
 /*N*/ 	if( !rSet.Count() )
 /*N*/ 		return;
-/*N*/ 
+/*N*/
 /*N*/ 	SwModify aCallMod( 0 );
 /*N*/ 	SwAttrSet aOld( GetAttrPool(), rSet.GetRanges() ),
 /*N*/ 			aNew( GetAttrPool(), rSet.GetRanges() );
@@ -939,7 +939,7 @@ struct ParaRstFmt
 /*N*/ 		aOld.Put( GetAttrPool().GetDefaultItem( nWhich ) );
 /*N*/ 		GetAttrPool().SetPoolDefaultItem( *pItem );
 /*N*/ 		aNew.Put( GetAttrPool().GetDefaultItem( nWhich ) );
-/*N*/ 
+/*N*/
 /*N*/ 		if( RES_CHRATR_BEGIN <= nWhich && RES_TXTATR_END > nWhich )
 /*N*/ 		{
 /*N*/ 			aCallMod.Add( pDfltTxtFmtColl );
@@ -977,12 +977,12 @@ struct ParaRstFmt
 /*N*/ 				delete pCpy;
 /*N*/ 			}
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		if( aIter.IsAtEnd() )
 /*N*/ 			break;
 /*N*/ 		pItem = aIter.NextItem();
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	if( aNew.Count() && aCallMod.GetDepends() )
 /*N*/ 	{
 /*N*/ 		if( DoesUndo() )
@@ -990,9 +990,9 @@ struct ParaRstFmt
 /*N*/ 			ClearRedo();
 /*N*/ 			AppendUndo( new SwUndoDefaultAttr( aOld ) );
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		const SfxPoolItem* pItem;
-/*N*/ 		if( ( SFX_ITEM_SET == 
+/*N*/ 		if( ( SFX_ITEM_SET ==
 /*N*/                 aNew.GetItemState( RES_PARATR_TABSTOP, FALSE, &pItem ) ) &&
 /*N*/ 			((SvxTabStopItem*)pItem)->Count() )
 /*N*/ 		{
@@ -1004,14 +1004,14 @@ struct ParaRstFmt
 /*N*/ 			//				wird. Als Modify wird ein FmtChg verschickt.
 /*N*/ 			SwTwips nNewWidth = (*(SvxTabStopItem*)pItem)[ 0 ].GetTabPos(),
 /*N*/ 					nOldWidth = ((SvxTabStopItem&)aOld.Get(RES_PARATR_TABSTOP))[ 0 ].GetTabPos();
-/*N*/ 
+/*N*/
 /*N*/ 			int bChg = FALSE;
 /*N*/ 			USHORT nMaxItems = GetAttrPool().GetItemCount( RES_PARATR_TABSTOP );
 /*N*/ 			for( USHORT n = 0; n < nMaxItems; ++n )
 /*N*/ 				if( 0 != (pItem = GetAttrPool().GetItem( RES_PARATR_TABSTOP, n ) ))
 /*N*/ 					bChg |= lcl_SetNewDefTabStops( nOldWidth, nNewWidth,
 /*N*/ 												*(SvxTabStopItem*)pItem );
-/*N*/ 
+/*N*/
 /*N*/ 			aNew.ClearItem( RES_PARATR_TABSTOP );
 /*N*/ 			aOld.ClearItem( RES_PARATR_TABSTOP );
 /*N*/ 			if( bChg )
@@ -1022,19 +1022,19 @@ struct ParaRstFmt
 /*N*/ 			}
 /*N*/ 		}
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	if( aNew.Count() && aCallMod.GetDepends() )
 /*N*/ 	{
 /*N*/ 		SwAttrSetChg aChgOld( aOld, aOld );
 /*N*/ 		SwAttrSetChg aChgNew( aNew, aNew );
 /*N*/ 		aCallMod.Modify( &aChgOld, &aChgNew );		// alle veraenderten werden verschickt
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	// und die default-Formate wieder beim Object austragen
 /*N*/ 	SwClient* pDep;
 /*N*/ 	while( 0 != ( pDep = (SwClient*)aCallMod.GetDepends()) )
 /*N*/ 		aCallMod.Remove( pDep );
-/*N*/ 
+/*N*/
 /*N*/ 	SetModified();
 /*N*/ }
 
@@ -1047,7 +1047,18 @@ struct ParaRstFmt
 /*
  * Loeschen der Formate
  */
+void SwDoc::DelCharFmt(USHORT nFmt)
+{
+    pCharFmtTbl->DeleteAndDestroy(nFmt);
+    SetModified();
+}
 
+void SwDoc::DelCharFmt( SwCharFmt *pFmt )
+{
+    USHORT nFmt = pCharFmtTbl->GetPos( pFmt );
+    ASSERT( USHRT_MAX != nFmt, "Fmt not found," );
+    DelCharFmt( nFmt );
+}
 
 /*N*/ void SwDoc::DelFrmFmt( SwFrmFmt *pFmt )
 /*N*/ {
@@ -1200,13 +1211,13 @@ struct ParaRstFmt
 /*N*/ 		ParaRstFmt* pPara = (ParaRstFmt*)pArgs;
 /*N*/ 		if ( pPara->bReset )
 /*N*/ 			lcl_RstAttr( pCNd, pPara );
-/*N*/ 
+/*N*/
 /*N*/ 		// erst in die History aufnehmen, damit ggfs. alte Daten
 /*N*/ 		// gesichert werden koennen
 /*N*/ 		if( pPara->pHistory )
 /*N*/ 			pPara->pHistory->Add( pCNd->GetFmtColl(), pCNd->GetIndex(),
 /*N*/ 									ND_TEXTNODE );
-/*N*/ 
+/*N*/
 /*N*/ 		pCNd->ChgFmtColl( pPara->pFmtColl );
 /*N*/ 		pPara->nWhich++;
 /*N*/ 	}
@@ -1226,7 +1237,7 @@ struct ParaRstFmt
 /*N*/ 		pHst = pUndo->GetHistory();
 /*N*/ 		AppendUndo( pUndo );
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	if( rRg.HasMark() )
 /*N*/ 	{
 /*N*/ 		ParaRstFmt aPara( pStt, pEnd, pHst );
@@ -1249,7 +1260,7 @@ struct ParaRstFmt
 /*?*/ 				aPara.pFmtColl = pFmt;
 /*?*/ 				lcl_RstAttr( pCNd, &aPara );
 /*N*/ 			}
-/*N*/ 
+/*N*/
 /*N*/ 			// erst in die History aufnehmen, damit ggfs. alte Daten
 /*N*/ 			// gesichert werden koennen
 /*N*/ 			if( pHst )
@@ -1259,7 +1270,7 @@ struct ParaRstFmt
 /*N*/ 		else
 /*N*/ 			bRet = FALSE;
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	if( bRet )
 /*N*/ 		SetModified();
 /*N*/ 	return bRet;
@@ -1281,24 +1292,24 @@ struct ParaRstFmt
 /*N*/ 			if( ((SwFmt*)rFmtArr[n])->GetName().Equals( rFmt.GetName() ))
 /*N*/ 				return (SwFmt*)rFmtArr[n];
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 	// suche erstmal nach dem "Parent"
 /*N*/ 	SwFmt* pParent = (SwFmt*)&rDfltFmt;
 /*N*/ 	if( rFmt.DerivedFrom() && pParent != rFmt.DerivedFrom() )
 /*N*/ 		pParent = CopyFmt( *rFmt.DerivedFrom(), rFmtArr,
 /*N*/ 								fnCopyFmt, rDfltFmt );
-/*N*/ 
+/*N*/
 /*N*/ 	// erzeuge das Format und kopiere die Attribute
 /*?*/ 	SwFmt* pNewFmt = (this->*fnCopyFmt)( rFmt.GetName(), pParent );
 /*?*/ 	pNewFmt->SetAuto( rFmt.IsAuto() );
 /*?*/ 	pNewFmt->CopyAttrs( rFmt, TRUE );			// kopiere Attribute
-/*?*/ 
+/*?*/
 /*?*/ 	pNewFmt->SetPoolFmtId( rFmt.GetPoolFmtId() );
 /*?*/ 	pNewFmt->SetPoolHelpId( rFmt.GetPoolHelpId() );
-/*?*/ 
+/*?*/
 /*?*/ 	// HelpFile-Id immer auf dflt setzen !!
 /*?*/ 	pNewFmt->SetPoolHlpFileId( UCHAR_MAX );
-/*?*/ 
+/*?*/
 /*?*/ 	return pNewFmt;
 /*N*/ }
 
@@ -1331,7 +1342,7 @@ struct ParaRstFmt
 /*?*/ 	SwTxtFmtColl* pParent = pDfltTxtFmtColl;
 /*?*/ 	if( pParent != rColl.DerivedFrom() )
 /*?*/ 		pParent = CopyTxtColl( *(SwTxtFmtColl*)rColl.DerivedFrom() );
-/*?*/ 
+/*?*/
 
 //FEATURE::CONDCOLL
 /*?*/ 	if( RES_CONDTXTFMTCOLL == rColl.Which() )
@@ -1341,23 +1352,23 @@ struct ParaRstFmt
 /*?*/ 	else
 /*?*/ //FEATURE::CONDCOLL
 /*?*/ 		pNewColl = MakeTxtFmtColl( rColl.GetName(), pParent );
-/*?*/ 
+/*?*/
 /*?*/ 	// kopiere jetzt noch die Auto-Formate oder kopiere die Attribute
 /*?*/ 	pNewColl->CopyAttrs( rColl, TRUE );
-/*?*/ 
+/*?*/
 /*?*/ 	// setze noch den Outline-Level
 /*?*/ 	if( NO_NUMBERING != rColl.GetOutlineLevel() )
 /*?*/ 		pNewColl->SetOutlineLevel( rColl.GetOutlineLevel() );
-/*?*/ 
+/*?*/
 /*?*/ 	pNewColl->SetPoolFmtId( rColl.GetPoolFmtId() );
 /*?*/ 	pNewColl->SetPoolHelpId( rColl.GetPoolHelpId() );
-/*?*/ 
+/*?*/
 /*?*/ 	// HelpFile-Id immer auf dflt setzen !!
 /*?*/ 	pNewColl->SetPoolHlpFileId( UCHAR_MAX );
-/*?*/ 
+/*?*/
 /*?*/ 	if( &rColl.GetNextTxtFmtColl() != &rColl )
 /*?*/ 		pNewColl->SetNextTxtFmtColl( *CopyTxtColl( rColl.GetNextTxtFmtColl() ));
-/*?*/ 
+/*?*/
 /*?*/ 	// ggfs. die NumRule erzeugen
 /*?*/ 	if( this != rColl.GetDoc() )
 /*?*/ 	{
@@ -1394,19 +1405,19 @@ struct ParaRstFmt
 /*?*/ 	SwGrfFmtColl* pParent = pDfltGrfFmtColl;
 /*?*/ 	if( pParent != rColl.DerivedFrom() )
 /*?*/ 		pParent = CopyGrfColl( *(SwGrfFmtColl*)rColl.DerivedFrom() );
-/*?*/ 
+/*?*/
 /*?*/ 	// falls nicht, so kopiere sie
 /*?*/ 	DBG_BF_ASSERT(0, "STRIP"); //STRIP001 pNewColl = MakeGrfFmtColl( rColl.GetName(), pParent );
-/*?*/ 
+/*?*/
 /*?*/ 	// noch die Attribute kopieren
 /*?*/ 	pNewColl->CopyAttrs( rColl );
-/*?*/ 
+/*?*/
 /*?*/ 	pNewColl->SetPoolFmtId( rColl.GetPoolFmtId() );
 /*?*/ 	pNewColl->SetPoolHelpId( rColl.GetPoolHelpId() );
-/*?*/ 
+/*?*/
 /*?*/ 	// HelpFile-Id immer auf dflt setzen !!
 /*?*/ 	pNewColl->SetPoolHlpFileId( UCHAR_MAX );
-/*?*/ 
+/*?*/
 /*?*/ 	return pNewColl;
 /*N*/ }
 
@@ -1457,10 +1468,10 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001  	FASTBOOL bNotifyLayout = FALSE;
 /*N*/ void SwDoc::_CreateNumberFormatter()
 /*N*/ {
 /*N*/ 	RTL_LOGFILE_CONTEXT_AUTHOR( aLog, "SW", "JP93722",  "SwDoc::_CreateNumberFormatter" );
-/*N*/ 
+/*N*/
 /*N*/ 	ASSERT( !pNumberFormatter, "ist doch schon vorhanden" );
-/*N*/ 
-/*N*/ 
+/*N*/
+/*N*/
 /*N*/ 	LanguageType eLang = LANGUAGE_SYSTEM; //System::GetLanguage();
 /*				((const SvxLanguageItem&)GetAttrPool().
                     GetDefaultItem( RES_CHRATR_LANGUAGE )).GetLanguage();
@@ -1469,7 +1480,7 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001  	FASTBOOL bNotifyLayout = FALSE;
 /*N*/ 	pNumberFormatter = new SvNumberFormatter( xMSF, eLang );
 /*N*/ 	pNumberFormatter->SetEvalDateFormat( NF_EVALDATEFORMAT_FORMAT_INTL );
 /*N*/ 	pNumberFormatter->SetYear2000(SFX_APP()->GetMiscConfig()->GetYear2000());
-/*N*/ 
+/*N*/
 /*N*/ }
 
 /*N*/ SwTblNumFmtMerge::SwTblNumFmtMerge( const SwDoc& rSrc, SwDoc& rDest )
@@ -1479,7 +1490,7 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001  	FASTBOOL bNotifyLayout = FALSE;
 /*N*/ 	SvNumberFormatter* pN;
 /*N*/ 	if( &rSrc != &rDest && 0 != ( pN = ((SwDoc&)rSrc).GetNumberFormatter( FALSE ) ))
 /*N*/ 		( pNFmt = rDest.GetNumberFormatter( TRUE ))->MergeFormatter( *pN );
-/*N*/ 
+/*N*/
 /*N*/ 	if( &rSrc != &rDest )
 /*N*/ 		((SwGetRefFieldType*)rSrc.GetSysFldType( RES_GETREFFLD ))->
 /*N*/ 			MergeWithOtherDoc( rDest );
