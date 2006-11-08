@@ -1,17 +1,37 @@
-/*==================================================================
-// class SfxRequest
-//
-// (C) 1996 - 2000 StarDivision GmbH, Hamburg, Germany
-// $Author: rt $ $Date: 2006-10-27 19:10:10 $ $Revision: 1.5 $
-// $Logfile:   T:/bf_sfx2/source/control/request.cxv  $ $Workfile:   REQUEST.CXX  $
-//------------------------------------------------------------------*/
-
-
-
-
-
-
-
+/*************************************************************************
+ *
+ *  OpenOffice.org - a multi-platform office productivity suite
+ *
+ *  $RCSfile: sfx2_request.cxx,v $
+ *
+ *  $Revision: 1.6 $
+ *
+ *  last change: $Author: kz $ $Date: 2006-11-08 12:26:01 $
+ *
+ *  The Contents of this file are made available subject to
+ *  the terms of GNU Lesser General Public License Version 2.1.
+ *
+ *
+ *    GNU Lesser General Public License Version 2.1
+ *    =============================================
+ *    Copyright 2005 by Sun Microsystems, Inc.
+ *    901 San Antonio Road, Palo Alto, CA 94303, USA
+ *
+ *    This library is free software; you can redistribute it and/or
+ *    modify it under the terms of the GNU Lesser General Public
+ *    License version 2.1, as published by the Free Software Foundation.
+ *
+ *    This library is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *    Lesser General Public License for more details.
+ *
+ *    You should have received a copy of the GNU Lesser General Public
+ *    License along with this library; if not, write to the Free Software
+ *    Foundation, Inc., 59 Temple Place, Suite 330, Boston,
+ *    MA  02111-1307  USA
+ *
+ ************************************************************************/
 
 #ifndef _SFXITEMITER_HXX //autogen
 #include <svtools/itemiter.hxx>
@@ -25,7 +45,6 @@
 #include <svtools/itemdel.hxx>
 #endif
 
-
 #pragma hdrstop
 
 #include "request.hxx"
@@ -34,9 +53,7 @@
 #include "objface.hxx"
 
 
-#ifndef _SFX_SFXUNO_HXX
-#include "sfxuno.hxx"
-#endif
+#include "appuno.hxx"
 
 namespace binfilter {
 
@@ -67,17 +84,17 @@ namespace binfilter {
 /*N*/     BOOL                bAllowRecording;
 /*N*/ 	SfxAllItemSet*      pInternalArgs;
 /*N*/     SfxViewFrame*       pViewFrame;
-/*N*/ 
+/*N*/
 /*N*/     ::com::sun::star::uno::Reference< ::com::sun::star::frame::XDispatchRecorder > xRecorder;
-/*N*/ 
+/*N*/
 /*N*/ 						SfxRequest_Impl( SfxRequest *pOwner )
 /*N*/ 						: pAnti( pOwner), bCancelled(FALSE),
 /*N*/ 						  nCallMode( SFX_CALLMODE_SYNCHRON ), nModifier(0),
 /*N*/                           pPool(0), pInternalArgs( 0 ), bAllowRecording( FALSE ), pViewFrame(0)
 /*N*/ 						{}
 /*N*/ 	~SfxRequest_Impl() { delete pInternalArgs; }
-/*N*/ 
-/*N*/ 
+/*N*/
+/*N*/
 /*N*/ 	void				SetPool( SfxItemPool *pNewPool );
 /*N*/ 	virtual void		Notify( SfxBroadcaster &rBC, const SfxHint &rHint );
 /*N*/     void                Record( const uno::Sequence < beans::PropertyValue >& rArgs );
@@ -113,11 +130,11 @@ namespace binfilter {
 /*N*/ SfxRequest::~SfxRequest()
 /*N*/ {
 /*N*/ 	DBG_MEMTEST();
-/*N*/ 
+/*N*/
 /*N*/ 	// nicht mit Done() marktierte Requests mit 'rem' rausschreiben
 /*N*/ 	if ( pImp->xRecorder.is() && !pImp->bDone && !pImp->bIgnored )
 /*?*/         pImp->Record( uno::Sequence < beans::PropertyValue >() );
-/*N*/ 
+/*N*/
 /*N*/ 	// Objekt abr"aumen
 /*N*/ 	delete pArgs;
 /*N*/ 	if ( pImp->pRetVal )
@@ -136,7 +153,7 @@ namespace binfilter {
 /*N*/ 	pImp( new SfxRequest_Impl(this) )
 /*N*/ {
 /*N*/ 	DBG_MEMTEST();
-/*N*/ 
+/*N*/
 /*N*/     pImp->bAllowRecording = rOrig.pImp->bAllowRecording;
 /*N*/     pImp->bDone = FALSE;
 /*N*/ 	pImp->bIgnored = FALSE;
@@ -147,7 +164,7 @@ namespace binfilter {
 /*N*/ 	pImp->bUseTarget = rOrig.pImp->bUseTarget;
 /*N*/ 	pImp->aTarget = rOrig.pImp->aTarget;
 /*N*/ 	pImp->nModifier = rOrig.pImp->nModifier;
-/*N*/ 
+/*N*/
 /*N*/ 	if ( pArgs )
 /*N*/ 		pImp->SetPool( pArgs->GetPool() );
 /*N*/ 	else
@@ -160,7 +177,7 @@ namespace binfilter {
 /*?*/ (
 /*?*/     SfxViewFrame*   pViewFrame,
 /*?*/     USHORT          nSlotId
-/*?*/ 
+/*?*/
 /*?*/ )
 
 /*	[Beschreibung]
@@ -177,7 +194,7 @@ namespace binfilter {
 /*?*/ 	pImp( new SfxRequest_Impl(this) )
 /*?*/ {
 /*?*/ 	DBG_MEMTEST();
-/*?*/ 
+/*?*/
 /*?*/ 	pImp->bDone = FALSE;
 /*?*/ 	pImp->bIgnored = FALSE;
 /*?*/     pImp->SetPool( &pViewFrame->GetPool() );
@@ -188,7 +205,7 @@ namespace binfilter {
 /*?*/ 	pImp->bUseTarget = FALSE;
 /*?*/     pImp->pViewFrame = pViewFrame;
 /*?*/     if( pImp->pViewFrame->GetDispatcher()->GetShellAndSlot_Impl( nSlotId, &pImp->pShell, &pImp->pSlot, TRUE, TRUE ) )
-/*?*/     {DBG_BF_ASSERT(0, "STRIP"); //STRIP001 
+/*?*/     {DBG_BF_ASSERT(0, "STRIP"); //STRIP001
 /*?*/     }
 /*?*/ #ifdef DBG_UTIL
 /*?*/     else
@@ -217,7 +234,7 @@ namespace binfilter {
 /*N*/ 	pImp( new SfxRequest_Impl(this) )
 /*N*/ {
 /*N*/ 	DBG_MEMTEST();
-/*N*/ 
+/*N*/
 /*N*/ 	pImp->bDone = FALSE;
 /*N*/ 	pImp->bIgnored = FALSE;
 /*N*/ 	pImp->SetPool( &rPool );
@@ -244,7 +261,7 @@ namespace binfilter {
 /*N*/ 	pImp( new SfxRequest_Impl(this) )
 /*N*/ {
 /*N*/ 	DBG_MEMTEST();
-/*N*/ 
+/*N*/
 /*N*/ 	pImp->bDone = FALSE;
 /*N*/ 	pImp->bIgnored = FALSE;
 /*N*/ 	pImp->SetPool( rSfxArgs.GetPool() );
@@ -306,7 +323,7 @@ namespace binfilter {
     geht in das Eigentum des Aufrufers "uber.
 */
 
-/*?*/ {DBG_BF_ASSERT(0, "STRIP"); //STRIP001 
+/*?*/ {DBG_BF_ASSERT(0, "STRIP"); //STRIP001
 /*?*/ }
 
 //--------------------------------------------------------------------
@@ -328,13 +345,13 @@ namespace binfilter {
     dann also noch leben.
 */
 
-/*?*/ {DBG_BF_ASSERT(0, "STRIP"); //STRIP001 
+/*?*/ {DBG_BF_ASSERT(0, "STRIP"); //STRIP001
 /*?*/ }
 
 //--------------------------------------------------------------------
 
 /*?*/ void SfxRequest::SetArgs( const SfxAllItemSet& rArgs )
-/*?*/ {DBG_BF_ASSERT(0, "STRIP"); //STRIP001 
+/*?*/ {DBG_BF_ASSERT(0, "STRIP"); //STRIP001
 /*?*/ }
 
 //--------------------------------------------------------------------
@@ -349,7 +366,7 @@ namespace binfilter {
 //--------------------------------------------------------------------
 
 /*?*/ void SfxRequest::RemoveItem( USHORT nID )
-/*?*/ {DBG_BF_ASSERT(0, "STRIP"); //STRIP001 
+/*?*/ {DBG_BF_ASSERT(0, "STRIP"); //STRIP001
 /*?*/ }
 
 //--------------------------------------------------------------------
@@ -415,7 +432,7 @@ namespace binfilter {
 /*N*/ 	{
 /*N*/ 		// ggf. in Which-Id umrechnen
 /*N*/ 		USHORT nWhich = pArgs->GetPool()->GetWhich(nSlotId);
-/*N*/ 
+/*N*/
 /*N*/ 		// ist das Item gesetzt oder bei bDeep==TRUE verf"ugbar?
 /*N*/ 		const SfxPoolItem *pItem = 0;
 /*N*/ 		if ( ( bDeep ? SFX_ITEM_AVAILABLE : SFX_ITEM_SET )
@@ -424,12 +441,12 @@ namespace binfilter {
 /*N*/ 			// stimmt der Typ "uberein?
 /*N*/ 			if ( !pItem || pItem->IsA(aType) )
 /*N*/ 				return pItem;
-/*N*/ 
+/*N*/
 /*N*/ 			// Item da aber falsch => Programmierfehler
 /*N*/ 			DBG_ERROR(  "invalid argument type" );
 /*N*/ 		}
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	// keine Parameter, nicht gefunden oder falschen Typ gefunden
 /*N*/ 	return 0;
 /*N*/ }
@@ -492,7 +509,7 @@ namespace binfilter {
     f"uhrte (z.B. Datei konnte nicht ge"offnet werden).
 */
 
-/*?*/ {DBG_BF_ASSERT(0, "STRIP"); //STRIP001 
+/*?*/ {DBG_BF_ASSERT(0, "STRIP"); //STRIP001
 /*?*/ }
 
 //--------------------------------------------------------------------
@@ -523,7 +540,7 @@ namespace binfilter {
     wenn das Ziel (genauer dessen Pool) stirbt.
 */
 
-/*?*/ {DBG_BF_ASSERT(0, "STRIP"); //STRIP001 
+/*?*/ {DBG_BF_ASSERT(0, "STRIP"); //STRIP001
 /*?*/ }
 
 //--------------------------------------------------------------------
@@ -569,11 +586,11 @@ namespace binfilter {
 /*N*/ {
 /*N*/ 	// als tats"achlich ausgef"uhrt markieren
 /*N*/ 	pImp->bDone = TRUE;
-/*N*/ 
+/*N*/
 /*N*/ 	// nicht Recorden
 /*N*/ 	if ( !pImp->xRecorder.is() )
 /*N*/ 		return;
-/*N*/ 
+/*N*/
 /*N*/ 	// wurde ein anderer Slot ausgef"uhrt als angefordert (Delegation)
 /*N*/ 	if ( nSlot != pImp->pSlot->GetSlotId() )
 /*N*/ 	{
@@ -592,13 +609,13 @@ namespace binfilter {
 /*?*/         aStr += ByteString::CreateFromInt32( pImp->pSlot->GetSlotId() );
 /*?*/         DBG_ERROR( aStr.GetBuffer() );
 /*?*/     }
-/*?*/ 
+/*?*/
 /*?*/     if ( !pImp->pSlot->pUnoName ) // Hosentr"ger und G"urtel
 /*?*/         return;
-/*?*/ 
+/*?*/
 /*?*/ 	// "ofters ben"otigte Werte
 /*?*/ 	SfxItemPool &rPool = pImp->pShell->GetPool();
-/*?*/ 
+/*?*/
 /*?*/ 	// Property-Slot?
 /*?*/ 	if ( !pImp->pSlot->IsMode(SFX_SLOT_METHOD) )
 /*?*/ 	{
@@ -619,7 +636,7 @@ namespace binfilter {
 /*?*/             TransformItems( pImp->pSlot->GetSlotId(), *pSet, aSeq, pImp->pSlot );
 /*?*/         pImp->Record( aSeq );
 /*?*/ 	}
-/*?*/ 
+/*?*/
 /*?*/ 	// alles in ein einziges Statement aufzeichnen?
 /*?*/ 	else if ( pImp->pSlot->IsMode(SFX_SLOT_RECORDPERSET) )
 /*?*/ 	{
@@ -628,7 +645,7 @@ namespace binfilter {
 /*?*/             TransformItems( pImp->pSlot->GetSlotId(), *pSet, aSeq, pImp->pSlot );
 /*?*/         pImp->Record( aSeq );
 /*?*/ 	}
-/*?*/ 
+/*?*/
 /*?*/ 	// jedes Item als einzelnes Statement recorden
 /*?*/ 	else if ( pImp->pSlot->IsMode(SFX_SLOT_RECORDPERITEM) )
 /*?*/ 	{
@@ -649,7 +666,7 @@ namespace binfilter {
 /*?*/ 					pSlot->nFlags &= ~((ULONG)SFX_SLOT_RECORDPERITEM);
 /*?*/ 					pSlot->nFlags &=  SFX_SLOT_RECORDPERSET;
 /*?*/ 				}
-/*?*/ 
+/*?*/
 /*?*/ 				// einen Sub-Request recorden
 /*?*/                 SfxRequest aReq( pImp->pViewFrame, nSlotId );
 /*?*/                 if ( aReq.pImp->pSlot )
@@ -779,7 +796,7 @@ namespace binfilter {
         Documents.Open( ... )
 */
 
-/*N*/ {DBG_BF_ASSERT(0, "STRIP"); //STRIP001 
+/*N*/ {DBG_BF_ASSERT(0, "STRIP"); //STRIP001
 /*N*/ }
 
 /*N*/ void SfxRequest::AllowRecording( BOOL bSet )
