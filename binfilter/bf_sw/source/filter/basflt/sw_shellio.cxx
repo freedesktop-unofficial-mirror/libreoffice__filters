@@ -4,9 +4,9 @@
  *
  *  $RCSfile: sw_shellio.cxx,v $
  *
- *  $Revision: 1.8 $
+ *  $Revision: 1.9 $
  *
- *  last change: $Author: rt $ $Date: 2006-10-27 23:26:23 $
+ *  last change: $Author: kz $ $Date: 2006-11-08 12:38:00 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -49,6 +49,15 @@
 #ifndef _SFXDOCFILE_HXX //autogen
 #include <bf_sfx2/docfile.hxx>
 #endif
+#ifndef _SVX_LRSPITEM_HXX //autogen
+#include <bf_svx/lrspitem.hxx>
+#endif
+#ifndef _SVX_ULSPITEM_HXX //autogen
+#include <bf_svx/ulspitem.hxx>
+#endif
+#ifndef _SVX_BOXITEM_HXX //autogen
+#include <bf_svx/boxitem.hxx>
+#endif
 #ifndef _SVXLINKMGR_HXX
 #include <bf_svx/linkmgr.hxx>
 #endif
@@ -89,6 +98,9 @@
 #ifndef _PAGEDESC_HXX
 #include <pagedesc.hxx>
 #endif
+#ifndef _POOLFMT_HXX
+#include <poolfmt.hxx>
+#endif
 #ifndef _FLTINI_HXX
 #include <fltini.hxx>
 #endif
@@ -121,29 +133,29 @@ using namespace ::com::sun::star;
 /*N*/ 	po->pStrm = pStrm;
 /*N*/ 	po->pStg  = pStg;
 /*N*/ 	po->bInsertMode = 0 != pCrsr;
-/*N*/ 
+/*N*/
 /*N*/ 	// ist ein Medium angegeben, dann aus diesem die Streams besorgen
-/*N*/ 	if( 0 != (po->pMedium = pMedium ) &&
-/*?*/ 		1 ) //STRIP001 !po->SetStrmStgPtr() )
+/*N*/   if( 0 != (po->pMedium = pMedium ) && !po->SetStrmStgPtr() )
 /*N*/ 	{
 /*?*/ 		DBG_BF_ASSERT(0, "STRIP"); //STRIP001 po->SetReadUTF8( FALSE );
+/*?*/      return ERR_SWG_FILE_FORMAT_ERROR;
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	ULONG nError = 0L;
-/*N*/ 
+/*N*/
 /*N*/ 	GetDoc();
-/*N*/ 
+/*N*/
 /*N*/ 	// am Sw3-Reader noch den pIo-Pointer "loeschen"
 /*N*/ 	if( po == ReadSw3 && pDoc->GetDocShell() &&
 /*N*/ 		((Sw3Reader*)po)->GetSw3Io() != pDoc->GetDocShell()->GetIoSystem() )
 /*N*/ 			((Sw3Reader*)po)->SetSw3Io( pDoc->GetDocShell()->GetIoSystem() );
-/*N*/ 
+/*N*/
 /*N*/ 	// waehrend des einlesens kein OLE-Modified rufen
 /*N*/ 	Link aOLELink( pDoc->GetOle2Link() );
 /*N*/ 	pDoc->SetOle2Link( Link() );
-/*N*/ 
+/*N*/
 /*N*/ 	pDoc->bInReading = TRUE;
-/*N*/ 
+/*N*/
 /*N*/ 	SwPaM *pPam;
 /*N*/ 	if( pCrsr )
 /*?*/ 		pPam = pCrsr;
@@ -161,12 +173,12 @@ using namespace ::com::sun::star;
 /*N*/ 		if( !pDoc->IsHTMLMode() || ReadHTML != po || !po->pTemplate  )
 /*N*/ 			po->SetTemplate( *pDoc );
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	// Pams sind ringfoermig verkettet. Aufhoeren, wenn man wieder beim
 /*N*/ 	// ersten ist.
 /*N*/ 	SwPaM *pEnd = pPam;
 /*N*/ 	SwUndoInsDoc* pUndo = 0L;
-/*N*/ 
+/*N*/
 /*N*/ 	BOOL bReadPageDescs = FALSE;
 /*N*/ 	BOOL bDocUndo = pDoc->DoesUndo();
 /*N*/ 	BOOL bSaveUndo = bDocUndo && pCrsr;
@@ -185,50 +197,50 @@ using namespace ::com::sun::star;
 /*?*/ 		}
 /*N*/ 	}
 /*N*/ 	pDoc->DoUndo( FALSE );
-/*N*/ 
+/*N*/
 /*N*/ 	SwNodeIndex aSplitIdx( pDoc->GetNodes() );
-/*N*/ 
+/*N*/
 /*N*/ 	SwRedlineMode eOld = pDoc->GetRedlineMode();
 /*N*/ 	pDoc->SetRedlineMode_intern( REDLINE_IGNORE );
-/*N*/ 
+/*N*/
 /*N*/ 	// Array von FlyFormaten
 /*N*/ 	SwSpzFrmFmts aFlyFrmArr;
 /*N*/ 	// only read templates? then ignore multi selection!
 /*N*/ 	BOOL bFmtsOnly = po->aOpt.IsFmtsOnly();
-/*N*/ 
+/*N*/
 /*N*/ 	while( TRUE )
 /*N*/ 	{
 /*N*/ 		if( bSaveUndo )
 /*?*/ 			pUndo = new SwUndoInsDoc( *pPam );
-/*N*/ 
+/*N*/
 /*N*/ 		SwPaM* pUndoPam = 0L;
 /*N*/ 		if( bDocUndo || pCrsr )
 /*N*/ 		{
 /*?*/ 			// Pam auf den Node davor setzen damit er nicht mit verschoben wird
 /*?*/ 			DBG_BF_ASSERT(0, "STRIP"); //STRIP001 const SwNodeIndex& rTmp = pPam->GetPoint()->nNode;
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		// Speicher mal alle Fly's
 /*N*/ 		if( pCrsr )
 /*?*/ 			aFlyFrmArr.Insert( pDoc->GetSpzFrmFmts(), 0L );
-/*N*/ 
+/*N*/
 /*N*/ 		xub_StrLen nSttCntnt = pPam->GetPoint()->nContent.GetIndex();
-/*N*/ 
+/*N*/
 /*N*/ 		// damit fuer alle Reader die Ende-Position immer stimmt, hier
 /*N*/ 		// pflegen.
 /*N*/ 		SwCntntNode* pCNd = pPam->GetCntntNode();
 /*N*/ 		xub_StrLen nEndCntnt = pCNd ? pCNd->Len() - nSttCntnt : 0;
 /*N*/ 		SwNodeIndex aEndPos( pPam->GetPoint()->nNode, 1 );
-/*N*/ 
+/*N*/
 /*N*/ 		nError = po->Read( *pDoc, *pPam, aFileName );
-/*N*/ 
+/*N*/
 /*N*/ 		if( !IsError( nError )) 	// dann setzen wir das Ende mal richtig
 /*N*/ 		{
 /*N*/ 			aEndPos--;
 /*N*/ 			pCNd = aEndPos.GetNode().GetCntntNode();
 /*N*/ 			if( !pCNd && 0 == ( pCNd = pDoc->GetNodes().GoPrevious( &aEndPos ) ))
 /*?*/ 				pCNd = pDoc->GetNodes().GoNext( &aEndPos );
-/*N*/ 
+/*N*/
 /*N*/ 			pPam->GetPoint()->nNode = aEndPos;
 /*N*/ 			xub_StrLen nLen = pCNd->Len();
 /*N*/ 			if( nLen < nEndCntnt )
@@ -237,7 +249,7 @@ using namespace ::com::sun::star;
 /*N*/ 				nEndCntnt = nLen - nEndCntnt;
 /*N*/ 			pPam->GetPoint()->nContent.Assign( pCNd, nEndCntnt );
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		if( pCrsr )
 /*N*/ 		{
 /*?*/ 			*pUndoPam->GetMark() = *pPam->GetPoint();
@@ -248,10 +260,10 @@ using namespace ::com::sun::star;
 /*?*/ 									(SwCntntNode*)pNd, nSttCntnt );
 /*?*/ 			else
 /*?*/ 				pUndoPam->GetPoint()->nContent.Assign( 0, 0 );
-/*?*/ 
+/*?*/
 /*?*/ 			int bChkHeaderFooter = pNd->FindHeaderStartNode() ||
 /*?*/ 								   pNd->FindFooterStartNode();
-/*?*/ 
+/*?*/
 /*?*/ 			// Suche alle neuen Fly's und speicher sie als einzelne Undo
 /*?*/ 			// Objecte
 /*?*/ 			for( USHORT n = 0; n < pDoc->GetSpzFrmFmts()->Count(); ++n )
@@ -292,7 +304,7 @@ using namespace ::com::sun::star;
 /*?*/ 								// also weg damit.
 /*?*/ 								pFrmFmt->DelFrms();
 /*?*/ 							}
-/*?*/ 
+/*?*/
 /*?*/ 							if( FLY_PAGE == rAnchor.GetAnchorId() )
 /*?*/ 							{
 /*?*/ 								if( !rAnchor.GetCntntAnchor() )
@@ -311,7 +323,7 @@ using namespace ::com::sun::star;
 /*?*/ 			}
 /*?*/ 			if( aFlyFrmArr.Count() )
 /*?*/ 				aFlyFrmArr.Remove( 0, aFlyFrmArr.Count() );
-/*?*/ 
+/*?*/
 /*?*/ 			pDoc->SetRedlineMode_intern( eOld );
 /*?*/ 			if( pDoc->IsRedlineOn() )
 /*?*/ 			{DBG_BF_ASSERT(0, "STRIP");} //STRIP001 	pDoc->AppendRedline( new SwRedline( REDLINE_INSERT, *pUndoPam ));
@@ -323,17 +335,17 @@ using namespace ::com::sun::star;
 /*N*/ 		{
 /*?*/ 			DBG_BF_ASSERT(0, "STRIP"); //STRIP001 pDoc->SetRedlineMode_intern( eOld );
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		delete pUndoPam;
-/*N*/ 
+/*N*/
 /*N*/ 		pPam = (SwPaM *) pPam->GetNext();
 /*N*/ 		if( pPam == pEnd )
 /*N*/ 			break;
-/*N*/ 
+/*N*/
 /*N*/ 		// only read templates? then ignore multi selection! Bug 68593
 /*?*/ 		if( bFmtsOnly )
 /*?*/ 			break;
-/*?*/ 
+/*?*/
         /*
          * !!! man muss selbst den Status vom Stream zuruecksetzen. !!!
          *	   Beim seekg wird der akt. Status, eof- und bad-Bit
@@ -345,10 +357,10 @@ using namespace ::com::sun::star;
 /*?*/ 			pStrm->ResetError();
 /*?*/ 		}
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	pDoc->bInReading = FALSE;
 /*N*/ 	pDoc->SetAllUniqueFlyNames();
-/*N*/ 
+/*N*/
 /*N*/ 	if( bReadPageDescs )
 /*?*/ 		pDoc->DoUndo( TRUE );
 /*N*/ 	else
@@ -361,7 +373,7 @@ using namespace ::com::sun::star;
 /*?*/ 			pDoc->SetRedlineMode_intern( REDLINE_IGNORE );
 /*N*/ 		}
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	// Wenn der Pam nur fuers Lesen konstruiert wurde, jetzt zerstoeren.
 /*N*/ 	if( !pCrsr )
 /*N*/ 	{
@@ -369,16 +381,16 @@ using namespace ::com::sun::star;
 /*N*/ 		eOld = (SwRedlineMode)(pDoc->GetRedlineMode() & ~REDLINE_IGNORE);
 /*N*/ 		pDoc->SetFieldsDirty( FALSE );
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	pDoc->SetRedlineMode_intern( eOld );
 /*N*/ 	pDoc->SetOle2Link( aOLELink );
-/*N*/ 
+/*N*/
 /*N*/ 	if( pCrsr )					// das Doc ist jetzt modifiziert
 /*N*/ 		pDoc->SetModified();
-/*N*/ 
+/*N*/
 /*N*/ 	if( po == ReadSw3 ) 		// am Sw3-Reader noch den pIo-Pointer "loeschen"
 /*N*/ 		((Sw3Reader*)po)->SetSw3Io( 0 );
-/*N*/ 
+/*N*/
 /*N*/ 	po->SetReadUTF8( FALSE );
 /*N*/ 	po->SetBlockMode( FALSE );
 /*N*/ 	po->SetOrganizerMode( FALSE );
@@ -394,6 +406,15 @@ using namespace ::com::sun::star;
 // Initiales Einlesben
 
 
+ SwReader::SwReader( SvStream& rStrm, const String& rFileName, SwDoc *pDoc )
+    : SwDocFac( pDoc ),
+    pStrm( &rStrm ),
+    pStg( 0 ),
+    pMedium( 0 ),
+    aFileName( rFileName ),
+    pCrsr( 0 )
+ {
+ }
 
 
 /*N*/ SwReader::SwReader( SvStorage& rStg, const String& rFileName, SwDoc *pDoc )
@@ -407,14 +428,27 @@ using namespace ::com::sun::star;
 /*N*/ }
 
 
+ SwReader::SwReader( SfxMedium& rMedium, const String& rFileName, SwDoc *pDoc )
+    : SwDocFac( pDoc ),
+    pStrm( 0 ),
+    pStg( 0 ),
+    pMedium( &rMedium ),
+    aFileName( rFileName ),
+    pCrsr( 0 )
+ {
+ }
 
 // In ein existierendes Dokument einlesen
 
-
-
-
-
-
+ SwReader::SwReader( SfxMedium& rMedium, const String& rFileName, SwPaM& rPam )
+    : SwDocFac( rPam.GetDoc() ),
+    aFileName( rFileName ),
+    pStg( 0 ),
+    pStrm( 0 ),
+    pMedium( &rMedium ),
+    pCrsr( &rPam )
+ {
+ }
 /*N*/ Reader::Reader()
 /*N*/ 	: pStrm(0), pStg(0), pMedium(0), pTemplate(0),
 /*N*/ 	bTmplBrowseMode( FALSE ), bInsertMode( FALSE ),
@@ -441,7 +475,7 @@ using namespace ::com::sun::star;
 /*N*/ 		SetTemplateName( GetTemplateName() );
 /*N*/ 		bHasAskTemplateName = TRUE;
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	if( !aTemplateNm.Len() )
 /*N*/ 		ClearTemplate();
 /*N*/ 	else
@@ -449,7 +483,7 @@ using namespace ::com::sun::star;
 /*?*/ 		INetURLObject aTDir( so3::StaticBaseUrl::SmartRelToAbs(aTemplateNm) );
 /*?*/ 		DateTime aCurrDateTime;
 /*?*/ 		BOOL bLoad = FALSE;
-/*?*/ 
+/*?*/
 /*?*/ 		// Wenn das Template schon mal geladen wurde, nur einmal pro
 /*?*/ 		// Minute nachschauen, ob es geaendert wurde.
 /*?*/ 		if( !pTemplate || aCurrDateTime >= aChkDateTime )
@@ -465,18 +499,18 @@ using namespace ::com::sun::star;
 /*?*/ 				aDStamp = aTstDate;
 /*?*/ 				aTStamp = aTstTime;
 /*?*/ 			}
-/*?*/ 
+/*?*/
 /*?*/ 			// Erst in einer Minute wieder mal nachschauen, ob sich die
 /*?*/ 			// Vorlage geaendert hat.
 /*?*/ 			aChkDateTime = aCurrDateTime;
 /*?*/ 			aChkDateTime += Time( 0L, 1L );
 /*?*/ 		}
-/*?*/ 
+/*?*/
 /*?*/ 		if( bLoad )
 /*?*/ 		{
 /*?*/ 			ClearTemplate();
 /*?*/ 			ASSERT( !pTemplate, "Who holds the template doc?" );
-/*?*/ 
+/*?*/
 /*?*/ 			SvStorageRef xStor( new SvStorage( aTDir.GetFull(), STREAM_READ ));
 /*?*/ 			ULONG nFormat = xStor->GetFormat();
 /*?*/ 			long nVersion = SOFFICE_FILEFORMAT_60;
@@ -515,12 +549,12 @@ using namespace ::com::sun::star;
 /*?*/ 						pTemplate->DoUndo( FALSE );		// always FALSE
 /*?*/ 						pTemplate->SetBrowseMode( bTmplBrowseMode );
 /*?*/ 						pTemplate->RemoveAllFmtLanguageDependencies();
-/*?*/ 
+/*?*/
 /*?*/ 						ReadXML->SetOrganizerMode( TRUE );
 /*?*/ 						SwReader aRdr( *xStor, aEmptyStr, pTemplate );
 /*?*/ 						aRdr.Read( *ReadXML );
 /*?*/ 						ReadXML->SetOrganizerMode( FALSE );
-/*?*/ 
+/*?*/
 /*?*/ 						pTemplate->AddLink();
 /*?*/ 					}
 /*?*/ 				}
@@ -530,27 +564,27 @@ using namespace ::com::sun::star;
 /*?*/ 				DBG_BF_ASSERT(0, "STRIP"); //STRIP001 pTemplate = new SwDoc;
 /*?*/ 			}
 /*?*/ 		}
-/*?*/ 
+/*?*/
 /*?*/ 		ASSERT( !pTemplate || FStatHelper::IsDocument(
 /*?*/ 				aTDir.GetMainURL( INetURLObject::NO_DECODE ) ) ||
 /*?*/ 				aTemplateNm.EqualsAscii( "$$Dummy$$" ),
 /*?*/ 				"TemplatePtr but no template exist!" );
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	return pTemplate;
 /*N*/ }
 
 /*N*/ BOOL Reader::SetTemplate( SwDoc& rDoc )
 /*N*/ {
 /*N*/ 	BOOL bRet = FALSE;
-/*N*/ 
+/*N*/
 /*N*/ 	GetTemplateDoc();
 /*N*/ 	if( pTemplate )
 /*N*/ 	{
 /*?*/ 		rDoc.RemoveAllFmtLanguageDependencies();
 /*?*/ 		DBG_BF_ASSERT(0, "STRIP"); //STRIP001 rDoc.ReplaceStyles( *pTemplate );
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	return bRet;
 /*N*/ }
 
@@ -576,16 +610,70 @@ using namespace ::com::sun::star;
 
 // alle die die Streams / Storages nicht geoeffnet brauchen,
 // muessen die Methode ueberladen
+int Reader::SetStrmStgPtr()
+{
+   ASSERT( pMedium, "Wo ist das Medium??" );
+
+   if( pMedium->IsStorage() )
+   {
+       if( SW_STORAGE_READER & GetReaderType() )
+       {
+           pStg = pMedium->GetStorage();
+           return TRUE;
+       }
+   }
+   else if( SW_STREAM_READER & GetReaderType() )
+   {
+       pStrm = pMedium->GetInStream();
+       return TRUE;
+   }
+   return FALSE;
+}
 
 
+ int Reader::GetReaderType()
+ {
+    return SW_STREAM_READER;
+ }
 
 
+ void Reader::SetFltName( const String& )
+ {
+ }
 
 
+void Reader::SetNoOutlineNum( SwDoc& rDoc )
+{
+}
 
 
+void Reader::ResetFrmFmtAttrs( SfxItemSet &rFrmSet )
+{
+    rFrmSet.Put( SvxLRSpaceItem() );
+    rFrmSet.Put( SvxULSpaceItem() );
+    rFrmSet.Put( SvxBoxItem() );
+}
 
 
+void Reader::ResetFrmFmts( SwDoc& rDoc )
+{
+    for( USHORT i=0; i<3; i++ )
+    {
+        USHORT nPoolId;
+        switch( i )
+        {
+        case 0: nPoolId = RES_POOLFRM_FRAME;    break;
+        case 1: nPoolId = RES_POOLFRM_GRAPHIC;  break;
+        case 2: nPoolId = RES_POOLFRM_OLE;      break;
+        }
+
+        SwFrmFmt *pFrmFmt = rDoc.GetFrmFmtFromPool( nPoolId );
+
+        pFrmFmt->ResetAttr( RES_LR_SPACE );
+        pFrmFmt->ResetAttr( RES_UL_SPACE );
+        pFrmFmt->ResetAttr( RES_BOX );
+    }
+}
 
     // read the sections of the document, which is equal to the medium.
     // returns the count of it
@@ -686,24 +774,24 @@ SwWriter::SwWriter( SfxMedium& rMedium, SwPaM& rPam, BOOL bWriteAll )
 /*N*/ {
 /*N*/ 	BOOL bHasMark = FALSE;
 /*N*/ 	SwPaM * pPam;
-/*N*/ 
+/*N*/
 /*N*/ 	SwDoc *pDoc = 0L;
 /*N*/     SvEmbeddedObjectRef* pRefForDocSh = 0;
-/*N*/ 
+/*N*/
 /*N*/ 	if ( pShell && !bWriteAll && pShell->IsTableMode() )
 /*N*/ 	{
 /*?*/ 		DBG_BF_ASSERT(0, "STRIP"); //STRIP001 bWriteAll = TRUE;
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	if( !bWriteAll && ( pShell || pOutPam ))
 /*N*/ 	{
 /*N*/ 		if( pShell )
 /*?*/ 			pPam = pShell->GetCrsr();
 /*N*/ 		else
 /*N*/ 			pPam = pOutPam;
-/*N*/ 
+/*N*/
 /*N*/ 		SwPaM *pEnd = pPam;
-/*N*/ 
+/*N*/
 /*N*/ 		// Erste Runde: Nachsehen, ob eine Selektion besteht.
 /*N*/ 		while(TRUE)
 /*N*/ 		{
@@ -712,7 +800,7 @@ SwWriter::SwWriter( SfxMedium& rMedium, SwPaM& rPam, BOOL bWriteAll )
 /*N*/ 			if(bHasMark || pPam == pEnd)
 /*N*/ 				break;
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		// Wenn keine Selektion besteht, eine ueber das ganze Dokument aufspannen.
 /*N*/ 		if(!bHasMark)
 /*N*/ 		{
@@ -739,10 +827,10 @@ SwWriter::SwWriter( SfxMedium& rMedium, SwPaM& rPam, BOOL bWriteAll )
 /*N*/ 		pPam->SetMark();
 /*N*/ 		pPam->Move( fnMoveForward, fnGoDoc );
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	rxWriter->bWriteAll = bWriteAll;
 /*N*/ 	SwDoc* pOutDoc = pDoc ? pDoc : &rDoc;
-/*N*/ 
+/*N*/
 /*N*/ 	// falls der Standart PageDesc. immer noch auf initalen Werten steht
 /*N*/ 	// (wenn z.B. kein Drucker gesetzt wurde) dann setze jetzt auf DIN A4
 /*N*/ 	if( !pOutDoc->GetPrt() )
@@ -762,14 +850,14 @@ SwWriter::SwWriter( SfxMedium& rMedium, SwPaM& rPam, BOOL bWriteAll )
 /*?*/ 			pOutDoc->ChgPageDesc( 0, aNew );
 /*?*/ 		}
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	SwEditShell* pESh = pOutDoc->GetEditShell();
 /*N*/ 	if( pESh )
 /*N*/ 		pESh->StartAllAction();
-/*N*/ 
+/*N*/
 /*N*/ 	BOOL bWasPurgeOle = pOutDoc->IsPurgeOLE();
 /*N*/ 	pOutDoc->SetPurgeOLE( FALSE );
-/*N*/ 
+/*N*/
 /*N*/ 	ULONG nError = 0;
 /*N*/ 	if( pMedium )
 /*?*/ 	{DBG_BF_ASSERT(0, "STRIP");} //STRIP001 	nError = rxWriter->Write( *pPam, *pMedium, pRealFileName );
@@ -777,11 +865,11 @@ SwWriter::SwWriter( SfxMedium& rMedium, SwPaM& rPam, BOOL bWriteAll )
 /*N*/ 		nError = rxWriter->Write( *pPam, *pStg, pRealFileName );
 /*N*/ 	else if( pStrm )
 /*N*/ 		nError = rxWriter->Write( *pPam, *pStrm, pRealFileName );
-/*N*/ 
+/*N*/
 /*N*/ 	pOutDoc->SetPurgeOLE( bWasPurgeOle );
 /*N*/ 	if( pESh )
 /*N*/ 		pESh->EndAllAction();
-/*N*/ 
+/*N*/
 /*N*/ 	// Falls nur zum Schreiben eine Selektion aufgespannt wurde, vor der
 /*N*/ 	// Rueckkehr den alten Crsr wieder herstellen.
 /*N*/ 	if( !bWriteAll && ( pShell || pOutPam ))
@@ -801,7 +889,7 @@ SwWriter::SwWriter( SfxMedium& rMedium, SwPaM& rPam, BOOL bWriteAll )
 /*N*/ 		if( !IsError( nError ) && !pDoc )
 /*N*/ 			rDoc.ResetModified();
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	if ( pDoc )
 /*N*/ 	{
 /*N*/         delete pRefForDocSh;
@@ -809,7 +897,7 @@ SwWriter::SwWriter( SfxMedium& rMedium, SwPaM& rPam, BOOL bWriteAll )
 /*?*/ 			delete pDoc;
 /*?*/ 		bWriteAll = FALSE;
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	return nError;
 /*N*/ }
 
