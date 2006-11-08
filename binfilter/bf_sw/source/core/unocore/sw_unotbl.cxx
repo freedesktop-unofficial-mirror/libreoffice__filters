@@ -4,9 +4,9 @@
  *
  *  $RCSfile: sw_unotbl.cxx,v $
  *
- *  $Revision: 1.4 $
+ *  $Revision: 1.5 $
  *
- *  last change: $Author: rt $ $Date: 2005-09-09 02:55:37 $
+ *  last change: $Author: kz $ $Date: 2006-11-08 12:36:58 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -236,8 +236,18 @@ using namespace ::com::sun::star::table;
 using namespace ::com::sun::star::beans;
 using namespace ::com::sun::star::chart;
 using namespace ::rtl;
-//collectn.cxx
-BOOL lcl_IsNumeric(const String&);
+
+BOOL lcl_IsNumeric(const String& rStr)
+{
+          DBG_BF_ASSERT(0, "STRIP"); //STRIP001
+    for(xub_StrLen i = 0; i < rStr.Len(); i++)
+    {
+        sal_Unicode c = rStr.GetChar(i);
+        if((c < '0') || (c > '9'))
+            return FALSE;
+    }
+    return TRUE;
+}
 
 //-----------------------------------------------------------------------------
 //aus unoobj.cxx
@@ -3978,24 +3988,24 @@ void SwXCellRange::setPropertyValue(const OUString& rPropertyName,
                     aBoxInfo.SetValid(0xff, FALSE);
                     BYTE nValid = 0;
                     switch(pMap->nMemberId & ~CONVERT_TWIPS)
-                    {        
-                        case  LEFT_BORDER :             nValid = VALID_LEFT; break;             
+                    {
+                        case  LEFT_BORDER :             nValid = VALID_LEFT; break;
                         case  RIGHT_BORDER:             nValid = VALID_RIGHT; break;
                         case  TOP_BORDER  :             nValid = VALID_TOP; break;
                         case  BOTTOM_BORDER:            nValid = VALID_BOTTOM; break;
-                        case  LEFT_BORDER_DISTANCE :    
-                        case  RIGHT_BORDER_DISTANCE:    
-                        case  TOP_BORDER_DISTANCE  :    
-                        case  BOTTOM_BORDER_DISTANCE:   
-                            nValid = VALID_DISTANCE; 
+                        case  LEFT_BORDER_DISTANCE :
+                        case  RIGHT_BORDER_DISTANCE:
+                        case  TOP_BORDER_DISTANCE  :
+                        case  BOTTOM_BORDER_DISTANCE:
+                            nValid = VALID_DISTANCE;
                         break;
                     }
                     aBoxInfo.SetValid(nValid, TRUE);
-                    
-                    
+
+
                     aSet.Put(aBoxInfo);
                     pDoc->GetTabBorders(*pCrsr, aSet);
-                    
+
                     aSet.Put(aBoxInfo);
                     SvxBoxItem aBoxItem((const SvxBoxItem&)aSet.Get(RES_BOX));
                     ((SfxPoolItem&)aBoxItem).PutValue(aValue, pMap->nMemberId);
@@ -4075,7 +4085,7 @@ uno::Any SwXCellRange::getPropertyValue(const OUString& rPropertyName) throw( be
                 }
                 break;
                 case RES_BOX :
-                {    
+                {
                     SwDoc* pDoc = pTblCrsr->GetDoc();
                     SfxItemSet aSet(pDoc->GetAttrPool(),
                                     RES_BOX, RES_BOX,
@@ -4778,7 +4788,7 @@ void SwXTableRows::insertByIndex(sal_Int32 nIndex, sal_Int32 nCount) throw( uno:
                 UnoActionContext aAction(pFrmFmt->GetDoc());
                 SwUnoCrsr* pUnoCrsr = pFrmFmt->GetDoc()->CreateUnoCrsr(aPos, sal_True);
                 pUnoCrsr->Move( fnMoveForward, fnGoNode );
-                
+
                 {
                     // remove actions
                     UnoActionRemoveContext aRemoveContext(pUnoCrsr->GetDoc());
