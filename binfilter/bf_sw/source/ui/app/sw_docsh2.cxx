@@ -4,9 +4,9 @@
  *
  *  $RCSfile: sw_docsh2.cxx,v $
  *
- *  $Revision: 1.8 $
+ *  $Revision: 1.9 $
  *
- *  last change: $Author: rt $ $Date: 2006-10-27 23:58:59 $
+ *  last change: $Author: kz $ $Date: 2006-11-08 12:41:04 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -305,7 +305,7 @@ using namespace sfx2;
 /*N*/ //		ASSERT( !this, "DocShell ist nicht richtig initialisiert!" );
 /*N*/ 		return ;
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	USHORT nAction = 0;
 /*N*/ 	if( rHint.ISA(SfxDocumentInfoHint) )
 /*N*/ 		nAction = 1;
@@ -320,7 +320,7 @@ using namespace sfx2;
 /*N*/ 			break;
 /*N*/ 		}
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	if( nAction )
 /*N*/ 	{
 /*N*/ 		BOOL bUnlockView;
@@ -335,12 +335,12 @@ using namespace sfx2;
 /*N*/ 		case 1:
 /*N*/ 			pDoc->DocInfoChgd( *((SfxDocumentInfoHint&)rHint).GetObject() );
 /*N*/ 			break;
-/*N*/ 
+/*N*/
 /*N*/ 		case 2:
 /*N*/ 			pDoc->GetSysFldType( RES_FILENAMEFLD )->UpdateFlds();
 /*N*/ 			break;
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		if( pWrtShell )
 /*N*/ 		{
 /*N*/ 			pWrtShell->EndAllAction();
@@ -349,7 +349,6 @@ using namespace sfx2;
 /*N*/ 		}
 /*N*/ 	}
 /*N*/ }
-
 
 /*N*/ void SwDoc::SetInfo( const SfxDocumentInfo& rInfo )
 /*N*/ {
@@ -371,7 +370,7 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 	if( pDocShell )
 /*N*/ {
 /*N*/ 	SfxInPlaceObject::FillClass(pClassName, pClipFormat, pAppName, pLongUserName,
 /*N*/ 								pUserName, nVersion);
-/*N*/ 
+/*N*/
 /*N*/ 	if (nVersion == SOFFICE_FILEFORMAT_31)
 /*N*/ 	{
 /*N*/ //        *pClassName		= SvGlobalName(0xDC5C7E40L, 0xB35C, 0x101B, 0x99, 0x61,
@@ -387,7 +386,7 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 	if( pDocShell )
 //        *pClassName		= SvGlobalName(0xDC5C7E40L, 0xB35C, 0x101B, 0x99, 0x61,
 //									   0x04, 0x02, 0x1C, 0x00, 0x70,0x02);
 /*N*/ 		*pClassName		= SvGlobalName( BF_SO3_SW_CLASSID_40 );
-/*N*/ 
+/*N*/
 /*N*/ 		*pClipFormat	= SOT_FORMATSTR_ID_STARWRITER_40;
 /*N*/ 		pAppName->AssignAscii( "StarWriter 4.0" );
 /*N*/ 		*pLongUserName	= SW_RESSTR(STR_WRITER_DOCUMENT_FULLTYPE_40);
@@ -421,7 +420,7 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 	if( pDocShell )
 /*N*/ 	if( IsEnableSetModified() && !pDoc->IsInCallModified() )
 /*N*/ 	{
 /*N*/ 		EnableSetModified( FALSE );
-/*N*/ 
+/*N*/
 /*N*/ 		if( bSet )
 /*N*/ 		{
 /*N*/ 			BOOL bOld = pDoc->IsModified();
@@ -431,51 +430,23 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 	if( pDocShell )
 /*N*/ 		}
 /*N*/ 		else
 /*N*/ 			pDoc->ResetModified();
-/*N*/ 
+/*N*/
 /*N*/ 		EnableSetModified( TRUE );
 /*N*/ 	}
-/*N*/ 	UpdateChildWindows();
 /*N*/ 	Broadcast(SfxSimpleHint(SFX_HINT_DOCCHANGED));
 /*N*/ }
-
-/*--------------------------------------------------------------------
-    Beschreibung:
- --------------------------------------------------------------------*/
-
-/*N*/ void SwDocShell::UpdateChildWindows()
-/*N*/ {
-/*N*/ 	// Flddlg ggf neu initialisieren (z.B. fuer TYP_SETVAR)
-/*N*/ 	if(!GetView())
-/*N*/ 		return;
-/*N*/ 	SfxViewFrame* pVFrame = GetView()->GetViewFrame();
-/*N*/ 	SwFldDlgWrapper *pWrp = (SwFldDlgWrapper*)pVFrame->
-/*N*/ 			GetChildWindow( SwFldDlgWrapper::GetChildWindowId() );
-/*N*/ 	if( pWrp )
-/*?*/ 		{DBG_BF_ASSERT(0, "STRIP");} //STRIP001 pWrp->ReInitDlg( this );
-
-    // RedlineDlg ggf neu initialisieren
-/*N*/ 	SwRedlineAcceptChild *pRed = (SwRedlineAcceptChild*)pVFrame->
-/*N*/ 			GetChildWindow( SwRedlineAcceptChild::GetChildWindowId() );
-/*N*/ 	if( pRed )
-/*?*/ 	{DBG_BF_ASSERT(0, "STRIP");} //STRIP001 	pRed->ReInitDlg( this );
-/*N*/ }
-
-/*--------------------------------------------------------------------
-    Beschreibung:
- --------------------------------------------------------------------*/
-
 
 /* -----------------------------14.12.99 16:52--------------------------------
 
  ---------------------------------------------------------------------------*/
 /*?*/ void	SwDocShell::ToggleBrowserMode(BOOL bSet, SwView* pView )
-/*?*/ {DBG_BF_ASSERT(0, "STRIP"); //STRIP001 
+/*?*/ {DBG_BF_ASSERT(0, "STRIP"); //STRIP001
 /*?*/ }
 
 /*N*/ULONG SwDocShell::LoadStylesFromFile( const String& rURL,
 /*N*/					SwgReaderOption& rOpt, BOOL bUnoCall )
 /*N*/{
-/*N*/	ULONG nErr = 0;DBG_BF_ASSERT(0, "STRIP"); //STRIP001 
+/*N*/	ULONG nErr = 0;DBG_BF_ASSERT(0, "STRIP"); //STRIP001
 /*N*/ 	return nErr;
 /*N*/ }
 
