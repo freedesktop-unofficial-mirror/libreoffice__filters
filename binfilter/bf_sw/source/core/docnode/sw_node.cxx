@@ -4,9 +4,9 @@
  *
  *  $RCSfile: sw_node.cxx,v $
  *
- *  $Revision: 1.6 $
+ *  $Revision: 1.7 $
  *
- *  last change: $Author: rt $ $Date: 2006-10-27 22:29:57 $
+ *  last change: $Author: kz $ $Date: 2006-11-08 12:30:07 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -184,7 +184,7 @@ using namespace ::com::sun::star::i18n;
 /*N*/ 	bWrongDirty = bACmplWrdDirty = TRUE;
 /*N*/ 	bSetNumLSpace = bIgnoreDontExpand = FALSE;
 /*N*/ 	nAFmtNumLvl = 0;
-/*N*/ 
+/*N*/
 /*N*/ 	SwNodes& rNodes = (SwNodes&)rWhere.GetNodes();
 /*N*/ 	SwNode* pInsNd = this; 		// der MAC kann this nicht einfuegen !!
 /*N*/ 	if( rWhere.GetIndex() )
@@ -214,7 +214,7 @@ using namespace ::com::sun::star::i18n;
 /*N*/ 	bWrongDirty = bACmplWrdDirty = TRUE;
 /*N*/ 	bSetNumLSpace = bIgnoreDontExpand = FALSE;
 /*N*/ 	nAFmtNumLvl = 0;
-/*N*/ 
+/*N*/
 /*N*/ 	SwNode* pInsNd = this; 		// der MAC kann this nicht einfuegen !!
 /*N*/ 	if( nPos )
 /*N*/ 	{
@@ -278,19 +278,19 @@ using namespace ::com::sun::star::i18n;
 /*N*/ 	const SwStartNode* pSttNd = pNd->FindSectionNode();
 /*N*/ 	if( pSttNd && ((SwSectionNode*)pSttNd)->GetSection().IsProtectFlag() )
 /*N*/ 		return TRUE;
-/*N*/ 
+/*N*/
 /*N*/ 	if( 0 != ( pSttNd = FindTableBoxStartNode() ) )
 /*N*/ 	{
 /*N*/ 		SwCntntFrm* pCFrm;
 /*N*/ 		if( IsCntntNode() && 0 != (pCFrm = ((SwCntntNode*)this)->GetFrm() ))
 /*N*/ 			return pCFrm->IsProtected();
-/*N*/ 
+/*N*/
 /*N*/ 		const SwTableBox* pBox = pSttNd->FindTableNode()->GetTable().
 /*N*/ 										GetTblBox( pSttNd->GetIndex() );
 /*N*/ 		if( pBox->GetFrmFmt()->GetProtect().IsCntntProtected() )
 /*?*/ 			return TRUE;
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	SwFrmFmt* pFlyFmt = GetFlyFmt();
 /*N*/ 	if( pFlyFmt )
 /*N*/ 	{
@@ -301,7 +301,7 @@ using namespace ::com::sun::star::i18n;
 /*N*/ 				? rAnchor.GetCntntAnchor()->nNode.GetNode().IsProtect()
 /*N*/ 				: FALSE;
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	if( 0 != ( pSttNd = FindFootnoteStartNode() ) )
 /*N*/ 	{
 /*?*/ 		const SwTxtFtn* pTFtn = GetDoc()->GetFtnIdxs().SeekEntry(
@@ -309,7 +309,7 @@ using namespace ::com::sun::star::i18n;
 /*?*/ 		if( pTFtn )
 /*?*/ 			return pTFtn->GetTxtNode().IsProtect();
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	return FALSE;
 /*N*/ }
 
@@ -367,7 +367,7 @@ using namespace ::com::sun::star::i18n;
 /*N*/ SwStartNode* SwNode::FindSttNodeByType( SwStartNodeType eTyp )
 /*N*/ {
 /*N*/ 	SwStartNode* pTmp = IsStartNode() ? (SwStartNode*)this : pStartOfSection;
-/*N*/ 
+/*N*/
 /*N*/ 	while( eTyp != pTmp->GetStartNodeType() && pTmp->GetIndex() )
 /*N*/ #if defined( ALPHA ) && defined( UNX )
 /*?*/ 		pTmp = ((SwNode*)pTmp)->pStartOfSection;
@@ -393,16 +393,16 @@ using namespace ::com::sun::star::i18n;
 /*N*/ 			else
 /*?*/ 				bCheckFirst = TRUE;
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		if( bCheckFirst )
 /*N*/ 		{
 /*?*/ 			// der 1.GliederungsNode liegt hinter dem Fragenden. Dann
 /*?*/ 			// teste mal, ob dieser auf der gleichen Seite steht. Wenn
 /*?*/ 			// nicht, ist das ein ungueltiger. Bug 61865
 /*?*/ 			pRet = rONds[0]->GetTxtNode();
-/*?*/ 
+/*?*/
 /*?*/ 			const SwCntntNode* pCNd = GetCntntNode();
-/*?*/ 
+/*?*/
 /*?*/ 			Point aPt( 0, 0 );
 /*?*/ 			const SwFrm* pFrm = pRet->GetFrm( &aPt, 0, FALSE ),
 /*?*/ 					   * pMyFrm = pCNd ? pCNd->GetFrm( &aPt, 0, FALSE ) : 0;
@@ -420,7 +420,7 @@ using namespace ::com::sun::star::i18n;
 /*N*/ 			while( nPos && nLvl < ( pRet = rONds[nPos]->GetTxtNode() )
 /*N*/ 					->GetTxtColl()->GetOutlineLevel() )
 /*N*/ 				--nPos;
-/*N*/ 
+/*N*/
 /*N*/ 			if( !nPos )		// bei 0 gesondert holen !!
 /*N*/ 				pRet = rONds[0]->GetTxtNode();
 /*N*/ 		}
@@ -554,7 +554,7 @@ using namespace ::com::sun::star::i18n;
 /*N*/ 	// Daher muessen alle Frames in der Abhaengigkeitsliste geloescht werden.
 /*N*/ 	if( GetDepends() )
 /*N*/ 		DelFrms();
-/*N*/ 
+/*N*/
 /*N*/ 	if( pAttrSet )
 /*N*/ 		delete pAttrSet;
 /*N*/ 	if( pCondColl )
@@ -569,13 +569,13 @@ using namespace ::com::sun::star::i18n;
 /*N*/ 	BOOL bNumRuleSet = FALSE, bCallModify = TRUE;
 /*N*/ 	String sNumRule, sOldNumRule;
 /*N*/ 	const SfxPoolItem* pItem;
-/*N*/ 
+/*N*/
 /*N*/ 	switch( nWhich )
 /*N*/ 	{
 /*N*/ 	case RES_OBJECTDYING :
 /*N*/ 		{
 /*?*/ 			SwFmt * pFmt = (SwFmt *) ((SwPtrMsgPoolItem *)pNewValue)->pObject;
-/*?*/ 
+/*?*/
 /*?*/ 			// nicht umhaengen wenn dieses das oberste Format ist !!
 /*?*/ 			if( pRegisteredIn == pFmt )
 /*?*/ 			{
@@ -597,12 +597,12 @@ using namespace ::com::sun::star::i18n;
 /*?*/ 			}
 /*N*/ 		}
 /*N*/ 		break;
-/*N*/ 
-/*N*/ 
+/*N*/
+/*N*/
 /*N*/ 	case RES_FMT_CHG:
 /*N*/ 		// falls mein Format Parent umgesetzt wird, dann melde ich
 /*N*/ 		// meinen Attrset beim Neuen an.
-/*N*/ 
+/*N*/
 /*N*/ 		// sein eigenes Modify ueberspringen !!
 /*N*/ 		if( pAttrSet &&
 /*N*/ 			((SwFmtChg*)pNewValue)->pChangedFmt == GetRegisteredIn() )
@@ -626,7 +626,7 @@ using namespace ::com::sun::star::i18n;
 /*?*/ 		DBG_BF_ASSERT(0, "STRIP"); //STRIP001 if( ((SwCondCollCondChg*)pNewValue)->pChangedFmt == GetRegisteredIn() &&
 /*?*/ 		return ;	// nicht an die Basisklasse / Frames weitergeben
 /*N*/ //FEATURE::CONDCOLL
-/*N*/ 
+/*N*/
 /*N*/ 	case RES_ATTRSET_CHG:
 /*N*/ 		if( GetNodes().IsDocNodes() && IsTxtNode() )
 /*N*/ 		{
@@ -641,7 +641,7 @@ using namespace ::com::sun::star::i18n;
 /*N*/ 				sOldNumRule = ((SwNumRuleItem*)pItem)->GetValue();
 /*N*/ 		}
 /*N*/ 		break;
-/*N*/ 
+/*N*/
 /*N*/ 	case RES_PARATR_NUMRULE:
 /*?*/ 		if( GetNodes().IsDocNodes() && IsTxtNode() )
 /*?*/ 		{
@@ -655,7 +655,7 @@ using namespace ::com::sun::star::i18n;
 /*?*/ 		}
 /*?*/ 		break;
 /*?*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	if( bNumRuleSet )
 /*N*/ 	{
 /*N*/ 		if( sNumRule.Len() )
@@ -691,7 +691,7 @@ using namespace ::com::sun::star::i18n;
 /*?*/ 		if( pRule )
 /*?*/ 			pRule->SetInvalidRule( TRUE );
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	if( bCallModify )
 /*N*/ 		SwModify::Modify( pOldValue, pNewValue );
 /*N*/ }
@@ -733,12 +733,12 @@ using namespace ::com::sun::star::i18n;
 /*N*/ 	if( pNewColl != pOldColl )
 /*N*/ 	{
 /*N*/ 		pNewColl->Add( this );
-/*N*/ 
+/*N*/
 /*N*/ 		// setze den Parent von unseren Auto-Attributen auf die neue
 /*N*/ 		// Collection:
 /*N*/ 		if( pAttrSet )
 /*?*/ 			pAttrSet->SetParent( &pNewColl->GetAttrSet() );
-/*N*/ 
+/*N*/
 /*N*/ //FEATURE::CONDCOLL
 /*N*/ 		// HACK: hier muss die entsprechend der neuen Vorlage die Bedingungen
 /*N*/ 		//		neu ueberprueft werden!
@@ -747,7 +747,7 @@ using namespace ::com::sun::star::i18n;
 /*N*/ 			SetCondFmtColl( 0 );
 /*N*/ 		}
 /*N*/ //FEATURE::CONDCOLL
-/*N*/ 
+/*N*/
 /*N*/ 		if( !IsModifyLocked() )
 /*N*/ 		{
 /*N*/ 			SwFmtChg aTmp1( pOldColl );
@@ -852,17 +852,17 @@ using namespace ::com::sun::star::i18n;
 /*N*/ {
 /*N*/ 	ASSERT( &rNode != this,
 /*N*/ 			"Kein Contentnode oder Copy-Node und neuer Node identisch." );
-/*N*/ 
+/*N*/
 /*N*/ 	if( !GetDepends() || &rNode == this )	// gibt es ueberhaupt Frames ??
 /*?*/ 		return;
-/*N*/ 
+/*N*/
 /*N*/ 	SwFrm *pFrm, *pNew;
 /*N*/ 	SwLayoutFrm *pUpper;
 /*N*/ 	// Frames anlegen fuer Nodes, die vor oder hinter der Tabelle stehen ??
 /*N*/ 	ASSERT( FindTableNode() == rNode.FindTableNode(), "Table confusion" )
-/*N*/ 
+/*N*/
 /*N*/ 	SwNode2Layout aNode2Layout( *this, rNode.GetIndex() );
-/*N*/ 
+/*N*/
 /*N*/ 	while( 0 != (pUpper = aNode2Layout.UpperFrm( pFrm, rNode )) )
 /*N*/ 	{
 /*N*/ 		pNew = rNode.MakeFrm();
@@ -881,10 +881,10 @@ using namespace ::com::sun::star::i18n;
 /*N*/ {
 /*N*/ 	if( !GetDepends() )
 /*N*/ 		return;
-/*N*/ 
+/*N*/
 /*N*/ 	SwClientIter aIter( *this );
 /*N*/ 	SwCntntFrm *pFrm;
-/*N*/ 
+/*N*/
 /*N*/ 	for( pFrm = (SwCntntFrm*)aIter.First( TYPE(SwCntntFrm)); pFrm;
 /*N*/ 		 pFrm = (SwCntntFrm*)aIter.Next() )
 /*N*/ 	{
@@ -928,8 +928,16 @@ using namespace ::com::sun::star::i18n;
 /*N*/ }
 
 
+ SwCntntNode *SwCntntNode::JoinNext()
+ {
+    return this;
+ }
 
 
+ SwCntntNode *SwCntntNode::JoinPrev()
+ {
+    return this;
+ }
 
 
 
@@ -956,15 +964,15 @@ using namespace ::com::sun::star::i18n;
 /*?*/ 			((SwNumRuleInfo&)rInfo).AddNode( *(SwTxtNode*)this );
 /*?*/ 		}
 /*?*/ 		return TRUE;
-/*?*/ 
+/*?*/
 /*?*/ 	case RES_GETLOWERNUMLEVEL:
 /*?*/ 		DBG_BF_ASSERT(0, "STRIP"); //STRIP001 if( IsTxtNode() && ((SwTxtNode*)this)->GetNum() &&
 /*?*/ 		break;
-/*?*/ 
+/*?*/
 /*?*/ 	case RES_FINDNEARESTNODE:
 /*?*/ 		DBG_BF_ASSERT(0, "STRIP"); //STRIP001 if( ((SwFmtPageDesc&)GetAttr( RES_PAGEDESC )).GetPageDesc() )
 /*?*/ 		return TRUE;
-/*?*/ 
+/*?*/
 /*?*/ 	case RES_CONTENT_VISIBLE:
 /*?*/ 		{
 /*?*/ 			((SwPtrMsgPoolItem&)rInfo).pObject =
@@ -972,7 +980,7 @@ using namespace ::com::sun::star::i18n;
 /*?*/ 		}
 /*?*/ 		return FALSE;
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	return SwModify::GetInfo( rInfo );
 /*N*/ }
 
@@ -982,15 +990,15 @@ using namespace ::com::sun::star::i18n;
 /*N*/ {
 /*N*/ 	if( !pAttrSet )			// lasse von den entsprechenden Nodes die
 /*N*/ 		NewAttrSet( GetDoc()->GetAttrPool() );		// AttrSets anlegen
-/*N*/ 
+/*N*/
 /*N*/ 	ASSERT( pAttrSet, "warum wurde kein AttrSet angelegt?" );
-/*N*/ 
+/*N*/
 /*N*/ 	if ( IsInCache() )
 /*N*/ 	{
 /*N*/ 		SwFrm::GetCache().Delete( this );
 /*N*/ 		SetInCache( FALSE );
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	BOOL bRet = FALSE;
 /*N*/ 	// wenn Modify gelockt ist, werden keine Modifies verschickt
 /*N*/ 	if( IsModifyLocked() ||
@@ -1008,7 +1016,7 @@ using namespace ::com::sun::star::i18n;
 /*N*/ 		{
 /*N*/ 			// einige Sonderbehandlungen fuer Attribute
 /*N*/ 			pAttrSet->SetModifyAtAttr( this );
-/*N*/ 
+/*N*/
 /*N*/ 			SwAttrSetChg aChgOld( *pAttrSet, aOld );
 /*N*/ 			SwAttrSetChg aChgNew( *pAttrSet, aNew );
 /*N*/ 			Modify( &aChgOld, &aChgNew );		// alle veraenderten werden verschickt
@@ -1022,15 +1030,15 @@ using namespace ::com::sun::star::i18n;
 /*N*/ {
 /*N*/ 	if( !pAttrSet )			// lasse von den entsprechenden Nodes die
 /*N*/ 		NewAttrSet( GetDoc()->GetAttrPool() );		// AttrSets anlegen
-/*N*/ 
+/*N*/
 /*N*/ 	if ( IsInCache() )
 /*N*/ 	{
 /*N*/ 		SwFrm::GetCache().Delete( this );
 /*N*/ 		SetInCache( FALSE );
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	BOOL bRet = FALSE;
-/*N*/ 
+/*N*/
 /*N*/ 	// wenn Modify gelockt ist, werden keine Modifies verschickt
 /*N*/ 	if( IsModifyLocked() || ( !GetDepends() &&
 /*N*/ 		SFX_ITEM_SET != rSet.GetItemState( RES_PARATR_NUMRULE, FALSE )) )
@@ -1062,39 +1070,39 @@ using namespace ::com::sun::star::i18n;
 /*N*/ {
 /*N*/ 	if( !pAttrSet )
 /*?*/ 		return FALSE;
-/*N*/ 
+/*N*/
 /*N*/ 	if ( IsInCache() )
 /*N*/ 	{
 /*?*/ 		SwFrm::GetCache().Delete( this );
 /*?*/ 		SetInCache( FALSE );
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	// wenn Modify gelockt ist, werden keine Modifies verschickt
 /*N*/ 	if( IsModifyLocked() )
 /*N*/ 	{
 /*?*/ 		USHORT nDel = (!nWhich2 || nWhich2 < nWhich1)
 /*?*/ 				? pAttrSet->ClearItem( nWhich1 )
 /*?*/ 				: pAttrSet->ClearItem_BC( nWhich1, nWhich2 );
-/*?*/ 
+/*?*/
 /*?*/ 		if( !pAttrSet->Count() )	// leer, dann loeschen
 /*?*/ 			DELETEZ( pAttrSet );
 /*?*/ 		return 0 != nDel;
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	// sollte kein gueltiger Bereich definiert sein ?
 /*N*/ 	if( !nWhich2 || nWhich2 < nWhich1 )
 /*N*/ 		nWhich2 = nWhich1;		// dann setze auf 1. Id, nur dieses Item
-/*N*/ 
+/*N*/
 /*N*/ 	SwAttrSet aOld( *pAttrSet->GetPool(), pAttrSet->GetRanges() ),
 /*N*/ 				aNew( *pAttrSet->GetPool(), pAttrSet->GetRanges() );
 /*N*/ 	BOOL bRet = 0 != pAttrSet->ClearItem_BC( nWhich1, nWhich2, &aOld, &aNew );
-/*N*/ 
+/*N*/
 /*N*/ 	if( bRet )
 /*N*/ 	{
 /*N*/ 		SwAttrSetChg aChgOld( *pAttrSet, aOld );
 /*N*/ 		SwAttrSetChg aChgNew( *pAttrSet, aNew );
 /*N*/ 		Modify( &aChgOld, &aChgNew );		// alle veraenderten werden verschickt
-/*N*/ 
+/*N*/
 /*N*/ 		if( !pAttrSet->Count() )	// leer, dann loeschen
 /*N*/ 			DELETEZ( pAttrSet );
 /*N*/ 	}
@@ -1106,13 +1114,13 @@ using namespace ::com::sun::star::i18n;
 /*N*/ {
 /*N*/ 	if( !pAttrSet )
 /*N*/ 		return 0;
-/*N*/ 
+/*N*/
 /*N*/ 	if ( IsInCache() )
 /*N*/ 	{
 /*?*/ 		SwFrm::GetCache().Delete( this );
 /*?*/ 		SetInCache( FALSE );
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	// wenn Modify gelockt ist, werden keine Modifies verschickt
 /*N*/ 	if( IsModifyLocked() )
 /*N*/ 	{
@@ -1121,17 +1129,17 @@ using namespace ::com::sun::star::i18n;
 /*?*/ 			DELETEZ( pAttrSet );
 /*?*/ 		return nDel;
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	SwAttrSet aOld( *pAttrSet->GetPool(), pAttrSet->GetRanges() ),
 /*N*/ 				aNew( *pAttrSet->GetPool(), pAttrSet->GetRanges() );
 /*N*/ 	BOOL bRet = 0 != pAttrSet->ClearItem_BC( 0, &aOld, &aNew );
-/*N*/ 
+/*N*/
 /*N*/ 	if( bRet )
 /*N*/ 	{
 /*N*/ 		SwAttrSetChg aChgOld( *pAttrSet, aOld );
 /*N*/ 		SwAttrSetChg aChgNew( *pAttrSet, aNew );
 /*N*/ 		Modify( &aChgOld, &aChgNew );		// alle veraenderten werden verschickt
-/*N*/ 
+/*N*/
 /*N*/ 		if( !pAttrSet->Count() )	// leer, dann loeschen
 /*N*/ 			DELETEZ( pAttrSet );
 /*N*/ 	}
@@ -1143,11 +1151,11 @@ using namespace ::com::sun::star::i18n;
 /*N*/ {
 /*N*/ 	if( rSet.Count() )
 /*?*/ 		rSet.ClearItem();
-/*N*/ 
+/*N*/
 /*N*/ 	const SwAttrSet& rAttrSet = GetSwAttrSet();
 /*N*/ 	if( bInParent )
 /*N*/ 		return rSet.Set( rAttrSet, TRUE ) ? TRUE : FALSE;
-/*N*/ 
+/*N*/
 /*?*/ 	rSet.Put( rAttrSet );
 /*?*/ 	return rSet.Count() ? TRUE : FALSE;
 /*N*/ }
@@ -1174,13 +1182,13 @@ using namespace ::com::sun::star::i18n;
 /*N*/ 	const SwNodes& rNds = GetNodes();
 /*N*/ 	BYTE nNdType = GetNodeType();
 /*N*/ 	SwNodeIndex aIdx( *this, 1 );
-/*N*/ 
+/*N*/
 /*N*/ 	const SwNode* pNd = this;
 /*N*/ 	while( aIdx < rNds.Count()-1 &&
 /*N*/ 		(( pNd = &aIdx.GetNode())->IsSectionNode() ||
 /*N*/ 			( pNd->IsEndNode() && pNd->FindStartNode()->IsSectionNode() )))
 /*N*/ 		aIdx++;
-/*N*/ 
+/*N*/
 /*N*/ 	if( pNd->GetNodeType() != nNdType || rNds.Count()-1 == aIdx.GetIndex() )
 /*N*/ 		return FALSE;
 /*N*/ 	if( pIdx )
@@ -1196,13 +1204,13 @@ using namespace ::com::sun::star::i18n;
 /*N*/ 	const SwNodes& rNds = GetNodes();
 /*N*/ 	BYTE nNdType = GetNodeType();
 /*N*/ 	SwNodeIndex aIdx( *this, -1 );
-/*N*/ 
+/*N*/
 /*N*/ 	const SwNode* pNd = this;
 /*N*/ 	while( aIdx.GetIndex() &&
 /*N*/ 		(( pNd = &aIdx.GetNode())->IsSectionNode() ||
 /*N*/ 			( pNd->IsEndNode() && pNd->FindStartNode()->IsSectionNode() )))
 /*?*/ 		aIdx--;
-/*N*/ 
+/*N*/
 /*N*/ 	if( pNd->GetNodeType() != nNdType || 0 == aIdx.GetIndex() )
 /*?*/ 		return FALSE;
 /*N*/ 	if( pIdx )
@@ -1225,7 +1233,7 @@ using namespace ::com::sun::star::i18n;
 /*?*/ 			pCondColl = new SwDepend( this, pColl );
 /*?*/ 		else
 /*?*/ 			pCondColl = 0;
-/*?*/ 
+/*?*/
 /*?*/ 		if( pAttrSet )
 /*?*/ 		{
 /*?*/ // Attrset beibehalten oder loeschen??
@@ -1233,7 +1241,7 @@ using namespace ::com::sun::star::i18n;
 /*?*/ //		     #64637#: Beim Laden eines Dokuments wird die bedingte
 /*?*/ //			 Vorlage nach dem Laden der harten Attribute gesetzt. Deshalb
 /*?*/ //			 wurden die harten Attribute geloescht.
-/*?*/ 
+/*?*/
 /*?*/ 			pAttrSet->SetParent( &GetAnyFmtColl().GetAttrSet() );
 /*?*/ // steht im docfmt.cxx
 /*?*/ //extern BOOL lcl_RstAttr( const SwNodePtr&, void* );
@@ -1241,7 +1249,7 @@ using namespace ::com::sun::star::i18n;
 /*?*/ //			if( pAttrSet && !pAttrSet->Count() )
 /*?*/ //				delete pAttrSet, pAttrSet = 0;
 /*?*/ 		}
-/*?*/ 
+/*?*/
 /*?*/ 		if( !IsModifyLocked() )
 /*?*/ 		{
 /*?*/ 			SwFmtChg aTmp1( pOldColl ? pOldColl : GetFmtColl() );
@@ -1269,7 +1277,7 @@ using namespace ::com::sun::star::i18n;
 /*N*/ 			{
 /*?*/ 			case ND_TABLENODE:		nCond = PARA_IN_TABLEBODY; break;
 /*N*/ 			case ND_SECTIONNODE: 	nCond = PARA_IN_SECTION; break;
-/*N*/ 
+/*N*/
 /*N*/ 			default:
 /*N*/ 				switch( pSttNd->GetStartNodeType() )
 /*N*/ 				{
@@ -1291,7 +1299,7 @@ using namespace ::com::sun::star::i18n;
 /*?*/ 						const SwFtnIdxs& rFtnArr = rNds.GetDoc()->GetFtnIdxs();
 /*?*/ 						const SwTxtFtn* pTxtFtn;
 /*?*/ 						const SwNode* pSrchNd = pSttNd;
-/*?*/ 
+/*?*/
 /*?*/ 						for( USHORT n = 0; n < rFtnArr.Count(); ++n )
 /*?*/ 							if( 0 != ( pTxtFtn = rFtnArr[ n ])->GetStartNode() &&
 /*?*/ 								pSrchNd == &pTxtFtn->GetStartNode()->GetNode() )
@@ -1306,7 +1314,7 @@ using namespace ::com::sun::star::i18n;
 /*?*/ 				case SwFooterStartNode:     nCond = PARA_IN_FOOTER; break;
 /*N*/ 				}
 /*N*/ 			}
-/*N*/ 
+/*N*/
 /*N*/ 			if( nCond )
 /*N*/ 			{
 /*N*/ 				rTmp.SetCondition( (Master_CollConditions)nCond, 0 );
@@ -1317,7 +1325,7 @@ using namespace ::com::sun::star::i18n;
 /*N*/ 						: 0;
 /*N*/ 		}
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	{
 /*N*/ 		USHORT nPos;
 /*N*/ 		const SwOutlineNodes& rOutlNds = rNds.GetOutLineNds();
@@ -1329,7 +1337,7 @@ using namespace ::com::sun::star::i18n;
 /*N*/ 				rOutlNds[ nPos ]->GetIndex() < GetIndex() )
 /*N*/ 			{
 /*N*/ 				SwTxtNode* pOutlNd = rOutlNds[ nPos ]->GetTxtNode();
-/*N*/ 
+/*N*/
 /*N*/ 				if( pOutlNd->GetOutlineNum() && !pOutlNd->GetNumRule() )
 /*N*/ 				{
 /*N*/ 					rTmp.SetCondition( PARA_IN_OUTLINE,
@@ -1339,7 +1347,7 @@ using namespace ::com::sun::star::i18n;
 /*N*/ 			}
 /*N*/ 		}
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	return FALSE;
 /*N*/ }
 
@@ -1351,7 +1359,7 @@ using namespace ::com::sun::star::i18n;
 /*N*/ 	{
 /*N*/ 		SwCollCondition aTmp( 0, 0, 0 );
 /*N*/ 		const SwCollCondition* pCColl;
-/*N*/ 
+/*N*/
 /*N*/ 		if( IsAnyCondition( aTmp ) && 0 != ( pCColl =
 /*N*/ 				((SwConditionTxtFmtColl*)GetFmtColl())->HasCondition( aTmp )))
 /*?*/ 			SetCondFmtColl( pCColl->GetTxtFmtColl() );
@@ -1369,7 +1377,7 @@ using namespace ::com::sun::star::i18n;
 /*N*/ 			}
 /*N*/ 			else
 /*N*/ 				pCColl = 0;
-/*N*/ 
+/*N*/
 /*N*/ 			if( pCColl )
 /*?*/ 				SetCondFmtColl( pCColl->GetTxtFmtColl() );
 /*N*/ 			else if( pCondColl )
