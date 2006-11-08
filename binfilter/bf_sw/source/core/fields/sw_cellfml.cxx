@@ -4,9 +4,9 @@
  *
  *  $RCSfile: sw_cellfml.cxx,v $
  *
- *  $Revision: 1.7 $
+ *  $Revision: 1.8 $
  *
- *  last change: $Author: rt $ $Date: 2006-10-27 22:36:35 $
+ *  last change: $Author: kz $ $Date: 2006-11-08 12:30:37 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -67,6 +67,9 @@
 #ifndef _TBLSEL_HXX
 #include <tblsel.hxx>
 #endif
+#ifndef _CELLFML_HXX
+#include <cellfml.hxx>
+#endif
 #ifndef _CALC_HXX
 #include <calc.hxx>
 #endif
@@ -85,6 +88,9 @@
 #ifndef _NDINDEX_HXX
 #include <ndindex.hxx>
 #endif
+#ifndef _HINTS_HXX
+#include <hints.hxx>
+#endif
 namespace binfilter {
 
 const sal_Unicode cRelTrenner = ',';
@@ -93,6 +99,8 @@ const sal_Unicode cRelKennung = '';		// CTRL-R
 const USHORT cMAXSTACKSIZE = 50;
 
 /*N*/ const SwFrm* lcl_GetBoxFrm( const SwTableBox& rBox );
+String lcl_BoxNmToRel( const SwTable&, const SwTableNode&,
+                        const String& , const String& , BOOL );
 
 
 /*************************************************************************
@@ -111,35 +119,35 @@ const USHORT cMAXSTACKSIZE = 50;
 /*N*/ double SwTableBox::GetValue( SwTblCalcPara& rCalcPara ) const
 /*N*/ {
 /*N*/ 	double nRet = 0;
-/*N*/ 
+/*N*/
 /*N*/ 	if( rCalcPara.rCalc.IsCalcError() )
 /*?*/ 		return nRet;			// schon ein Fehler in der Berechnung
-/*N*/ 
+/*N*/
 /*N*/ 	rCalcPara.rCalc.SetCalcError( CALC_SYNTAX );	// default immer Fehler
-/*N*/ 
+/*N*/
 /*N*/ 	// keine Content Box ?
 /*N*/ 	if( !pSttNd  )
 /*?*/ 		return nRet;
-/*N*/ 
+/*N*/
 /*N*/ 	if( rCalcPara.IncStackCnt() )
 /*?*/ 		return nRet;
-/*N*/ 
+/*N*/
 /*N*/ 	rCalcPara.SetLastTblBox( this );
-/*N*/ 
+/*N*/
 /*N*/ 	// wird eine Rekursion erzeugt ?
 /*N*/ 	SwTableBox* pBox = (SwTableBox*)this;
 /*N*/ 	if( rCalcPara.pBoxStk->Seek_Entry( pBox ))
 /*?*/ 		return nRet;			// steht schon auf dem Stack: FEHLER
-/*N*/ 
+/*N*/
 /*N*/ 	// bei dieser Box nochmal aufsetzen
 /*N*/ 	rCalcPara.SetLastTblBox( this );
-/*N*/ 
+/*N*/
 /*N*/ 	rCalcPara.pBoxStk->Insert( pBox );		// eintragen
 /*N*/ 	do {		// Middle-Check-Loop, damit aus dieser gesprungen werden kann
 /*N*/ 				// hier aufgespannt, damit am Ende der Box-Pointer aus dem
 /*N*/ 				// Stack ausgetragen wird
 /*N*/ 		SwDoc* pDoc = GetFrmFmt()->GetDoc();
-/*N*/ 
+/*N*/
 /*N*/ 		const SfxPoolItem* pItem;
 /*N*/ 		if( SFX_ITEM_SET == GetFrmFmt()->GetItemState(
 /*N*/ 								RES_BOXATR_FORMULA, FALSE, &pItem ) )
@@ -161,17 +169,17 @@ const USHORT cMAXSTACKSIZE = 50;
 /*?*/ 			nRet = ((SwTblBoxValue*)pItem)->GetValue();
 /*?*/ 			break;
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		SwTxtNode* pTxtNd = pDoc->GetNodes()[ pSttNd->GetIndex() + 1 ]->GetTxtNode();
 /*N*/ 		if( !pTxtNd )
 /*?*/ 			break;
-/*N*/ 
+/*N*/
 /*N*/ 		xub_StrLen nSttPos = 0;
 /*N*/ 		const String& rTxt = pTxtNd->GetTxt();
 /*N*/ 		while( nSttPos < rTxt.Len() &&
 /*N*/ 				( ' ' ==  rTxt.GetChar( nSttPos ) || '\t' ==  rTxt.GetChar( nSttPos ) ) )
 /*?*/ 			++nSttPos;
-/*N*/ 
+/*N*/
 /*N*/ 		// beginnt an erster Position ein "RechenFeld", dann erfrage den Wert
 /*N*/ 		// von diesem
 /*N*/ 		sal_Unicode cChr;
@@ -183,9 +191,9 @@ const USHORT cMAXSTACKSIZE = 50;
 /*N*/ 			SwTxtFld* pTxtFld = pTxtNd->GetTxtFld( aIdx );
 /*N*/ 			if( !pTxtFld )
 /*?*/ 				break;
-/*N*/ 
+/*N*/
 /*N*/ 			rCalcPara.rCalc.SetCalcError( CALC_NOERR );	// wieder zuruecksetzen
-/*N*/ 
+/*N*/
 /*N*/ 			const SwField* pFld = pTxtFld->GetFld().GetFld();
 /*N*/ 			switch( pFld->GetTyp()->Which()  )
 /*N*/ 			{
@@ -209,17 +217,17 @@ const USHORT cMAXSTACKSIZE = 50;
 /*N*/ 					nRet = pTblFld->GetValue();
 /*N*/ 				}
 /*N*/ 				break;
-/*N*/ 
+/*N*/
 /*N*/ 			case RES_DATETIMEFLD:
 /*?*/ 				nRet = ((SwDateTimeField*)pFld)->GetValue();
 /*?*/ 				break;
-/*?*/ 
+/*?*/
 /*?*/ 			case RES_JUMPEDITFLD:
 /*?*/ 				//JP 14.09.98: Bug 56112 - der Platzhalter kann nie einen
 /*?*/ 				//				gueltigen Inhalt haben!
 /*?*/ 				nRet = 0;
 /*?*/ 				break;
-/*?*/ 
+/*?*/
 /*?*/ 			default:
 /*?*/ 				nRet = rCalcPara.rCalc.Calculate( pFld->Expand() ).GetDouble();
 /*N*/ 			}
@@ -228,13 +236,13 @@ const USHORT cMAXSTACKSIZE = 50;
 /*N*/ 		{
 /*N*/ 			// Ergebnis ist 0 und kein Fehler!
 /*N*/ 			rCalcPara.rCalc.SetCalcError( CALC_NOERR );	// wieder zuruecksetzen
-/*N*/ 
+/*N*/
 /*N*/ 			double aNum;
 /*N*/ 			String sTxt( rTxt.Copy( nSttPos ) );
 /*N*/ 			sal_uInt32 nFmtIndex = GetFrmFmt()->GetTblBoxNumFmt().GetValue();
-/*N*/ 
+/*N*/
 /*N*/ 			SvNumberFormatter* pNumFmtr = pDoc->GetNumberFormatter();
-/*N*/ 
+/*N*/
 /*N*/ 			if( NUMBERFORMAT_TEXT == nFmtIndex )
 /*N*/ 				nFmtIndex = 0;
 /*N*/ 			// JP 22.04.98: Bug 49659 - Sonderbehandlung fuer Prozent
@@ -246,24 +254,24 @@ const USHORT cMAXSTACKSIZE = 50;
 /*?*/ 					NUMBERFORMAT_NUMBER == pNumFmtr->GetType( nTmpFmt ))
 /*?*/ 					sTxt += '%';
 /*?*/ 			}
-/*N*/ 
+/*N*/
 /*N*/ 			if( pNumFmtr->IsNumberFormat( sTxt, nFmtIndex, aNum ))
 /*N*/ 				nRet = aNum;
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ // ?? sonst ist das ein Fehler
 /*N*/ 	} while( FALSE );
-/*N*/ 
+/*N*/
 /*N*/ 	if( !rCalcPara.IsStackOverFlow() )
 /*N*/ 	{
 /*N*/ 		rCalcPara.pBoxStk->Remove( pBox );		// raus aus dem Stack
 /*N*/ 		rCalcPara.DecStackCnt();
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	//JP 12.01.99: mit Fehlererkennung, Bug 60794
 /*N*/ 	if( DBL_MAX == nRet )
 /*?*/ 		rCalcPara.rCalc.SetCalcError( CALC_SYNTAX );	// Fehler setzen
-/*N*/ 
+/*N*/
 /*N*/ 	return nRet;
 /*N*/ }
 
@@ -299,9 +307,9 @@ const USHORT cMAXSTACKSIZE = 50;
 /*N*/ 	SwTblCalcPara* pCalcPara = (SwTblCalcPara*)pPara;
 /*N*/ 	if( pCalcPara->rCalc.IsCalcError() )		// ist schon Fehler gesetzt ?
 /*?*/ 		return;
-/*N*/ 
+/*N*/
 /*N*/ 	SwTableBox* pSttBox, *pEndBox = 0;
-/*N*/ 
+/*N*/
 /*N*/ 	rFirstBox.Erase(0,1);		// Kennung fuer Box loeschen
 /*N*/ 	// ein Bereich in dieser Klammer ?
 /*N*/ 	if( pLastBox )
@@ -309,7 +317,7 @@ const USHORT cMAXSTACKSIZE = 50;
 /*N*/ 	//TODOUNICODE: does it work?
 /*N*/ //		pEndBox = (SwTableBox*)(long)(*pLastBox);
 /*N*/ 		pEndBox = (SwTableBox*)pLastBox->ToInt32();
-/*N*/ 
+/*N*/
 /*N*/ 		// ist das ueberhaupt ein gueltiger Pointer ??
 /*N*/ 		if( !rTbl.GetTabSortBoxes().Seek_Entry( pEndBox ))
 /*?*/ 			pEndBox = 0;
@@ -321,7 +329,7 @@ const USHORT cMAXSTACKSIZE = 50;
 /*N*/ 	// ist das ueberhaupt ein gueltiger Pointer ??
 /*N*/ 	if( !rTbl.GetTabSortBoxes().Seek_Entry( pSttBox ))
 /*?*/ 		pSttBox = 0;
-/*N*/ 
+/*N*/
 /*N*/ 	rNewStr += ' ';
 /*N*/ 	if( pEndBox && pSttBox )	// Bereich ?
 /*N*/ 	{
@@ -329,7 +337,7 @@ const USHORT cMAXSTACKSIZE = 50;
 /*N*/ 		// deren Werte
 /*N*/ 		SwSelBoxes aBoxes;
 /*N*/ 		GetBoxes( *pSttBox, *pEndBox, aBoxes );
-/*N*/ 
+/*N*/
 /*N*/ 		rNewStr += '(';
 /*N*/ 		for( USHORT n = 0; n < aBoxes.Count() &&
 /*N*/ 						   !pCalcPara->rCalc.IsCalcError(); ++n )
@@ -351,9 +359,39 @@ const USHORT cMAXSTACKSIZE = 50;
 /*N*/ 	rNewStr += ' ';
 /*N*/ }
 
+void SwTableFormula::BoxNmsToRelNm( const SwTable& rTbl, String& rNewStr,
+                    String& rFirstBox, String* pLastBox, void* pPara ) const
+{
+    // Box-Namen (externe Darstellung) zu relativen Namen
+    SwNode* pNd = (SwNode*)pPara;
+    ASSERT( pNd, "Feld steht in keinem Node" );
+    const SwTableNode* pTblNd = pNd->FindTableNode();
 
+    String sRefBoxNm;
+    if( &pTblNd->GetTable() == &rTbl )
+    {
+        const SwTableBox *pBox = rTbl.GetTblBox(
+                pNd->FindTableBoxStartNode()->GetIndex() );
+        ASSERT( pBox, "Feld steht in keiner Tabelle" );
+        sRefBoxNm = pBox->GetName();
+    }
 
+    rNewStr += rFirstBox.Copy(0,1);     // Kennung fuer Box erhalten
+    rFirstBox.Erase(0,1);
+    if( pLastBox )
+    {
+        rNewStr += lcl_BoxNmToRel( rTbl, *pTblNd, sRefBoxNm, *pLastBox,
+                                eNmType == EXTRNL_NAME );
+        rNewStr += ':';
+        rFirstBox.Erase( 0, pLastBox->Len()+1 );
+    }
 
+    rNewStr += lcl_BoxNmToRel( rTbl, *pTblNd, sRefBoxNm, rFirstBox,
+                            eNmType == EXTRNL_NAME );
+
+    // Kennung fuer Box erhalten
+    rNewStr += rFirstBox.GetChar( rFirstBox.Len() - 1 );
+}
 
 
 /*N*/ void SwTableFormula::PtrToBoxNms( const SwTable& rTbl, String& rNewStr,
@@ -361,14 +399,14 @@ const USHORT cMAXSTACKSIZE = 50;
 /*N*/ {
 /*N*/ 	// ein Bereich in dieser Klammer ?
 /*N*/ 	SwTableBox* pBox;
-/*N*/ 
+/*N*/
 /*N*/ 	rNewStr += rFirstBox.Copy(0,1);		// Kennung fuer Box erhalten
 /*N*/ 	rFirstBox.Erase(0,1);
 /*N*/ 	if( pLastBox )
 /*N*/ 	{
 /*N*/ //		pBox = (SwTableBox*)(long)(*pLastBox);
 /*N*/ 		pBox = (SwTableBox*)pLastBox->ToInt32();
-/*N*/ 
+/*N*/
 /*N*/ 		// ist das ueberhaupt ein gueltiger Pointer ??
 /*N*/ 		if( rTbl.GetTabSortBoxes().Seek_Entry( pBox ))
 /*N*/ 			rNewStr += pBox->GetName();
@@ -377,7 +415,7 @@ const USHORT cMAXSTACKSIZE = 50;
 /*N*/ 		rNewStr += ':';
 /*N*/ 		rFirstBox.Erase( 0, pLastBox->Len()+1 );
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ //	pBox = (SwTableBox*)(long)rFirstBox;
 /*N*/ 	pBox = (SwTableBox*)rFirstBox.ToInt32();
 /*N*/ 	// ist das ueberhaupt ein gueltiger Pointer ??
@@ -385,7 +423,7 @@ const USHORT cMAXSTACKSIZE = 50;
 /*N*/ 		rNewStr += pBox->GetName();
 /*N*/ 	else
 /*N*/ 		rNewStr += '?';
-/*N*/ 
+/*N*/
 /*N*/ 	// Kennung fuer Box erhalten
 /*N*/ 	rNewStr += rFirstBox.GetChar( rFirstBox.Len() - 1 );
 /*N*/ }
@@ -395,7 +433,7 @@ const USHORT cMAXSTACKSIZE = 50;
 /*N*/ {
 /*N*/ 	// ein Bereich in dieser Klammer ?
 /*N*/ 	const SwTableBox* pBox;
-/*N*/ 
+/*N*/
 /*N*/ 	rNewStr += rFirstBox.Copy(0,1);		// Kennung fuer Box erhalten
 /*N*/ 	rFirstBox.Erase(0,1);
 /*N*/ 	if( pLastBox )
@@ -405,10 +443,10 @@ const USHORT cMAXSTACKSIZE = 50;
 /*N*/ 		rNewStr += ':';
 /*N*/ 		rFirstBox.Erase( 0, pLastBox->Len()+1 );
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	pBox = rTbl.GetTblBox( rFirstBox );
 /*N*/ 	rNewStr += String::CreateFromInt32( (long)pBox );
-/*N*/ 
+/*N*/
 /*N*/ 	// Kennung fuer Box erhalten
 /*N*/ 	rNewStr += rFirstBox.GetChar( rFirstBox.Len() - 1 );
 /*N*/ }
@@ -462,6 +500,26 @@ const USHORT cMAXSTACKSIZE = 50;
 /*N*/ }
 
     // erzeuge die relative (fuers Kopieren) Formel
+ void SwTableFormula::ToRelBoxNm( const SwTable* pTbl )
+ {
+    const SwNode* pNd = 0;
+    FnScanFormel fnFormel = 0;
+    switch( eNmType)
+    {
+    case INTRNL_NAME:
+    case EXTRNL_NAME:
+        if( pTbl )
+        {
+            fnFormel = &SwTableFormula::BoxNmsToRelNm;
+            pNd = GetNodeOfFormula();
+        }
+        break;
+    case REL_NAME:
+        return;
+    }
+    sFormel = ScanString( fnFormel, *pTbl, (void*)pNd );
+    eNmType = REL_NAME;
+ }
 
 
 /*N*/ String SwTableFormula::ScanString( FnScanFormel fnFormel, const SwTable& rTbl,
@@ -469,12 +527,12 @@ const USHORT cMAXSTACKSIZE = 50;
 /*N*/ {
 /*N*/ 	String aStr;
 /*N*/ 	USHORT nFml = 0, nStt = 0, nEnd = 0, nTrenner;
-/*N*/ 
+/*N*/
 /*N*/ 	do {
 /*N*/ 		// falls der Formel ein Name vorangestellt ist, diese Tabelle
 /*N*/ 		// benutzen !!
 /*N*/ 		const SwTable* pTbl = &rTbl;
-/*N*/ 
+/*N*/
 /*N*/ 		nStt = sFormel.Search( '<', nFml );
 /*N*/ 		if( STRING_NOTFOUND != nStt )
 /*N*/ 		{
@@ -482,7 +540,7 @@ const USHORT cMAXSTACKSIZE = 50;
 /*N*/ 				( ' ' == sFormel.GetChar( nStt + 1 ) ||
 /*N*/ 				  '=' == sFormel.GetChar( nStt + 1 ) ) )
 /*?*/ 				nStt = sFormel.Search( '<', nStt + 1 );
-/*N*/ 
+/*N*/
 /*N*/ 			if( STRING_NOTFOUND != nStt )
 /*N*/ 				nEnd = sFormel.Search( '>', nStt+1 );
 /*N*/ 		}
@@ -493,7 +551,7 @@ const USHORT cMAXSTACKSIZE = 50;
 /*N*/ 			break;
 /*N*/ 		}
 /*N*/ 		aStr.Insert( sFormel, nFml, nStt - nFml );	// Anfang schreiben
-/*N*/ 
+/*N*/
 /*N*/ 		if( fnFormel != NULL )
 /*N*/ 		{
 /*N*/ 			// ist ein TabellenName vorangestellt ??
@@ -506,19 +564,19 @@ const USHORT cMAXSTACKSIZE = 50;
 /*N*/ 				&& nTrenner < nEnd )
 /*N*/ 			{
 /*?*/ 				String sTblNm( sFormel.Copy( nStt, nEnd - nStt ));
-/*?*/ 
+/*?*/
 /*?*/ 				// falls im Namen schon die Punkte enthalten sind,
 /*?*/ 				// treten diese immer paarig auf!!! (A1.1.1 !!)
 /*?*/ 				if( (sTblNm.GetTokenCount( '.' ) - 1 ) & 1 )
 /*?*/ 				{
 /*?*/ 					sTblNm.Erase( nTrenner - nStt );
-/*?*/ 
+/*?*/
 /*?*/ 					// beim Bauen der Formel ist der TabellenName unerwuenscht
 /*?*/ 					//JP 22.02.99: der CAST muss fuer den Linux-Compiler sein
 /*?*/ 					if( fnFormel != (FnScanFormel)&SwTableFormula::_MakeFormel )
 /*?*/ 						aStr += sTblNm;
 /*?*/ 					nStt = nTrenner;
-/*?*/ 
+/*?*/
 /*?*/ 					sTblNm.Erase( 0, 1 );	// Trenner loeschen
 /*?*/ 					if( sTblNm != rTbl.GetFrmFmt()->GetName() )
 /*?*/ 					{
@@ -527,7 +585,7 @@ const USHORT cMAXSTACKSIZE = 50;
 /*?*/ 					}
 /*?*/ 				}
 /*N*/ 			}
-/*N*/ 
+/*N*/
 /*N*/ 			String sBox( sFormel.Copy( nStt, nEnd - nStt + 1 ));
 /*N*/ 			// ein Bereich in dieser Klammer ?
 /*N*/ 			if( STRING_NOTFOUND != ( nTrenner = sFormel.Search( ':', nStt ))
@@ -540,7 +598,7 @@ const USHORT cMAXSTACKSIZE = 50;
 /*N*/ 			else
 /*N*/ 				(this->*fnFormel)( *pTbl, aStr, sBox, 0, pPara );
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		nFml = nEnd+1;
 /*N*/ 	} while( TRUE );
 /*N*/ 	return aStr;
@@ -564,7 +622,7 @@ const USHORT cMAXSTACKSIZE = 50;
         if( pF->Frm().Y() <
     }
 */
-/*N*/ 
+/*N*/
 /*N*/ 	SwNodeIndex aIdx( *rBox.GetSttNd() );
 /*N*/ 	SwCntntNode* pCNd = aIdx.GetNodes().GoNext( &aIdx );
 /*N*/ 	ASSERT( pCNd, "Box hat keinen TextNode" );
@@ -572,10 +630,50 @@ const USHORT cMAXSTACKSIZE = 50;
 /*N*/ 	return pCNd->GetFrm( &aPt, NULL, FALSE );
 /*N*/ }
 
+String lcl_BoxNmToRel( const SwTable& rTbl, const SwTableNode& rTblNd,
+                            const String& rRefBoxNm, const String& rGetStr,
+                            BOOL bExtrnlNm )
+{
+    String sCpy( rRefBoxNm );
+    String sTmp( rGetStr );
+    if( !bExtrnlNm )
+    {
+        // in die Externe Darstellung umwandeln.
+//      SwTableBox* pBox = (SwTableBox*)(long)sTmp;
+        SwTableBox* pBox = (SwTableBox*)sTmp.ToInt32();
+        if( !rTbl.GetTabSortBoxes().Seek_Entry( pBox ))
+            return '?';
+        sTmp = pBox->GetName();
+    }
 
+    // sollte die es eine Tabellen uebergreifende Formel sein, dann behalte
+    // die externe Darstellung bei:
+    if( &rTbl == &rTblNd.GetTable() )
+    {
+        long nBox = SwTable::_GetBoxNum( sTmp, TRUE );
+        nBox -= SwTable::_GetBoxNum( sCpy, TRUE );
+        long nLine = SwTable::_GetBoxNum( sTmp );
+        nLine -= SwTable::_GetBoxNum( sCpy );
 
+        sCpy = sTmp;        //JP 01.11.95: den Rest aus dem BoxNamen anhaengen
 
+        sTmp = cRelKennung;
+        sTmp += String::CreateFromInt32( nBox );
+        sTmp += cRelTrenner;
+        sTmp += String::CreateFromInt32( nLine );
 
+        if( sCpy.Len() )
+        {
+            sTmp += cRelTrenner;
+            sTmp += sCpy;
+        }
+    }
+
+    if( sTmp.Len() && '>' == sTmp.GetChar( sTmp.Len() - 1 ))
+        sTmp.Erase( sTmp.Len()-1 );
+
+    return sTmp;
+}
 
 /*N*/ void SwTableFormula::GetBoxes( const SwTableBox& rSttBox,
 /*N*/ 								const SwTableBox& rEndBox,
@@ -588,11 +686,11 @@ const USHORT cMAXSTACKSIZE = 50;
 /*N*/ 	pEnd = ( 0 != (pFrm = lcl_GetBoxFrm( rEndBox ))) ? pFrm->GetUpper() : 0;
 /*N*/ 	if( !pStt || !pEnd )
 /*?*/ 		return ;			            // no valid selection
-/*N*/ 
+/*N*/
 /*N*/ 	GetTblSel( pStt, pEnd, rBoxes );
-/*N*/ 
+/*N*/
 /*N*/ 	const SwTable* pTbl = pStt->FindTabFrm()->GetTable();
-/*N*/ 
+/*N*/
 /*N*/ 	// filter die Kopfzeilen-Boxen heraus:
 /*N*/ 	if( pTbl->IsHeadlineRepeat() )
 /*N*/ 		do {	// middle-check loop
@@ -600,7 +698,7 @@ const USHORT cMAXSTACKSIZE = 50;
 /*N*/ 			const SwTableLine* pLine = rSttBox.GetUpper();
 /*N*/ 			while( pLine->GetUpper() )
 /*?*/ 				pLine = pLine->GetUpper()->GetUpper();
-/*N*/ 
+/*N*/
 /*N*/ 			if( pLine == pHeadLine )
 /*?*/ 				break;		// Headline mit im Bereich !
 /*N*/ 			// vielleicht ist ja Start und Ende vertauscht
@@ -609,18 +707,18 @@ const USHORT cMAXSTACKSIZE = 50;
 /*?*/ 				pLine = pLine->GetUpper()->GetUpper();
 /*N*/ 			if( pLine == pHeadLine )
 /*?*/ 				break;		// Headline mit im Bereich !
-/*N*/ 
+/*N*/
 /*N*/ 			const SwTabFrm *pTable = pStt->FindTabFrm();
 /*N*/ 			const SwTabFrm *pEndTable = pEnd->FindTabFrm();
 /*N*/ 			if( pTable == pEndTable )		// keine gespl. Tabelle
 /*N*/ 				break;
-/*N*/ 
+/*N*/
 /*N*/ 			// dann mal die Tabellenkoepfe raus:
 /*?*/ 			for( USHORT n = 0; n < rBoxes.Count(); ++n )
 /*?*/ 			{
 /*?*/ 				while( (pLine = rBoxes[n]->GetUpper())->GetUpper() )
 /*?*/ 					pLine = pLine->GetUpper()->GetUpper();
-/*?*/ 
+/*?*/
 /*?*/ 				if( pLine == pHeadLine )
 /*?*/ 					rBoxes.Remove( n--, 1 );
 /*?*/ 			}
@@ -629,12 +727,33 @@ const USHORT cMAXSTACKSIZE = 50;
 
     // sind alle Boxen gueltig, auf die sich die Formel bezieht?
 
-
-
+USHORT SwTableFormula::GetLnPosInTbl( const SwTable& rTbl, const SwTableBox* pBox )
+{
+    USHORT nRet = USHRT_MAX;
+    if( pBox )
+    {
+        const SwTableLine* pLn = pBox->GetUpper();
+        while( pLn->GetUpper() )
+            pLn = pLn->GetUpper()->GetUpper();
+        nRet = rTbl.GetTabLines().GetPos( pLn );
+    }
+    return nRet;
+}
 
 
     // erzeuge die externe Formel, beachte aber das die Formel
     // in einer gesplitteten/gemergten Tabelle landet
+void SwTableFormula::ToSplitMergeBoxNm( SwTableFmlUpdate& rTblUpd )
+{
+    const SwTable* pTbl;
+    const SwNode* pNd = GetNodeOfFormula();
+    if( pNd && 0 != ( pNd = pNd->FindTableNode() ))
+        pTbl = &((SwTableNode*)pNd)->GetTable();
+    else
+        pTbl = rTblUpd.pTbl;
 
+    sFormel = ScanString( &SwTableFormula::_SplitMergeBoxNm, *pTbl, (void*)&rTblUpd );
+    eNmType = INTRNL_NAME;
+}
 
 }
