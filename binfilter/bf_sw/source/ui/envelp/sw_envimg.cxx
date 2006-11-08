@@ -4,9 +4,9 @@
  *
  *  $RCSfile: sw_envimg.cxx,v $
  *
- *  $Revision: 1.6 $
+ *  $Revision: 1.7 $
  *
- *  last change: $Author: rt $ $Date: 2006-10-28 00:14:39 $
+ *  last change: $Author: kz $ $Date: 2006-11-08 12:45:40 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -36,8 +36,6 @@
 
 #pragma hdrstop
 
-
-
 #ifndef _SWTYPES_HXX
 #include <swtypes.hxx>
 #endif
@@ -64,8 +62,6 @@ using namespace ::com::sun::star::uno;
 
 /*N*/ TYPEINIT1_AUTOFACTORY( SwEnvItem, SfxPoolItem );
 
-// --------------------------------------------------------------------------
-// --------------------------------------------------------------------------
 /*N*/ SwEnvItem::SwEnvItem() :
 /*N*/ 	SfxPoolItem(FN_ENVELOP)
 /*N*/ {
@@ -87,10 +83,9 @@ using namespace ::com::sun::star::uno;
 /*N*/ 	bPrintFromAbove(rItem.bPrintFromAbove),
 /*N*/ 	lShiftRight    (rItem.lShiftRight),
 /*N*/ 	lShiftDown     (rItem.lShiftDown)
-/*N*/ {DBG_BF_ASSERT(0, "STRIP"); //STRIP001 
+/*N*/ {DBG_BF_ASSERT(0, "STRIP"); //STRIP001
 /*N*/ }
 
-// --------------------------------------------------------------------------
 // --------------------------------------------------------------------------
 /*N*/ int SwEnvItem::operator ==(const SfxPoolItem& rItem) const
 /*N*/ {
@@ -103,18 +98,4 @@ DBG_BF_ASSERT(0, "STRIP"); return 0;//STRIP001 	const SwEnvItem& rEnv = (const S
 /*N*/ 	return new SwEnvItem(*this);
 /*N*/ }
 // --------------------------------------------------------------------------
-// --------------------------------------------------------------------------
-/* -----------------------------26.09.00 14:04--------------------------------
-
- ---------------------------------------------------------------------------*/
-/* -----------------------------26.09.00 14:05--------------------------------
-
- ---------------------------------------------------------------------------*/
-/* -----------------------------26.09.00 14:04--------------------------------
-
- ---------------------------------------------------------------------------*/
-
-/* -----------------------------26.04.01 12:26--------------------------------
-
- ---------------------------------------------------------------------------*/
 }
