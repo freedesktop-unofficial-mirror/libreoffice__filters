@@ -4,9 +4,9 @@
  *
  *  $RCSfile: sw_swdll.cxx,v $
  *
- *  $Revision: 1.5 $
+ *  $Revision: 1.6 $
  *
- *  last change: $Author: rt $ $Date: 2006-10-28 00:00:29 $
+ *  last change: $Author: kz $ $Date: 2006-11-08 12:41:32 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -82,13 +82,13 @@ namespace binfilter {
 /*N*/ void SwDLL::Init()
 /*N*/ {
 /*N*/ 	RTL_LOGFILE_CONTEXT_AUTHOR( aLog, "SW", "JP93722",  "SwDLL" );
-/*N*/ 
+/*N*/
 /*N*/ 	// called directly after loading the DLL
 /*N*/ 	// do whatever you want, you may use Sw-DLL too
-/*N*/ 
+/*N*/
 /*N*/ 	// the SdModule must be created
 /*N*/ 	SwModuleDummy** ppShlPtr = (SwModuleDummy**) GetAppData(BF_SHL_WRITER);
-/*N*/ 
+/*N*/
 /*N*/ 	SvFactory* pDocFact     = (SvFactory*)(*ppShlPtr)->pSwDocShellFactory;
 /*N*/ 	SvFactory* pWDocFact    = (SvFactory*)(*ppShlPtr)->pSwWebDocShellFactory;
 /*N*/ 	SvFactory* pGlobDocFact = (SvFactory*)(*ppShlPtr)->pSwGlobalDocShellFactory;
@@ -98,7 +98,7 @@ namespace binfilter {
 /*N*/ 	(*ppShlPtr)->pSwDocShellFactory    		= pDocFact    ;
 /*N*/ 	(*ppShlPtr)->pSwWebDocShellFactory     	= pWDocFact   ;
 /*N*/ 	(*ppShlPtr)->pSwGlobalDocShellFactory 	= pGlobDocFact;
-/*N*/ 
+/*N*/
 /*N*/     if ( pDocFact )
 /*N*/     {
 /*N*/         SwDocShell::Factory().RegisterPluginMenuBar( SW_RES(CFG_SW_MENU_PORTAL));
@@ -108,31 +108,25 @@ namespace binfilter {
 /*N*/         SwGlobalDocShell::Factory().RegisterAccel(SW_RES(CFG_SW_ACCEL));
 /*N*/         SwGlobalDocShell::Factory().RegisterPluginMenuBar( SW_RES(CFG_SWGLOBAL_MENU_PORTAL));
 /*N*/     }
-/*N*/ 
+/*N*/
 /*N*/ 	SwWebDocShell::Factory().RegisterPluginMenuBar( SW_RES(CFG_SWWEB_MENU_PORTAL));
 /*N*/ 	SwWebDocShell::Factory().RegisterMenuBar(SW_RES(CFG_SWWEB_MENU));
 /*N*/ 	SwWebDocShell::Factory().RegisterAccel(SW_RES(CFG_SWWEB_ACCEL));
-/*N*/ 
+/*N*/
 /*N*/ 	SdrObjFactory::InsertMakeObjectHdl( LINK( &aSwObjectFactory, SwObjectFactory, MakeObject ) );
-/*N*/ 
+/*N*/
 /*N*/ 	RTL_LOGFILE_CONTEXT_TRACE( aLog, "Init Core/UI/Filter" );
-/*N*/ 
+/*N*/
 /*N*/ 	//Initialisierung der Statics
 /*N*/ 	::binfilter::_InitCore();
 /*N*/ 	::binfilter::_InitFilter();
-/*N*/ 	::binfilter::_InitUI();
-/*N*/ 
+///*N*/   ::binfilter::_InitUI();
+/*N*/
 /*N*/ 	pModule->InitAttrPool();
 /*N*/ 	//jetzt darf das SwModule seinen Pool anlegen
-/*N*/ 
-/*N*/ 	// register your view-factories here
-/*N*/ 	RegisterFactories();
-/*N*/ 
+/*N*/
 /*N*/ 	// register your shell-interfaces here
 /*N*/ 	RegisterInterfaces();
-/*N*/ 
-/*N*/ 	// register your controllers here
-/*N*/ 	RegisterControls();
 /*N*/ }
 
 
@@ -147,11 +141,11 @@ namespace binfilter {
 /*N*/ {
 /*N*/ 	// called directly befor unloading the DLL
 /*N*/ 	// do whatever you want, Sw-DLL is accessible
-/*N*/ 
+/*N*/
 /*N*/ 	// der Pool muss vor den statics geloescht werden
 /*N*/ 	SW_MOD()->RemoveAttrPool();
-/*N*/ 
-/*N*/ 	::binfilter::_FinitUI();
+/*N*/
+///*N*/   ::binfilter::_FinitUI();
 /*N*/ 	::binfilter::_FinitFilter();
 /*N*/ 	::binfilter::_FinitCore();
 /*N*/ 	// Objekt-Factory austragen
