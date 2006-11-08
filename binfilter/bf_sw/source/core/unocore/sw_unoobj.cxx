@@ -4,9 +4,9 @@
  *
  *  $RCSfile: sw_unoobj.cxx,v $
  *
- *  $Revision: 1.8 $
+ *  $Revision: 1.9 $
  *
- *  last change: $Author: kz $ $Date: 2006-07-06 10:36:20 $
+ *  last change: $Author: kz $ $Date: 2006-11-08 12:36:30 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -329,7 +329,7 @@ using std::auto_ptr;
 using namespace ::rtl;
 
 //collectn.cxx
-BOOL lcl_IsNumeric(const String&);
+//BOOL lcl_IsNumeric(const String&);
 /****************************************************************************
     static methods
 ****************************************************************************/
@@ -717,11 +717,11 @@ sal_Bool lcl_setCrsrPropertyValue(const SfxItemPropertyMap* pMap,
                         //the first style should replace the current attributes, all other have to be added
                         SwXTextCursor::SetCrsrAttr(rPam, aSet, nStyle ? CRSR_ATTR_MODE_DONTREPLACE : 0);
                         rPam.GetDoc()->EndUndo( UNDO_START );
-                    }        
-                }            
+                    }
+                }
                 else
                     bRet = sal_False;
-            }            
+            }
             break;
             case FN_UNO_PARA_STYLE :
                 lcl_SetTxtFmtColl(aValue, rPam);
@@ -794,7 +794,7 @@ sal_Bool lcl_setCrsrPropertyValue(const SfxItemPropertyMap* pMap,
                         SwDocStyleSheet* pStyle =
                             (SwDocStyleSheet*)pDoc->GetDocShell()->GetStyleSheetPool()->Find(sStyle, SFX_STYLE_FAMILY_CHAR);
                         SwFmtDrop* pDrop = 0;
-                        if(pStyle && 
+                        if(pStyle &&
                                 ((SwDocStyleSheet*)pStyle)->GetCharFmt() != pDoc->GetDfltCharFmt())
                         {
                             const SfxPoolItem* pItem;
@@ -1639,7 +1639,7 @@ sal_Bool SwXTextCursor::gotoNextSentence(sal_Bool Expand) throw( uno::RuntimeExc
         if(!bRet)
             bRet = pUnoCrsr->MovePara(fnParaNext, fnParaStart);
 
-        // if at the end of the sentence (i.e. at the space after the '.') 
+        // if at the end of the sentence (i.e. at the space after the '.')
         // advance to next word in order for GoSentence to work properly
         // next time and have isStartOfSentence return true after this call
         if (!pUnoCrsr->IsStartWord())
