@@ -4,9 +4,9 @@
  *
  *  $RCSfile: sw_doc.cxx,v $
  *
- *  $Revision: 1.8 $
+ *  $Revision: 1.9 $
  *
- *  last change: $Author: rt $ $Date: 2006-10-27 22:21:21 $
+ *  last change: $Author: kz $ $Date: 2006-11-08 12:27:55 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -177,14 +177,14 @@ namespace binfilter {
 /*N*/ 	SwCntntNode *pNode = rPos.nNode.GetNode().GetCntntNode();
 /*N*/ 	if(0 == pNode)
 /*N*/ 		return FALSE;
-/*N*/ 
+/*N*/
 /*N*/ 	{
 /*N*/ 		// Bug 26675:	DataChanged vorm loeschen verschicken, dann bekommt
 /*N*/ 		//			man noch mit, welche Objecte sich im Bereich befinden.
 /*N*/ 		//			Danach koennen sie vor/hinter der Position befinden.
 /*N*/ 		SwDataChanged aTmp( this, rPos, 0 );
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	SwUndoSplitNode* pUndo = 0;
 /*N*/ 	if ( DoesUndo() )
 /*N*/ 	{
@@ -193,7 +193,7 @@ namespace binfilter {
 /*N*/ 		if( pNode->IsTxtNode() )
 /*N*/ 			AppendUndo( pUndo = new SwUndoSplitNode( this, rPos, bChkTableStart  ));
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	//JP 28.01.97: Sonderfall fuer SplitNode am Tabellenanfang:
 /*N*/ 	//				steht die am Doc/Fly/Footer/..-Anfang oder direkt
 /*N*/ 	//				hinter einer Tabelle, dann fuege davor
@@ -228,7 +228,7 @@ namespace binfilter {
 /*?*/ 						pNd = 0;
 /*?*/ 				}
 /*?*/ 			}
-/*?*/ 
+/*?*/
 /*?*/ 			if( pNd )
 /*?*/ 			{
 /*?*/ 				SwTxtNode* pTxtNd = GetNodes().MakeTxtNode(
@@ -238,7 +238,7 @@ namespace binfilter {
 /*?*/ 				{
 /*?*/ 					((SwPosition&)rPos).nNode = pTblNd->GetIndex()-1;
 /*?*/ 					((SwPosition&)rPos).nContent.Assign( pTxtNd, 0 );
-/*?*/ 
+/*?*/
 /*?*/ 					// nur im BodyBereich den SeitenUmbruch/-Vorlage umhaengem
 /*?*/ 					if( nPrevPos > GetNodes().GetEndOfExtras().GetIndex() )
 /*?*/ 					{
@@ -257,7 +257,7 @@ namespace binfilter {
 /*?*/ 							pFrmFmt->ResetAttr( RES_BREAK );
 /*?*/ 						}
 /*?*/ 					}
-/*?*/ 
+/*?*/
 /*?*/ 					if( pUndo )
 /*?*/ 						pUndo->SetTblFlag();
 /*?*/ 					SetModified();
@@ -266,7 +266,7 @@ namespace binfilter {
 /*?*/ 			}
 /*?*/ 		}
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	SvULongs aBkmkArr( 15, 15 );
 /*N*/ 	_SaveCntntIdx( this, rPos.nNode.GetIndex(), rPos.nContent.GetIndex(),
 /*N*/ 					aBkmkArr, SAVEFLY_SPLIT );
@@ -274,14 +274,14 @@ namespace binfilter {
 /*N*/ 	{
 /*N*/ 		// verschiebe noch alle Bookmarks/TOXMarks/FlyAtCnt
 /*N*/ 		if( aBkmkArr.Count() )
-/*?*/ 	{	DBG_BF_ASSERT(0, "STRIP"); }//STRIP001 	_RestoreCntntIdx( this, aBkmkArr, rPos.nNode.GetIndex()-1, 0, TRUE );
-/*N*/ 
+/*?*/   {   _RestoreCntntIdx( this, aBkmkArr, rPos.nNode.GetIndex()-1, 0, TRUE );}
+/*N*/
 /*N*/ 		if( IsRedlineOn() || (!IsIgnoreRedline() && pRedlineTbl->Count() ))
 /*N*/ 		{
 /*?*/ 			DBG_BF_ASSERT(0, "STRIP"); //STRIP001 SwPaM aPam( rPos );
 /*N*/ 		}
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	SetModified();
 /*N*/ 	return TRUE;
 /*N*/ }
@@ -301,21 +301,21 @@ namespace binfilter {
 /*N*/ 	}
 /*N*/ 	else
 /*N*/ 		pCurNode = (SwTxtNode*)pCurNode->AppendNode( rPos );
-/*N*/ 
+/*N*/
 /*N*/ 	rPos.nNode++;
 /*N*/ 	rPos.nContent.Assign( pCurNode, 0 );
-/*N*/ 
+/*N*/
 /*N*/ 	if( DoesUndo() )
 /*N*/ 	{
 /*N*/ 		ClearRedo();
 /*N*/ 		AppendUndo( new SwUndoInsert( rPos.nNode ));
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	if( IsRedlineOn() || (!IsIgnoreRedline() && pRedlineTbl->Count() ))
 /*N*/ 	{
 /*?*/ 		DBG_BF_ASSERT(0, "STRIP"); //STRIP001 SwPaM aPam( rPos );
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	SetModified();
 /*N*/ 	return TRUE;
 /*N*/ }
@@ -324,16 +324,16 @@ namespace binfilter {
 /*N*/ {
 /*N*/ 	if( DoesUndo() )
 /*N*/ 		ClearRedo();
-/*N*/ 
+/*N*/
 /*N*/ 	const SwPosition* pPos = rRg.GetPoint();
-/*N*/ 
+/*N*/
 /*N*/ 	if( pACEWord )					// Aufnahme in die Autokorrektur
 /*N*/ 	{
 /*?*/ 		if( 1 == rStr.Len() && pACEWord->IsDeleted() )
-/*?*/ 		 {DBG_BF_ASSERT(0, "STRIP");} //STRIP001 	pACEWord->CheckChar( *pPos, rStr.GetChar( 0 ) );
+/*?*/        {DBG_BF_ASSERT(0, "STRIP");} //STRIP001   pACEWord->CheckChar( *pPos, rStr.GetChar( 0 ) );
 /*?*/ 		delete pACEWord, pACEWord = 0;
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	SwTxtNode *pNode = pPos->nNode.GetNode().GetTxtNode();
 /*N*/ 	if(!pNode)
 /*N*/ 		return FALSE;
@@ -341,11 +341,11 @@ namespace binfilter {
 /*N*/ 	const USHORT nInsMode = bHintExpand ? INS_EMPTYEXPAND
 /*N*/ 									 : INS_NOHINTEXPAND;
 /*N*/ 	SwDataChanged aTmp( rRg, 0 );
-/*N*/ 
+/*N*/
 /*N*/ 	if( !DoesUndo() || !DoesGroupUndo() )
 /*N*/ 	{
 /*N*/ 		pNode->Insert( rStr, pPos->nContent, nInsMode );
-/*N*/ 
+/*N*/
 /*N*/ 		if( DoesUndo() )
 /*N*/ 			AppendUndo( new SwUndoInsert( pPos->nNode,
 /*N*/ 									pPos->nContent.GetIndex(), rStr.Len() ));
@@ -356,7 +356,7 @@ namespace binfilter {
 /*?*/ 		xub_StrLen nInsPos = pPos->nContent.GetIndex();
 /*?*/ 		SwUndoInsert * pUndo;
 /*?*/ 		CharClass& rCC = GetAppCharClass();
-/*?*/ 
+/*?*/
 /*?*/ 		if( 0 == nUndoSize || UNDO_INSERT !=
 /*?*/ 				( pUndo = (SwUndoInsert*)(*pUndos)[ --nUndoSize ])->GetId() ||
 /*?*/ 			!pUndo->CanGrouping( *pPos ))
@@ -365,7 +365,7 @@ namespace binfilter {
 /*?*/ 							!rCC.isLetterNumeric( rStr, 0 ) );
 /*?*/ 			AppendUndo( pUndo );
 /*?*/ 		}
-/*?*/ 
+/*?*/
 /*?*/ 		for( xub_StrLen i = 0; i < rStr.Len(); ++i )
 /*?*/ 		{
 /*?*/ 			nInsPos++;
@@ -379,12 +379,12 @@ namespace binfilter {
 /*?*/ 		}
 /*?*/ 		pNode->Insert( rStr, pPos->nContent, nInsMode );
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	if( IsRedlineOn() || (!IsIgnoreRedline() && pRedlineTbl->Count() ))
 /*N*/ 	{
 /*?*/ 		DBG_BF_ASSERT(0, "STRIP"); //STRIP001 SwPaM aPam( pPos->nNode, aTmp.GetCntnt(),
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	SetModified();
 /*N*/ 	return TRUE;
 /*N*/ }
@@ -442,11 +442,11 @@ namespace binfilter {
 /*N*/ 	if( !pFrmFmt )
 /*N*/ 	{
 /*N*/ 		USHORT nId = RES_POOLFRM_OLE;
-/*N*/ 
+/*N*/
 /*N*/ 		FASTBOOL bMath = SmModuleDummy::HasID( *pObj->GetSvFactory() );
 /*N*/         if ( bMath )
 /*?*/ 			nId = RES_POOLFRM_FORMEL;
-/*N*/ 
+/*N*/
 /*N*/ 		pFrmFmt = GetFrmFmtFromPool( nId );
 /*N*/ 	}
 /*N*/ 	return _InsNoTxtNode( *rRg.GetPoint(), GetNodes().MakeOLENode(
@@ -464,7 +464,7 @@ namespace binfilter {
 /*N*/ {
 /*N*/ 	if( !pFrmFmt )
 /*N*/ 		pFrmFmt = GetFrmFmtFromPool( RES_POOLFRM_OLE );
-/*N*/ 
+/*N*/
 /*N*/ 	return _InsNoTxtNode( *rRg.GetPoint(), GetNodes().MakeOLENode(
 /*N*/ 							SwNodeIndex( GetNodes().GetEndOfAutotext() ),
 /*N*/ 							rObjName,
@@ -550,20 +550,20 @@ void SwDoc::SetGlobalMacro( USHORT nEvent, const SvxMacro& rMacro )
 /*M*/ 		rStat.Reset();
 /*M*/ 		rStat.nPara = 0;        // Default ist auf 1 !!
 /*M*/ 		SwNode* pNd;
-/*M*/ 
+/*M*/
 /*M*/ 		for( ULONG n = GetNodes().Count(); n; )
 /*M*/ 			switch( ( pNd = GetNodes()[ --n ])->GetNodeType() )
 /*M*/ 			{
 /*M*/             case ND_TEXTNODE:
 /*M*/                 {
 /*M*/                     const String& rStr = ((SwTxtNode*)pNd)->GetTxt();
-/*M*/ 
+/*M*/
 /*M*/                     if( rStr.Len() && pBreakIt->xBreak.is() )
 /*M*/                     {
 /*M*/                         SwScanner aScanner( *((SwTxtNode*)pNd), NULL,
 /*M*/                                             ::com::sun::star::i18n::WordType::WORD_COUNT,
 /*M*/                                             0, rStr.Len(), sal_False, sal_False );
-/*M*/ 
+/*M*/
 /*M*/                         while ( aScanner.NextWord() )
 /*M*/                         {
 /*M*/                             if ( aScanner.GetLen() > 1 ||
@@ -580,7 +580,7 @@ void SwDoc::SetGlobalMacro( USHORT nEvent, const SvxMacro& rMacro )
 /*M*/ 			case ND_OLENODE:		++rStat.nOLE;	break;
 /*M*/ 			case ND_SECTIONNODE:	break;
 /*M*/ 			}
-/*M*/ 
+/*M*/
 /*M*/ 		rStat.nPage 	= GetRootFrm() ? GetRootFrm()->GetPageNum() : 0;
 /*M*/ 		rStat.bModified = FALSE;
 /*M*/ 		SetDocStat( rStat );
@@ -597,7 +597,7 @@ void SwDoc::SetGlobalMacro( USHORT nEvent, const SvxMacro& rMacro )
 /*N*/ {
 /*N*/ 	delete pSwgInfo;
 /*N*/ 	pSwgInfo = new SfxDocumentInfo(rInfo);
-/*N*/ 
+/*N*/
 /*N*/ 	GetSysFldType( RES_DOCINFOFLD )->UpdateFlds();
 /*N*/ 	GetSysFldType( RES_TEMPLNAMEFLD )->UpdateFlds();
 /*N*/ 	SetModified();
@@ -612,7 +612,7 @@ void SwDoc::SetGlobalMacro( USHORT nEvent, const SvxMacro& rMacro )
 /*N*/ 	{
 /*N*/ 		if( 0 == (pItem = GetAttrPool().GetItem( RES_TXTATR_REFMARK, n ) ))
 /*N*/ 			continue;
-/*N*/ 
+/*N*/
 /*N*/ 		const SwFmtRefMark* pFmtRef = (SwFmtRefMark*)pItem;
 /*N*/ 		const SwTxtRefMark* pTxtRef = pFmtRef->GetTxtRefMark();
 /*N*/ 		if( pTxtRef && &pTxtRef->GetTxtNode().GetNodes() == &GetNodes() &&
@@ -647,7 +647,7 @@ void SwDoc::SetGlobalMacro( USHORT nEvent, const SvxMacro& rMacro )
 /*N*/ 		aOle2Link.Call( (void*)nCall );
 /*N*/ 		bInCallModified = FALSE;
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	if( pACEWord && !pACEWord->IsDeleted() )
 /*?*/ 		delete pACEWord, pACEWord = 0;
 /*N*/ }
