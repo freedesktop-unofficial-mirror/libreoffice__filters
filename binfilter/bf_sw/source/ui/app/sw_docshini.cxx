@@ -4,9 +4,9 @@
  *
  *  $RCSfile: sw_docshini.cxx,v $
  *
- *  $Revision: 1.9 $
+ *  $Revision: 1.10 $
  *
- *  last change: $Author: rt $ $Date: 2006-10-27 23:59:22 $
+ *  last change: $Author: kz $ $Date: 2006-11-08 12:41:19 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -170,9 +170,6 @@
 #ifndef _LINKENUM_HXX
 #include <linkenum.hxx>
 #endif
-#ifndef _SWWAIT_HXX
-#include <swwait.hxx>
-#endif
 
 #ifndef _SWSWERROR_H
 #include <swerror.h>
@@ -207,21 +204,21 @@ using namespace ::rtl;
 /*N*/ sal_Bool SwDocShell::InitNew( SvStorage * pStor )
 /*N*/ {
 /*N*/ 	RTL_LOGFILE_CONTEXT_AUTHOR( aLog, "SW", "JP93722",  "SwDocShell::InitNew" );
-/*N*/ 
+/*N*/
 /*N*/ 	sal_Bool bRet = SfxInPlaceObject::InitNew( pStor );
 /*N*/ 	ASSERT( GetMapUnit() == MAP_TWIP, "map unit is not twip!" );
 /*N*/ 	sal_Bool bHTMLTemplSet = sal_False;
 /*N*/ 	if( bRet )
 /*N*/ 	{
 /*N*/ 		AddLink();		// pDoc / pIo ggf. anlegen
-/*N*/ 
+/*N*/
 /*N*/         sal_Bool bWeb = ISA( SwWebDocShell );
 /*N*/         if ( bWeb )
 /*?*/ 			bHTMLTemplSet = SetHTMLTemplate( *GetDoc() );//Styles aus HTML.vor
 /*N*/ 		else if( ISA( SwGlobalDocShell ) )
 /*?*/ 			GetDoc()->SetGlobalDoc();		// Globaldokument
-/*N*/ 
-/*N*/ 
+/*N*/
+/*N*/
 /*
         //JP 12.07.95: so einfach waere es fuer die neu Mimik
         pDoc->SetDefault( SvxTabStopItem( 1,
@@ -277,7 +274,7 @@ using namespace ::rtl;
 /*N*/             RES_CHRATR_CJK_LANGUAGE,
 /*N*/             RES_CHRATR_CTL_LANGUAGE
 /*N*/         };
-/*N*/ 
+/*N*/
 /*N*/         for(USHORT i = 0; i < 3; i++)
 /*N*/         {
 /*N*/             USHORT nFontWhich = aFontWhich[i];
@@ -318,7 +315,7 @@ using namespace ::rtl;
 /*N*/ 						break;
 /*N*/ 					}
 /*N*/ 				}
-/*N*/ 
+/*N*/
 /*N*/ 				Font aLangDefFont = OutputDevice::GetDefaultFont(
 /*N*/                     nFontTypes[i],
 /*N*/                     eLanguage,
@@ -349,7 +346,7 @@ using namespace ::rtl;
 /*M*/             FONT_CAPTION_CTL,   RES_POOLCOLL_LABEL,
 /*M*/             FONT_INDEX_CTL,     RES_POOLCOLL_REGISTER_BASE
 /*M*/         };
-/*N*/ 
+/*N*/
 /*N*/         USHORT nFontWhich = RES_CHRATR_FONT;
 /*M*/         for(USHORT nIdx = 0; nIdx < 24; nIdx += 2)
 /*M*/         {
@@ -383,13 +380,13 @@ using namespace ::rtl;
 /*M*/             }
 /*M*/         }
 /*N*/     }
-/*N*/ 
+/*N*/
     /* #106748# If the default frame direction of a document is RTL
          the default adjusment is to the right. */
 /*N*/      if( !bHTMLTemplSet &&
 /*N*/ 		FRMDIR_HORI_RIGHT_TOP == GetDefaultFrameDirection(GetAppLanguage()) )
 /*N*/         pDoc->SetDefault( SvxAdjustItem(SVX_ADJUST_RIGHT) );
-/*N*/ 
+/*N*/
 /*N*/ 	return bRet;
 /*N*/ }
 
@@ -441,7 +438,7 @@ using namespace ::rtl;
 /*N*/ 	RemoveLink();
 /*N*/ 	delete pIo;
 /*N*/ 	delete pFontList;
-/*N*/ 
+/*N*/
 /*N*/ 	// wir als BroadCaster werden auch unser eigener Listener
 /*N*/ 	// (fuer DocInfo/FileNamen/....)
 /*N*/ 	EndListening( *this );
@@ -491,12 +488,12 @@ using namespace ::rtl;
 /*N*/ 	pDoc->SetDocShell( this );		// am Doc den DocShell-Pointer setzen
 /*N*/ 	uno::Reference< text::XTextDocument >  xDoc(GetBaseModel(), uno::UNO_QUERY);
 /*N*/ 	((SwXTextDocument*)xDoc.get())->Reactivate(this);
-/*N*/ 
+/*N*/
 /*N*/ 	if( !pIo )
 /*N*/ 		pIo = new Sw3Io( *pDoc );
 /*N*/ 	else
 /*?*/ 		{DBG_BF_ASSERT(0, "STRIP");} //STRIP001 pIo->SetDoc( *pDoc );
-/*N*/ 
+/*N*/
 /*N*/ 	SetPool(&pDoc->GetAttrPool());
 
     // am besten erst wenn eine sdbcx::View erzeugt wird !!!
@@ -515,12 +512,12 @@ using namespace ::rtl;
 /*N*/ 	{
 /*N*/ 		SfxPrinter* pPrt = pDoc->GetPrt();
 /*N*/ 		delete pFontList;
-/*N*/ 
+/*N*/
 /*N*/ 		if( pPrt && pPrt->GetDevFontCount() && !pDoc->IsBrowseMode() )
 /*N*/ 			pFontList = new FontList( pPrt );
 /*N*/ 		else
 /*N*/ 			pFontList = new FontList( Application::GetDefaultDevice() );
-/*N*/ 
+/*N*/
 /*N*/ 		PutItem( SvxFontListItem( pFontList, SID_ATTR_CHAR_FONTLIST ) );
 /*N*/ 	}
 /*N*/ }
@@ -563,9 +560,9 @@ using namespace ::rtl;
 /*N*/ 		RTL_LOGFILE_CONTEXT_TRACE( aLog, "after SfxInPlaceObject::Load" );
 /*N*/ 		if( pDoc )              // fuer Letzte Version !!
 /*?*/ 			RemoveLink();       // das existierende Loslassen
-/*N*/ 
+/*N*/
 /*N*/ 		AddLink();      // Link setzen und Daten updaten !!
-/*N*/ 
+/*N*/
 /*N*/ 		// Das Laden
 /*N*/ 		// fuer MD
 /*N*/ 		if( bXML )
@@ -579,10 +576,9 @@ using namespace ::rtl;
 /*?*/                 SFX_ITEMSET_ARG( pMedium->GetItemSet(), pUpdateDocItem, SfxUInt16Item, SID_UPDATEDOCMODE, sal_False);
 /*?*/                 nUpdateDocMode = pUpdateDocItem ? pUpdateDocItem->GetValue() : ::com::sun::star::document::UpdateDocMode::NO_UPDATE;
 /*?*/             }
-/*?*/ 
+/*?*/
 /*N*/ 		}
-/*N*/ 
-/*N*/ 		SwWait aWait( *this, sal_True );
+/*N*/
 /*N*/ 		sal_uInt32 nErr = ERR_SWG_READ_ERROR;
 /*N*/ 		switch( GetCreateMode() )
 /*N*/ 		{
@@ -608,7 +604,7 @@ using namespace ::rtl;
 /*N*/ 		case SFX_CREATE_MODE_INTERNAL:
 /*N*/ 		case SFX_CREATE_MODE_EMBEDDED:
 /*N*/ 			if ( bXML )
-/*N*/ 			{DBG_BF_ASSERT(0, "STRIP"); //STRIP001 
+/*N*/ 			{DBG_BF_ASSERT(0, "STRIP"); //STRIP001
 /*N*/ 			}
             // SfxProgress unterdruecken, wenn man Embedded ist
 /*N*/ 			SW_MOD()->SetEmbeddedLoadSave( sal_True );
@@ -658,9 +654,9 @@ using namespace ::rtl;
 /*N*/ 		default:
 /*?*/ 			ASSERT( !this, "Load: new CreateMode?" );
 /*N*/ #endif
-/*N*/ 
+/*N*/
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		if( !bXML )
 /*N*/ 		{
 /*N*/ 			ASSERT( !pBasePool, "wer hat seinen Pool nicht zerstoert?" );
@@ -669,7 +665,7 @@ using namespace ::rtl;
 /*N*/ 		}
 /*N*/ 		UpdateFontList();
 /*N*/ 		InitDraw();
-/*N*/ 
+/*N*/
 /*N*/ 		SetError( nErr );
 /*N*/ 		bRet = !IsError( nErr );
 
@@ -686,7 +682,7 @@ using namespace ::rtl;
 /*N*/ 			// dann entferne alle nicht referenzierte OLE-Objecte
 /*N*/ 			SvStorageInfoList aInfoList;
 /*N*/ 			pStor->FillInfoList( &aInfoList );
-/*N*/ 
+/*N*/
 /*N*/ 			// erstmal alle nicht "OLE-Objecte" aus der Liste entfernen
                 sal_uInt32 n;
 /*N*/ 			for( n = aInfoList.Count(); n; )
@@ -696,7 +692,7 @@ using namespace ::rtl;
 /*N*/ 				if( 3 != rName.Match( String::CreateFromAscii("Obj") ))
 /*N*/ 					aInfoList.Remove( n );
 /*N*/ 			}
-/*N*/ 
+/*N*/
 /*N*/ 			// dann alle referenzierten Object aus der Liste entfernen
 /*N*/ 			SwClientIter aIter( *(SwModify*)pDoc->GetDfltGrfFmtColl() );
 /*N*/ 			for( SwCntntNode* pNd = (SwCntntNode*)aIter.First( TYPE( SwCntntNode ) );
@@ -743,9 +739,9 @@ using namespace ::rtl;
 /*?*/ 	sal_Bool bRet = sal_False;
 /*?*/ 	if( pDoc )
 /*?*/ 		RemoveLink();
-/*?*/ 
+/*?*/
 /*?*/ 	AddLink();		// Link setzen und Daten updaten !!
-/*?*/ 
+/*?*/
 /*?*/ 	do {		// middle check loop
 /*?*/ 		sal_uInt32 nErr = ERR_SWG_READ_ERROR;
 /*?*/ 		const String& rNm = pStor->GetName();
@@ -758,7 +754,6 @@ using namespace ::rtl;
 /*?*/ 		if( pStor->IsStream( aStreamName ) )
 /*?*/ 		{
 /*?*/ 			// Das Laden
-/*?*/ 			SwWait aWait( *this, sal_True );
 /*?*/ 			if( bXML )
 /*?*/ 			{
 /*?*/ 				ASSERT( !pBasePool, "wer hat seinen Pool nicht zerstoert?" );
@@ -780,30 +775,30 @@ using namespace ::rtl;
 /*?*/ 			// sollte es sich um eine 2. Vrolage handeln ??
 /*?*/ 			if( SvStorage::IsStorageFile( rNm ) )
 /*?*/ 				break;
-/*?*/ 
+/*?*/
 /*?*/ 			const SfxFilter* pFltr = SwIoSystem::GetFileFilter( rNm, aEmptyStr );
 /*?*/ 			if( !pFltr || !pFltr->GetUserData().EqualsAscii( FILTER_SWG ))
 /*?*/ 				break;
-/*?*/ 
+/*?*/
 /*?*/ 			SfxMedium aMed( rNm, STREAM_STD_READ, FALSE );
 /*?*/ 			if( 0 == ( nErr = aMed.GetInStream()->GetError() ) )
 /*?*/ 			{
 /*?*/ 				DBG_BF_ASSERT(0, "STRIP"); //STRIP001 SwWait aWait( *this, sal_True );
 /*?*/ 			}
 /*?*/ 		}
-/*?*/ 
+/*?*/
 /*?*/ 		if( !bXML )
 /*?*/ 		{
 /*?*/ 			ASSERT( !pBasePool, "wer hat seinen Pool nicht zerstoert?" );
 /*?*/ 			pBasePool = new SwDocStyleSheetPool( *pDoc,
 /*?*/ 								SFX_CREATE_MODE_ORGANIZER == GetCreateMode() );
 /*?*/ 		}
-/*?*/ 
+/*?*/
 /*?*/ 		SetError( nErr );
 /*?*/ 		bRet = !IsError( nErr );
-/*?*/ 
+/*?*/
 /*?*/ 	} while( sal_False );
-/*?*/ 
+/*?*/
 /*?*/ 	SfxObjectShell::LoadFrom( pStor );
 /*?*/ 	pDoc->ResetModified();
 /*?*/ 	return bRet;
@@ -817,12 +812,12 @@ using namespace ::rtl;
 /*M*/ 					SFX_CREATE_MODE_ORGANIZER == GetCreateMode() );
 /*M*/ 	UpdateFontList();
 /*M*/ 	InitDraw();
-/*M*/ 
+/*M*/
 /*M*/     pDoc->SetLinkUpdMode( GLOBALSETTING );
 /*M*/ 	pDoc->SetFldUpdateFlags( AUTOUPD_GLOBALSETTING );
-/*M*/ 
+/*M*/
 /*M*/ 	sal_Bool bWeb = ISA(SwWebDocShell);
-/*M*/ 
+/*M*/
 /*M*/ 	sal_uInt16 nRange[] =	{
 /*N*/         RES_PARATR_ADJUST, RES_PARATR_ADJUST,
 /*M*/ 							RES_CHRATR_COLOR, RES_CHRATR_COLOR,
@@ -836,36 +831,36 @@ using namespace ::rtl;
 /*M*/         nRange[ (sizeof(nRange)/sizeof(nRange[0])) - 2 ] = RES_PARATR_HYPHENZONE;
 /*M*/ 	}
 /*M*/ 	SfxItemSet aDfltSet( pDoc->GetAttrPool(), nRange );
-/*M*/ 
+/*M*/
 /*M*/     //! get lingu options without loading lingu DLL
 /*M*/     SvtLinguOptions aLinguOpt;
-/*N*/ 
+/*N*/
 /*N*/ 	// #107253# Replaced SvtLinguConfig with SwLinguConfig wrapper with UsageCount
 /*N*/     SwLinguConfig().GetOptions( aLinguOpt );
-/*M*/ 
+/*M*/
 /*M*/     sal_Int16   nVal = aLinguOpt.nDefaultLanguage,
 /*M*/                 eCJK = aLinguOpt.nDefaultLanguage_CJK,
 /*M*/                 eCTL = aLinguOpt.nDefaultLanguage_CTL;
 /*M*/ 	aDfltSet.Put( SvxLanguageItem( nVal, RES_CHRATR_LANGUAGE ) );
 /*M*/     aDfltSet.Put( SvxLanguageItem( eCJK, RES_CHRATR_CJK_LANGUAGE ) );
 /*M*/     aDfltSet.Put( SvxLanguageItem( eCTL, RES_CHRATR_CTL_LANGUAGE ) );
-/*M*/ 
+/*M*/
 /*M*/     if(!bWeb)
 /*M*/ 	{
 /*M*/ 		SvxHyphenZoneItem aHyp( (SvxHyphenZoneItem&) pDoc->GetDefault(
 /*M*/ 														RES_PARATR_HYPHENZONE) );
 /*M*/         aHyp.GetMinLead()   = aLinguOpt.nHyphMinLeading;
 /*M*/         aHyp.GetMinTrail()  = aLinguOpt.nHyphMinTrailing;
-/*M*/ 
+/*M*/
 /*M*/ 		aDfltSet.Put( aHyp );
-/*M*/ 
+/*M*/
 /*M*/ 		sal_uInt16 nNewPos = SW_MOD()->GetUsrPref(FALSE)->GetDefTab();
 /*M*/ 		if( nNewPos )
 /*M*/ 			aDfltSet.Put( SvxTabStopItem( 1, nNewPos,
 /*M*/ 											SVX_TAB_ADJUST_DEFAULT ) );
 /*M*/ 	}
 /*M*/     aDfltSet.Put( SvxColorItem( Color( COL_AUTO ), RES_CHRATR_COLOR ) );
-/*N*/     
+/*N*/
 /*M*/ 	pDoc->SetDefault( aDfltSet );
 /*M*/ 	pDoc->ResetModified();
 /*M*/ }
