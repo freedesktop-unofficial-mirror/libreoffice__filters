@@ -4,9 +4,9 @@
  *
  *  $RCSfile: sw_ndtbl.cxx,v $
  *
- *  $Revision: 1.9 $
+ *  $Revision: 1.10 $
  *
- *  last change: $Author: rt $ $Date: 2006-10-27 22:29:35 $
+ *  last change: $Author: kz $ $Date: 2006-11-08 12:29:54 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -101,6 +101,12 @@
 #ifndef _REDLINE_HXX
 #include <redline.hxx>
 #endif
+#ifndef _ROLBCK_HXX
+#include <rolbck.hxx>
+#endif
+#ifndef _TBLRWCL_HXX
+#include <tblrwcl.hxx>
+#endif
 #ifndef _EDITSH_HXX
 #include <editsh.hxx>
 #endif
@@ -142,7 +148,7 @@ const sal_Unicode T2T_PARA = 0x0a;
 /*?*/ 	case 2:	bBottom = bLeft = TRUE; 				break;
 /*?*/ 	case 3: bBottom = bLeft = bRight = TRUE; 		break;
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	const BOOL bHTML = rFmt.GetDoc()->IsHTMLMode();
 /*N*/ 	Color aCol( bHTML ? COL_GRAY : COL_BLACK );
 /*N*/ 	SvxBorderLine aLine( &aCol, DEF_LINE_WIDTH_0 );
@@ -211,7 +217,7 @@ static bool lcl_IsItemSet(const SwFmt & rFmt, USHORT which)
 /*N*/ 		SwNode* pNd = (SwNode*)GetNodes()[ nIndex ]->StartOfSectionNode();
 /*N*/ 		if( 0 != ( pTableNd = pNd->GetTableNode() ) )
 /*?*/ 			break;
-/*N*/ 
+/*N*/
 /*N*/ 		nIndex = pNd->GetIndex();
 /*N*/ 	} while ( nIndex );
 /*N*/ 	return pTableNd;
@@ -222,6 +228,93 @@ static bool lcl_IsItemSet(const SwFmt & rFmt, USHORT which)
 
     // fuege in der Line, vor der InsPos eine neue Box ein.
 
+ BOOL SwNodes::InsBoxen( SwTableNode* pTblNd,
+                        SwTableLine* pLine,
+                        SwTableBoxFmt* pBoxFmt,
+                        SwTxtFmtColl* pTxtColl,
+                        SwAttrSet* pAutoAttr,
+                        USHORT nInsPos,
+                        USHORT nCnt )
+ {
+    if( !nCnt )
+        return FALSE;
+    ASSERT( pLine, "keine gueltige Zeile" );
+
+    // Index hinter die letzte Box der Line
+    ULONG nIdxPos;
+    SwTableBox *pPrvBox = 0, *pNxtBox = 0;
+    if( pLine->GetTabBoxes().Count() )
+    {
+        if( nInsPos < pLine->GetTabBoxes().Count() )
+        {
+            if( 0 == (pPrvBox = pLine->FindPreviousBox( pTblNd->GetTable(),
+                            pLine->GetTabBoxes()[ nInsPos ] )))
+                pPrvBox = pLine->FindPreviousBox( pTblNd->GetTable() );
+        }
+        else if( 0 == ( pNxtBox = pLine->FindNextBox( pTblNd->GetTable(),
+                            pLine->GetTabBoxes()[ nInsPos-1 ] )))
+                pNxtBox = pLine->FindNextBox( pTblNd->GetTable() );
+    }
+    else if( 0 == ( pNxtBox = pLine->FindNextBox( pTblNd->GetTable() )))
+        pPrvBox = pLine->FindPreviousBox( pTblNd->GetTable() );
+
+    if( !pPrvBox && !pNxtBox )
+    {
+        BOOL bSetIdxPos = TRUE;
+        if( pTblNd->GetTable().GetTabLines().Count() && !nInsPos )
+        {
+            const SwTableLine* pTblLn = pLine;
+            while( pTblLn->GetUpper() )
+                pTblLn = pTblLn->GetUpper()->GetUpper();
+
+            if( pTblNd->GetTable().GetTabLines()[ 0 ] == pTblLn )
+            {
+                // also vor die erste Box der Tabelle
+                while( ( pNxtBox = pLine->GetTabBoxes()[0])->GetTabLines().Count() )
+                    pLine = pNxtBox->GetTabLines()[0];
+                nIdxPos = pNxtBox->GetSttIdx();
+                bSetIdxPos = FALSE;
+            }
+        }
+        if( bSetIdxPos )
+            // Tabelle ohne irgendeinen Inhalt oder am Ende, also vors Ende
+            nIdxPos = pTblNd->EndOfSectionIndex();
+    }
+    else if( pNxtBox )          // es gibt einen Nachfolger
+        nIdxPos = pNxtBox->GetSttIdx();
+    else                        // es gibt einen Vorgaenger
+        nIdxPos = pPrvBox->GetSttNd()->EndOfSectionIndex() + 1;
+
+    SwNodeIndex aEndIdx( *this, nIdxPos );
+    for( USHORT n = 0; n < nCnt; ++n )
+    {
+        SwStartNode* pSttNd = new SwStartNode( aEndIdx, ND_STARTNODE,
+                                                SwTableBoxStartNode );
+        pSttNd->pStartOfSection = pTblNd;
+        SwEndNode* pEndNd = new SwEndNode( aEndIdx, *pSttNd );
+
+        pPrvBox = new SwTableBox( pBoxFmt, *pSttNd, pLine );
+        pLine->GetTabBoxes().C40_INSERT( SwTableBox, pPrvBox, nInsPos + n );
+
+        if( NO_NUMBERING == pTxtColl->GetOutlineLevel()
+ //FEATURE::CONDCOLL
+            && RES_CONDTXTFMTCOLL != pTxtColl->Which()
+ //FEATURE::CONDCOLL
+        )
+            new SwTxtNode( SwNodeIndex( *pSttNd->EndOfSectionNode() ),
+                                pTxtColl, pAutoAttr );
+        else
+        {
+            // Outline-Numerierung richtig behandeln !!!
+            SwTxtNode* pTNd = new SwTxtNode(
+                            SwNodeIndex( *pSttNd->EndOfSectionNode() ),
+                            (SwTxtFmtColl*)GetDoc()->GetDfltTxtFmtColl(),
+                            pAutoAttr );
+            pTNd->ChgFmtColl( pTxtColl );
+        }
+    }
+    return TRUE;
+ }
 
 // --------------- einfuegen einer neuen Tabelle --------------
 
@@ -229,44 +322,44 @@ static bool lcl_IsItemSet(const SwFmt & rFmt, USHORT which)
 /*N*/ 									USHORT nCols, SwHoriOrient eAdjust,
 /*N*/ 									USHORT nInsTblFlags,
 /*N*/ 									const SwTableAutoFmt* pTAFmt,
-/*N*/                                    const SvUShorts* pColArr, 
+/*N*/                                    const SvUShorts* pColArr,
 /*N*/                                    BOOL bCalledFromShell )
 /*N*/ {
 /*N*/ 	ASSERT( nRows, "Tabelle ohne Zeile?" );
 /*N*/ 	ASSERT( nCols, "Tabelle ohne Spalten?" );
-/*N*/ 
+/*N*/
 /*N*/ 	{
 /*N*/ 		// nicht in Fussnoten kopieren !!
 /*N*/ 		if( rPos.nNode < GetNodes().GetEndOfInserts().GetIndex() &&
 /*N*/ 			rPos.nNode >= GetNodes().GetEndOfInserts().StartOfSectionIndex() )
 /*?*/ 			return 0;
-/*N*/ 
+/*N*/
 /*N*/ 		// sollte das ColumnArray die falsche Anzahl haben wird es ignoriert!
 /*N*/ 		if( pColArr &&
 /*N*/ 			(nCols + ( HORI_NONE == eAdjust ? 2 : 1 )) != pColArr->Count() )
 /*?*/ 			pColArr = 0;
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	if( DoesUndo() )
 /*N*/ 	{
 /*N*/ 		ClearRedo();
 /*N*/ 		AppendUndo( new SwUndoInsTbl( rPos, nCols, nRows, eAdjust,
 /*N*/ 										nInsTblFlags, pTAFmt, pColArr ));
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	// fuege erstmal die Nodes ein
 /*N*/ 	// hole das Auto-Format fuer die Tabelle
 /*N*/ 	SwTxtFmtColl *pBodyColl = GetTxtCollFromPool( RES_POOLCOLL_TABLE ),
 /*N*/ 				 *pHeadColl = pBodyColl;
-/*N*/ 
+/*N*/
 /*N*/ 	BOOL bDfltBorders = nInsTblFlags & DEFAULT_BORDER;
-/*N*/ 
+/*N*/
 /*N*/ 	if( (nInsTblFlags & HEADLINE) && (1 != nRows || !bDfltBorders) )
 /*?*/ 		pHeadColl = GetTxtCollFromPool( RES_POOLCOLL_TABLE_HDLN );
-/*N*/ 
+/*N*/
 /*N*/ 	/* #106283# Save content node to extract FRAMEDIR from. */
 /*N*/ 	const SwCntntNode * pCntntNd = rPos.nNode.GetNode().GetCntntNode();
-/*N*/ 
+/*N*/
     /* #109161# If we are called from a shell pass the attrset from
         pCntntNd (aka the node the table is inserted at) thus causing
         SwNodes::InsertTable to propagate an adjust item if
@@ -274,30 +367,30 @@ static bool lcl_IsItemSet(const SwFmt & rFmt, USHORT which)
 /*N*/ 	SwTableNode *pTblNd = GetNodes().InsertTable
 /*N*/         ( rPos.nNode, nCols, pBodyColl, nRows, pHeadColl,
 /*N*/           bCalledFromShell ? &pCntntNd->GetSwAttrSet() : 0 );
-/*N*/ 
+/*N*/
 /*N*/ 	// dann erstelle die Box/Line/Table-Struktur
 /*N*/ 	SwTableLineFmt* pLineFmt = MakeTableLineFmt();
 /*N*/ 	SwTableFmt* pTableFmt = MakeTblFrmFmt( GetUniqueTblName(), GetDfltFrmFmt() );
-/*N*/ 
+/*N*/
     /* #106283# If the node to insert the table at is a context node and has a
        non-default FRAMEDIR propagate it to the table. */
 /*N*/ 	if (pCntntNd)
 /*N*/ 	{
 /*N*/ 		const SwAttrSet & aNdSet = pCntntNd->GetSwAttrSet();
 /*N*/ 		const SfxPoolItem *pItem = NULL;
-/*N*/ 
-/*N*/ 		if (SFX_ITEM_SET == aNdSet.GetItemState( RES_FRAMEDIR, TRUE, &pItem ) 
+/*N*/
+/*N*/ 		if (SFX_ITEM_SET == aNdSet.GetItemState( RES_FRAMEDIR, TRUE, &pItem )
 /*N*/ 			&& pItem != NULL)
 /*N*/ 		{
 /*N*/ 			pTableFmt->SetAttr( *pItem );
 /*N*/ 		}
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	//Orientation am Fmt der Table setzen
 /*N*/ 	pTableFmt->SetAttr( SwFmtHoriOrient( 0, eAdjust ) );
 /*N*/ 	// alle Zeilen haben die Fill-Order von links nach rechts !
 /*N*/ 	pLineFmt->SetAttr( SwFmtFillOrder( ATT_LEFT_TO_RIGHT ));
-/*N*/ 
+/*N*/
 /*N*/ 	// die Tabelle bekommt USHRT_MAX als default SSize
 /*N*/ 	SwTwips nWidth = USHRT_MAX;
 /*N*/ 	if( pColArr )
@@ -315,7 +408,7 @@ static bool lcl_IsItemSet(const SwFmt & rFmt, USHORT which)
 /*N*/ 	pTableFmt->SetAttr( SwFmtFrmSize( ATT_VAR_SIZE, nWidth ));
 /*N*/ 	if( !(nInsTblFlags & SPLIT_LAYOUT) )
 /*?*/ 		pTableFmt->SetAttr( SwFmtLayoutSplit( FALSE ));
-/*N*/ 
+/*N*/
 /*N*/ 	// verschiebe ggfs. die harten PageDesc/PageBreak Attribute:
 /*N*/ 	SwCntntNode* pNextNd = GetNodes()[ pTblNd->EndOfSectionIndex()+1 ]
 /*N*/ 							->GetCntntNode();
@@ -337,12 +430,12 @@ static bool lcl_IsItemSet(const SwFmt & rFmt, USHORT which)
 /*?*/ 			pNextNd->ResetAttr( RES_BREAK );
 /*?*/ 		}
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	SwTable * pNdTbl = &pTblNd->GetTable();
 /*N*/ 	pTableFmt->Add( pNdTbl );		// das Frame-Format setzen
-/*N*/ 
+/*N*/
 /*N*/ 	pNdTbl->SetHeadlineRepeat( HEADLINE_REPEAT == (nInsTblFlags & HEADLINE_REPEAT) );
-/*N*/ 
+/*N*/
 /*N*/ 	SvPtrarr aBoxFmtArr( 0, 16 );
 /*N*/ 	SwTableBoxFmt* pBoxFmt = 0;
 /*N*/ 	if( !bDfltBorders && !pTAFmt )
@@ -357,7 +450,7 @@ static bool lcl_IsItemSet(const SwFmt & rFmt, USHORT which)
 /*N*/ 			aBoxFmtArr.Insert( (void*)0, i );
 /*N*/ 	}
 /*N*/ 	SfxItemSet aCharSet( GetAttrPool(), RES_CHRATR_BEGIN, RES_PARATR_END-1 );
-/*N*/ 
+/*N*/
 /*N*/ 	SwNodeIndex aNdIdx( *pTblNd, 1 );	// auf den ersten Box-StartNode
 /*N*/ 	SwTableLines& rLines = pNdTbl->GetTabLines();
 /*N*/ 	for( USHORT n = 0; n < nRows; ++n )
@@ -379,7 +472,7 @@ static bool lcl_IsItemSet(const SwFmt & rFmt, USHORT which)
 /*N*/ 			}
 /*N*/ 			else
 /*?*/ 				pBoxF = pBoxFmt;
-/*N*/ 
+/*N*/
 /*N*/ 			// fuer AutoFormat bei der Eingabe: beim Einfuegen der Tabelle
 /*N*/ 			// werden gleich die Spalten gesetzt. Im Array stehen die
 /*N*/ 			// Positionen der Spalten!! (nicht deren Breite!)
@@ -397,7 +490,7 @@ static bool lcl_IsItemSet(const SwFmt & rFmt, USHORT which)
 /*?*/ 					pBoxF->SetAttr( SwFmtFrmSize( ATT_VAR_SIZE, nWidth ));
 /*?*/ 				}
 /*N*/ 			}
-/*N*/ 
+/*N*/
 /*N*/ 			SwTableBox *pBox = new SwTableBox( pBoxF, aNdIdx, pLine);
 /*N*/ 			rBoxes.C40_INSERT( SwTableBox, pBox, i );
 /*N*/ 			aNdIdx += 3;		// StartNode, TextNode, EndNode  == 3 Nodes
@@ -406,12 +499,12 @@ static bool lcl_IsItemSet(const SwFmt & rFmt, USHORT which)
 /*N*/ 	// und Frms einfuegen.
 /*N*/ 	GetNodes().GoNext( &aNdIdx );      // zum naechsten ContentNode
 /*N*/ 	pTblNd->MakeFrms( &aNdIdx );
-/*N*/ 
+/*N*/
 /*N*/ 	if( IsRedlineOn() || (!IsIgnoreRedline() && pRedlineTbl->Count() ))
 /*N*/ 	{
 /*?*/ 		DBG_BF_ASSERT(0, "STRIP"); //STRIP001 SwPaM aPam( *pTblNd->EndOfSectionNode(), *pTblNd, 1 );
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	SetModified();
 /*N*/ 	return pNdTbl;
 /*N*/ }
@@ -425,17 +518,17 @@ static bool lcl_IsItemSet(const SwFmt & rFmt, USHORT which)
 /*N*/ {
 /*N*/ 	if( !nBoxes )
 /*?*/ 		return 0;
-/*N*/ 
+/*N*/
 /*N*/ 	// wenn Lines angegeben, erzeuge die Matrix aus Lines & Boxen
 /*N*/ 	if( !pHeadlineTxtColl || !nLines )
 /*N*/ 		pHeadlineTxtColl = pCntntTxtColl;
-/*N*/ 
+/*N*/
 /*N*/ 	SwTableNode * pTblNd = new SwTableNode( rNdIdx );
 /*N*/ 	SwEndNode* pEndNd = new SwEndNode( rNdIdx, *pTblNd );
-/*N*/ 
+/*N*/
 /*N*/ 	if( !nLines )		// fuer die FOR-Schleife
 /*N*/ 		++nLines;
-/*N*/ 
+/*N*/
 /*N*/ 	SwNodeIndex aIdx( *pEndNd );
 /*N*/ 	register SwTxtFmtColl* pTxtColl = pHeadlineTxtColl;
 /*N*/ 	for( register USHORT nL = 0; nL < nLines; ++nL )
@@ -451,18 +544,18 @@ static bool lcl_IsItemSet(const SwFmt & rFmt, USHORT which)
                  newly created context node in the new cell.
              */
 /*N*/ 			SwTxtNode * pTmpNd = new SwTxtNode( aIdx, pTxtColl );
-/*N*/             
+/*N*/
 /*N*/             const SfxPoolItem * pItem = NULL;
-/*N*/ 
+/*N*/
 /*N*/             if (! lcl_IsItemSet(*pTmpNd, RES_PARATR_ADJUST) &&
-/*N*/                 pAttrSet != NULL && 
+/*N*/                 pAttrSet != NULL &&
 /*N*/                 SFX_ITEM_SET == pAttrSet->GetItemState( RES_PARATR_ADJUST, TRUE,
 /*N*/                                                         &pItem)
 /*N*/                 )
 /*N*/             {
 /*N*/                 static_cast<SwCntntNode *>(pTmpNd)->SetAttr(*pItem);
 /*N*/             }
-/*N*/             
+/*N*/
 /*N*/ 			new SwEndNode( aIdx, *pSttNd );
 /*N*/ 		}
 /*N*/ 		pTxtColl = pCntntTxtColl;
@@ -507,7 +600,7 @@ static bool lcl_IsItemSet(const SwFmt & rFmt, USHORT which)
 
 /*N*/ BOOL SwDoc::SplitTbl( const SwSelBoxes& rBoxes, sal_Bool bVert, USHORT nCnt,
 /*N*/                       sal_Bool bSameHeight )
-/*N*/ {DBG_BF_ASSERT(0, "STRIP"); return FALSE;//STRIP001 
+/*N*/ {DBG_BF_ASSERT(0, "STRIP"); return FALSE;//STRIP001
 /*N*/ }
 
 
@@ -528,7 +621,7 @@ static bool lcl_IsItemSet(const SwFmt & rFmt, USHORT which)
 
 /*M*/ SwTableNode::~SwTableNode()
 /*M*/ {
-/*M*/ 	//don't forget to notify uno wrappers   
+/*M*/ 	//don't forget to notify uno wrappers
 /*M*/ 	SwFrmFmt* pTblFmt = GetTable().GetFrmFmt();
 /*M*/ 	SwPtrMsgPoolItem aMsgHint( RES_REMOVE_UNO_OBJECT,
 /*M*/ 								pTblFmt );
@@ -582,12 +675,12 @@ void SwTableNode::MakeFrms(const SwNodeIndex & rIdx )
 /*N*/ 	SwNode *pNd = GetNodes().FindPrvNxtFrmNode( *pIdxBehind, EndOfSectionNode() );
 /*N*/ 	if( !pNd )
 /*N*/ 		return ;
-/*N*/ 
+/*N*/
 /*N*/ 	// liegt der gefundene ContentNode vor oder hinter der Tabelle ?
 /*N*/ 	BOOL bBehind = EndOfSectionIndex() < pIdxBehind->GetIndex();
-/*N*/ 
+/*N*/
 /*N*/ 	SwFrm *pFrm, *pNew;
-/*N*/ 
+/*N*/
 /*N*/ 	SwNode2Layout aNode2Layout( *pNd, GetIndex() );
 /*N*/ 	while( 0 != (pFrm = aNode2Layout.NextFrm()) )
 /*N*/ 	{
@@ -604,7 +697,7 @@ void SwTableNode::MakeFrms(const SwNodeIndex & rIdx )
 /*N*/ 	//Die TabFrms haengen am FrmFmt des SwTable.
 /*N*/ 	//Sie muessen etwas umstaendlich zerstort werden, damit die Master
 /*N*/ 	//die Follows mit in's Grab nehmen.
-/*N*/ 
+/*N*/
 /*N*/ 	SwClientIter aIter( *(pTable->GetFrmFmt()) );
 /*N*/ 	SwClient *pLast = aIter.GoStart();
 /*N*/ 	while ( pLast )
@@ -649,19 +742,145 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 //STRIP001 	DelFrms();
 // die neue Size aus dem Max der Boxen errechnet; vorrausgesetzt,
 // die Size ist "absolut" gesetzt (USHRT_MAX)
 
+void SwCollectTblLineBoxes::AddToUndoHistory( const SwCntntNode& rNd )
+{
+    if( pHst )
+        pHst->Add( rNd.GetFmtColl(), rNd.GetIndex(), ND_TEXTNODE );
+}
 
+void SwCollectTblLineBoxes::AddBox( const SwTableBox& rBox )
+{
+    aPosArr.Insert( nWidth, aPosArr.Count() );
+    SwTableBox* p = (SwTableBox*)&rBox;
+    aBoxes.Insert( p, aBoxes.Count() );
+    nWidth += (USHORT)rBox.GetFrmFmt()->GetFrmSize().GetWidth();
+}
 
+const SwTableBox* SwCollectTblLineBoxes::GetBoxOfPos( const SwTableBox& rBox )
+{
+    const SwTableBox* pRet = 0;
+    if( aPosArr.Count() )
+    {
+        USHORT n;
+        for( n = 0; n < aPosArr.Count(); ++n )
+            if( aPosArr[ n ] == nWidth )
+                break;
+            else if( aPosArr[ n ] > nWidth )
+            {
+                if( n )
+                    --n;
+                break;
+            }
 
+        if( n >= aPosArr.Count() )
+            --n;
 
+        nWidth += (USHORT)rBox.GetFrmFmt()->GetFrmSize().GetWidth();
+        pRet = aBoxes[ n ];
+    }
+    return pRet;
+}
 
+BOOL lcl_Line_CollectBox( const SwTableLine*& rpLine, void* pPara )
+{
+    SwCollectTblLineBoxes* pSplPara = (SwCollectTblLineBoxes*)pPara;
+    if( pSplPara->IsGetValues() )
+        ((SwTableLine*)rpLine)->GetTabBoxes().ForEach( &::binfilter::lcl_Box_CollectBox, pPara );
+    else
+        ((SwTableLine*)rpLine)->GetTabBoxes().ForEach( &::binfilter::lcl_BoxSetSplitBoxFmts, pPara );
+    return TRUE;
+}
 
+BOOL lcl_Box_CollectBox( const SwTableBox*& rpBox, void* pPara )
+{
+    SwCollectTblLineBoxes* pSplPara = (SwCollectTblLineBoxes*)pPara;
+    USHORT nLen = rpBox->GetTabLines().Count();
+    if( nLen )
+    {
+        // dann mit der richtigen Line weitermachen
+        if( pSplPara->IsGetFromTop() )
+            nLen = 0;
+        else
+            --nLen;
 
+        const SwTableLine* pLn = rpBox->GetTabLines()[ nLen ];
+        lcl_Line_CollectBox( pLn, pPara );
+    }
+    else
+        pSplPara->AddBox( *rpBox );
+    return TRUE;
+}
 
+BOOL lcl_BoxSetSplitBoxFmts( const SwTableBox*& rpBox, void* pPara )
+{
+    SwCollectTblLineBoxes* pSplPara = (SwCollectTblLineBoxes*)pPara;
+    USHORT nLen = rpBox->GetTabLines().Count();
+    if( nLen )
+    {
+        // dann mit der richtigen Line weitermachen
+        if( pSplPara->IsGetFromTop() )
+            nLen = 0;
+        else
+            --nLen;
 
+        const SwTableLine* pLn = rpBox->GetTabLines()[ nLen ];
+        lcl_Line_CollectBox( pLn, pPara );
+    }
+    else
+    {
+        const SwTableBox* pSrcBox = pSplPara->GetBoxOfPos( *rpBox );
+        SwFrmFmt* pFmt = pSrcBox->GetFrmFmt();
+        SwTableBox* pBox = (SwTableBox*)rpBox;
 
+        if( HEADLINE_BORDERCOPY == pSplPara->GetMode() )
+        {
+            const SvxBoxItem& rBoxItem = pBox->GetFrmFmt()->GetBox();
+            if( !rBoxItem.GetTop() )
+            {
+                SvxBoxItem aNew( rBoxItem );
+                aNew.SetLine( pFmt->GetBox().GetBottom(), BOX_LINE_TOP );
+                if( aNew != rBoxItem )
+                    pBox->ClaimFrmFmt()->SetAttr( aNew );
+            }
+        }
+        else
+        {
+USHORT __FAR_DATA aTableSplitBoxSetRange[] = {
+    RES_LR_SPACE,       RES_UL_SPACE,
+    RES_BACKGROUND,     RES_SHADOW,
+    RES_PROTECT,        RES_PROTECT,
+    RES_VERT_ORIENT,    RES_VERT_ORIENT,
+    0 };
+            SfxItemSet aTmpSet( pFmt->GetDoc()->GetAttrPool(),
+                                aTableSplitBoxSetRange );
+            aTmpSet.Put( pFmt->GetAttrSet() );
+            if( aTmpSet.Count() )
+                pBox->ClaimFrmFmt()->SetAttr( aTmpSet );
 
+            if( HEADLINE_BOXATRCOLLCOPY == pSplPara->GetMode() )
+            {
+                SwNodeIndex aIdx( *pSrcBox->GetSttNd(), 1 );
+                SwCntntNode* pCNd = aIdx.GetNode().GetCntntNode();
+                if( !pCNd )
+                    pCNd = aIdx.GetNodes().GoNext( &aIdx );
+                aIdx = *pBox->GetSttNd();
+                SwCntntNode* pDNd = aIdx.GetNodes().GoNext( &aIdx );
 
+                // nur wenn der Node alleine in der Section steht
+                if( 2 == pDNd->EndOfSectionIndex() -
+                        pDNd->StartOfSectionIndex() )
+                {
+                    pSplPara->AddToUndoHistory( *pDNd );
+                    pDNd->ChgFmtColl( pCNd->GetFmtColl() );
+                }
+            }
 
+            // bedingte Vorlage beachten
+            pBox->GetSttNd()->CheckSectionCondColl();
+        }
+    }
+    return TRUE;
+}
 
 
 
@@ -691,11 +910,11 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 //STRIP001 	DelFrms();
 /*N*/ 	ResId aId( STR_TABLE_DEFNAME, pSwResMgr );
 /*N*/ 	String aName( aId );
 /*N*/ 	xub_StrLen nNmLen = aName.Len();
-/*N*/ 
+/*N*/
 /*N*/ 	USHORT nNum, nTmp, nFlagSize = ( pTblFrmFmtTbl->Count() / 8 ) +2;
 /*N*/ 	BYTE* pSetFlags = new BYTE[ nFlagSize ];
 /*N*/ 	memset( pSetFlags, 0, nFlagSize );
-/*N*/ 
+/*N*/
         USHORT n=0;
 /*N*/ 	for( n = 0; n < pTblFrmFmtTbl->Count(); ++n )
 /*N*/ 	{
@@ -709,7 +928,7 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 //STRIP001 	DelFrms();
 /*N*/ 				pSetFlags[ nNum / 8 ] |= (0x01 << ( nNum & 0x07 ));
 /*N*/ 		}
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	// alle Nummern entsprechend geflag, also bestimme die richtige Nummer
 /*N*/ 	nNum = pTblFrmFmtTbl->Count();
 /*N*/ 	for( n = 0; n < nFlagSize; ++n )
@@ -721,7 +940,7 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 //STRIP001 	DelFrms();
 /*N*/ 				++nNum, nTmp >>= 1;
 /*N*/ 			break;
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 	delete [] pSetFlags;
 /*N*/ 	return aName += String::CreateFromInt32( ++nNum );
 /*N*/ }
@@ -761,7 +980,7 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 //STRIP001 	DelFrms();
 /*N*/ 	{
 /*N*/ 		SwTableBox* pBox = pSttNd->FindTableNode()->GetTable().
 /*N*/ 							GetTblBox( pSttNd->GetIndex() );
-/*N*/ 
+/*N*/
 /*N*/ 		const SfxPoolItem* pFmtItem = 0;
 /*N*/ 		const SfxItemSet& rSet = pBox->GetFrmFmt()->GetAttrSet();
 /*N*/ 		if( SFX_ITEM_SET == rSet.GetItemState( RES_BOXATR_FORMAT, FALSE, &pFmtItem ) ||
@@ -772,9 +991,9 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 //STRIP001 	DelFrms();
 /*?*/ 			{
 /*?*/ 				DBG_BF_ASSERT(0, "STRIP"); //STRIP001 ClearRedo();
 /*?*/ 			}
-/*?*/ 
+/*?*/
 /*?*/ 			SwFrmFmt* pBoxFmt = pBox->ClaimFrmFmt();
-/*?*/ 
+/*?*/
 /*?*/ 			//JP 01.09.97: TextFormate bleiben erhalten!
 /*?*/ 			USHORT nWhich1 = RES_BOXATR_FORMAT;
 /*?*/ 			if( pFmtItem && GetNumberFormatter()->IsTextFormat(
@@ -785,7 +1004,7 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 //STRIP001 	DelFrms();
 /*?*/ 				//				Sorge dafuer, das der Text auch entsprechend
 /*?*/ 				//				formatiert wird!
 /*?*/ 				pBoxFmt->SetAttr( *GetDfltAttr( RES_BOXATR_FORMAT ));
-/*?*/ 
+/*?*/
 /*?*/ 			pBoxFmt->ResetAttr( nWhich1, RES_BOXATR_VALUE );
 /*?*/ 			SetModified();
 /*N*/ 		}
