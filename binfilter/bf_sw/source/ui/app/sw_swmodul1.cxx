@@ -4,9 +4,9 @@
  *
  *  $RCSfile: sw_swmodul1.cxx,v $
  *
- *  $Revision: 1.7 $
+ *  $Revision: 1.8 $
  *
- *  last change: $Author: rt $ $Date: 2006-10-28 00:00:52 $
+ *  last change: $Author: kz $ $Date: 2006-11-08 12:41:55 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -49,7 +49,7 @@
 #ifndef _SFXDISPATCH_HXX
 #include <bf_sfx2/dispatch.hxx>
 #endif
-#ifndef _SFX_CHILDWIN_HXX 
+#ifndef _SFX_CHILDWIN_HXX
 #include <bf_sfx2/childwin.hxx>
 #endif
 #ifndef INCLUDED_SVTOOLS_USEROPTIONS_HXX
@@ -114,7 +114,7 @@
 #ifndef _SVX_BRSHITEM_HXX //autogen
 #include <bf_svx/brshitem.hxx>
 #endif
-#ifndef _SV_MSGBOX_HXX 
+#ifndef _SV_MSGBOX_HXX
 #include <vcl/msgbox.hxx>
 #endif
 
@@ -184,44 +184,16 @@ using namespace ::com::sun::star::view;
 using namespace ::com::sun::star::lang;
 #define C2U(char) ::rtl::OUString::createFromAscii(char)
 
-/* -----------------------------05.01.00 15:14--------------------------------
-
- ---------------------------------------------------------------------------*/
-
-/* -----------------------------05.01.00 15:18--------------------------------
-
- ---------------------------------------------------------------------------*/
-/* -----------------------------05.01.00 15:19--------------------------------
-
- ---------------------------------------------------------------------------*/
-/* -----------------------------05.01.00 15:21--------------------------------
-
- ---------------------------------------------------------------------------*/
-/* -----------------------------05.01.00 15:22--------------------------------
-
- ---------------------------------------------------------------------------*/
-/* -----------------------------05.01.00 15:45--------------------------------
-
- ---------------------------------------------------------------------------*/
-/*-----------------08/28/97 08:41pm-----------------
-
---------------------------------------------------*/
-
-/*--------------------------------------------------------------------
-    Beschreibung:	Aktuelle SwWrtShell
- --------------------------------------------------------------------*/
-
 
 
 /*--------------------------------------------------------------------
     Beschreibung: 	Pointer auf die aktuelle Sicht
  --------------------------------------------------------------------*/
 
-
 /*N*/ SwView* GetActiveView()
 /*N*/ {
-/*N*/ 	SfxViewShell* pView = SfxViewShell::Current();
-/*N*/ 	return PTR_CAST( SwView, pView );
+/*M*/   DBG_BF_ASSERT(0, "STRIP"); //STRIP001
+/*N*/   return NULL;
 /*N*/ }
 /*--------------------------------------------------------------------
     Beschreibung:	Ueber Views iterieren - static
@@ -229,34 +201,16 @@ using namespace ::com::sun::star::lang;
 
 /*N*/ SwView* SwModule::GetFirstView()
 /*N*/ {
-/*N*/ 	// liefert nur sichtbare SwViews
-/*N*/ 	const TypeId aTypeId = TYPE(SwView);
-/*N*/ 	SwView* pView = (SwView*)SfxViewShell::GetFirst(&aTypeId);
-/*N*/ 	return pView;
+/*M*/   DBG_BF_ASSERT(0, "STRIP"); //STRIP001
+/*N*/   return NULL;
 /*N*/ }
 
 
 /*N*/ SwView* SwModule::GetNextView(SwView* pView)
 /*N*/ {
-/*N*/ 	DBG_ASSERT(PTR_CAST(SwView, pView),"keine SwView uebergeben")
-/*N*/ 	const TypeId aTypeId = TYPE(SwView);
-/*N*/ 	// auf Sichtbarkeit pruefen, bis der Sfx das GetFirst/Next
-/*N*/ 	//mit bOnlyVisible implementiert hat
-/*N*/ 	SwView* pNView = (SwView*)SfxViewShell::GetNext(*pView, &aTypeId);
-/*N*/ 	while(pNView && !pNView->GetViewFrame()->IsVisible())
-/*N*/ 	{
-/*N*/ 		pNView = (SwView*)SfxViewShell::GetNext(*pNView, &aTypeId);
-/*N*/ 	}
-/*N*/ 	return pNView;
+/*M*/   DBG_BF_ASSERT(0, "STRIP"); //STRIP001
+/*N*/   return NULL;
 /*N*/ }
-
-/*------------------------------------------------------------------------
- Beschreibung:	Liefert UsrPref mit den Einstellungen des aktuellen
-                Fensters
-------------------------------------------------------------------------*/
-
-
-
 
 /*------------------------------------------------------------------------
  Beschreibung:	Neuer Master fuer die Einstellungen wird gesetzt;
@@ -266,16 +220,8 @@ using namespace ::com::sun::star::lang;
 
 /*M*/ void SwModule::ApplyUsrPref(const SwViewOption &rUsrPref, SwView* pActView,
 /*M*/ 							sal_uInt16 nDest )
-/*M*/ {DBG_BF_ASSERT(0, "STRIP"); //STRIP001 
+/*M*/ {DBG_BF_ASSERT(0, "STRIP"); //STRIP001
 /*M*/ }
-/* -----------------------------28.09.00 12:36--------------------------------
-
- ---------------------------------------------------------------------------*/
-/*-----------------13.11.96 11.57-------------------
-
---------------------------------------------------*/
-
-
 /*-----------------05.02.97 08.03-------------------
 
 --------------------------------------------------*/
@@ -290,23 +236,9 @@ using namespace ::com::sun::star::lang;
 /*N*/ 	{
 /*N*/ 		pPrtOpt = new SwPrintOptions(FALSE);
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	return bWeb ? pWebPrtOpt : pPrtOpt;
 /*N*/ }
-
-/*-----------------26.06.97 07.52-------------------
-
---------------------------------------------------*/
-
-
-/*--------------------------------------------------------------------
-    Beschreibung: Schaut nach ob's min eine View gibt
- --------------------------------------------------------------------*/
-
-
-/*--------------------------------------------------------------------
-    Beschreibung:
- --------------------------------------------------------------------*/
 
 /*--------------------------------------------------------------------
     Beschreibung: Redlining
@@ -338,47 +270,15 @@ DBG_BF_ASSERT(0, "STRIP"); return 0;//STRIP001 	if (!bAuthorInitialised)
 /*N*/ sal_uInt16 SwModule::InsertRedlineAuthor(const String& rAuthor) //SW50.SDW
 /*N*/ {
 /*N*/ 	sal_uInt16 nPos = 0;
-/*N*/ 
+/*N*/
 /*N*/ 	while (nPos < pAuthorNames->Count() && *pAuthorNames->GetObject(nPos) != rAuthor)
 /*N*/ 		nPos++;
-/*N*/ 
+/*N*/
 /*N*/ 	if (nPos == pAuthorNames->Count())
 /*N*/ 		pAuthorNames->Insert(new String(rAuthor), nPos);
-/*N*/ 
+/*N*/
 /*N*/ 	return nPos;
 /*N*/ }
-
-/*--------------------------------------------------------------------
-    Beschreibung:
- --------------------------------------------------------------------*/
-
-
-/*--------------------------------------------------------------------
-    Beschreibung:
- --------------------------------------------------------------------*/
-
-
-/*--------------------------------------------------------------------
-    Beschreibung:
- --------------------------------------------------------------------*/
-
-
-/*--------------------------------------------------------------------
-    Beschreibung:
- --------------------------------------------------------------------*/
-
-
-/*--------------------------------------------------------------------
-    Beschreibung:
- --------------------------------------------------------------------*/
-
-
-/*--------------------------------------------------------------------
-    Beschreibung: Fuer zukuenftige Erweiterung:
- --------------------------------------------------------------------*/
-
-
-
 
 /*--------------------------------------------------------------------
     Beschreibung:
@@ -388,21 +288,6 @@ DBG_BF_ASSERT(0, "STRIP"); return 0;//STRIP001 	if (!bAuthorInitialised)
 /*N*/ {
 /*N*/ 	return pModuleConfig->GetMarkAlignMode();
 /*N*/ }
-
-/*--------------------------------------------------------------------
-    Beschreibung:
- --------------------------------------------------------------------*/
-
-
-
-/*--------------------------------------------------------------------
-    Beschreibung:
- --------------------------------------------------------------------*/
-
-
-/*--------------------------------------------------------------------
-    Beschreibung:
- --------------------------------------------------------------------*/
 
 
 /*-----------------03.03.98 16:47-------------------
