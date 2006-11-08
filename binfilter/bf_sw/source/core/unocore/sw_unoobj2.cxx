@@ -4,9 +4,9 @@
  *
  *  $RCSfile: sw_unoobj2.cxx,v $
  *
- *  $Revision: 1.6 $
+ *  $Revision: 1.7 $
  *
- *  last change: $Author: kz $ $Date: 2006-07-06 10:36:33 $
+ *  last change: $Author: kz $ $Date: 2006-11-08 12:36:44 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -337,7 +337,7 @@ using namespace ::com::sun::star::drawing;
 using namespace ::rtl;
 
 //collectn.cxx
-BOOL lcl_IsNumeric(const String&);
+//BOOL lcl_IsNumeric(const String&);
 
 void CollectFrameAtNode( SwClient& rClnt, const SwNodeIndex& rIdx,
                             SwDependArr& rFrameArr, BOOL bSort )
@@ -907,7 +907,7 @@ Sequence< OUString > SAL_CALL SwXTextCursor::getAvailableServiceNames(void) thro
 
   -----------------------------------------------------------------------*/
 
-IMPL_STATIC_LINK( SwXTextCursor, RemoveCursor_Impl, 
+IMPL_STATIC_LINK( SwXTextCursor, RemoveCursor_Impl,
                   Reference<XInterface>*, pArg )
 {
     ASSERT( pThis != NULL, "no reference?" );
@@ -934,9 +934,9 @@ void 	SwXTextCursor::Modify( SfxPoolItem *pOld, SfxPoolItem *pNew)
         // create reference to this object to prevent deletion before
         // the STATIC_LINK is executed. The link will delete the
         // reference.
-        Reference<XInterface>* pRef = 
+        Reference<XInterface>* pRef =
             new Reference<XInterface>( static_cast<XServiceInfo*>( this ) );
-        Application::PostUserEvent( 
+        Application::PostUserEvent(
             STATIC_LINK( this, SwXTextCursor, RemoveCursor_Impl ), pRef );
     }
 
