@@ -4,9 +4,9 @@
  *
  *  $RCSfile: sw_atrftn.cxx,v $
  *
- *  $Revision: 1.7 $
+ *  $Revision: 1.8 $
  *
- *  last change: $Author: rt $ $Date: 2006-10-27 23:17:00 $
+ *  last change: $Author: kz $ $Date: 2006-11-08 12:35:56 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -119,6 +119,15 @@ int SwFmtFtn::operator==( const SfxPoolItem& rAttr ) const
 /*N*/ 	return pNew;
 /*N*/ }
 
+void SwFmtFtn::SetEndNote( BOOL b )
+{
+    if ( b != bEndNote )
+    {
+        if ( GetTxtFtn() )
+            GetTxtFtn()->DelFrms();
+        bEndNote = b;
+    }
+}
 
 /*N*/ SwFmtFtn::~SwFmtFtn()
 /*N*/ {
@@ -138,13 +147,13 @@ int SwFmtFtn::operator==( const SfxPoolItem& rAttr ) const
 /*N*/ 		const SwSectionNode* pSectNd = pTxtAttr
 /*N*/ 					? SwUpdFtnEndNtAtEnd::FindSectNdWithEndAttr( *pTxtAttr )
 /*N*/ 					: 0;
-/*N*/ 
+/*N*/
 /*N*/ 		if( pSectNd )
 /*N*/ 		{
 /*N*/ 			const SwFmtFtnEndAtTxtEnd& rFtnEnd = (SwFmtFtnEndAtTxtEnd&)
 /*N*/ 				pSectNd->GetSection().GetFmt()->GetAttr(
 /*?*/ 					IsEndNote() ? RES_END_AT_TXTEND : RES_FTN_AT_TXTEND );
-/*N*/ 
+/*N*/
 /*N*/ 			if( FTNEND_ATTXTEND_OWNNUMANDFMT == rFtnEnd.GetValue() )
 /*N*/ 			{
 /*?*/ 				bMakeNum = FALSE;
@@ -156,7 +165,7 @@ int SwFmtFtn::operator==( const SfxPoolItem& rAttr ) const
 /*?*/ 				}
 /*N*/ 			}
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		if( bMakeNum )
 /*N*/ 		{
 /*N*/ 			const SwEndNoteInfo* pInfo;
@@ -222,7 +231,7 @@ int SwFmtFtn::operator==( const SfxPoolItem& rAttr ) const
 /*N*/ 			//				geloescht werden
 /*?*/ 			pDoc = pStartNode->GetNodes().GetDoc();
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		// Wir duerfen die Fussnotennodes nicht loeschen
 /*N*/ 		// und brauchen die Fussnotenframes nicht loeschen, wenn
 /*N*/ 		// wir im ~SwDoc() stehen.
@@ -241,7 +250,7 @@ int SwFmtFtn::operator==( const SfxPoolItem& rAttr ) const
                 {DBG_BF_ASSERT(0, "STRIP");} //STRIP001 /*?*/ 				DelFrms();
 /*N*/ 		}
 /*N*/ 		DELETEZ( pStartNode );
-/*N*/ 
+/*N*/
 /*N*/ 		// loesche die Fussnote noch aus dem Array am Dokument
 /*N*/ 		for( USHORT n = 0; n < pDoc->GetFtnIdxs().Count(); ++n )
 /*?*/ 			if( this == pDoc->GetFtnIdxs()[n] )
@@ -269,7 +278,7 @@ int SwFmtFtn::operator==( const SfxPoolItem& rAttr ) const
 /*N*/ 		rFtn.nNumber = nNewNum;
 /*N*/ 		rFtn.aNumber = aEmptyStr;
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	ASSERT( pMyTxtNd, "wo ist mein TextNode?" );
 /*N*/ 	SwNodes &rNodes = pMyTxtNd->GetDoc()->GetNodes();
 /*N*/ 	pMyTxtNd->Modify( 0, &rFtn );
@@ -297,12 +306,12 @@ int SwFmtFtn::operator==( const SfxPoolItem& rAttr ) const
 /*N*/ {
 /*N*/ 	if( pStartNode )
 /*N*/ 		return;
-/*N*/ 
+/*N*/
 /*N*/ 	// Nun verpassen wir dem TxtNode noch die Fussnotenvorlage.
 /*N*/ 	SwTxtFmtColl *pFmtColl;
 /*N*/ 	const SwEndNoteInfo* pInfo;
 /*N*/ 	USHORT nPoolId;
-/*N*/ 
+/*N*/
 /*N*/ 	if( GetFtn().IsEndNote() )
 /*N*/ 	{
 /*?*/ 		pInfo = &rNodes.GetDoc()->GetEndNoteInfo();
@@ -313,10 +322,10 @@ int SwFmtFtn::operator==( const SfxPoolItem& rAttr ) const
 /*N*/ 		pInfo = &rNodes.GetDoc()->GetFtnInfo();
 /*N*/ 		nPoolId = RES_POOLCOLL_FOOTNOTE;
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	if( 0 == (pFmtColl = pInfo->GetFtnTxtColl() ) )
 /*N*/ 		pFmtColl = rNodes.GetDoc()->GetTxtCollFromPool( nPoolId );
-/*N*/ 
+/*N*/
 /*N*/ 	SwStartNode* pSttNd = rNodes.MakeTextSection( SwNodeIndex( rNodes.GetEndOfInserts() ),
 /*N*/ 										SwFootnoteStartNode, pFmtColl );
 /*N*/ 	pStartNode = new SwNodeIndex( *pSttNd );
@@ -329,7 +338,7 @@ int SwFmtFtn::operator==( const SfxPoolItem& rAttr ) const
     ASSERT( pMyTxtNd, "wo ist mein TextNode?" );
     if( !pMyTxtNd )
         return ;
- 
+
     BOOL bFrmFnd = FALSE;
     {
         SwClientIter aIter( *pMyTxtNd );
@@ -357,16 +366,16 @@ int SwFmtFtn::operator==( const SfxPoolItem& rAttr ) const
                     pFnd; pFnd = (SwCntntFrm*)aIter.Next() )
             {
                 SwPageFrm* pPage = pFnd->FindPageFrm();
- 
+
                 SwFrm *pFrm = pFnd->GetUpper();
                 while ( pFrm && !pFrm->IsFtnFrm() )
                     pFrm = pFrm->GetUpper();
- 
+
                 SwFtnFrm *pFtn = (SwFtnFrm*)pFrm;
                 while ( pFtn && pFtn->GetMaster() )
                     pFtn = pFtn->GetMaster();
                 ASSERT( pFtn->GetAttr() == this, "Ftn mismatch error." );
- 
+
                 while ( pFtn )
                 {
                     SwFtnFrm *pFoll = pFtn->GetFollow();
@@ -385,23 +394,23 @@ int SwFmtFtn::operator==( const SfxPoolItem& rAttr ) const
 /*N*/ {
 /*N*/ 	if( !pMyTxtNd )
 /*N*/ 		return USHRT_MAX;
-/*N*/ 
+/*N*/
 /*N*/ 	SwDoc* pDoc = pMyTxtNd->GetDoc();
 /*N*/ 	if( pDoc->IsInReading() )
 /*N*/ 		return USHRT_MAX;
-/*N*/ 
+/*N*/
 /*N*/ 	USHORT n, nFtnCnt = pDoc->GetFtnIdxs().Count();
-/*N*/ 
+/*N*/
 /*N*/ 	BYTE nTmp = 255 < nFtnCnt ? 255 : nFtnCnt;
 /*N*/ 	SvUShortsSort aArr( nTmp, nTmp );
-/*N*/ 
+/*N*/
 /*N*/ 	// dann testmal, ob die Nummer schon vergeben ist oder ob eine neue
 /*N*/ 	// bestimmt werden muss.
 /*N*/ 	SwTxtFtn* pTxtFtn;
 /*N*/ 	for( n = 0; n < nFtnCnt; ++n )
 /*N*/ 		if( (pTxtFtn = pDoc->GetFtnIdxs()[ n ]) != this )
 /*?*/ 			aArr.Insert( pTxtFtn->nSeqNo );
-/*N*/ 
+/*N*/
 /*N*/ 	// teste erstmal ob die Nummer schon vorhanden ist:
 /*N*/ 	if( USHRT_MAX != nSeqNo )
 /*N*/ 	{
@@ -410,48 +419,48 @@ int SwFmtFtn::operator==( const SfxPoolItem& rAttr ) const
 /*?*/ 				return nSeqNo;			// nicht vorhanden -> also benutzen
 /*?*/ 			else if( aArr[ n ] == nSeqNo )
 /*?*/ 				break;					// schon vorhanden -> neue erzeugen
-/*N*/ 
+/*N*/
 /*N*/ 		if( n == aArr.Count() )
 /*N*/ 			return nSeqNo;			// nicht vorhanden -> also benutzen
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	// alle Nummern entsprechend geflag, also bestimme die richtige Nummer
 /*N*/ 	for( n = 0; n < aArr.Count(); ++n )
 /*N*/ 		if( n != aArr[ n ] )
 /*N*/ 			break;
-/*N*/ 
+/*N*/
 /*N*/ 	return nSeqNo = n;
 /*N*/ }
 
 /*N*/ void SwTxtFtn::SetUniqueSeqRefNo( SwDoc& rDoc )
 /*N*/ {
 /*N*/ 	USHORT n, nStt = 0, nFtnCnt = rDoc.GetFtnIdxs().Count();
-/*N*/ 
+/*N*/
 /*N*/ 	BYTE nTmp = 255 < nFtnCnt ? 255 : nFtnCnt;
 /*N*/ 	SvUShortsSort aArr( nTmp, nTmp );
-/*N*/ 
+/*N*/
 /*N*/ 	// dann alle Nummern zusammensammeln die schon existieren
 /*N*/ 	SwTxtFtn* pTxtFtn;
 /*N*/ 	for( n = 0; n < nFtnCnt; ++n )
 /*N*/ 		if( USHRT_MAX != (pTxtFtn = rDoc.GetFtnIdxs()[ n ])->nSeqNo )
 /*N*/ 			aArr.Insert( pTxtFtn->nSeqNo );
-/*N*/ 
-/*N*/ 
+/*N*/
+/*N*/
 /*N*/ 	for( n = 0; n < nFtnCnt; ++n )
 /*N*/ 		if( USHRT_MAX == (pTxtFtn = rDoc.GetFtnIdxs()[ n ])->nSeqNo )
 /*N*/ 		{
 /*N*/ 			for( ; nStt < aArr.Count(); ++nStt )
 /*?*/ 				if( nStt != aArr[ nStt ] )
 /*?*/ 				{
-/*?*/ 
+/*?*/
 /*?*/ 					pTxtFtn->nSeqNo = nStt;
 /*?*/ 					break;
 /*?*/ 				}
-/*N*/ 
+/*N*/
 /*N*/ 			if( USHRT_MAX == pTxtFtn->nSeqNo )
 /*N*/ 				break;	// nichts mehr gefunden
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 	// alle Nummern schon vergeben, also mit nStt++ weitermachen
 /*N*/ 	for( ; n < nFtnCnt; ++n )
 /*N*/ 		if( USHRT_MAX == (pTxtFtn = rDoc.GetFtnIdxs()[ n ])->nSeqNo )
