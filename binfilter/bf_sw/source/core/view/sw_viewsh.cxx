@@ -4,9 +4,9 @@
  *
  *  $RCSfile: sw_viewsh.cxx,v $
  *
- *  $Revision: 1.7 $
+ *  $Revision: 1.8 $
  *
- *  last change: $Author: rt $ $Date: 2006-10-27 23:24:23 $
+ *  last change: $Author: kz $ $Date: 2006-11-08 12:37:18 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -41,9 +41,6 @@
 
 #ifndef _SFX_PROGRESS_HXX //autogen
 #include <bf_sfx2/progress.hxx>
-#endif
-#ifndef _SHL_HXX
-//#include <tools/shl.hxx>
 #endif
 #ifndef _SWWAIT_HXX
 #include <swwait.hxx>
@@ -101,15 +98,13 @@
 #ifndef _PAGEDESC_HXX
 #include <pagedesc.hxx>
 #endif
-#ifdef ACCESSIBLE_LAYOUT
-#endif
 #ifndef _ACCESSIBILITYOPTIONS_HXX
 #include <accessibilityoptions.hxx>
 #endif
 #ifndef _STATSTR_HRC
 #include <statstr.hrc>
 #endif
-// OD 14.01.2003 #103492#
+#include <shellres.hxx>
 namespace binfilter {
 
 BOOL ViewShell::bLstAct = FALSE;
@@ -139,12 +134,12 @@ FASTBOOL bInSizeNotify = FALSE;
 /*?*/ 		UISizeNotify();
 /*?*/ 		return;
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	// #94195# remember when the handles need refresh at end of method
 /*N*/ 	sal_Bool bRefreshMarker(sal_False);
-/*N*/ 
+/*N*/
 /*N*/ 	bInEndAction = TRUE;
-/*N*/ 
+/*N*/
 /*N*/ 	//Laeuft hiermit das EndAction der Letzten Shell im Ring?
 /*N*/ 	ViewShell::bLstAct = TRUE;
 /*N*/ 	ViewShell *pSh = (ViewShell*)this->GetNext();
@@ -156,16 +151,16 @@ FASTBOOL bInSizeNotify = FALSE;
 /*?*/ 		else
 /*?*/ 			pSh = (ViewShell*)pSh->GetNext();
 /*?*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	SET_CURR_SHELL( this );
 /*N*/ 	if ( Imp()->HasDrawView() && !Imp()->GetDrawView()->IsMarkHdlHidden() )
 /*?*/ 		Imp()->StartAction();
-/*N*/ 
+/*N*/
 /*N*/ 	if ( Imp()->GetRegion() && Imp()->GetRegion()->GetOrigin() != VisArea() )
 /*N*/ 		Imp()->DelRegions();
-/*N*/ 
+/*N*/
 /*N*/ 	const FASTBOOL bExtraData = ::binfilter::IsExtraData( GetDoc() );
-/*N*/ 
+/*N*/
 /*N*/ 	if ( !bIdleEnd )
 /*N*/ 	{
 /*N*/ 		if ( Imp()->IsNextScroll() && !bExtraData )
@@ -185,7 +180,7 @@ FASTBOOL bInSizeNotify = FALSE;
 /*N*/ 		aAction.Action();
 /*N*/ 		Imp()->SetScroll();
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	//Wenn wir selbst keine Paints erzeugen, so warten wir auf das Paint
 /*N*/ 	//vom System. Dann ist das Clipping korrekt gesetzt; Beispiel: verschieben
 /*N*/ 	//eines DrawObjektes.
@@ -200,21 +195,21 @@ FASTBOOL bInSizeNotify = FALSE;
 /*?*/ 			{
 /*?*/ 				if ( bPaintsFromSystem )
 /*?*/ 					Imp()->AddPaintRect( aInvalidRect );
-/*?*/ 
+/*?*/
 /*?*/ 				// AW 22.09.99: tell DrawView that drawing order will be rearranged
 /*?*/ 				// to give it a chance to react with proper IAO updates
 /*?*/ 				if (HasDrawView())
 /*?*/ 				{
 /*?*/ 				DBG_BF_ASSERT(0, "STRIP"); //STRIP001 	GetDrawView()->ForceInvalidateMarkHandles();
 /*?*/ 				}
-/*?*/ 
+/*?*/
 /*?*/ 				ResetInvalidRect();
 /*?*/ 				bPaintsFromSystem = TRUE;
 /*?*/ 			}
 /*?*/ 			bPaintWorks = TRUE;
-/*?*/ 
+/*?*/
 /*?*/ 			SwRegionRects *pRegion = Imp()->GetRegion();
-/*?*/ 
+/*?*/
 /*?*/ 			//JP 27.11.97: wer die Selection hided, muss sie aber auch
 /*?*/ 			//				wieder Showen. Sonst gibt es Paintfehler!
 /*?*/ 			//	z.B.: addional Mode, Seite vertikal hab zu sehen, in der
@@ -225,11 +220,11 @@ FASTBOOL bInSizeNotify = FALSE;
 /*?*/ 								IsA( TYPE(SwCrsrShell) );
 /*?*/ 			if( bShowCrsr )
 /*?*/ 				{DBG_BF_ASSERT(0, "STRIP");} //STRIP001 ((SwCrsrShell*)this)->HideCrsrs();
-/*?*/ 
+/*?*/
 /*?*/ 			Scroll();
 /*?*/ 			if ( bPaintsFromSystem && Imp()->pScrolledArea )
                     {DBG_BF_ASSERT(0, "STRIP");} //STRIP001 /*?*/ 				Imp()->FlushScrolledArea();
-/*?*/ 
+/*?*/
 /*?*/ 			if ( pRegion )
                     {DBG_BF_ASSERT(0, "STRIP");} //STRIP001 /*?*/ 			{
 /*?*/ 			if( bShowCrsr )
@@ -243,12 +238,12 @@ FASTBOOL bInSizeNotify = FALSE;
 /*N*/ 	}
 /*N*/ 	else
 /*N*/ 		bPaintWorks = TRUE;
-/*N*/ 
+/*N*/
 /*N*/ 	bInEndAction = FALSE;
 /*N*/ 	ViewShell::bLstAct = FALSE;
 /*N*/ 	Imp()->EndAction();
-/*N*/ 
-/*N*/ 
+/*N*/
+/*N*/
 /*N*/ 	//Damit sich die automatischen Scrollbars auch richtig anordnen k”nnen
 /*N*/ 	//muessen wir die Aktion hier kuenstlich beenden (EndAction loesst ein
 /*N*/ 	//Notify aus, und das muss Start-/EndAction rufen um die  Scrollbars
@@ -256,20 +251,20 @@ FASTBOOL bInSizeNotify = FALSE;
 /*N*/ 	--nStartAction;
 /*N*/ 	UISizeNotify();
 /*N*/ 	++nStartAction;
-/*N*/ 
+/*N*/
 /*N*/ #ifndef PRODUCT
 /*N*/ 	// No Scroll starts the timer to repair the scrolled area automatically
 /*N*/ 	if( GetViewOptions()->IsTest8() )
 /*N*/ #endif
 /*?*/ 	if ( Imp()->IsScrolled() )
 /*?*/ 		Imp()->RestartScrollTimer();
-/*N*/ 
+/*N*/
 /*N*/ 	// #94195# refresh handles when they were hard removed for display change
 /*N*/ 	if(bRefreshMarker && HasDrawView())
 /*N*/ 	{
 /*?*/ 		GetDrawView()->AdjustMarkHdl(FALSE);
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ #ifdef ACCESSIBLE_LAYOUT
 /*N*/ #endif
 /*N*/ }
@@ -289,19 +284,6 @@ FASTBOOL bInSizeNotify = FALSE;
 /*N*/ 	Imp()->StartAction();
 /*N*/ }
 
-
-/******************************************************************************
-|*
-|*	ViewShell::ImplLockPaint(), ImplUnlockPaint()
-|*
-|*	Ersterstellung		MA 11. Jun. 96
-|*	Letzte Aenderung	MA 11. Jun. 96
-|*
-******************************************************************************/
-
-
-
-
 /******************************************************************************
 |*
 |*	ViewShell::AddPaintRect()
@@ -319,11 +301,11 @@ FASTBOOL bInSizeNotify = FALSE;
 /*N*/ 	{
 /*N*/ 		if ( pSh->IsPreView() && pSh->GetWin() )
 /*N*/ //			pSh->GetWin()->Invalidate();
-/*?*/ 			::binfilter::RepaintPagePreview( pSh, rRect );
+/*?*/           DBG_BF_ASSERT(0, "STRIP");//::binfilter::RepaintPagePreview( pSh, rRect );
 /*N*/ 		else
 /*N*/ 			bRet |= pSh->Imp()->AddPaintRect( rRect );
 /*N*/ 		pSh = (ViewShell*)pSh->GetNext();
-/*N*/ 
+/*N*/
 /*N*/ 	} while ( pSh != this );
 /*N*/ 	return bRet;
 /*N*/ }
@@ -348,12 +330,12 @@ FASTBOOL bInSizeNotify = FALSE;
 /*N*/ 			{
 /*N*/ 				if ( pSh->IsPreView() )
 /*N*/ //					pSh->GetWin()->Invalidate();
-/*?*/ 					::binfilter::RepaintPagePreview( pSh, rRect );
+/*?*/                   DBG_BF_ASSERT(0, "STRIP");//::binfilter::RepaintPagePreview( pSh, rRect );
 /*N*/ 				else if ( pSh->VisArea().IsOver( rRect ) )
 /*N*/ 					pSh->GetWin()->Invalidate( rRect.SVRect() );
 /*N*/ 			}
 /*N*/ 			pSh = (ViewShell*)pSh->GetNext();
-/*N*/ 
+/*N*/
 /*N*/ 		} while ( pSh != this );
 /*N*/ 	}
 /*N*/ }
@@ -369,7 +351,7 @@ FASTBOOL bInSizeNotify = FALSE;
 
 /*N*/ void ViewShell::MakeVisible( const SwRect &rRect )
 /*N*/ {
-/*N*/ 	if ( !VisArea().IsInside( rRect ) || IsScrollMDI( this, rRect ) || GetCareWin(*this) )
+/*N*/   if ( !VisArea().IsInside( rRect ) || /*IsScrollMDI( this, rRect ) ||*/ GetCareWin(*this) )
 /*N*/ 	{
 /*N*/ 		if ( !IsViewLocked() )
 /*N*/ 		{
@@ -381,7 +363,7 @@ FASTBOOL bInSizeNotify = FALSE;
 /*N*/ 				do{
 /*N*/ 					nOldH = pRoot->Frm().Height();
 /*N*/ 					StartAction();
-/*N*/ 					ScrollMDI( this, rRect, USHRT_MAX, USHRT_MAX );
+/*N*/                   DBG_BF_ASSERT(0, "STRIP");//ScrollMDI( this, rRect, USHRT_MAX, USHRT_MAX );
 /*N*/ 					EndAction();
 /*N*/ 				} while( nOldH != pRoot->Frm().Height() && nLoopCnt-- );
 /*N*/ 			}
@@ -391,7 +373,7 @@ FASTBOOL bInSizeNotify = FALSE;
 /*N*/ 				//MA: 04. Nov. 94, braucht doch keiner oder??
 /*N*/ 				ASSERT( !this, "MakeVisible fuer Drucker wird doch gebraucht?" );
 /*N*/ 			}
-/*N*/ 
+/*N*/
 /*N*/ #endif
 /*N*/ 		}
 /*N*/ 	}
@@ -417,32 +399,6 @@ FASTBOOL bInSizeNotify = FALSE;
 ******************************************************************************/
 
 
-/******************************************************************************
-|*
-|*	ViewShell::GetNumPages()
-|*
-|*	Ersterstellung		MA ??
-|*	Letzte Aenderung	MA 20. Apr. 94
-|*
-******************************************************************************/
-
-
-
-/*************************************************************************
-|*
-|*					ViewShell::UpdateFlds()
-|*
-|*	  Ersterstellung	BP 04.05.92
-|*	  Beschreibung		erzwingt ein Update fuer jedes Feld
-|*
-|*	UpdateFlds benachrichtigt alle Felder mit pNewHt.
-|*	Wenn pNewHt == 0 ist (default), wird der Feldtyp verschickt.
-|*
-*************************************************************************/
-
-
-// update all charts, for that exists any table
-
 /*************************************************************************
 |*
 |*	  ViewShell::LayoutIdle()
@@ -461,27 +417,27 @@ FASTBOOL bInSizeNotify = FALSE;
 /*N*/ 	if( !pOpt->IsIdle() || !GetWin() ||
 /*N*/ 		( Imp()->HasDrawView() && Imp()->GetDrawView()->IsDragObj() ) )
 /*N*/ 		return;
-/*N*/ 
+/*N*/
 /*N*/ 	//Kein Idle wenn gerade gedruckt wird.
 /*N*/ 	ViewShell *pSh = this;
 /*N*/ 	do
 /*N*/ 	{	if ( !pSh->GetWin() )
 /*N*/ 			return;
 /*N*/ 		pSh = (ViewShell*)pSh->GetNext();
-/*N*/ 
+/*N*/
 /*N*/ 	} while ( pSh != this );
-/*N*/ 
+/*N*/
 /*N*/ 	SET_CURR_SHELL( this );
-/*N*/ 
+/*N*/
 /*N*/ #ifndef PRODUCT
 /*N*/ 	// Wenn Test5 gedrueckt ist, wird der IdleFormatierer abgeknipst.
 /*N*/ 	if( pOpt->IsTest5() )
 /*N*/ 		return;
 /*N*/ #endif
-/*N*/ 
+/*N*/
 /*N*/ 	{
 /*N*/ 		DBG_PROFSTART( LayoutIdle );
-/*N*/ 
+/*N*/
 /*N*/ 		//Cache vorbereiten und restaurieren, damit er nicht versaut wird.
 /*N*/ 		SwSaveSetLRUOfst aSave( *SwTxtFrm::GetTxtCache(),
 /*N*/ 							 SwTxtFrm::GetTxtCache()->GetCurMax() - 50 );
@@ -491,9 +447,6 @@ FASTBOOL bInSizeNotify = FALSE;
 /*N*/ }
 
 // Absatzabstaende koennen wahlweise addiert oder maximiert werden
-
-
-
 
 
 /******************************************************************************
@@ -507,8 +460,6 @@ FASTBOOL bInSizeNotify = FALSE;
 
 /*N*/ void ViewShell::Reformat()
 /*N*/ {
-/*N*/ 	SwWait aWait( *GetDoc()->GetDocShell(), TRUE );
-/*N*/ 
 /*N*/ 	// Wir gehen auf Nummer sicher:
 /*N*/ 	// Wir muessen die alten Fontinformationen wegschmeissen,
 /*N*/ 	// wenn die Druckeraufloesung oder der Zoomfaktor sich aendert.
@@ -518,10 +469,10 @@ FASTBOOL bInSizeNotify = FALSE;
 /*N*/ #else
 /*N*/ 	pFntCache->Flush( );
 /*N*/ #endif
-/*N*/ 
+/*N*/
 /*N*/     if( GetLayout()->IsCallbackActionEnabled() )
 /*N*/     {
-/*N*/ 
+/*N*/
 /*N*/         StartAction();
 /*N*/         GetLayout()->InvalidateAllCntnt();
 /*N*/         EndAction();
@@ -541,12 +492,11 @@ FASTBOOL bInSizeNotify = FALSE;
 /*N*/ void ViewShell::CalcLayout()
 /*N*/ {
 /*N*/ 	SET_CURR_SHELL( this );
-/*N*/ 	SwWait aWait( *GetDoc()->GetDocShell(), TRUE );
-/*N*/ 
+/*N*/
 /*N*/ 	//Cache vorbereiten und restaurieren, damit er nicht versaut wird.
 /*N*/ 	SwSaveSetLRUOfst aSaveLRU( *SwTxtFrm::GetTxtCache(),
 /*N*/ 						  		SwTxtFrm::GetTxtCache()->GetCurMax() - 50 );
-/*N*/ 
+/*N*/
 /*N*/ 	//Progress einschalten wenn noch keiner Lauft.
 /*N*/ 	const BOOL bEndProgress = SfxProgress::GetActiveProgress( GetDoc()->GetDocShell() ) == 0;
 /*N*/ 	if ( bEndProgress )
@@ -555,7 +505,7 @@ FASTBOOL bInSizeNotify = FALSE;
 /*N*/ 		nEndPage += nEndPage * 10 / 100;
 /*N*/ 		::binfilter::StartProgress( STR_STATSTR_REFORMAT, 0, nEndPage, GetDoc()->GetDocShell() );
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	SwLayAction aAction( GetLayout(), Imp() );
 /*N*/ 	aAction.SetPaint( FALSE );
 /*N*/ 	aAction.SetStatBar( TRUE );
@@ -564,7 +514,7 @@ FASTBOOL bInSizeNotify = FALSE;
 /*N*/ 	GetDoc()->LockExpFlds();
 /*N*/ 	aAction.Action();
 /*N*/ 	GetDoc()->UnlockExpFlds();
-/*N*/ 
+/*N*/
 /*N*/ 	//Das SetNewFldLst() am Doc wurde unterbunden und muss nachgeholt
 /*N*/ 	//werden (siehe flowfrm.cxx, txtfld.cxx)
 /*N*/ 	if ( aAction.IsExpFlds() )
@@ -573,14 +523,14 @@ FASTBOOL bInSizeNotify = FALSE;
 /*N*/ 		aAction.SetPaint( FALSE );
 /*N*/ 		aAction.SetStatBar( TRUE );
 /*N*/ 		aAction.SetReschedule( TRUE );
-/*N*/ 
+/*N*/
 /*N*/ 		SwDocPosUpdate aMsgHnt( 0 );
 /*N*/ 		GetDoc()->UpdatePageFlds( &aMsgHnt );
 /*N*/ 		GetDoc()->UpdateExpFlds();
-/*N*/ 
+/*N*/
 /*N*/ 		aAction.Action();
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	if ( VisArea().HasArea() )
 /*N*/ 		InvalidateWindows( VisArea() );
 /*N*/ 	if ( bEndProgress )
@@ -602,7 +552,7 @@ FASTBOOL bInSizeNotify = FALSE;
 /*N*/ 	do
 /*N*/ 	{	pSh->Imp()->SetFirstVisPageInvalid();
 /*N*/ 		pSh = (ViewShell*)pSh->GetNext();
-/*N*/ 
+/*N*/
 /*N*/ 	} while ( pSh != this );
 /*N*/ }
 
@@ -622,7 +572,7 @@ FASTBOOL bInSizeNotify = FALSE;
 /*N*/ 	else if( ActionPend() || Imp()->IsCalcLayoutProgress() || bPaintInProgress )
 /*N*/ 	{
 /*N*/ 		bDocSizeChgd = TRUE;
-/*N*/ 
+/*N*/
 /*N*/ 		if ( !Imp()->IsCalcLayoutProgress() && ISA( SwCrsrShell ) )
 /*N*/ 		{
 /*N*/ 			const SwFrm *pCnt = ((SwCrsrShell*)this)->GetCurrFrm( FALSE );
@@ -632,68 +582,16 @@ FASTBOOL bInSizeNotify = FALSE;
 /*N*/ 				USHORT nVirtNum = pPage->GetVirtPageNum();
 /*N*/ 		 		const SvxNumberType& rNum = pPage->GetPageDesc()->GetNumType();
 /*N*/ 				String sDisplay = rNum.GetNumStr( nVirtNum );
-/*N*/ 				PageNumNotify( this, pCnt->GetPhyPageNum(), nVirtNum, sDisplay );
+/*N*/               DBG_BF_ASSERT(0, "STRIP");//PageNumNotify( this, pCnt->GetPhyPageNum(), nVirtNum, sDisplay );
 /*N*/ 			}
 /*N*/ 		}
 /*N*/ 	}
 /*N*/ 	else
 /*N*/ 	{
 /*N*/ 		bDocSizeChgd = FALSE;
-/*N*/ 		::binfilter::SizeNotify( this, GetLayout()->Frm().SSize() );
+/*N*/       DBG_BF_ASSERT(0, "STRIP");//::binfilter::SizeNotify( this, GetLayout()->Frm().SSize() );
 /*N*/ 	}
 /*N*/ }
-
-/******************************************************************************
-|*
-|*	ViewShell::VisPortChgd()
-|*
-|*	Ersterstellung		MA ??
-|*	Letzte Aenderung	MA 22. Jul. 96
-|*
-******************************************************************************/
-
-
-/******************************************************************************
-|*
-|*	ViewShell::SmoothScroll()
-|*
-|*	Ersterstellung		MA 04. Jul. 96
-|*	Letzte Aenderung	MA 25. Mar. 97
-|*
-******************************************************************************/
-
-
-/******************************************************************************
-|*
-|*	ViewShell::PaintDesktop()
-|*
-|*	Ersterstellung		MA 16. Dec. 93
-|*	Letzte Aenderung	MA 30. Nov. 95
-|*
-******************************************************************************/
-
-
-
-// PaintDesktop gesplittet, dieser Teil wird auch von PreViewPage benutzt
-
-/******************************************************************************
-|*
-|*	ViewShell::CheckInvalidForPaint()
-|*
-|*	Ersterstellung		MA 19. May. 94
-|*	Letzte Aenderung	MA 09. Jun. 94
-|*
-******************************************************************************/
-
-
-/******************************************************************************
-|*
-|*	ViewShell::Paint()
-|*
-|*	Ersterstellung		MA ??
-|*	Letzte Aenderung	MA 17. Sep. 96
-|*
-******************************************************************************/
 
 
 /******************************************************************************
@@ -729,21 +627,6 @@ FASTBOOL bInSizeNotify = FALSE;
 DBG_BF_ASSERT(0, "STRIP"); //STRIP001 //STRIP001 	if ( !bBrowseChgd && !GetDoc()->IsBrowseMode() )
 /*N*/ }
 
-/******************************************************************************
-|*
-|*	ViewShell::Is/Set[Head|Foot]InBrowse()
-|*
-|*	Ersterstellung		MA 10. Feb. 97
-|*	Letzte Aenderung	MA 10. Feb. 97
-|*
-******************************************************************************/
-
-
-
-
-
-
-
 /*************************************************************************
 |*
 |* 	  ViewShell::GetLayout()
@@ -758,7 +641,7 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 //STRIP001 	if ( !bBrowseChgd && !GetDoc()
 /*N*/ {
 /*N*/ 	return GetDoc()->GetRootFrm();
 /*N*/ }
-/*N*/ 
+/*N*/
 /*N*/ SfxPrinter* ViewShell::GetPrt( BOOL bCreate ) const
 /*N*/ {
 /*N*/     return GetDoc()->GetPrt( bCreate );
@@ -775,7 +658,7 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 //STRIP001 	if ( !bBrowseChgd && !GetDoc()
 /*N*/         pTmpOut = mpTmpRef;
 /*N*/     else
 /*N*/         pTmpOut = &GetDoc()->GetRefDev();
-/*N*/ 
+/*N*/
 /*N*/     return *pTmpOut;
 /*N*/ }
 
@@ -814,27 +697,6 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 //STRIP001 	if ( !bBrowseChgd && !GetDoc()
 /*N*/ 	return GetDoc()->GetAttrPool();
 /*N*/ }
 
-/*************************************************************************
-|*
-|*	  ViewShell::SetSubsLines()
-|*
-|*	  Beschreibung		Hilfslinien An-/Abschalten
-|*	  Ersterstellung	MA 26. May. 92
-|*	  Letzte Aenderung	MA 03. May. 95
-|*
-*************************************************************************/
-
-
-/******************************************************************************
-|*
-|*	ViewShell::ApplyViewOptions(), ImplApplyViewOptions()
-|*
-|*	Ersterstellung		??
-|*	Letzte Aenderung	MA 03. Mar. 98
-|*
-******************************************************************************/
-
-
 
 /******************************************************************************
 |*
@@ -852,18 +714,9 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 //STRIP001 	if ( !bBrowseChgd && !GetDoc()
 /*N*/ 	//it is required to set scroll bars in readonly documents
 /*N*/ 	if(rOpt.IsStarOneSetting())
 /*N*/ 		pOpt->SetStarOneSetting(TRUE);
-/*N*/ 
+/*N*/
 /*N*/ 	pOpt->SetSymbolFont(rOpt.GetSymbolFont());
 /*N*/ }
-
-/******************************************************************************
-|*
-|*	ViewShell::SetReadonly()
-|*
-|*	Ersterstellung		OS 05.09.96
-|*	Letzte Aenderung	MA 12. Feb. 97
-|*
-******************************************************************************/
 
 /* -----------------------------2002/07/31 17:06------------------------------
 
@@ -902,7 +755,7 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 //STRIP001 	if ( !bBrowseChgd && !GetDoc()
 /*N*/ 		bDocSizeChgd = FALSE;
 /*N*/ 		FASTBOOL bOld = bInSizeNotify;
 /*N*/ 		bInSizeNotify = TRUE;
-/*N*/ 		::binfilter::SizeNotify( this, GetLayout()->Frm().SSize() );
+/*N*/       DBG_BF_ASSERT(0, "STRIP");//::binfilter::SizeNotify( this, GetLayout()->Frm().SSize() );
 /*N*/ 		bInSizeNotify = bOld;
 /*N*/ 	}
 /*N*/ }
@@ -912,10 +765,6 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 //STRIP001 	if ( !bBrowseChgd && !GetDoc()
 /*N*/ {
 /*N*/ 	return GetDoc()->IsBrowseMode();
 /*N*/ }
-
-
-
-
 
 /* -----------------------------06.05.2002 13:23------------------------------
 
@@ -933,7 +782,7 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 //STRIP001 	if ( !bBrowseChgd && !GetDoc()
 /*N*/         pAccOptions->SetAlwaysAutoColor(rAccessibilityOptions.GetIsAutomaticFontColor());
 /*N*/         pAccOptions->SetStopAnimatedGraphics(! rAccessibilityOptions.GetIsAllowAnimatedGraphics());
 /*N*/         pAccOptions->SetStopAnimatedText(! rAccessibilityOptions.GetIsAllowAnimatedText());
-/*N*/ 
+/*N*/
 /*N*/         if(pOpt->IsReadonly())
 /*N*/             pOpt->SetSelectionInReadonly(rAccessibilityOptions.IsSelectionInReadonly());
 /*N*/     }
@@ -945,4 +794,10 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 //STRIP001 	if ( !bBrowseChgd && !GetDoc()
  *
  * --------------------------------------------------*/
 
+ShellResource* ViewShell::GetShellRes()
+{
+    if ( !pShellRes )
+        pShellRes = new ShellResource();
+    return pShellRes;
+}
 }
