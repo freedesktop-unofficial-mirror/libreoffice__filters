@@ -4,9 +4,9 @@
  *
  *  $RCSfile: sw_ftnfrm.cxx,v $
  *
- *  $Revision: 1.6 $
+ *  $Revision: 1.7 $
  *
- *  last change: $Author: rt $ $Date: 2006-10-27 22:53:34 $
+ *  last change: $Author: kz $ $Date: 2006-11-08 12:31:57 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -110,7 +110,7 @@ namespace binfilter {
 /*N*/ ULONG MA_FASTCALL lcl_FindFtnPos( const SwDoc *pDoc, const SwTxtFtn *pAttr )
 /*N*/ {
 /*N*/ 	const SwFtnIdxs &rFtnIdxs = pDoc->GetFtnIdxs();
-/*N*/ 
+/*N*/
 /*N*/ #ifdef MA_DEBUG
 /*N*/ 	//Wenn das Array nicht stimmt haben wir ein Problem, denn viele
 /*N*/ 	//Ftn-Functions bauen auf dem Array auf.
@@ -133,7 +133,7 @@ namespace binfilter {
 /*N*/ 		}
 /*N*/ 	}
 /*N*/ #endif
-/*N*/ 
+/*N*/
 /*N*/ 	USHORT nRet;
 /*N*/ 	SwTxtFtnPtr pBla = (SwTxtFtn*)pAttr;
 /*N*/ 	if ( rFtnIdxs.Seek_Entry( pBla, &nRet ) )
@@ -315,7 +315,7 @@ namespace binfilter {
 /*N*/         if( (Prt().*fnRect->fnGetHeight)() < 0 && !pPage->IsFtnPage() )
 /*N*/ 			bValidSize = FALSE;
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	if ( !bValidSize )
 /*N*/ 	{
 /*N*/ 		if ( pPage->IsFtnPage() && !GetFmt()->GetDoc()->IsBrowseMode() )
@@ -336,7 +336,7 @@ namespace binfilter {
 /*N*/ 			}
 /*N*/ 			//Jetzt noch den Rand addieren
 /*N*/ 			nRemaining += nBorder;
-/*N*/ 
+/*N*/
 /*N*/ 			SwTwips nDiff;
 /*N*/ 			if( IsInSct() )
 /*N*/ 			{
@@ -394,12 +394,12 @@ namespace binfilter {
 /*?*/ 		return 0;
 /*N*/ 	}
 /*N*/ #endif
-/*N*/ 
+/*N*/
 /*N*/     SWRECTFN( this )
 /*N*/     if( (Frm().*fnRect->fnGetHeight)() > 0 &&
 /*N*/          nDist > ( LONG_MAX - (Frm().*fnRect->fnGetHeight)() ) )
 /*N*/         nDist = LONG_MAX - (Frm().*fnRect->fnGetHeight)();
-/*N*/ 
+/*N*/
 /*N*/ 	SwFtnBossFrm *pBoss = (SwFtnBossFrm*)GetUpper();
 /*N*/ 	if( IsInSct() )
 /*N*/ 	{
@@ -438,7 +438,7 @@ namespace binfilter {
 /*N*/ 		//aber mehr als der Body kann koennen und wollen wir nun auch wieder
 /*N*/ 		//nicht herausruecken.
 /*?*/         nDist = (GetPrev()->Frm().*fnRect->fnGetHeight)();
-/*N*/ 
+/*N*/
 /*N*/     long nAvail = 0;
 /*N*/ 	if ( GetFmt()->GetDoc()->IsBrowseMode() )
 /*N*/ 	{
@@ -451,7 +451,7 @@ namespace binfilter {
 /*?*/ 		if ( nAvail > nDist )
 /*?*/ 			nAvail = nDist;
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/     if ( !bTst )
 /*N*/     {
 /*N*/         (Frm().*fnRect->fnSetHeight)( (Frm().*fnRect->fnGetHeight)() + nDist );
@@ -487,9 +487,9 @@ namespace binfilter {
 /*?*/ 				nReal += AdjustNeighbourhood( nGrow - nReal, bTst );
 /*N*/ 		}
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	nReal += nAvail;
-/*N*/ 
+/*N*/
 /*N*/ 	if ( !bTst )
 /*N*/ 	{
 /*N*/ 		if ( nReal != nDist )
@@ -500,7 +500,7 @@ namespace binfilter {
 /*?*/             if( IsVertical() && !IsReverse() )
 /*?*/                 Frm().Pos().X() += nDist;
 /*N*/         }
-/*N*/ 
+/*N*/
 /*N*/ 		//Nachfolger braucht nicht invalidiert werden, denn wir wachsen
 /*N*/ 		//immer nach oben.
 /*N*/ 		if( nReal )
@@ -589,7 +589,7 @@ namespace binfilter {
 /*N*/ }
 
 /*N*/ #ifndef PRODUCT
-/*N*/ 
+/*N*/
 /*N*/ SwTwips SwFtnFrm::GrowFrm( SwTwips nDist, BOOL bTst, BOOL bInfo )
 /*N*/ {
 /*N*/ #if OSL_DEBUG_LEVEL > 1
@@ -637,10 +637,10 @@ namespace binfilter {
 /*?*/ 		GetNext()->InvalidatePos();
 /*N*/ 	else if ( GetPrev() )
 /*?*/ 		GetPrev()->SetRetouche();
-/*N*/ 
+/*N*/
 /*N*/ 	//Erst removen, dann Upper Shrinken.
 /*N*/ 	SwLayoutFrm *pUp = GetUpper();
-/*N*/ 
+/*N*/
 /*N*/ 	//Verkettung korrigieren.
 /*N*/ 	SwFtnFrm *pFtn = (SwFtnFrm*)this;
 /*N*/ 	if ( pFtn->GetFollow() )
@@ -649,10 +649,10 @@ namespace binfilter {
 /*?*/ 		pFtn->GetMaster()->SetFollow( pFtn->GetFollow() );
 /*N*/ 	pFtn->SetFollow( 0 );
 /*N*/ 	pFtn->SetMaster( 0 );
-/*N*/ 
+/*N*/
 /*N*/ 	// Alle Verbindungen kappen.
 /*N*/ 	Remove();
-/*N*/ 
+/*N*/
 /*N*/ 	if ( pUp )
 /*N*/ 	{
 /*N*/ 		//Die letzte Fussnote nimmt ihren Container mit.
@@ -700,10 +700,10 @@ namespace binfilter {
 /*N*/ 	ASSERT( pSibling != this, "Bin mein eigener Nachbar." );
 /*N*/ 	ASSERT( !GetPrev() && !GetNext() && !GetUpper(),
 /*N*/ 			"Bin noch irgendwo angemeldet." );
-/*N*/ 
+/*N*/
 /*N*/ 	//In den Baum einhaengen.
 /*N*/ 	InsertBefore( (SwLayoutFrm*)pParent, pSibling );
-/*N*/ 
+/*N*/
 /*N*/     SWRECTFN( this )
 /*N*/     if( (Frm().*fnRect->fnGetWidth)()!=(pParent->Prt().*fnRect->fnGetWidth)() )
 /*?*/ 		_InvalidateSize();
@@ -714,7 +714,7 @@ namespace binfilter {
 /*?*/ 		GetNext()->_InvalidatePos();
 /*N*/     if( (Frm().*fnRect->fnGetHeight)() )
 /*?*/         pParent->Grow( (Frm().*fnRect->fnGetHeight)() );
-/*N*/ 
+/*N*/
 /*N*/ 	//Wenn mein Vorgaenger mein Master ist und/oder wenn mein Nachfolger mein
 /*N*/ 	//Follow ist so kann ich deren Inhalt uebernehmen und sie vernichten.
 /*N*/ 	if ( GetPrev() && GetPrev() == GetMaster() )
@@ -792,7 +792,7 @@ namespace binfilter {
 /*N*/ {
 /*N*/ 	if ( !IsInDocBody() )
 /*N*/ 		return FALSE;
-/*N*/ 
+/*N*/
 /*N*/ 	if ( IsInTab() )
 /*N*/ 	{
 /*N*/ 		//Keine Ftns in wiederholten Headlines.
@@ -849,7 +849,7 @@ namespace binfilter {
 /*?*/ 					delete pFtn;
 /*?*/ 				}
 /*?*/ 				pFtn = pNxt;
-/*?*/ 
+/*?*/
 /*?*/ 			} while ( pFtn );
 /*N*/ 		}
 /*N*/         if( !pBoss->IsInSct() )
@@ -882,7 +882,7 @@ namespace binfilter {
 /*N*/ {
 /*N*/ 	if ( !pPage )
 /*?*/ 		pPage = (SwPageFrm*)Lower();
-/*N*/ 
+/*N*/
 /*N*/ 	do
 /*N*/ 	{	// Bei spaltigen Seiten muessen wir in allen Spalten aufraeumen
 /*N*/ 		SwFtnBossFrm* pBoss;
@@ -907,7 +907,7 @@ namespace binfilter {
 /*N*/ 		}
 /*N*/ 		else
 /*N*/ 			break;
-/*N*/ 
+/*N*/
 /*?*/ 	} while ( pPage );
 /*N*/ }
 
@@ -920,6 +920,16 @@ namespace binfilter {
 |*
 |*************************************************************************/
 
+void SwRootFrm::CheckFtnPageDescs( BOOL bEndNote )
+{
+    SwPageFrm *pPage = (SwPageFrm*)Lower();
+    while ( pPage && !pPage->IsFtnPage() )
+        pPage = (SwPageFrm*)pPage->GetNext();
+    while ( pPage && pPage->IsEndNotePage() != bEndNote )
+        pPage = (SwPageFrm*)pPage->GetNext();
+    if ( pPage )
+        SwFrm::CheckPageDescs( pPage, FALSE );
+}
 
 
 /*************************************************************************
@@ -937,14 +947,14 @@ namespace binfilter {
 /*N*/ 	//Einfuegen eines Fussnotencontainers. Der Fussnotencontainer sitzt
 /*N*/ 	//immer direkt hinter dem Bodytext.
 /*N*/ 	//Sein FrmFmt ist immer das DefaultFrmFmt.
-/*N*/ 
+/*N*/
 /*N*/ #ifndef PRODUCT
 /*N*/ 	if ( FindFtnCont() )
 /*?*/ 	{   ASSERT( !this, "Fussnotencontainer bereits vorhanden." );
 /*?*/ 		return 0;
 /*N*/ 	}
 /*N*/ #endif
-/*N*/ 
+/*N*/
 /*N*/ 	SwFtnContFrm *pNew = new SwFtnContFrm( GetFmt()->GetDoc()->GetDfltFrmFmt());
 /*N*/ 	SwLayoutFrm *pLay = FindBodyCont();
 /*N*/ 	pNew->Paste( this, pLay->GetNext() );
@@ -966,7 +976,7 @@ namespace binfilter {
 /*N*/ 	SwFrm *pFrm = Lower();
 /*N*/ 	while( pFrm && !pFrm->IsFtnContFrm() )
 /*N*/ 		pFrm = pFrm->GetNext();
-/*N*/ 
+/*N*/
 /*N*/ #ifndef PRODUCT
 /*N*/ 	if ( pFrm )
 /*N*/ 	{
@@ -979,7 +989,7 @@ namespace binfilter {
 /*N*/ 		}
 /*N*/ 	}
 /*N*/ #endif
-/*N*/ 
+/*N*/
 /*N*/ 	return (SwFtnContFrm*)pFrm;
 /*N*/ }
 
@@ -1034,10 +1044,10 @@ namespace binfilter {
 /*N*/ 	SwFtnContFrm *pCont = FindNearestFtnCont();
 /*N*/ 	if ( !pCont )
 /*N*/ 		return 0;
-/*N*/ 
+/*N*/
 /*N*/ 	//Ab der ersten Fussnote im Container die erste suchen, die
 /*N*/ 	//von der aktuellen Spalte (bzw. einspaltigen Seite) referenziert wird.
-/*N*/ 
+/*N*/
 /*N*/ 	SwFtnFrm *pRet = (SwFtnFrm*)pCont->Lower();
 /*N*/ 	const USHORT nRefNum = FindPageFrm()->GetPhyPageNum();
 /*N*/ 	const USHORT nRefCol = lcl_ColumnNum( this );
@@ -1067,12 +1077,12 @@ namespace binfilter {
 /*?*/ 		return NULL;
 /*?*/ 	// Ende, wenn Ref auf einer spaeteren Seite oder auf der gleichen Seite in einer
 /*?*/ 	// spaeteren Spalte liegt
-/*?*/ 
+/*?*/
 /*?*/ 	do
 /*?*/ 	{
 /*?*/ 		while ( pRet->GetFollow() )
 /*?*/ 			pRet = pRet->GetFollow();
-/*?*/ 
+/*?*/
 /*?*/ 		SwFtnFrm *pNxt = (SwFtnFrm*)pRet->GetNext();
 /*?*/ 		if ( !pNxt )
 /*?*/ 		{
@@ -1128,7 +1138,7 @@ namespace binfilter {
 /*N*/ 		{
 /*?*/ 			while ( pRet->GetFollow() )
 /*?*/ 				pRet = pRet->GetFollow();
-/*?*/ 
+/*?*/
 /*?*/ 			if ( pRet->GetNext() )
 /*?*/ 				pRet = (const SwFtnFrm*)pRet->GetNext();
 /*?*/ 			else
@@ -1165,7 +1175,7 @@ namespace binfilter {
 /*N*/ 	//Vernichten der Inkarnationen von Fussnoten zum Attribut, wenn sie nicht
 /*N*/ 	//zu pAssumed gehoeren.
 /*N*/ 	ASSERT( !pCheck->GetMaster(), "Master not an Master." );
-/*N*/ 
+/*N*/
 /*N*/ 	SwNodeIndex aIdx( *pCheck->GetAttr()->GetStartNode(), 1 );
 /*N*/ 	SwCntntNode *pNd = aIdx.GetNode().GetCntntNode();
 /*N*/ 	if ( !pNd )
@@ -1181,7 +1191,7 @@ namespace binfilter {
 /*N*/ 			SwFrm *pTmp = pFrm->GetUpper();
 /*N*/ 			while ( pTmp && !pTmp->IsFtnFrm() )
 /*?*/ 				pTmp = pTmp->GetUpper();
-/*N*/ 
+/*N*/
 /*N*/ 			SwFtnFrm *pFtn = (SwFtnFrm*)pTmp;
 /*N*/ 			while ( pFtn && pFtn->GetMaster() )
 /*?*/ 				pFtn = pFtn->GetMaster();
@@ -1227,11 +1237,11 @@ namespace binfilter {
 /*N*/ 	//Gibt es bereits einen Container aber noch keine Fussnote zu diesem
 /*N*/ 	//Fussnotenboss, so muss die Fussnote hinter die letzte Fussnote der dichtesten
 /*N*/ 	//Vorseite/spalte.
-/*N*/ 
+/*N*/
 /*N*/ 	ResetFtn( pNew );
 /*N*/ 	SwFtnFrm *pSibling = FindFirstFtn();
 /*N*/ 	BOOL bDontLeave = FALSE;
-/*N*/ 
+/*N*/
 /*N*/ 	// Ok, a sibling has been found, but is the sibling in an acceptable
 /*N*/ 	// environment?
 /*N*/ 	if( IsInSct() )
@@ -1258,15 +1268,15 @@ namespace binfilter {
 /*?*/ 			}
 /*?*/ 		}
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	if( pSibling && pSibling->FindPageFrm()->IsEndNotePage() !=
 /*N*/ 		FindPageFrm()->IsEndNotePage() )
 /*?*/ 		pSibling = NULL;
-/*N*/ 
+/*N*/
 /*N*/ 	//Damit die Position herausgefunden werden kann.
 /*N*/ 	SwDoc *pDoc = GetFmt()->GetDoc();
 /*N*/ 	const ULONG nStPos = ::binfilter::lcl_FindFtnPos( pDoc, pNew->GetAttr() );
-/*N*/ 
+/*N*/
 /*N*/ 	ULONG nCmpPos, nLastPos;
 /*N*/ 	SwFtnContFrm *pParent = 0;
 /*N*/ 	if( pSibling )
@@ -1275,7 +1285,7 @@ namespace binfilter {
 /*?*/ 		if( nCmpPos > nStPos )
 /*?*/ 			pSibling = NULL;
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	if ( !pSibling )
 /*N*/ 	{	pParent = FindFtnCont();
 /*N*/ 		if ( !pParent )
@@ -1291,7 +1301,7 @@ namespace binfilter {
 /*?*/ 				SwFtnFrm *pFtn = (SwFtnFrm*)pParent->Lower();
 /*?*/ 				if ( pFtn )
 /*?*/ 				{
-/*?*/ 
+/*?*/
 /*?*/ 					nCmpPos = ::binfilter::lcl_FindFtnPos( pDoc, pFtn->GetAttr() );
 /*?*/ 					if ( nCmpPos > nStPos )
 /*?*/ 						pParent = 0;
@@ -1315,18 +1325,18 @@ namespace binfilter {
 /*?*/ 				return;
 /*?*/ 			}
 /*?*/ 			nCmpPos  = ::binfilter::lcl_FindFtnPos( pDoc, pSibling->GetAttr() );
-/*?*/ 
+/*?*/
 /*?*/ 			SwFtnBossFrm *pNxtB = this;	//Immer den letzten merken, damit wir nicht
 /*?*/ 			SwFtnFrm  *pLastSib = 0;	//ueber das Ziel hinausschiessen.
-/*?*/ 
+/*?*/
 /*?*/ 			while ( pSibling && nCmpPos <= nStPos )
 /*?*/ 			{
 /*?*/ 				pLastSib = pSibling; // der kommt schon mal in Frage
 /*?*/ 				nLastPos = nCmpPos;
-/*?*/ 
+/*?*/
 /*?*/ 				while ( pSibling->GetFollow() )
 /*?*/ 					pSibling = pSibling->GetFollow();
-/*?*/ 
+/*?*/
 /*?*/ 				if ( pSibling->GetNext() )
 /*?*/ 				{
 /*?*/ 					pSibling = (SwFtnFrm*)pSibling->GetNext();
@@ -1391,10 +1401,10 @@ namespace binfilter {
 /*?*/ 		{
 /*?*/ 			pLastSib = pSibling;
 /*?*/ 			nLastPos = nCmpPos;
-/*?*/ 
+/*?*/
 /*?*/ 			while ( pSibling->GetFollow() )
 /*?*/ 				pSibling = pSibling->GetFollow();
-/*?*/ 
+/*?*/
 /*?*/ 			SwFtnFrm *pFoll = (SwFtnFrm*)pSibling->GetNext();
 /*?*/ 			if ( pFoll )
 /*?*/ 			{
@@ -1479,7 +1489,7 @@ namespace binfilter {
 /*N*/ 	//Wenn es die Fussnote schon gibt tun wir nix.
 /*N*/ 	if ( FindFtn( pRef, pAttr ) )
 /*?*/ 		return;
-/*N*/ 
+/*N*/
 /*N*/ 	//Wenn Fussnoten am Dokumentende eingestellt sind, so brauchen wir 'eh erst
 /*N*/ 	//ab der entsprechenden Seite zu suchen.
 /*N*/ 	//Wenn es noch keine gibt, muss eben eine erzeugt werden.
@@ -1555,7 +1565,7 @@ namespace binfilter {
 /*?*/ 			pPage = (SwPageFrm*)pPage->GetNext();
 /*?*/ 			bChgPage = TRUE;
 /*?*/ 		}
-/*?*/ 
+/*?*/
 /*?*/ 		if ( !pPage->IsFtnPage() )
 /*?*/ 		{
 /*?*/ 			SwPageDesc *pDesc = pDoc->GetFtnInfo().GetPageDesc( *pDoc );
@@ -1588,13 +1598,13 @@ namespace binfilter {
 /*?*/ 			}
 /*?*/ 		}
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	//Erstmal eine Fussnote und die benoetigten CntntFrms anlegen.
 /*N*/ 	if ( !pAttr->GetStartNode() )
 /*?*/ 	{	ASSERT( !this, "Kein Fussnoteninhalt." );
 /*?*/ 		return;
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	// Wenn es auf der Seite/Spalte bereits einen FtnCont gibt,
 /*N*/ 	// kann in einen spaltigen Bereich keiner erzeugt werden.
 /*N*/ 	if( pBoss->IsInSct() && pBoss->IsColumnFrm() && !pPage->IsFtnPage() )
@@ -1609,7 +1619,7 @@ namespace binfilter {
 /*?*/ 			}
 /*?*/ 		}
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	SwFtnFrm *pNew = new SwFtnFrm( pDoc->GetDfltFrmFmt(), pRef, pAttr );
 /*N*/ 	{
 /*N*/ 		SwNodeIndex aIdx( *pAttr->GetStartNode(), 1 );
@@ -1695,7 +1705,7 @@ namespace binfilter {
 /*N*/ 				}
 /*N*/ 			}
 /*?*/ 		} while ( 0 != (pClient = aIter++) );
-/*N*/ 
+/*N*/
 /*N*/ 	return 0;
 /*N*/ }
 /*************************************************************************
@@ -1811,7 +1821,7 @@ namespace binfilter {
 /*N*/ {
 /*N*/ 	//Alle Fussnoten der Spalte/Seite dergestalt anformatieren,
 /*N*/ 	//dass sie ggf. die Spalte/Seite wechseln.
-/*N*/ 
+/*N*/
 /*N*/ 	SwSaveFtnHeight aSave( this, nDeadLine );
 /*N*/ 	SwFtnFrm *pFtn = FindFirstFtn();
 /*N*/ 	if( pFtn && pFtn->GetPrev() && bLock )
@@ -1940,14 +1950,14 @@ namespace binfilter {
 /*N*/ 	//Seitenweise Numerierung nur wenn es am Dokument so eingestellt ist.
 /*N*/ 	if ( GetFmt()->GetDoc()->GetFtnInfo().eNum != FTNNUM_PAGE )
 /*N*/ 		return;
-/*?*/ 
+/*?*/
 /*?*/ 	SwLayoutFrm* pBody = FindBodyCont();
 /*?*/ 	if( !pBody || !pBody->Lower() )
 /*?*/ 		return;
-/*?*/ 
+/*?*/
 /*?*/ 	SwCntntFrm* pCntnt = pBody->ContainsCntnt();
 /*?*/ 	USHORT nNum = 0;
-/*?*/ 
+/*?*/
 /*?*/ 	while( pCntnt && pCntnt->FindPageFrm() == this )
 /*?*/ 	{
 /*?*/ 		if( ((SwTxtFrm*)pCntnt)->HasFtn() )
@@ -2004,7 +2014,7 @@ namespace binfilter {
 /*N*/ {
 /*N*/ 	SwFrm *pBody = FindBodyCont();
 /*N*/ 	pBody->Calc();
-/*N*/ 
+/*N*/
 /*N*/ 	SwFrm *pCont = FindFtnCont();
 /*N*/ 	const SwTwips nMax = nMaxFtnHeight;//Aktuelle MaxHeight nicht ueberschreiten.
 /*N*/     SWRECTFN( this )
@@ -2015,12 +2025,12 @@ namespace binfilter {
 /*N*/ 	}
 /*N*/ 	else
 /*N*/         nMaxFtnHeight = -(pBody->Frm().*fnRect->fnBottomDist)( nDeadLine );
-/*N*/ 
+/*N*/
 /*N*/ 	if ( GetFmt()->GetDoc()->IsBrowseMode() )
 /*?*/         nMaxFtnHeight += pBody->Grow( LONG_MAX PHEIGHT, TRUE );
 /*N*/ 	if ( IsInSct() )
 /*?*/         nMaxFtnHeight += FindSctFrm()->Grow( LONG_MAX PHEIGHT, TRUE );
-/*N*/ 
+/*N*/
 /*N*/ 	if ( nMaxFtnHeight < 0 )
 /*N*/ 		nMaxFtnHeight = 0;
 /*N*/ 	if ( nMax != LONG_MAX && nMaxFtnHeight > nMax )
@@ -2042,10 +2052,10 @@ namespace binfilter {
 /*N*/ 	//->AMA: Was ist da fuer Bereiche sinnvoll (und kompatibel zu MS ;-)?
 /*N*/ 	//AMA: MS kennt scheinbar kein Begrenzung, die Fussnoten nehmen durchaus
 /*N*/ 	// die ganze Seite/Spalte ein.
-/*N*/ 
+/*N*/
 /*N*/ 	const SwPageFrm* pPg = FindPageFrm();
 /*N*/ 	ASSERT( pPg, "Footnote lost page" );
-/*N*/ 
+/*N*/
 /*N*/ 	const SwFrm *pBody = FindBodyCont();
 /*N*/ 	SwTwips nRet;
 /*N*/ 	if( pBody )
@@ -2177,12 +2187,12 @@ namespace binfilter {
 /*?*/ 	if( pDoc->GetFtnInfo().ePos == FTNPOS_CHAPTER &&
 /*?*/ 		( !IsInSct() || !FindSctFrm()->IsFtnAtEnd() ) )
 /*?*/ 		return TRUE;
-/*?*/ 
+/*?*/
 /*?*/ 	if ( !pNewBoss )
 /*?*/ 		pNewBoss = FindFtnBossFrm( TRUE );
 /*?*/ 	if ( pNewBoss == pOldBoss )
 /*?*/ 		return FALSE;
-/*?*/ 
+/*?*/
 /*?*/ 	DBG_BF_ASSERT(0, "STRIP"); return FALSE;//STRIP001 BOOL bMoved = FALSE;
 /*N*/ }
 
