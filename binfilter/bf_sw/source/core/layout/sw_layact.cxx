@@ -4,9 +4,9 @@
  *
  *  $RCSfile: sw_layact.cxx,v $
  *
- *  $Revision: 1.8 $
+ *  $Revision: 1.9 $
  *
- *  last change: $Author: rt $ $Date: 2006-10-27 22:53:57 $
+ *  last change: $Author: kz $ $Date: 2006-11-08 12:32:11 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -125,7 +125,7 @@ namespace binfilter {
 /*N*/ 					return; \
 /*N*/ 				} \
 /*N*/ 			}
-/*N*/ 
+/*N*/
 /*N*/ #define XCHECKPAGE \
 /*N*/ 			{	if ( IsAgain() ) \
 /*N*/ 				{	BreakPoint(); \
@@ -139,7 +139,7 @@ namespace binfilter {
 /*?*/ 			{	if ( IsAgain() ) \
 /*?*/ 					return; \
 /*?*/ 			}
-/*?*/ 
+/*?*/
 /*?*/ #define XCHECKPAGE \
 /*?*/ 			{	if ( IsAgain() ) \
 /*?*/ 				{ \
@@ -167,11 +167,6 @@ namespace binfilter {
 /*N*/ void SwLayAction::CheckWaitCrsr()
 /*N*/ {
 /*N*/ 	RESCHEDULE
-/*N*/ 	if ( !IsWait() && IsWaitAllowed() && IsPaint() &&
-/*N*/ 		 ((Ticks() - GetStartTicks()) >= CLOCKS_PER_SEC/2) )
-/*N*/ 	{
-/*N*/ 		pWait = new SwWait( *pRoot->GetFmt()->GetDoc()->GetDocShell(), TRUE );
-/*N*/ 	}
 /*N*/ }
 
 /*************************************************************************
@@ -226,21 +221,21 @@ namespace binfilter {
 /*N*/ 	SwRegionRects aTmp( rRect );
 /*N*/ 	const SwSortDrawObjs &rObjs = *pPage->GetSortedObjs();
 /*N*/ 	const SwFlyFrm *pSelfFly = pCnt->FindFlyFrm();
-/*N*/ 
+/*N*/
         USHORT i=0;
 /*N*/ 	for ( i = 0; i < rObjs.Count() && aTmp.Count(); ++i )
 /*N*/ 	{
 /*N*/ 		SdrObject *pO = rObjs[i];
 /*N*/ 		if ( !pO->IsWriterFlyFrame() )
 /*N*/ 			continue;
-/*N*/ 
+/*N*/
 /*N*/ 		SwFlyFrm *pFly = ((SwVirtFlyDrawObj*)pO)->GetFlyFrm();
-/*N*/ 
+/*N*/
 /*N*/ 		if ( pFly == pSelfFly || !rRect.IsOver( pFly->Frm() ) )
 /*N*/ 			continue;
-/*?*/ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 
+/*?*/ DBG_BF_ASSERT(0, "STRIP"); //STRIP001
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	BOOL bPaint = FALSE;
 /*N*/ 	const SwRect *pData = aTmp.GetData();
 /*N*/ 	for ( i = 0; i < aTmp.Count(); ++pData, ++i )
@@ -268,7 +263,7 @@ namespace binfilter {
 /*N*/                               long nOldBottom )
 /*N*/ {
 /*N*/     SWRECTFN( pCnt )
-/*N*/ 
+/*N*/
 /*N*/     if ( pCnt->IsCompletePaint() || !pCnt->IsTxtFrm() )
 /*N*/ 	{
 /*N*/ 		SwRect aPaint( pCnt->PaintArea() );
@@ -299,7 +294,7 @@ namespace binfilter {
 /*N*/         SwRect aPaintRect = static_cast<SwTxtFrm*>(const_cast<SwCntntFrm*>(pCnt))->Paint();
 /*N*/         _PaintCntnt( pCnt, pPage, aPaintRect );
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	if ( pCnt->IsRetouche() && !pCnt->GetNext() )
 /*N*/ 	{
 /*N*/ 		const SwFrm *pTmp = pCnt;
@@ -331,18 +326,18 @@ namespace binfilter {
 /*N*/ 	const SwSortDrawObjs &rObjs = *pPage->GetSortedObjs();
 /*N*/ 	const SwFlyFrm *pSelfFly = pFrm->FindFlyFrm();
 /*N*/ 	const BOOL bInCnt = pSelfFly && pSelfFly->IsFlyInCntFrm() ? TRUE : FALSE;
-/*N*/ 
+/*N*/
 /*N*/ 	for ( USHORT j = 0; j < rObjs.Count(); ++j )
 /*N*/ 	{
 /*N*/ 		const SdrObject 		*pObj = rObjs[j];
 /*N*/ 		const SwRect aRect( pObj->GetBoundRect() );
 /*N*/ 		if ( !rRect1.IsOver( aRect ) && !rRect2.IsOver( aRect ) )
 /*N*/ 			continue;		//Keine Ueberlappung, der naechste.
-/*N*/ 
+/*N*/
 /*N*/ 		const SwVirtFlyDrawObj *pFlyObj = pObj->IsWriterFlyFrame() ?
 /*N*/ 												(SwVirtFlyDrawObj*)pObj : 0;
 /*N*/ 		const SwFlyFrm *pFly = pFlyObj ? pFlyObj->GetFlyFrm() : 0;
-/*N*/ 
+/*N*/
 /*N*/ 		//Wenn der Rahmen innerhalb des LayFrm verankert ist, so darf er
 /*N*/ 		//mitgescrollt werden, wenn er nicht seitlich aus dem Rechteck
 /*N*/ 		//herausschaut.
@@ -353,13 +348,13 @@ namespace binfilter {
 /*?*/ 				return TRUE;
 /*?*/ 			continue;
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		if ( !pSelfFly )	//Nur wenn der Frm in einem Fly steht kann
 /*N*/ 			return TRUE;	//es Einschraenkungen geben.
-/*N*/ 
+/*N*/
 /*?*/ 		if ( !pFlyObj )		//Keine Einschraenkung fuer Zeichenobjekte.
 /*?*/ 			return TRUE;
-/*?*/ 
+/*?*/
 /*?*/ 		if ( pFly != pSelfFly )
 /*?*/ 		{
 /*?*/ 			//Flys unter dem eigenen nur dann abziehen, wenn sie innerhalb des
@@ -400,7 +395,7 @@ namespace binfilter {
 /*N*/ 	FASTBOOL bScroll = TRUE;
 /*N*/ 	SwRect aPaintRect( pCntnt->PaintArea() );
 /*N*/     SWRECTFN( pCntnt )
-/*N*/ 
+/*N*/
 /*N*/ 	//Wenn altes oder neues Rechteck mit einem Fly ueberlappen, in dem der
 /*N*/ 	//Cntnt nicht selbst steht, so ist nichts mit Scrollen.
 /*N*/ 	if ( pPage->GetSortedObjs() )
@@ -419,7 +414,7 @@ namespace binfilter {
 /*N*/ 	}
 /*N*/ 	if ( bScroll && pPage->GetFmt()->GetBackground().GetGraphicPos() != GPOS_NONE )
 /*N*/ 		bScroll = FALSE;
-/*N*/ 
+/*N*/
     // OD 04.11.2002 #94454# - Don't intersect potential paint rectangle with
     // union of frame and printing area, because at scroll destination position
     // could be a frame that has filled up the potential paint area.
@@ -474,7 +469,7 @@ namespace binfilter {
 /*N*/ 	bUpdateExpFlds = bBrowseActionStop = bActionInProgress = FALSE;
 /*N*/     // OD 14.04.2003 #106346# - init new flag <mbFormatCntntOnInterrupt>.
 /*N*/     mbFormatCntntOnInterrupt = sal_False;
-/*N*/ 
+/*N*/
 /*N*/     pImp->pLayAct = this;   //Anmelden
 /*N*/ }
 
@@ -553,7 +548,6 @@ namespace binfilter {
 /*N*/ 	//TurboMode? Disqualifiziert fuer Idle-Format.
 /*N*/ 	if ( IsPaint() && !IsIdle() && TurboAction() )
 /*N*/ 	{
-/*N*/ 		delete pWait, pWait = 0;
 /*N*/ 		pRoot->ResetTurboFlag();
 /*N*/ 		bActionInProgress = FALSE;
 /*N*/ 		pRoot->DeleteEmptySct();
@@ -567,10 +561,10 @@ namespace binfilter {
 /*N*/ 		pFrm->InvalidatePage();
 /*N*/ 	}
 /*N*/ 	pRoot->DisallowTurbo();
-/*N*/ 
+/*N*/
 /*N*/ 	if ( IsCalcLayout() )
 /*?*/ 		SetCheckPages( FALSE );
-/*N*/ 
+/*N*/
 /*N*/ 	InternalAction();
 /*N*/ 	bAgain |= RemoveEmptyBrowserPages();
 /*N*/ 	while ( IsAgain() )
@@ -580,13 +574,11 @@ namespace binfilter {
 /*N*/ 		bAgain |= RemoveEmptyBrowserPages();
 /*N*/ 	}
 /*N*/ 	pRoot->DeleteEmptySct();
-/*N*/ 
-/*N*/ 	delete pWait, pWait = 0;
-/*N*/ 
+/*N*/
 /*N*/ 	//Turbo-Action ist auf jedenfall wieder erlaubt.
 /*N*/ 	pRoot->ResetTurboFlag();
 /*N*/ 	pRoot->ResetTurbo();
-/*N*/ 
+/*N*/
 /*N*/ 	if ( IsInput() )
 /*N*/ 		pImp->GetShell()->SetNoNextScroll();
 /*N*/ 	SetCheckPages( TRUE );
@@ -604,7 +596,7 @@ namespace binfilter {
 /*?*/ 	{	bPageChgd = TRUE;
 /*?*/ 		pPage = pCnt->FindPageFrm();
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	if ( pPage->GetFmt()->GetDoc()->GetFtnIdxs().Count() )
 /*N*/ 	{
 /*N*/ 		SwFtnContFrm *pCont = pPage->FindFtnCont();
@@ -634,9 +626,9 @@ namespace binfilter {
 /*N*/ void SwLayAction::InternalAction()
 /*N*/ {
 /*N*/ 	ASSERT( pRoot->Lower()->IsPageFrm(), ":-( Keine Seite unterhalb der Root.");
-/*N*/ 
+/*N*/
 /*N*/ 	pRoot->Calc();
-/*N*/ 
+/*N*/
 /*N*/ 	//Die erste ungueltige bzw. zu formatierende Seite ermitteln.
 /*N*/ 	//Bei einer Complete-Action ist es die erste ungueltige; mithin ist die
 /*N*/ 	//erste zu formatierende Seite diejenige Seite mit der Numemr eins.
@@ -646,17 +638,17 @@ namespace binfilter {
 /*N*/ 				pImp->GetFirstVisPage();
 /*N*/ 	if ( !pPage )
 /*?*/ 		pPage = (SwPageFrm*)pRoot->Lower();
-/*N*/ 
+/*N*/
 /*N*/ 	//Wenn ein "Erster-Fliess-Cntnt" innerhalb der der ersten sichtbaren Seite
 /*N*/ 	//ein Follow ist, so schalten wir die Seite zurueck auf den Ur-Master dieses
 /*N*/ 	//Cntnt's
 /*N*/ 	if ( !IsComplete() )
 /*N*/ 		pPage = CheckFirstVisPage( pPage );
 /*N*/ 	USHORT nFirstPageNum = pPage->GetPhyPageNum();
-/*N*/ 
+/*N*/
 /*N*/ 	while ( pPage && !pPage->IsInvalid() && !pPage->IsInvalidFly() )
 /*N*/ 		pPage = (SwPageFrm*)pPage->GetNext();
-/*N*/ 
+/*N*/
 /*N*/ 	SwDoc* pDoc = pRoot->GetFmt()->GetDoc();
 /*N*/ 	BOOL bNoLoop = pPage ? SwLayouter::StartLoopControl( pDoc, pPage ) : NULL;
 /*N*/ 	USHORT nPercentPageNum = 0;
@@ -684,7 +676,7 @@ namespace binfilter {
 /*?*/ 			pPage = pTmp;
 /*?*/ 			continue;
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ #ifdef MA_DEBUG
 /*?*/ 		static USHORT nStop = USHRT_MAX;
 /*?*/ 		if ( pPage->GetPhyPageNum() == nStop )
@@ -755,7 +747,7 @@ namespace binfilter {
 /*N*/ 			//Die Flys haben Vorrang, d.h. wenn sich an den Flys waehrend der
 /*N*/ 			//Formatierung des Bodys etwas aendert wird die Body-Formatierung
 /*N*/ 			//unterbrochen und wieder bei den Flys angefangen.
-/*N*/ 
+/*N*/
 /*N*/ 			while ( !IsInterrupt() && !IsNextCycle() &&
 /*N*/ 					((IS_FLYS && IS_INVAFLY) || pPage->IsInvalid()) )
 /*N*/ 			{
@@ -815,7 +807,7 @@ namespace binfilter {
 /*N*/ 					}
 /*N*/ 					if( bNoLoop )
 /*N*/ 						pDoc->GetLayouter()->LoopControl( pPage, LOOP_PAGE );
-/*N*/ 
+/*N*/
 /*N*/ 				}
 /*N*/ 			}
 /*N*/ 			//Eine vorige Seite kann wieder invalid sein.
@@ -830,7 +822,7 @@ namespace binfilter {
 /*N*/ 			if ( !IsInterrupt() )
 /*N*/ 			{
 /*N*/ 				SetNextCycle( FALSE );
-/*N*/ 
+/*N*/
 /*N*/ 				if ( nPreInvaPage != USHRT_MAX )
 /*N*/ 				{
 /*N*/ 					if( !IsComplete() && nPreInvaPage + 2 < nFirstPageNum )
@@ -848,7 +840,7 @@ namespace binfilter {
 /*N*/ 						pPage = (SwPageFrm*)pPage->GetPrev();
 /*N*/ 					nPreInvaPage = USHRT_MAX;
 /*N*/ 				}
-/*N*/ 
+/*N*/
 /*N*/ 				//Ist eine Vorseite invalid?
 /*N*/ 				while ( pPage->GetPrev() &&
 /*N*/ 						( ((SwPageFrm*)pPage->GetPrev())->IsInvalid() ||
@@ -915,12 +907,12 @@ namespace binfilter {
 /*N*/ 		SwPageFrm *pPg = pPage;
 /*N*/ 		XCHECKPAGE;
 /*N*/ 		const SwRect &rVis = pImp->GetShell()->VisArea();
-/*N*/ 
+/*N*/
 /*N*/         while( pPg && pPg->Frm().Bottom() < rVis.Top() )
 /*?*/ 			pPg = (SwPageFrm*)pPg->GetNext();
 /*N*/         if( pPg != pPage )
 /*?*/             pPg = pPg ? (SwPageFrm*)pPg->GetPrev() : pPage;
-/*N*/ 
+/*N*/
 /*N*/         // OD 14.04.2003 #106346# - set flag for interrupt content formatting
 /*N*/         mbFormatCntntOnInterrupt = IsInput() && !IsStopPrt();
 /*N*/         long nBottom = rVis.Bottom();
@@ -976,7 +968,7 @@ namespace binfilter {
 |*************************************************************************/
 /*N*/ BOOL SwLayAction::_TurboAction( const SwCntntFrm *pCnt )
 /*N*/ {
-/*N*/ 
+/*N*/
 /*N*/ 	const SwPageFrm *pPage = 0;
 /*N*/ 	if ( !pCnt->IsValid() || pCnt->IsCompletePaint() || pCnt->IsRetouche() )
 /*N*/ 	{
@@ -985,10 +977,10 @@ namespace binfilter {
 /*N*/ 		pCnt->Calc();
 /*N*/ 		if ( pCnt->Frm().Bottom() < aOldRect.Bottom() )
 /*N*/ 			pCnt->SetRetouche();
-/*N*/ 
+/*N*/
 /*N*/ 		pPage = pCnt->FindPageFrm();
 /*N*/ 		PaintCntnt( pCnt, pPage, aOldRect, nOldBottom );
-/*N*/ 
+/*N*/
 /*N*/ 		if ( !pCnt->GetValidLineNumFlag() && pCnt->IsTxtFrm() )
 /*N*/ 		{
 /*N*/ 			const ULONG nAllLines = ((SwTxtFrm*)pCnt)->GetAllLines();
@@ -1011,7 +1003,7 @@ namespace binfilter {
 /*N*/ 			}
 /*N*/ 			return FALSE;
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		if ( pPage->IsInvalidLayout() || (IS_FLYS && IS_INVAFLY) )
 /*N*/ 			return FALSE;
 /*N*/ 	}
@@ -1043,7 +1035,7 @@ namespace binfilter {
 /*N*/ BOOL SwLayAction::TurboAction()
 /*N*/ {
 /*N*/ 	BOOL bRet = TRUE;
-/*N*/ 
+/*N*/
 /*N*/ 	if ( pRoot->GetTurbo() )
 /*N*/ 	{
 /*N*/ 		if ( !_TurboAction( pRoot->GetTurbo() ) )
@@ -1077,7 +1069,7 @@ namespace binfilter {
 /*N*/ const SwFrm *lcl_FindFirstInvaLay( const SwFrm *pFrm, long nBottom )
 /*N*/ {
 /*N*/ 	ASSERT( pFrm->IsLayoutFrm(), "FindFirstInvaLay, no LayFrm" );
-/*N*/ 
+/*N*/
 /*N*/ 	if ( !pFrm->IsValid() || pFrm->IsCompletePaint() &&
 /*N*/ 		 pFrm->Frm().Top() < nBottom )
 /*N*/ 		return pFrm;
@@ -1110,7 +1102,7 @@ namespace binfilter {
 /*N*/ 			if ( pCnt->Frm().Top() <= nBottom )
 /*N*/ 				return pCnt;
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		if ( pCnt->GetDrawObjs() )
 /*N*/ 		{
 /*N*/ 			const SwDrawObjs &rObjs = *pCnt->GetDrawObjs();
@@ -1147,7 +1139,7 @@ namespace binfilter {
 /*N*/ const SwFrm *lcl_FindFirstInvaFly( const SwPageFrm *pPage, long nBottom )
 /*N*/ {
 /*N*/ 	ASSERT( pPage->GetSortedObjs(), "FindFirstInvaFly, no Flys" )
-/*N*/ 
+/*N*/
 /*N*/ 	for ( USHORT i = 0; i < pPage->GetSortedObjs()->Count(); ++i )
 /*N*/ 	{
 /*N*/ 		SdrObject *pO = (*pPage->GetSortedObjs())[i];
@@ -1158,7 +1150,7 @@ namespace binfilter {
 /*N*/ 			{
 /*N*/ 				if ( pFly->IsInvalid() || pFly->IsCompletePaint() )
 /*N*/ 					return pFly;
-/*N*/ 
+/*N*/
 /*N*/ 				const SwFrm *pTmp;
 /*N*/ 				if ( 0 != (pTmp = lcl_FindFirstInvaCntnt( pFly, nBottom, 0 )) &&
 /*N*/ 					 pTmp->Frm().Top() <= nBottom )
@@ -1173,7 +1165,7 @@ namespace binfilter {
 /*N*/ {
 /*N*/ 	BOOL bRet = FALSE;
 /*N*/ 	const FASTBOOL bBrowse = pRoot->GetFmt()->GetDoc()->IsBrowseMode();
-/*N*/ 
+/*N*/
 /*N*/ 	//Wenn die Seite nicht Gueltig ist wird sie schnell formatiert, sonst
 /*N*/ 	//gibts nix als Aerger.
 /*N*/ 	if ( !prPage->IsValid() )
@@ -1198,14 +1190,14 @@ namespace binfilter {
 /*N*/ 		if ( IsAgain() )
 /*?*/ 			return FALSE;
 /*N*/ 	}
-/*N*/ 
-/*N*/ 
+/*N*/
+/*N*/
 /*N*/ 	const SwRect &rVis = pImp->GetShell()->VisArea();
 /*N*/ 	if ( (prPage->Frm().Top() >= rVis.Bottom()) ||
 /*N*/ 		 (prPage->Frm().Left()>= rVis.Right()) )
 /*N*/ 	{
 /*N*/ 		bRet = TRUE;
-/*N*/ 
+/*N*/
 /*N*/ 		//Jetzt wird es ein bischen unangenehm: Der erste CntntFrm dieser Seite
 /*N*/ 		//im Bodytext muss Formatiert werden, wenn er dabei die Seite
 /*N*/ 		//wechselt, muss ich nochmal eine Seite zuvor anfangen, denn
@@ -1214,10 +1206,10 @@ namespace binfilter {
 /*N*/ 		//Formatiert werden, denn es kann passieren, dass kurzfristig
 /*N*/ 		//leere Seiten existieren (Bsp. Absatz ueber mehrere Seiten
 /*N*/ 		//wird geloescht oder verkleinert).
-/*N*/ 
+/*N*/
 /*N*/ 		//Ist fuer den Browser uninteressant, wenn der letzte Cnt davor bereits
 /*N*/ 		//nicht mehr sichbar ist.
-/*N*/ 
+/*N*/
 /*N*/ 		const SwPageFrm *p2ndPage = prPage;
 /*N*/ 		const SwCntntFrm *pCntnt;
 /*N*/ 		const SwLayoutFrm* pBody = p2ndPage->FindBodyCont();
@@ -1254,7 +1246,7 @@ namespace binfilter {
 /*?*/ 					bTstCnt = FALSE;
 /*N*/ 				}
 /*N*/ 			}
-/*N*/ 
+/*N*/
 /*N*/ 			if ( bTstCnt )
 /*N*/ 			{
 /*N*/ 				if ( pCntnt->IsInSct() )
@@ -1318,7 +1310,7 @@ namespace binfilter {
 /*N*/ 			}
 /*N*/ 		}
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	if ( !bRet && bBrowse )
 /*N*/ 	{
 /*N*/ 		const long nBottom = rVis.Bottom();
@@ -1359,10 +1351,10 @@ namespace binfilter {
 /*N*/ {
 /*N*/ 	//Wenn der Fly innerhalb eines anderen Rahmens gebunden ist, so sollte
 /*N*/ 	//dieser zuerst Formatiert werden.
-/*N*/ 
+/*N*/
 /*N*/ 	if ( pFly->GetAnchor()->IsInTab() )
 /*N*/ 		pFly->GetAnchor()->FindTabFrm()->Calc();
-/*N*/ 
+/*N*/
 /*N*/ 	SwFlyFrm *pAnch = pFly->GetAnchor()->FindFlyFrm();
 /*N*/ 	if ( pAnch )
 /*N*/ 	{
@@ -1437,22 +1429,22 @@ namespace binfilter {
 /*N*/ 	ASSERT( !IsAgain(), "Ungueltige Seite beachten." );
 /*N*/ 	if ( IsAgain() )
 /*?*/ 		return FALSE;
-/*N*/ 
+/*N*/
 /*N*/ 	BOOL bChanged = FALSE;
 /*N*/ 	BOOL bAlreadyPainted = FALSE;
 /*N*/     // OD 11.11.2002 #104414# - remember frame at complete paint
 /*N*/     SwRect aFrmAtCompletePaint;
-/*N*/ 
+/*N*/
 /*N*/ 	if ( !pLay->IsValid() || pLay->IsCompletePaint() )
 /*N*/ 	{
 /*N*/ 		if ( pLay->GetPrev() && !pLay->GetPrev()->IsValid() )
 /*N*/ 			pLay->GetPrev()->SetCompletePaint();
-/*N*/ 
+/*N*/
 /*N*/ 		SwRect aOldRect( pLay->Frm() );
 /*N*/ 		pLay->Calc();
 /*N*/ 		if ( aOldRect != pLay->Frm() )
 /*N*/ 			bChanged = TRUE;
-/*N*/ 
+/*N*/
 /*N*/ 		FASTBOOL bNoPaint = FALSE;
 /*N*/         if ( pLay->IsPageBodyFrm() &&
 /*N*/              pLay->Frm().Pos() == aOldRect.Pos() &&
@@ -1461,7 +1453,7 @@ namespace binfilter {
 /*N*/ 		{
 /*N*/ 			//HotFix: Vobis Homepage, nicht so genau hinsehen, sonst
 /*N*/ 			//rpaints
-/*N*/ 
+/*N*/
 /*N*/ 			//Einschraenkungen wegen Kopf-/Fusszeilen
 /*N*/             if ( !( pLay->IsCompletePaint() &&
 /*N*/                    ( pLay->GetFmt()->GetDoc()->IsHeadInBrowse() ||
@@ -1473,7 +1465,7 @@ namespace binfilter {
 /*N*/ 				bNoPaint = TRUE;
 /*N*/ 			}
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		if ( !bNoPaint && IsPaint() && bAddRect && (pLay->IsCompletePaint() || bChanged) )
 /*N*/ 		{
 /*N*/ 			SwRect aPaint( pLay->Frm() );
@@ -1491,7 +1483,7 @@ namespace binfilter {
 /*N*/                 aPaint.Right( aPaint.Right() + nBorderWidth + nShadowWidth );
 /*N*/                 aPaint.Bottom( aPaint.Bottom() + nBorderWidth + nShadowWidth );
 /*N*/             }
-/*N*/ 
+/*N*/
 /*N*/             if ( pLay->IsPageFrm() &&
 /*N*/                  pLay->GetFmt()->GetDoc()->IsBrowseMode() )
 /*N*/ 			{
@@ -1516,7 +1508,7 @@ namespace binfilter {
 /*N*/ 					for ( i = 0; i < aRegion.Count(); ++i )
 /*N*/ 						pImp->GetShell()->AddPaintRect( aRegion[i] );
 /*N*/ 				}
-/*N*/ 
+/*N*/
 /*N*/ 			}
 /*N*/ 			else
 /*N*/ 			{
@@ -1525,7 +1517,7 @@ namespace binfilter {
 /*N*/                 // OD 11.11.2002 #104414# - remember frame at complete paint
 /*N*/                 aFrmAtCompletePaint = pLay->Frm();
 /*N*/ 			}
-/*N*/ 
+/*N*/
 /*N*/             // OD 13.02.2003 #i9719#, #105645# - provide paint of spacing
 /*N*/             // between pages (not only for in online mode).
 /*N*/             if ( pLay->IsPageFrm() )
@@ -1547,11 +1539,11 @@ namespace binfilter {
 /*N*/                     pImp->GetShell()->AddPaintRect( aSpaceToNextPage );
 /*N*/                 }
 /*N*/             }
-/*N*/ 
+/*N*/
 /*N*/         }
 /*N*/ 		pLay->ResetCompletePaint();
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	if ( IsPaint() && bAddRect &&
 /*N*/ 		 !pLay->GetNext() && pLay->IsRetoucheFrm() && pLay->IsRetouche() )
 /*N*/ 	{
@@ -1562,20 +1554,20 @@ namespace binfilter {
 /*N*/ 		if ( !pImp->GetShell()->AddPaintRect( aRect ) )
 /*N*/ 			pLay->ResetRetouche();
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	if( bAlreadyPainted )
 /*N*/ 		bAddRect = FALSE;
-/*N*/ 
+/*N*/
 /*N*/ 	CheckWaitCrsr();
-/*N*/ 
+/*N*/
 /*N*/ 	if ( IsAgain() )
 /*N*/ 		return FALSE;
-/*N*/ 
+/*N*/
 /*N*/ 	//Jetzt noch diejenigen Lowers versorgen die LayoutFrm's sind
-/*N*/ 
+/*N*/
 /*N*/ 	if ( pLay->IsFtnFrm() )	//Hat keine LayFrms als Lower.
 /*N*/ 		return bChanged;
-/*N*/ 
+/*N*/
 /*N*/ 	SwFrm *pLow = pLay->Lower();
 /*N*/ 	BOOL bTabChanged = FALSE;
 /*N*/ 	while ( pLow && pLow->GetUpper() == pLay )
@@ -1592,7 +1584,7 @@ namespace binfilter {
 /*N*/ 			//Abkuerzung im die Zyklen zu minimieren, bei Lock kommt das
 /*N*/ 			//Paint sowieso (Primaer fuer Browse)
 /*N*/ 			pLow->OptCalc();
-/*N*/ 
+/*N*/
 /*N*/ 		if ( IsAgain() )
 /*N*/ 			return FALSE;
 /*N*/ 		pLow = pLow->GetNext();
@@ -1615,20 +1607,20 @@ namespace binfilter {
 /*N*/ 	ASSERT( !IsAgain(), "Ungueltige Seite beachten." );
 /*N*/ 	if ( IsAgain() )
 /*?*/ 		return FALSE;
-/*N*/ 
+/*N*/
 /*N*/ 	BOOL bChanged = FALSE;
-/*N*/ 
+/*N*/
 /*N*/ 	if ( !pFly->IsValid() || pFly->IsCompletePaint() || pFly->IsInvalid() )
 /*N*/ 	{
 /*N*/ 		//Der Frame hat sich veraendert, er wird jetzt Formatiert
 /*N*/ 		const SwRect aOldRect( pFly->Frm() );
 /*N*/ 		pFly->Calc();
 /*N*/ 		bChanged = aOldRect != pFly->Frm();
-/*N*/ 
+/*N*/
 /*N*/ 		if ( IsPaint() && bAddRect && (pFly->IsCompletePaint() || bChanged) &&
 /*N*/ 			 pFly->Frm().Top() > 0 && pFly->Frm().Left() > 0 )
 /*N*/ 			pImp->GetShell()->AddPaintRect( pFly->Frm() );
-/*N*/ 
+/*N*/
 /*N*/ 		if ( bChanged )
 /*N*/ 			pFly->Invalidate();
 /*N*/ 		else
@@ -1636,10 +1628,10 @@ namespace binfilter {
 /*N*/ 		bAddRect = FALSE;
 /*N*/ 		pFly->ResetCompletePaint();
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	if ( IsAgain() )
 /*?*/ 		return FALSE;
-/*N*/ 
+/*N*/
 /*N*/ 	//Jetzt noch diejenigen Lowers versorgen die LayoutFrm's sind
 /*N*/ 	BOOL bTabChanged = FALSE;
 /*N*/ 	SwFrm *pLow = pFly->Lower();
@@ -1701,9 +1693,9 @@ namespace binfilter {
 /*N*/ 	if ( pRow )
 /*N*/ 		while ( pLow != pRow )
 /*N*/ 			pLow = pLow->GetNext();
-/*N*/ 
+/*N*/
 /*N*/ 	SwRootFrm *pRootFrm = 0;
-/*N*/ 
+/*N*/
 /*N*/ 	while ( pLow )
 /*N*/ 	{
 /*N*/ 		if ( !bResetOnly )
@@ -1716,7 +1708,7 @@ namespace binfilter {
 /*N*/ 					pRootFrm = pPage->FindRootFrm();
 /*N*/ 				if( pRootFrm && pRootFrm->IsAnyShellAccessible() &&
 /*N*/ 					pRootFrm->GetCurrShell() )
-/*N*/ 				{DBG_BF_ASSERT(0, "STRIP"); //STRIP001 
+/*N*/ 				{DBG_BF_ASSERT(0, "STRIP"); //STRIP001
 /*N*/ 				}
 /*N*/ 			}
 /*N*/ 		}
@@ -1801,7 +1793,7 @@ namespace binfilter {
 /*N*/ 	}
 /*N*/ 	if ( pPage->GetFmt()->GetBackground().GetGraphicPos() != GPOS_NONE )
 /*?*/ 		return;
-/*N*/ 
+/*N*/
 /*N*/ 	ViewShell *pSh = pPage->GetShell();
 /*N*/ 	if ( pSh )
 /*N*/ 		pSh->AddScrollRect( pTab, aRect, nOfst );
@@ -1812,7 +1804,7 @@ namespace binfilter {
 // OD 31.10.2002 #104100#
 // NOTE: no adjustments for vertical layout support necessary
 /*N*/ BOOL CheckPos( SwFrm *pFrm )
-/*N*/ {DBG_BF_ASSERT(0, "STRIP"); //STRIP001 
+/*N*/ {DBG_BF_ASSERT(0, "STRIP"); //STRIP001
 /*N*/ 	return TRUE;
 /*N*/ }
 
@@ -1823,26 +1815,26 @@ namespace binfilter {
 /*N*/ 	ASSERT( !IsAgain(), "8-) Ungueltige Seite beachten." );
 /*N*/ 	if ( IsAgain() )
 /*?*/ 		return FALSE;
-/*N*/ 
+/*N*/
 /*N*/ 	SwDoc* pDoc = pRoot->GetFmt()->GetDoc();
 /*N*/ 	const BOOL bOldIdle = pDoc->IsIdleTimerActive();
 /*N*/ 	pDoc->StopIdleTimer();
-/*N*/ 
+/*N*/
 /*N*/     BOOL bChanged = FALSE;
 /*N*/ 	FASTBOOL bPainted = FALSE;
-/*N*/ 
+/*N*/
 /*N*/ 	const SwPageFrm *pOldPage = pTab->FindPageFrm();
-/*N*/ 
+/*N*/
 /*N*/     // OD 31.10.2002 #104100# - vertical layout support
 /*N*/     // use macro to declare and init <sal_Bool bVert>, <sal_Bool bRev> and
 /*N*/     // <SwRectFn fnRect> for table frame <pTab>.
 /*N*/     SWRECTFN( pTab );
-/*N*/ 
+/*N*/
 /*N*/ 	if ( !pTab->IsValid() || pTab->IsCompletePaint() || pTab->IsComplete() )
 /*N*/ 	{
 /*N*/ 		if ( pTab->GetPrev() && !pTab->GetPrev()->IsValid() )
 /*N*/ 			pTab->GetPrev()->SetCompletePaint();
-/*N*/ 
+/*N*/
 /*N*/ 		//Potenzielles Scrollrect ist die ganze Tabelle. Da bereits ein
 /*N*/ 		//Wachstum innerhalb der Tabelle - und damit der Tabelle selbst -
 /*N*/ 		//stattgefunden haben kann, muss die untere Kante durch die
@@ -1862,16 +1854,16 @@ namespace binfilter {
 /*N*/                 // OD 31.10.2002 #104100# - vertical layout support
 /*N*/                 (aScrollRect.*fnRect->fnSetTop)( (pRow->Frm().*fnRect->fnGetTop)() );
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		const SwFrm *pOldUp = pTab->GetUpper();
-/*N*/ 
+/*N*/
 /*N*/ 		SwRect aOldRect( pTab->Frm() );
 /*N*/ 		pTab->SetLowersFormatted( FALSE );
 /*N*/ 		pTab->Calc();
 /*N*/ 		if ( aOldRect != pTab->Frm() )
 /*N*/ 			bChanged = TRUE;
 /*N*/ 		SwRect aPaintFrm = pTab->PaintArea();
-/*N*/ 
+/*N*/
 /*N*/ 		if ( IsPaint() && bAddRect )
 /*N*/ 		{
 /*N*/ 			if ( pRow && pOldUp == pTab->GetUpper() &&
@@ -1895,14 +1887,14 @@ namespace binfilter {
 /*N*/ 				else
 /*N*/                     // OD 31.10.2002 #104100# - vertical layout support
 /*N*/                     nOfst = (pTab->Frm().*fnRect->fnTopDist)( (aOldRect.*fnRect->fnGetTop)() );
-/*N*/ 
+/*N*/
 /*N*/ 				if ( nOfst )
 /*N*/ 				{
 /*N*/ 					 ::binfilter::lcl_AddScrollRectTab( pTab, pRow, aScrollRect, nOfst );
 /*N*/ 					 bPainted = TRUE;
 /*N*/ 				}
 /*N*/ 			}
-/*N*/ 
+/*N*/
 /*N*/             // OD 01.11.2002 #104100# - add condition <pTab->Frm().HasArea()>
 /*N*/             if ( !pTab->IsCompletePaint() && pTab->IsComplete() &&
 /*N*/ 				 ( pTab->Frm().SSize() != pTab->Prt().SSize() ||
@@ -1914,7 +1906,7 @@ namespace binfilter {
 /*N*/ 			{
 /*N*/                 // OD 01.11.2002 #104100# - re-implement calculation of margin rectangles.
 /*N*/                 SwRect aMarginRect;
-/*N*/ 
+/*N*/
 /*N*/                 SwTwips nLeftMargin = (pTab->*fnRect->fnGetLeftMargin)();
 /*N*/                 if ( nLeftMargin > 0)
 /*N*/                 {
@@ -1922,14 +1914,14 @@ namespace binfilter {
 /*N*/                     (aMarginRect.*fnRect->fnSetWidth)( nLeftMargin );
 /*N*/                     pImp->GetShell()->AddPaintRect( aMarginRect );
 /*N*/                 }
-/*N*/ 
+/*N*/
 /*N*/                 if ( (pTab->*fnRect->fnGetRightMargin)() > 0)
 /*N*/                 {
 /*N*/                     aMarginRect = pTab->Frm();
 /*N*/                     (aMarginRect.*fnRect->fnSetLeft)( (pTab->*fnRect->fnGetPrtRight)() );
 /*N*/                     pImp->GetShell()->AddPaintRect( aMarginRect );
 /*N*/                 }
-/*N*/ 
+/*N*/
 /*N*/                 SwTwips nTopMargin = (pTab->*fnRect->fnGetTopMargin)();
 /*N*/                 if ( nTopMargin > 0)
 /*N*/                 {
@@ -1937,7 +1929,7 @@ namespace binfilter {
 /*N*/                     (aMarginRect.*fnRect->fnSetHeight)( nTopMargin );
 /*N*/                     pImp->GetShell()->AddPaintRect( aMarginRect );
 /*N*/                 }
-/*N*/ 
+/*N*/
 /*N*/                 if ( (pTab->*fnRect->fnGetBottomMargin)() > 0)
 /*N*/                 {
 /*N*/                     aMarginRect = pTab->Frm();
@@ -1951,7 +1943,7 @@ namespace binfilter {
 /*N*/ 				bAddRect = FALSE;
 /*N*/ 				bPainted = TRUE;
 /*N*/ 			}
-/*N*/ 
+/*N*/
 /*N*/             if ( pTab->IsRetouche() && !pTab->GetNext() )
 /*N*/ 			{
 /*N*/ 				SwRect aRect( pTab->GetUpper()->PaintArea() );
@@ -1963,7 +1955,7 @@ namespace binfilter {
 /*N*/ 		}
 /*N*/ 		else
 /*N*/ 			bAddRect = FALSE;
-/*N*/ 
+/*N*/
 /*N*/         if ( pTab->IsCompletePaint() && !pOptTab )
 /*N*/ 			pOptTab = pTab;
 /*N*/ 		pTab->ResetCompletePaint();
@@ -1979,17 +1971,17 @@ namespace binfilter {
 /*N*/ 		if ( !pImp->GetShell()->AddPaintRect( aRect ) )
 /*N*/ 			pTab->ResetRetouche();
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	CheckWaitCrsr();
-/*N*/ 
+/*N*/
 /*N*/ 	if ( bOldIdle )
 /*N*/ 		pDoc->StartIdleTimer();
-/*N*/ 
+/*N*/
 /*N*/ 	//Heftige Abkuerzung!
 /*N*/ 	if ( pTab->IsLowersFormatted() &&
 /*N*/          (bPainted || !pImp->GetShell()->VisArea().IsOver( pTab->Frm())) )
 /*N*/ 		return FALSE;
-/*N*/ 
+/*N*/
 /*N*/ 	//Jetzt noch die Lowers versorgen
 /*N*/ 	if ( IsAgain() )
 /*N*/ 		return FALSE;
@@ -2001,10 +1993,10 @@ namespace binfilter {
 /*N*/ 			return FALSE;
 /*N*/ 		pLow = (SwLayoutFrm*)pLow->GetNext();
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	if ( pOldPage->GetPhyPageNum() > (pTab->FindPageFrm()->GetPhyPageNum() + 1) )
 /*N*/ 		SetNextCycle( TRUE );
-/*N*/ 
+/*N*/
 /*N*/ 	return bChanged;
 /*N*/ }
 
@@ -2020,7 +2012,7 @@ namespace binfilter {
 /*N*/ {
 /*N*/ 	const SwCntntFrm *pCntnt = pPage->ContainsCntnt();
 /*N*/ 	const FASTBOOL bBrowse = pRoot->GetFmt()->GetDoc()->IsBrowseMode();
-/*N*/ 
+/*N*/
 /*N*/ 	while ( pCntnt && pPage->IsAnLower( pCntnt ) )
 /*N*/ 	{
 /*N*/ 		//Wenn der Cntnt sich eh nicht veraendert koennen wir ein paar
@@ -2033,7 +2025,7 @@ namespace binfilter {
 /*N*/ 			const BOOL bNxtCnt = IsCalcLayout() && !pCntnt->GetFollow();
 /*N*/ 			const SwCntntFrm *pCntntNext = bNxtCnt ? pCntnt->GetNextCntntFrm() : 0;
 /*N*/ 			const SwCntntFrm *pCntntPrev = pCntnt->GetPrev() ? pCntnt->GetPrevCntntFrm() : 0;
-/*N*/ 
+/*N*/
 /*N*/ 			const SwLayoutFrm*pOldUpper  = pCntnt->GetUpper();
 /*N*/ 			const SwTabFrm *pTab = pCntnt->FindTabFrm();
 /*N*/ 			const BOOL bInValid = !pCntnt->IsValid() || pCntnt->IsCompletePaint();
@@ -2041,7 +2033,7 @@ namespace binfilter {
 /*N*/ 			bPaint = bOldPaint && !(pTab && pTab == pOptTab);
 /*N*/ 			_FormatCntnt( pCntnt, pPage );
 /*N*/ 			bPaint = bOldPaint;
-/*N*/ 
+/*N*/
 /*N*/ 			if ( !pCntnt->GetValidLineNumFlag() && pCntnt->IsTxtFrm() )
 /*N*/ 			{
 /*N*/ 				const ULONG nAllLines = ((SwTxtFrm*)pCntnt)->GetAllLines();
@@ -2050,10 +2042,10 @@ namespace binfilter {
 /*N*/ 					 nAllLines != ((SwTxtFrm*)pCntnt)->GetAllLines() )
 /*?*/ 					pImp->GetShell()->AddPaintRect( pCntnt->Frm() );
 /*N*/ 			}
-/*N*/ 
+/*N*/
 /*N*/ 			if ( IsAgain() )
 /*N*/ 				return FALSE;
-/*N*/ 
+/*N*/
 /*N*/ 			//Wenn Layout oder Flys wieder Invalid sind breche ich die Verarbeitung
 /*N*/ 			//vorlaeufig ab - allerdings nicht fuer die BrowseView, denn dort wird
 /*N*/ 			//das Layout staendig ungueltig, weil die Seitenhoehe angepasst wird.
@@ -2075,7 +2067,7 @@ namespace binfilter {
 /*N*/ 				const USHORT nCurNum = pCntnt->FindPageFrm()->GetPhyPageNum();
 /*N*/ 				if (  nCurNum < pPage->GetPhyPageNum() )
 /*N*/ 					nPreInvaPage = nCurNum;
-/*N*/ 
+/*N*/
 /*N*/ 				//Wenn der Frm mehr als eine Seite rueckwaerts geflossen ist, so
 /*N*/ 				//fangen wir nocheinmal von vorn an damit wir nichts auslassen.
 /*N*/ 				if ( !IsCalcLayout() && pPage->GetPhyPageNum() > nCurNum+1 )
@@ -2129,7 +2121,7 @@ namespace binfilter {
 /*N*/ 				}
 /*N*/ 				pCntnt = bNxtCnt ? pCntntNext : pCntnt->GetNextCntntFrm();
 /*N*/ 			}
-/*N*/ 
+/*N*/
 /*N*/ 			RESCHEDULE;
 /*N*/ 		}
 /*N*/ 		else
@@ -2142,7 +2134,7 @@ namespace binfilter {
 /*N*/ 					 nAllLines != ((SwTxtFrm*)pCntnt)->GetAllLines() )
 /*?*/ 					pImp->GetShell()->AddPaintRect( pCntnt->Frm() );
 /*N*/ 			}
-/*N*/ 
+/*N*/
 /*N*/ 			//Falls der Frm schon vor der Abarbeitung hier formatiert wurde.
 /*N*/ 			if ( pCntnt->IsTxtFrm() && ((SwTxtFrm*)pCntnt)->HasRepaint() &&
 /*N*/ 				  IsPaint() )
@@ -2224,7 +2216,7 @@ namespace binfilter {
 /*N*/                         (pCntnt->Frm().*fnRect->fnGetBottom)() );
 /*N*/ 		pCntnt->OptCalc();
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	//Die im Absatz verankerten Flys wollen auch mitspielen.
 /*N*/ 	const SwDrawObjs *pObjs = pCntnt->GetDrawObjs();
 /*N*/ 	for ( USHORT i = 0; pObjs && i < pObjs->Count(); ++i )
@@ -2337,12 +2329,12 @@ namespace binfilter {
 /*N*/ {
 /*N*/ 	BOOL bOneProcessed = FALSE;
 /*N*/ 	const SwCntntFrm *pCntnt = pFly->ContainsCntnt();
-/*N*/ 
+/*N*/
 /*N*/ 	while ( pCntnt )
 /*N*/ 	{
 /*N*/ 		if ( __FormatFlyCntnt( pCntnt ) )
 /*N*/ 			bOneProcessed = TRUE;
-/*N*/ 
+/*N*/
 /*N*/ 		if ( !pCntnt->GetValidLineNumFlag() && pCntnt->IsTxtFrm() )
 /*N*/ 		{
 /*N*/ 			const ULONG nAllLines = ((SwTxtFrm*)pCntnt)->GetAllLines();
@@ -2351,10 +2343,10 @@ namespace binfilter {
 /*N*/ 				 nAllLines != ((SwTxtFrm*)pCntnt)->GetAllLines() )
 /*?*/ 				pImp->GetShell()->AddPaintRect( pCntnt->Frm() );
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		if ( IsAgain() )
 /*N*/ 			return FALSE;
-/*N*/ 
+/*N*/
 /*N*/ 		//wenn eine Eingabe anliegt breche ich die Verarbeitung ab.
 /*N*/ 		if ( bOneProcessed && !pFly->IsFlyInCntFrm() )
 /*N*/ 		{
@@ -2436,10 +2428,10 @@ namespace binfilter {
 /*N*/ BOOL SwLayAction::IsStopPrt() const
 /*N*/ {
 /*N*/ 	BOOL bResult = FALSE;
-/*N*/ 
+/*N*/
 /*N*/ 	if (pImp != NULL && pProgress != NULL)
 /*N*/ 		bResult = pImp->IsStopPrt();
-/*N*/ 
+/*N*/
 /*N*/ 	return bResult;
 /*N*/ }
 
@@ -2464,10 +2456,10 @@ namespace binfilter {
 /*?*/ 		pPage = pImp->GetFirstVisPage();
 /*?*/ 	else
 /*?*/ 		pPage = (SwPageFrm*)pRoot->Lower();
-/*?*/ 
+/*?*/
 /*?*/ 	pCntntNode = NULL;
 /*?*/ 	nTxtPos = STRING_LEN;
-/*?*/ 
+/*?*/
 /*?*/ 	while ( pPage )
 /*?*/ 	{
 /*?*/ 		bPageValid = TRUE;
@@ -2523,7 +2515,7 @@ namespace binfilter {
 /*N*/ 				}
 /*N*/ 			}
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		((SwTxtFrm*)pCnt)->CollectAutoCmplWrds( pCntntNode, nTxtPos,
 /*N*/ 												bVisAreaOnly );
 /*		bPageValid = bPageValid && !pCnt->GetNode()->IsAutoCompleteWordDirty();
@@ -2534,7 +2526,7 @@ namespace binfilter {
 /*N*/         if ( Application::AnyInput( INPUT_ANY ) )
 /*N*/ 			return TRUE;
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	//Die im Absatz verankerten Flys wollen auch mitspielen.
 /*N*/ 	if ( pCnt->GetDrawObjs() )
 /*N*/ 	{
@@ -2571,16 +2563,16 @@ namespace binfilter {
 /*N*/ 	if( !pImp->GetShell()->GetViewOptions()->IsAutoCompleteWords() ||
 /*N*/ 		pImp->GetShell()->GetDoc()->GetAutoCompleteWords().IsLockWordLstLocked())
 /*N*/ 		return FALSE;
-/*N*/ 
+/*N*/
 /*N*/ 	SwPageFrm *pPage;
 /*N*/ 	if ( bVisAreaOnly )
 /*N*/ 		pPage = pImp->GetFirstVisPage();
 /*N*/ 	else
 /*N*/ 		pPage = (SwPageFrm*)pRoot->Lower();
-/*N*/ 
+/*N*/
 /*N*/ 	pCntntNode = NULL;
 /*N*/ 	nTxtPos = STRING_LEN;
-/*N*/ 
+/*N*/
 /*N*/ 	while ( pPage )
 /*N*/ 	{
 /*N*/ 		bPageValid = TRUE;
@@ -2611,10 +2603,10 @@ namespace binfilter {
 /*N*/ 				}
 /*N*/ 			}
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		if( bPageValid )
 /*N*/ 			pPage->ValidateAutoCompleteWords();
-/*N*/ 
+/*N*/
 /*N*/ 		pPage = (SwPageFrm*)pPage->GetNext();
 /*N*/ 		if ( pPage && bVisAreaOnly &&
 /*N*/ 			 !pPage->Frm().IsOver( pImp->GetShell()->VisArea()))
@@ -2677,11 +2669,11 @@ namespace binfilter {
 /*N*/ #endif
 /*N*/ {
 /*N*/ 	pImp->pIdleAct = this;
-/*N*/ 
+/*N*/
 /*N*/ 	SHOW_IDLE( COL_LIGHTRED );
-/*N*/ 
+/*N*/
 /*N*/ 	pImp->GetShell()->EnableSmooth( FALSE );
-/*N*/ 
+/*N*/
 /*N*/ 	//Zuerst den Sichtbaren Bereich Spellchecken, nur wenn dort nichts
 /*N*/ 	//zu tun war wird das IdleFormat angestossen.
 /*N*/ 	if ( !FormatSpelling( TRUE ) && !CollectAutoCmplWords( TRUE ))
@@ -2706,36 +2698,36 @@ namespace binfilter {
 /*N*/ 			aBools.Insert( bVis, aBools.Count() );
 /*N*/ 			pSh = (ViewShell*)pSh->GetNext();
 /*N*/ 		} while ( pSh != pImp->GetShell() );
-/*N*/ 
+/*N*/
 /*N*/ 		SwLayAction aAction( pRoot, pImp );
 /*N*/ 		aAction.SetInputType( INPUT_ANY );
 /*N*/ 		aAction.SetIdle( TRUE );
 /*N*/ 		aAction.SetWaitAllowed( FALSE );
 /*N*/ 		aAction.Action();
-/*N*/ 
+/*N*/
 /*N*/ 		//Weitere Start-/EndActions nur auf wenn irgendwo Paints aufgelaufen
 /*N*/ 		//sind oder wenn sich die Sichtbarkeit des CharRects veraendert hat.
 /*N*/ 		FASTBOOL bActions = FALSE;
 /*N*/ 		USHORT nBoolIdx = 0;
 /*N*/ 		do
 /*N*/ 		{	--pSh->nStartAction;
-/*N*/ 
+/*N*/
 /*N*/ 			if ( pSh->Imp()->GetRegion() || pSh->Imp()->GetScrollRects() )
 /*?*/ 				bActions = TRUE;
 /*N*/ 			else
 /*N*/ 			{
 /*N*/ 				SwRect aTmp( pSh->VisArea() );
 /*N*/ 				pSh->UISizeNotify();
-/*N*/ 
+/*N*/
 /*N*/ 				bActions |= aTmp != pSh->VisArea() ||
 /*N*/ 							aBools[nBoolIdx] !=
 /*N*/ 								   ((SwCrsrShell*)pSh)->GetCharRect().IsOver(pSh->VisArea());
 /*N*/ 			}
-/*N*/ 
+/*N*/
 /*N*/ 			pSh = (ViewShell*)pSh->GetNext();
 /*N*/ 			++nBoolIdx;
 /*N*/ 		} while ( pSh != pImp->GetShell() );
-/*N*/ 
+/*N*/
 /*N*/ 		if ( bActions )
 /*N*/ 		{
 /*?*/ 			//Start- EndActions aufsetzen. ueber die CrsrShell, damit der
@@ -2743,12 +2735,12 @@ namespace binfilter {
 /*?*/ 			nBoolIdx = 0;
 /*?*/ 			do
 /*?*/ 			{	FASTBOOL bCrsrShell = pSh->IsA( TYPE(SwCrsrShell) );
-/*?*/ 
+/*?*/
 /*?*/ 				if ( bCrsrShell )
 /*?*/ 					((SwCrsrShell*)pSh)->SttCrsrMove();
 /*?*/ //				else
 /*?*/ //					pSh->StartAction();
-/*?*/ 
+/*?*/
 /*?*/ 				//Wenn Paints aufgelaufen sind, ist es am sinnvollsten schlicht das
 /*?*/ 				//gesamte Window zu invalidieren. Anderfalls gibt es Paintprobleme
 /*?*/ 				//deren Loesung unverhaeltnissmaessig aufwendig waere.
@@ -2759,7 +2751,7 @@ namespace binfilter {
 /*?*/ 				{
 /*?*/ 					DBG_BF_ASSERT(0, "STRIP"); //STRIP001 pImp->DelRegions();
 /*?*/ 				}
-/*?*/ 
+/*?*/
 /*?*/ 				if ( bCrsrShell )
 /*?*/ 					//Wenn der Crsr sichbar war wieder sichbar machen, sonst
 /*?*/ 					//EndCrsrMove mit TRUE fuer IdleEnd.
@@ -2770,19 +2762,19 @@ namespace binfilter {
 /*?*/ 				{
 /*?*/ 					DBG_BF_ASSERT(0, "STRIP"); //STRIP001 if( bCrsrShell )
 /*?*/ 				}
-/*?*/ 
+/*?*/
 /*?*/ 				pSh = (ViewShell*)pSh->GetNext();
 /*?*/ 				++nBoolIdx;
-/*?*/ 
+/*?*/
 /*?*/ 			} while ( pSh != pImp->GetShell() );
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		if ( !aAction.IsInterrupt() )
 /*N*/ 		{
 /*N*/ 			if( !FormatSpelling( FALSE ))
 /*N*/ 				CollectAutoCmplWords( FALSE );
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		FASTBOOL bInValid;
 /*N*/ 		const SwViewOption& rVOpt = *pImp->GetShell()->GetViewOptions();
 /*N*/ 		FASTBOOL bSpell = rVOpt.IsOnlineSpell(),
@@ -2794,20 +2786,20 @@ namespace binfilter {
 /*N*/ 					   pPg->IsInvalidFlyInCnt() ||
 /*N*/ 					   (bSpell && pPg->IsInvalidSpelling()) ||
 /*N*/ 					   (bACmplWrd && pPg->IsInvalidAutoCompleteWords());
-/*N*/ 
+/*N*/
 /*N*/ 			pPg = (SwPageFrm*)pPg->GetNext();
-/*N*/ 
+/*N*/
 /*N*/ 		} while ( pPg && TRUE^bInValid );
-/*N*/ 
+/*N*/
 /*N*/ 		if ( TRUE^bInValid )
 /*N*/ 			pRoot->ResetIdleFormat();
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	pImp->GetShell()->EnableSmooth( TRUE );
-/*N*/ 
+/*N*/
 /*N*/ #ifdef ACCESSIBLE_LAYOUT
 /*N*/ #endif
-/*N*/ 
+/*N*/
 /*N*/ #ifndef PRODUCT
 /*N*/ #if OSL_DEBUG_LEVEL > 1
 /*N*/ 	if ( bIndicator && pImp->GetShell()->GetWin() )
