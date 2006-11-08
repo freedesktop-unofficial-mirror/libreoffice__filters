@@ -4,9 +4,9 @@
  *
  *  $RCSfile: sw_fldmgr.cxx,v $
  *
- *  $Revision: 1.5 $
+ *  $Revision: 1.6 $
  *
- *  last change: $Author: rt $ $Date: 2006-10-28 00:23:00 $
+ *  last change: $Author: kz $ $Date: 2006-11-08 12:46:27 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -43,10 +43,6 @@
 #include <hintids.hxx>
 #endif
 
-
-
-
-
 #ifndef _HORIORNT_HXX
 #include <horiornt.hxx>
 #endif
@@ -63,7 +59,6 @@
 #ifndef _FLDMGR_HXX
 #include <fldmgr.hxx>
 #endif
-
 #ifndef _FLDUI_HRC
 #include <fldui.hrc>
 #endif
@@ -84,40 +79,40 @@ using namespace ::com::sun::star::sdbc;
 /*N*/ {
 /*N*/ 	GRP_DOC_BEGIN	=  0,
 /*N*/ 	GRP_DOC_END   	=  GRP_DOC_BEGIN + 11,
-/*N*/ 
+/*N*/
 /*N*/ 	GRP_FKT_BEGIN 	=  GRP_DOC_END,
     GRP_FKT_END     =  GRP_FKT_BEGIN + 8,
-/*N*/ 
+/*N*/
 /*N*/ 	GRP_REF_BEGIN 	=  GRP_FKT_END,
 /*N*/ 	GRP_REF_END   	=  GRP_REF_BEGIN + 2,
-/*N*/ 
+/*N*/
 /*N*/ 	GRP_REG_BEGIN 	=  GRP_REF_END,
 /*N*/ 	GRP_REG_END     =  GRP_REG_BEGIN + 1,
-/*N*/ 
+/*N*/
 /*N*/ 	GRP_DB_BEGIN  	=  GRP_REG_END,
 /*N*/ 	GRP_DB_END    	=  GRP_DB_BEGIN  + 5,
-/*N*/ 
+/*N*/
 /*N*/ 	GRP_VAR_BEGIN 	=  GRP_DB_END,
 /*N*/ 	GRP_VAR_END   	=  GRP_VAR_BEGIN + 9
 /*N*/ };
-/*N*/ 
+/*N*/
 /*N*/ enum
 /*N*/ {
 /*N*/ 	GRP_WEB_DOC_BEGIN	=  0,
 /*N*/ 	GRP_WEB_DOC_END   	=  GRP_WEB_DOC_BEGIN + 9,
-/*N*/ 
+/*N*/
 /*N*/ 	GRP_WEB_FKT_BEGIN 	=  GRP_WEB_DOC_END + 2,
 /*N*/ 	GRP_WEB_FKT_END   	=  GRP_WEB_FKT_BEGIN + 0,	// Die Gruppe ist leer!
-/*N*/ 
+/*N*/
 /*N*/ 	GRP_WEB_REF_BEGIN 	=  GRP_WEB_FKT_END + 6,		// Die Gruppe ist leer!
 /*N*/ 	GRP_WEB_REF_END   	=  GRP_WEB_REF_BEGIN + 0,
-/*N*/ 
+/*N*/
 /*N*/ 	GRP_WEB_REG_BEGIN 	=  GRP_WEB_REF_END + 2,
 /*N*/ 	GRP_WEB_REG_END     =  GRP_WEB_REG_BEGIN + 1,
-/*N*/ 
+/*N*/
 /*N*/ 	GRP_WEB_DB_BEGIN  	=  GRP_WEB_REG_END,			// Die Gruppe ist leer!
 /*N*/ 	GRP_WEB_DB_END    	=  GRP_WEB_DB_BEGIN  + 0,
-/*N*/ 
+/*N*/
 /*N*/ 	GRP_WEB_VAR_BEGIN 	=  GRP_WEB_DB_END + 5,
 /*N*/ 	GRP_WEB_VAR_END   	=  GRP_WEB_VAR_BEGIN + 1
 /*N*/ };
@@ -132,14 +127,14 @@ using namespace ::com::sun::star::sdbc;
 /*N*/ 	0,
 /*N*/ 	0
 /*N*/ };
-/*N*/ 
+/*N*/
 /*N*/ static const USHORT __FAR_DATA aGetFmt[] =
 /*N*/ {
 /*N*/ // die Reihenfolge muss zu Beginn mit den ResourceIds fuer FMT_GETVAR_???
 /*N*/ // uebereinstimmen
 /*N*/ 	0
 /*N*/ };
-/*N*/ 
+/*N*/
 /*N*/ static const USHORT __FAR_DATA aUsrFmt[] =
 /*N*/ {
 /*N*/ // die Reihenfolge muss zu Beginn mit den ResourceIds fuer FMT_SETVAR_???
@@ -147,18 +142,18 @@ using namespace ::com::sun::star::sdbc;
 /*N*/ 	0,
 /*N*/ 	SUB_CMD
 /*N*/ };
-/*N*/ 
+/*N*/
 /*N*/ static const USHORT __FAR_DATA aDBFmt[] =
 /*N*/ {
 /*N*/ // die Reihenfolge muss zu Beginn mit den ResourceIds fuer FMT_DBFLD_???
 /*N*/ // uebereinstimmen
 /*N*/ 	SUB_OWN_FMT
 /*N*/ };
-/*N*/ 
+/*N*/
 /*N*/ static const USHORT VF_COUNT		= sizeof(aGetFmt) / sizeof(USHORT);
 /*N*/ static const USHORT VF_USR_COUNT	= sizeof(aUsrFmt) / sizeof(USHORT);
 /*N*/ static const USHORT VF_DB_COUNT		= sizeof(aDBFmt)  / sizeof(USHORT);
-/*N*/ 
+/*N*/
 /*--------------------------------------------------------------------
     Beschreibung: Feldtypen und Subtypes
  --------------------------------------------------------------------*/
@@ -232,16 +227,10 @@ static const SwFldPack __FAR_DATA aSwFlds[] =
 String* SwFldMgr::pDate = 0;
 String* SwFldMgr::pTime = 0;
 
-
-/*--------------------------------------------------------------------
-    Beschreibung: Zugriff auf die Shell
- --------------------------------------------------------------------*/
- 
-
 /*N*/ void SwFieldType::_GetFldName()
 /*N*/ {
 /*N*/ 	static const USHORT coFldCnt = STR_TYPE_END	- STR_TYPE_BEGIN;
-/*N*/ 
+/*N*/
 /*N*/ 	static USHORT __READONLY_DATA coFldNms[ coFldCnt ] = {
 /*N*/ 		FLD_DATE_STD,
 /*N*/ 		FLD_TIME_STD,
@@ -287,7 +276,7 @@ String* SwFldMgr::pTime = 0;
 /*N*/       STR_COMBINED_CHARS,
 /*N*/       STR_DROPDOWN
 /*N*/ 	};
-/*N*/ 
+/*N*/
 /*N*/ 	// Infos fuer Felder einfuegen
 /*N*/ 	SwFieldType::pFldNames = new SvStringsDtor( (BYTE)coFldCnt, 2 );
 /*N*/ 	for( USHORT nIdx = 0; nIdx < coFldCnt; ++nIdx )
@@ -297,6 +286,4 @@ String* SwFldMgr::pTime = 0;
 /*N*/ 		SwFieldType::pFldNames->Insert(pTmp, nIdx );
 /*N*/ 	}
 /*N*/ }
-
-
 }
