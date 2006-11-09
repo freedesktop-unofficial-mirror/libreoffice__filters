@@ -4,9 +4,9 @@
  *
  *  $RCSfile: DocTokTestService.cxx,v $
  *
- *  $Revision: 1.4 $
+ *  $Revision: 1.5 $
  *
- *  last change: $Author: hbrinkm $ $Date: 2006-11-01 09:14:37 $
+ *  last change: $Author: hbrinkm $ $Date: 2006-11-09 16:03:18 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
