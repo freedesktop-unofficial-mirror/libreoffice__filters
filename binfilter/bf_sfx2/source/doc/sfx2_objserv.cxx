@@ -4,9 +4,9 @@
  *
  *  $RCSfile: sfx2_objserv.cxx,v $
  *
- *  $Revision: 1.9 $
+ *  $Revision: 1.10 $
  *
- *  last change: $Author: rt $ $Date: 2006-10-27 19:30:19 $
+ *  last change: $Author: vg $ $Date: 2006-11-22 10:18:24 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -74,7 +74,6 @@
 #include "doc.hrc"
 #include "docfac.hxx"
 #include "fcontnr.hxx"
-#include "filedlghelper.hxx"
 
 #ifndef _SFX_HELPID_HRC
 #include "helpid.hrc"
@@ -85,7 +84,7 @@ namespace binfilter {
 
 using namespace ::com::sun::star::lang;
 using namespace ::com::sun::star::uno;
-using namespace ::com::sun::star::ui::dialogs;
+//using namespace ::com::sun::star::ui::dialogs;
 using namespace ::com::sun::star::awt;
 using namespace ::com::sun::star::container;
 using namespace ::com::sun::star::beans;
@@ -98,7 +97,7 @@ using namespace ::com::sun::star::task;
 /*N*/ {
 /*N*/ 	String&		_rNewNameVar;
 /*N*/ 	String 		_aNewName;
-/*N*/ 
+/*N*/
 /*N*/ public:
 /*N*/ 				SfxSaveAsContext_Impl( String &rNewNameVar,
 /*N*/ 									   const String &rNewName )
@@ -143,13 +142,13 @@ svtools::AsynchronLink* pPendingCloser = 0;
 //=========================================================================
 
 /*N*/ void SfxObjectShell::PrintExec_Impl(SfxRequest &rReq)
-/*N*/ {DBG_BF_ASSERT(0, "STRIP"); //STRIP001 
+/*N*/ {DBG_BF_ASSERT(0, "STRIP"); //STRIP001
 /*N*/ }
 
 //--------------------------------------------------------------------
 
 /*N*/ void SfxObjectShell::PrintState_Impl(SfxItemSet &rSet)
-/*N*/ {DBG_BF_ASSERT(0, "STRIP"); //STRIP001 
+/*N*/ {DBG_BF_ASSERT(0, "STRIP"); //STRIP001
 /*N*/ }
 
 //--------------------------------------------------------------------
@@ -161,20 +160,20 @@ svtools::AsynchronLink* pPendingCloser = 0;
 /*N*/ )
 /*N*/ {
 /*N*/     BOOL bOk = sal_False;
-/*N*/ 
+/*N*/
 /*N*/ 	{DBG_CHKTHIS(SfxObjectShell, 0);}
-/*N*/ 
+/*N*/
 /*N*/ 	pImp->bSetStandardName=FALSE;
 /*N*/ 	if ( GetMedium() )
 /*N*/ 	{
 /*N*/ 		SFX_ITEMSET_ARG( aParams, pSaveToItem, SfxBoolItem, SID_SAVETO, sal_False );
 /*N*/     	sal_Bool bSaveTo = pSaveToItem && pSaveToItem->GetValue();
-/*N*/ 
+/*N*/
 /*N*/ 		String aFilterName;
 /*N*/ 		SFX_ITEMSET_ARG( aParams, pFilterNameItem, SfxStringItem, SID_FILTER_NAME, sal_False );
 /*N*/ 		if( pFilterNameItem )
 /*N*/ 			aFilterName = pFilterNameItem->GetValue();
-/*N*/ 
+/*N*/
 /*N*/ 		// in case no filter defined use default one
 /*N*/ 		if( !aFilterName.Len() )
 /*N*/ 		{
@@ -184,29 +183,29 @@ svtools::AsynchronLink* pPendingCloser = 0;
 /*N*/ 				  || !bSaveTo && !pFilt->CanImport() // SaveAs case
 /*N*/ 				  || pFilt->IsInternal() );
 /*N*/ 			 	 pFilt = GetFactory().GetFilter( ++nActFilt ) );
-/*N*/ 
+/*N*/
 /*N*/ 			DBG_ASSERT( pFilt, "No default filter!\n" );
-/*N*/ 
+/*N*/
 /*N*/ 			if( pFilt )
 /*N*/         		aFilterName = pFilt->GetFilterName();
-/*N*/ 
+/*N*/
 /*N*/         	aParams->Put(SfxStringItem( SID_FILTER_NAME, aFilterName));
 /*N*/ 		}
-/*N*/ 
-/*N*/ 
+/*N*/
+/*N*/
 /*N*/ 		{
 /*N*/ 			SfxObjectShellRef xLock( this ); // ???
-/*N*/ 
+/*N*/
 /*N*/     		// since saving a document modified its DocumentInfo, the current DocumentInfo must be saved on "SaveTo", because
 /*N*/     		// it must be restored after saving
 /*N*/ 			SfxDocumentInfo aSavedInfo;
 /*N*/ 			sal_Bool bCopyTo =  bSaveTo || GetCreateMode() == SFX_CREATE_MODE_EMBEDDED;
 /*N*/ 			if ( bCopyTo )
 /*N*/ 				aSavedInfo = GetDocInfo();
-/*N*/ 
+/*N*/
 /*N*/ 	        bOk = CommonSaveAs_Impl( INetURLObject(aFileName), aFilterName,
 /*N*/		 		aParams );
-/*N*/ 
+/*N*/
 /*N*/ 			if ( bCopyTo )
 /*N*/ 			{
 /*N*/         		// restore DocumentInfo if only a copy was created
@@ -214,21 +213,18 @@ svtools::AsynchronLink* pPendingCloser = 0;
 /*N*/ 				rDocInfo = aSavedInfo;
 /*N*/ 			}
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		// Picklisten-Eintrag verhindern
 /*N*/ 		GetMedium()->SetUpdatePickList( FALSE );
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	return bOk;
 /*N*/ }
-
-//-------------------------------------------------------------------------
-
 
 //--------------------------------------------------------------------
 
 /*N*/ void SfxObjectShell::ExecFile_Impl(SfxRequest &rReq)
-/*N*/ {DBG_BF_ASSERT(0, "STRIP"); //STRIP001 
+/*N*/ {DBG_BF_ASSERT(0, "STRIP"); //STRIP001
 /*N*/ }
 
 //--------------------------------------------------------------------
@@ -247,14 +243,14 @@ svtools::AsynchronLink* pPendingCloser = 0;
 /*N*/                 rSet.Put( SfxBoolItem( nWhich, GetDocInfo().IsSaveVersionOnClose() ) );
 /*N*/                 break;
 /*N*/             }
-/*N*/ 
+/*N*/
 /*N*/ 			case SID_DOCTEMPLATE :
 /*N*/ 			{
 /*N*/ 				if ( !GetFactory().GetTemplateFilter() )
 /*N*/ 					rSet.DisableItem( nWhich );
 /*N*/ 				break;
 /*N*/ 			}
-/*N*/ 
+/*N*/
 /*N*/ 			case SID_VERSION:
 /*N*/ 				{
 /*N*/ 					SfxObjectShell *pDoc = this;
@@ -269,7 +265,7 @@ svtools::AsynchronLink* pPendingCloser = 0;
 /*N*/ 							pDoc = pFrame->GetObjectShell();
 /*N*/ 						}
 /*N*/ 					}
-/*N*/ 
+/*N*/
 /*N*/ 					if ( !pFrame || !pDoc->HasName() ||
 /*N*/ 						!IsOwnStorageFormat_Impl( *pDoc->GetMedium() ) ||
 /*N*/ 						pDoc->GetMedium()->GetStorage()->GetVersion() < SOFFICE_FILEFORMAT_50 )
@@ -297,12 +293,12 @@ svtools::AsynchronLink* pPendingCloser = 0;
 /*N*/                     	rSet.DisableItem(nWhich);
 /*N*/ 				}
 /*N*/ 				break;
-/*N*/ 
+/*N*/
 /*N*/ 			case SID_DOCINFO:
 /*N*/ 				if ( 0 != ( pImp->eFlags & SFXOBJECTSHELL_NODOCINFO ) )
 /*N*/ 					rSet.DisableItem( nWhich );
 /*N*/ 				break;
-/*N*/ 
+/*N*/
 /*N*/ 			case SID_CLOSEDOC:
 /*N*/ 			{
 /*N*/ 				SfxObjectShell *pDoc = this;
@@ -314,7 +310,7 @@ svtools::AsynchronLink* pPendingCloser = 0;
 /*N*/ 					// das FrameSetDocument geclosed werden
 /*N*/ 					pDoc = pFrame->GetTopViewFrame()->GetObjectShell();
 /*N*/ 				}
-/*N*/ 
+/*N*/
 /*N*/ 				if ( pDoc->GetFlags() & SFXOBJECTSHELL_DONTCLOSE )
 /*N*/ 					rSet.DisableItem(nWhich);
 /*N*/ 				else if ( pObj && (
@@ -329,7 +325,7 @@ svtools::AsynchronLink* pPendingCloser = 0;
 /*N*/ 					rSet.Put(SfxStringItem(nWhich, String(SfxResId(STR_CLOSEDOC))));
 /*N*/ 				break;
 /*N*/ 			}
-/*N*/ 
+/*N*/
 /*N*/ 			case SID_SAVEASDOC:
 /*N*/ 			{
 /*N*/ 				if( ( pImp->nLoadedFlags & SFX_LOADED_MAINDOCUMENT ) != SFX_LOADED_MAINDOCUMENT )
@@ -337,18 +333,18 @@ svtools::AsynchronLink* pPendingCloser = 0;
 /*N*/ 					rSet.DisableItem( nWhich );
 /*N*/ 					break;
 /*N*/ 				}
-/*N*/ 				
+/*N*/
 /*N*/ 				const SfxFilter* pCombinedFilters = NULL;
 /*N*/ 				SfxFactoryFilterContainer* pFilterContainer = GetFactory().GetFilterContainer();
-/*N*/ 				
+/*N*/
 /*N*/ 				if ( pFilterContainer )
 /*N*/ 				{
 /*N*/ 					SfxFilterFlags    nMust    = SFX_FILTER_IMPORT | SFX_FILTER_EXPORT;
 /*N*/     				SfxFilterFlags    nDont    = SFX_FILTER_NOTINSTALLED;
-/*N*/ 
+/*N*/
 /*N*/ 					pCombinedFilters = pFilterContainer->GetAnyFilter( nMust, nDont );
 /*N*/ 				}
-/*N*/ 
+/*N*/
 /*N*/ 				if ( !pCombinedFilters || !GetMedium() )
 /*N*/ 					rSet.DisableItem( nWhich );
 /*N*/ 				else if ( pObj && (
@@ -357,10 +353,10 @@ svtools::AsynchronLink* pPendingCloser = 0;
 /*N*/ 					rSet.Put( SfxStringItem( nWhich, String( SfxResId( STR_SAVECOPYDOC ) ) ) );
 /*N*/ 				else
 /*N*/ 					rSet.Put( SfxStringItem( nWhich, String( SfxResId( STR_SAVEASDOC ) ) ) );
-/*N*/ 
+/*N*/
 /*N*/ 				break;
 /*N*/ 			}
-/*N*/ 
+/*N*/
 /*N*/ 			case SID_EXPORTDOCASPDF:
 /*N*/ 			case SID_DIRECTEXPORTDOCASPDF:
 /*N*/ 			{
@@ -372,23 +368,23 @@ svtools::AsynchronLink* pPendingCloser = 0;
 /*N*/ 					if ( pFilter != NULL )
 /*N*/ 						break;
 /*N*/ 				}
-/*N*/ 
+/*N*/
 /*N*/ 				rSet.DisableItem( nWhich );
 /*N*/ 				break;
 /*N*/ 			}
-/*N*/ 
+/*N*/
 /*N*/ 			case SID_DOC_MODIFIED:
 /*N*/ 			{
 /*N*/ 				rSet.Put( SfxStringItem( SID_DOC_MODIFIED, IsModified() ? '*' : ' ' ) );
 /*N*/ 				break;
 /*N*/ 			}
-/*N*/ 
+/*N*/
 /*N*/ 			case SID_MODIFIED:
 /*N*/ 			{
 /*N*/ 				rSet.Put( SfxBoolItem( SID_MODIFIED, IsModified() ) );
 /*N*/ 				break;
 /*N*/ 			}
-/*N*/ 
+/*N*/
 /*N*/ 			case SID_DOCINFO_TITLE:
 /*N*/ 			{
 /*N*/ 				rSet.Put( SfxStringItem(
@@ -409,19 +405,19 @@ svtools::AsynchronLink* pPendingCloser = 0;
 //--------------------------------------------------------------------
 
 /*N*/ void SfxObjectShell::ExecProps_Impl(SfxRequest &rReq)
-/*N*/ {DBG_BF_ASSERT(0, "STRIP"); //STRIP001 
+/*N*/ {DBG_BF_ASSERT(0, "STRIP"); //STRIP001
 /*N*/ }
 
 //--------------------------------------------------------------------
 
 /*N*/ void SfxObjectShell::StateProps_Impl(SfxItemSet &rSet)
-/*N*/ {DBG_BF_ASSERT(0, "STRIP"); //STRIP001 
+/*N*/ {DBG_BF_ASSERT(0, "STRIP"); //STRIP001
 /*N*/ }
 
 //--------------------------------------------------------------------
 
 /*N*/ void SfxObjectShell::ExecView_Impl(SfxRequest &rReq)
-/*N*/ {DBG_BF_ASSERT(0, "STRIP"); //STRIP001 
+/*N*/ {DBG_BF_ASSERT(0, "STRIP"); //STRIP001
 /*N*/ }
 
 //--------------------------------------------------------------------
