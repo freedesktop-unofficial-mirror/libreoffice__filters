@@ -4,9 +4,9 @@
  *
  *  $RCSfile: sw_SwXDocumentSettings.cxx,v $
  *
- *  $Revision: 1.4 $
+ *  $Revision: 1.5 $
  *
- *  last change: $Author: rt $ $Date: 2005-09-09 06:54:30 $
+ *  last change: $Author: rt $ $Date: 2006-12-04 08:08:20 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -254,14 +254,14 @@ void SwXDocumentSettings::release ()
     OWeakObject::release();
 }
 
-uno::Sequence< uno::Type > SAL_CALL SwXDocumentSettings::getTypes(  ) 
+uno::Sequence< uno::Type > SAL_CALL SwXDocumentSettings::getTypes(  )
     throw (RuntimeException)
 {
     vos::OGuard aGuard(Application::GetSolarMutex());
 
     uno::Sequence< uno::Type > aBaseTypes( 5 );
     uno::Type* pBaseTypes = aBaseTypes.getArray();
-    
+
     // from MasterPropertySet
     pBaseTypes[0] = ::getCppuType((Reference< XPropertySet >*)0);
     pBaseTypes[1] = ::getCppuType((Reference< XPropertyState >*)0);
@@ -269,11 +269,11 @@ uno::Sequence< uno::Type > SAL_CALL SwXDocumentSettings::getTypes(  )
     //
     pBaseTypes[3] = ::getCppuType((Reference< XServiceInfo >*)0);
     pBaseTypes[4] = ::getCppuType((Reference< XTypeProvider >*)0);
-    
+
     return aBaseTypes;
 }
 
-uno::Sequence< sal_Int8 > SAL_CALL SwXDocumentSettings::getImplementationId(  ) 
+uno::Sequence< sal_Int8 > SAL_CALL SwXDocumentSettings::getImplementationId(  )
     throw (RuntimeException)
 {
     vos::OGuard aGuard(Application::GetSolarMutex());
@@ -493,21 +493,16 @@ void SwXDocumentSettings::_setSingleValue( const comphelper::PropertyInfo & rInf
         {
             sal_Int16 nTmp;
             rValue >>= nTmp;
-            if( (nTmp == document::PrinterIndependentLayout::ENABLED ) ||
-                (nTmp == document::PrinterIndependentLayout::DISABLED ) )
-                mpDoc->SetUseVirtualDevice( 
-                    nTmp == document::PrinterIndependentLayout::ENABLED  );
-            else
-                throw IllegalArgumentException();
+            mpDoc->SetUseVirtualDevice( nTmp != document::PrinterIndependentLayout::DISABLED  );
         }
         break;
         case HANDLE_IS_LABEL_DOC :
-        {    
+        {
             sal_Bool bSet;
             if(!(rValue >>= bSet))
                 throw IllegalArgumentException();
-            mpDoc->SetLabelDoc(bSet);   
-        }    
+            mpDoc->SetLabelDoc(bSet);
+        }
         break;
         case HANDLE_IS_ADD_FLY_OFFSET:
         {
@@ -673,7 +668,7 @@ void SwXDocumentSettings::_getSingleValue( const comphelper::PropertyInfo & rInf
         break;
         case HANDLE_PRINTER_INDEPENDENT_LAYOUT:
         {
-            sal_Int16 nTmp = mpDoc->IsUseVirtualDevice() 
+            sal_Int16 nTmp = mpDoc->IsUseVirtualDevice()
                 ? document::PrinterIndependentLayout::ENABLED
                 : document::PrinterIndependentLayout::DISABLED;
             rValue <<= nTmp;
@@ -684,7 +679,7 @@ void SwXDocumentSettings::_getSingleValue( const comphelper::PropertyInfo & rInf
             sal_Bool bLabel = mpDoc->IsLabelDoc();
             rValue <<= bLabel;
         }
-        break;        
+        break;
         case HANDLE_IS_ADD_FLY_OFFSET:
         {
             sal_Bool bTmp = mpDoc->IsAddFlyOffsets();
