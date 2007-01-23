@@ -4,9 +4,9 @@
  *
  *  $RCSfile: sw_w4wflt.cxx,v $
  *
- *  $Revision: 1.9 $
+ *  $Revision: 1.10 $
  *
- *  last change: $Author: kz $ $Date: 2006-12-12 15:55:17 $
+ *  last change: $Author: obo $ $Date: 2007-01-23 08:27:19 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -79,7 +79,7 @@ typedef int (FAR PASCAL *FNw4wf)( LPSTR, LPSTR, LPSTR, LPSTR, FNDisplay );
 
 #endif      // defined( WIN ) || defined( WNT )
 
-// --------------------------------------------------------------------- 
+// ---------------------------------------------------------------------
 
 #ifdef UNX
 #include <stdlib.h>
