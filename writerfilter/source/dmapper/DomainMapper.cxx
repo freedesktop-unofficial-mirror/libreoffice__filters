@@ -4,9 +4,9 @@
  *
  *  $RCSfile: DomainMapper.cxx,v $
  *
- *  $Revision: 1.21 $
+ *  $Revision: 1.22 $
  *
- *  last change: $Author: fridrich_strba $ $Date: 2007-03-30 15:35:35 $
+ *  last change: $Author: os $ $Date: 2007-04-02 11:53:21 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -1456,7 +1456,7 @@ void DomainMapper::attribute(doctok::Id Name, doctok::Value & val)
                 m_pImpl->m_aCurrentTabStop.bDeleted = false;
                 // TODO handle the alignment
                 // m_pImpl->m_aCurrentTabStop.Alignment = ???
-            }            
+            }
             break;
         case NS_ooxml::LN_CT_TabStop_leader:
             // TODO handle the leader character
@@ -1481,7 +1481,7 @@ void DomainMapper::attribute(doctok::Id Name, doctok::Value & val)
         case NS_ooxml::LN_CT_Jc_val:
             handleParaJustification(nIntValue, m_pImpl->GetTopContext(), bExchangeLeftRight);
             break;
-            
+
         case NS_ooxml::LN_CT_Spacing_before:
             m_pImpl->GetTopContext()->Insert(PROP_PARA_TOP_MARGIN, uno::makeAny( ConversionHelper::convertToMM100( nIntValue ) ));
             break;
@@ -1504,7 +1504,7 @@ void DomainMapper::attribute(doctok::Id Name, doctok::Value & val)
         case NS_ooxml::LN_CT_SignedHpsMeasure_val:
             mnHpsMeasure = nIntValue;
             break;
-            
+
         case NS_ooxml::LN_CT_SignedTwipsMeasure_val:
         case NS_ooxml::LN_CT_TwipsMeasure_val:
             mnTwipsMeasure = nIntValue;
@@ -1513,15 +1513,15 @@ void DomainMapper::attribute(doctok::Id Name, doctok::Value & val)
         case NS_ooxml::LN_CT_Ind_left:
             m_pImpl->GetTopContext()->Insert(
                 PROP_PARA_LEFT_MARGIN, uno::makeAny( ConversionHelper::convertToMM100(nIntValue ) ));
-            break;            
+            break;
         case NS_ooxml::LN_CT_Ind_right:
             m_pImpl->GetTopContext()->Insert(
                 PROP_PARA_RIGHT_MARGIN, uno::makeAny( ConversionHelper::convertToMM100(nIntValue ) ));
-            break;            
+            break;
         case NS_ooxml::LN_CT_Ind_hanging:
             m_pImpl->GetTopContext()->Insert(
                 PROP_PARA_FIRST_LINE_INDENT, uno::makeAny( - ConversionHelper::convertToMM100(nIntValue ) ));
-            break;            
+            break;
         case NS_ooxml::LN_CT_Ind_firstLine:
             m_pImpl->GetTopContext()->Insert(
                 PROP_PARA_FIRST_LINE_INDENT, uno::makeAny( ConversionHelper::convertToMM100(nIntValue ) ));
@@ -1529,6 +1529,7 @@ void DomainMapper::attribute(doctok::Id Name, doctok::Value & val)
         default:
             {
                 //int nVal = val.getInt();
+                OSL_ASSERT("unknown attribute");
             }
         }
     }
@@ -1564,7 +1565,7 @@ void DomainMapper::sprm( doctok::Sprm& sprm_, PropertyMapPtr rContext, SprmType 
     rtl::OUString sStringValue = pValue->getString();
 
     /* WRITERFILTERSTATUS: table: sprmdata */
-    
+
     printf("*** sprm *** 0x%.8x *** sprm *** 0x%.8x *** %s *** sprm ***\n", (unsigned int)nId, (unsigned int)nIntValue, OUStringToOString(sStringValue, RTL_TEXTENCODING_UTF8).getStr());
     switch(nId)
     {
@@ -1659,7 +1660,7 @@ void DomainMapper::sprm( doctok::Sprm& sprm_, PropertyMapPtr rContext, SprmType 
     case 17:
     case 0x840F:   // sprmPDxaLeft
         /* WRITERFILTERSTATUS: done: 50, planned: 5, spent: 1 */
-        if( 0x840e == nId || 0x17 == nId|| (bExchangeLeftRight && nId == 0x845d) || ( !bExchangeLeftRight && nId == 0x845e))
+        if( 0x840F == nId || 0x17 == nId|| (bExchangeLeftRight && nId == 0x845d) || ( !bExchangeLeftRight && nId == 0x845e))
             rContext->Insert(
                              eSprmType == SPRM_DEFAULT ? PROP_PARA_LEFT_MARGIN : PROP_LEFT_MARGIN,
 
@@ -2150,7 +2151,7 @@ void DomainMapper::sprm( doctok::Sprm& sprm_, PropertyMapPtr rContext, SprmType 
             // 9 = dotdash 10 = dotdotdash 11 = wave
 
             doctok::Reference<Properties>::Pointer_t pProperties = sprm_.getProps();
-            
+
             if (!pProperties.get())
                 handleUnderlineType(nIntValue, rContext);
             else
@@ -2897,7 +2898,7 @@ void DomainMapper::sprm( doctok::Sprm& sprm_, PropertyMapPtr rContext, SprmType 
         {
             //contains a color as 0xTTRRGGBB while SO uses 0xTTRRGGBB
             doctok::Reference<Properties>::Pointer_t pProperties = sprm_.getProps();
-            
+
             sal_Int32 nColor = ConversionHelper::ConvertColor(nIntValue);
             rContext->Insert(PROP_CHAR_COLOR, uno::makeAny( nColor ) );
         }
@@ -2950,7 +2951,7 @@ void DomainMapper::sprm( doctok::Sprm& sprm_, PropertyMapPtr rContext, SprmType 
         resolveSprmProps(sprm_);
         m_pImpl->IncorporateTabStop(m_pImpl->m_aCurrentTabStop);
         break;
-    
+
     // TEMPORARY SOLUTION: have to find how to make this attribute instead of sprm
     case NS_ooxml::LN_EG_RPrBase_color:
     case NS_ooxml::LN_CT_PPrBase_tabs:
@@ -2993,7 +2994,7 @@ void DomainMapper::sprm( doctok::Sprm& sprm_, PropertyMapPtr rContext, SprmType 
             rContext->Insert(PROP_CHAR_ESCAPEMENT_HEIGHT,  uno::makeAny( nProp ) );
         }
         break;
-    
+
 
     default:
         {
@@ -3341,7 +3342,7 @@ bool DomainMapper::getColorFromIndex(const sal_Int32 nIndex, sal_Int32 nColor)
     nColor = 0;
     if ((nIndex < 1) || (nIndex > 16))
         return false;
-        
+
     switch (nIndex)
     {
     case 1: nColor=0x000000; break; //black
@@ -3363,7 +3364,7 @@ bool DomainMapper::getColorFromIndex(const sal_Int32 nIndex, sal_Int32 nColor)
     default:
         return false;
     }
-    return true;  
+    return true;
 }
 
 void DomainMapper::resolveSprmProps(doctok::Sprm & sprm_)
@@ -3371,8 +3372,8 @@ void DomainMapper::resolveSprmProps(doctok::Sprm & sprm_)
     doctok::Reference<Properties>::Pointer_t pProperties = sprm_.getProps();
     if( pProperties.get())
         pProperties->resolve(*this);
-    
+
 }
-   
+
 
 } //namespace dmapper
