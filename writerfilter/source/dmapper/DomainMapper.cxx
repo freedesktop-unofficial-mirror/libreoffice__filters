@@ -4,9 +4,9 @@
  *
  *  $RCSfile: DomainMapper.cxx,v $
  *
- *  $Revision: 1.27 $
+ *  $Revision: 1.28 $
  *
- *  last change: $Author: fridrich_strba $ $Date: 2007-04-10 09:31:00 $
+ *  last change: $Author: os $ $Date: 2007-04-13 09:35:20 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -1432,10 +1432,10 @@ void DomainMapper::attribute(doctok::Id Name, doctok::Value & val)
         case NS_rtf::LN_STYLESHEET:
             /* WRITERFILTERSTATUS: done: 0, planned: 0.5, spent: 0 */
             break;
-            
+
         case NS_rtf::LN_fcEastAsianLayout:
         /*  it seems that the value is following:
-                ???? XX YYYY ZZ 
+                ???? XX YYYY ZZ
             where
                 XX seems to be the run id
                 ZZ is the length of the function that is normally 6
@@ -1452,14 +1452,14 @@ void DomainMapper::attribute(doctok::Id Name, doctok::Value & val)
                     {} curly brackets (0x04).
                 ???? is different and we do not know its signification
           */
-                
+
             if ((nIntValue & 0x000000FF) == 6)
-            {                
+            {
                 switch ((nIntValue & 0x0000FF00) >> 8)
                 {
                 case 1: // vertical text
                     m_pImpl->GetTopContext()->Insert(PROP_CHAR_ROTATION, uno::makeAny ( sal_Int16(900) ));
-                    m_pImpl->GetTopContext()->Insert(PROP_CHAR_ROTATION_IS_FIT_TO_LINE, uno::makeAny (((nIntValue & 0x00FF0000) >> 16) != 0));                    
+                    m_pImpl->GetTopContext()->Insert(PROP_CHAR_ROTATION_IS_FIT_TO_LINE, uno::makeAny (((nIntValue & 0x00FF0000) >> 16) != 0));
                     break;
                 case 2: // two lines in one
                     m_pImpl->GetTopContext()->Insert(PROP_CHAR_COMBINE_IS_ON, uno::makeAny ( true ));
@@ -1471,7 +1471,7 @@ void DomainMapper::attribute(doctok::Id Name, doctok::Value & val)
                 }
             }
             break;
-            
+
         case NS_ooxml::LN_CT_Underline_val:
             handleUnderlineType(nIntValue, m_pImpl->GetTopContext());
             break;
@@ -1563,7 +1563,7 @@ void DomainMapper::attribute(doctok::Id Name, doctok::Value & val)
         case NS_ooxml::LN_CT_Highlight_val:
             {
                 sal_Int32 nColor = 0;
-                if (mbIsHighlightSet = getColorFromIndex(nIntValue, nColor))
+                if(true ==( mbIsHighlightSet = getColorFromIndex(nIntValue, nColor)))
                     m_pImpl->GetTopContext()->Insert(PROP_CHAR_BACK_COLOR, uno::makeAny( nColor ));
                 else if (mnBackgroundColor)
                     m_pImpl->GetTopContext()->Insert(PROP_CHAR_BACK_COLOR, uno::makeAny( mnBackgroundColor ));
@@ -1577,7 +1577,7 @@ void DomainMapper::attribute(doctok::Id Name, doctok::Value & val)
         case NS_ooxml::LN_CT_Em_val:
             m_pImpl->GetTopContext()->Insert(PROP_CHAR_EMPHASIS, uno::makeAny ( getEmphasisValue (nIntValue)));
             break;
-        
+
         case NS_ooxml::LN_CT_EastAsianLayout_id:
             break;
         case NS_ooxml::LN_CT_EastAsianLayout_combine:
@@ -3053,7 +3053,7 @@ void DomainMapper::sprm( doctok::Sprm& sprm_, PropertyMapPtr rContext, SprmType 
     case NS_ooxml::LN_EG_RPrBase_effect:
         resolveSprmProps(sprm_);
         break;
-        
+
     case NS_ooxml::LN_CT_PPrBase_tabs:
         resolveSprmProps(sprm_);
         break;
@@ -3290,7 +3290,7 @@ void DomainMapper::table(doctok::Id name, doctok::Reference<Table>::Pointer_t re
         //same as above to import style sheets
         m_pImpl->SetStyleSheetImport( true );
         ref->resolve( *m_pImpl->GetStyleSheetTable() );
-        m_pImpl->GetStyleSheetTable()->ApplyStyleSheets(m_pImpl->GetTextDocument());
+        m_pImpl->GetStyleSheetTable()->ApplyStyleSheets(m_pImpl->GetTextDocument(), m_pImpl->GetFontTable());
         m_pImpl->SetStyleSheetImport( false );
         break;
     case NS_rtf::LN_LISTTABLE:
@@ -3487,22 +3487,22 @@ rtl::OUString DomainMapper::getBracketStringFromEnum(const sal_Int32 nIntValue, 
         if (bIsPrefix)
             return rtl::OUString( RTL_CONSTASCII_USTRINGPARAM ( "(" ));
         return rtl::OUString( RTL_CONSTASCII_USTRINGPARAM ( ")" ));
-        
+
     case 2:
         if (bIsPrefix)
             return rtl::OUString( RTL_CONSTASCII_USTRINGPARAM ( "[" ));
         return rtl::OUString( RTL_CONSTASCII_USTRINGPARAM ( "]" ));
-        
+
     case 3:
         if (bIsPrefix)
             return rtl::OUString( RTL_CONSTASCII_USTRINGPARAM ( "<" ));
         return rtl::OUString( RTL_CONSTASCII_USTRINGPARAM ( ">" ));
-        
+
     case 4:
         if (bIsPrefix)
             return rtl::OUString( RTL_CONSTASCII_USTRINGPARAM ( "{" ));
         return rtl::OUString( RTL_CONSTASCII_USTRINGPARAM ( "}" ));
-        
+
     case 0:
     default:
         return rtl::OUString();
@@ -3522,7 +3522,7 @@ void DomainMapper::resolveAttributeProperties(doctok::Value & val)
     if( pProperties.get())
         pProperties->resolve(*this);
 }
-    
+
 
 com::sun::star::style::TabAlign DomainMapper::getTabAlignFromValue(const sal_Int32 nIntValue)
 {
