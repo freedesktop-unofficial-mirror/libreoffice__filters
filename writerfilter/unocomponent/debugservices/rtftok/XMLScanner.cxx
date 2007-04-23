@@ -4,9 +4,9 @@
  *
  *  $RCSfile: XMLScanner.cxx,v $
  *
- *  $Revision: 1.4 $
+ *  $Revision: 1.5 $
  *
- *  last change: $Author: hbrinkm $ $Date: 2006-11-01 09:14:38 $
+ *  last change: $Author: os $ $Date: 2007-04-23 09:57:09 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -54,6 +54,7 @@
 #include <rtl/string.hxx>
 #include <hash_set>
 #include <assert.h>
+#include <string>
 #include <cppuhelper/implbase2.hxx>
 #include <com/sun/star/embed/XTransactedObject.hpp>
 #include <com/sun/star/embed/XStorage.hpp>
@@ -117,7 +118,7 @@ class XmlRtfScannerHandler : public writerfilter::rtftok::RTFScannerHandler
         }
 
         charBuffer = "";
-        
+
         if (ucharBuffer.length() > 0)
         {
             cout << "<utext>";
@@ -137,7 +138,7 @@ class XmlRtfScannerHandler : public writerfilter::rtftok::RTFScannerHandler
     void ctrl(char*token, char* value)
     {
         clearBuffers();
-        cout << "<" << token << ">" << value << "</" << token << ">" 
+        cout << "<" << token << ">" << value << "</" << token << ">"
              << endl;
     }
     void lbrace(void)
@@ -175,10 +176,10 @@ class XmlRtfScannerHandler : public writerfilter::rtftok::RTFScannerHandler
         clearBuffers();
         cout << "<hexchar value=\"" << hexch << "\"/>" << endl;
     }
-    
+
 public:
     XmlRtfScannerHandler(uno::Reference<lang::XMultiServiceFactory> &xServiceFactory_, uno::Reference<com::sun::star::ucb::XSimpleFileAccess> &xFileAccess_) :
-    objDataLevel(0), numOfOLEs(0), 
+    objDataLevel(0), numOfOLEs(0),
     xServiceFactory(xServiceFactory_),
     xFileAccess(xFileAccess_)
     {
@@ -200,7 +201,7 @@ private:
     sal_Int64 bytesTotal;
     sal_Int64 bytesRead;
 public:
-    RtfInputSourceImpl(uno::Reference< io::XInputStream > &xInputStream_, uno::Reference< task::XStatusIndicator > &xStatusIndicator_) : 
+    RtfInputSourceImpl(uno::Reference< io::XInputStream > &xInputStream_, uno::Reference< task::XStatusIndicator > &xStatusIndicator_) :
       xInputStream(xInputStream_),
       xStatusIndicator(xStatusIndicator_),
       bytesRead(0)
@@ -216,7 +217,7 @@ public:
 
     virtual ~RtfInputSourceImpl() {}
 
-    int read(void *buf, int maxlen) 
+    int read(void *buf, int maxlen)
     {
         uno::Sequence< sal_Int8 > buffer;
         int len=xInputStream->readSomeBytes(buffer,maxlen);
@@ -247,7 +248,7 @@ public:
                 xStatusIndicator->end();
             }
             return 0;
-        }		
+        }
     }
 };
 
@@ -269,7 +270,7 @@ sal_Int32 SAL_CALL XMLScanner::run( const uno::Sequence< rtl::OUString >& aArgum
 
             uno::Reference<com::sun::star::ucb::XSimpleFileAccess> xFileAccess(
             xFactory->createInstanceWithContext(
-                ::rtl::OUString(RTL_CONSTASCII_USTRINGPARAM("com.sun.star.ucb.SimpleFileAccess")), 
+                ::rtl::OUString(RTL_CONSTASCII_USTRINGPARAM("com.sun.star.ucb.SimpleFileAccess")),
                 xContext), uno::UNO_QUERY_THROW );
 
             rtl_uString *dir=NULL;
@@ -303,7 +304,7 @@ sal_Int32 SAL_CALL XMLScanner::run( const uno::Sequence< rtl::OUString >& aArgum
             RtfInputSourceImpl rtfInputSource(xInputStream, xStatusIndicator);
             XmlRtfScannerHandler eventHandler(xServiceFactory, xFileAccess);
             writerfilter::rtftok::RTFScanner *rtfScanner=writerfilter::rtftok::RTFScanner::createRTFScanner(rtfInputSource, eventHandler);
-            
+
             cout << "<out>" << endl;
             rtfScanner->yylex();
             cout << "</out>" << endl;
