@@ -4,9 +4,9 @@
  *
  *  $RCSfile: ListTable.cxx,v $
  *
- *  $Revision: 1.2 $
+ *  $Revision: 1.3 $
  *
- *  last change: $Author: os $ $Date: 2006-11-02 12:37:24 $
+ *  last change: $Author: os $ $Date: 2007-04-25 11:31:49 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -257,7 +257,7 @@ void ListTable_Impl::AddLevel()
   -----------------------------------------------------------------------*/
 ListTable::ListTable(
         DomainMapper& rDMapper,
-        uno::Reference< lang::XMultiServiceFactory > xFactory) :
+        const uno::Reference< lang::XMultiServiceFactory > xFactory) :
     m_pImpl( new ListTable_Impl(rDMapper, xFactory) )
 {
 }
@@ -720,12 +720,12 @@ void ListTable::attribute(doctok::Id Name, doctok::Value & val)
 //        case NS_rtf::LN_footerr: break;
 //        case NS_rtf::LN_endnote: break;
 //        case NS_rtf::LN_BOOKMARKNAME: break;
-        
-        case NS_rtf::LN_LISTLEVEL: 
-        {    
+
+        case NS_rtf::LN_LISTLEVEL:
+        {
             //add a new level to the level vector and make it the current one
             m_pImpl->AddLevel();
-            
+
             doctok::Reference<Properties>::Pointer_t pProperties;
             if((pProperties = val.getProperties()).get())
                 pProperties->resolve(*this);
@@ -748,7 +748,7 @@ void ListTable::attribute(doctok::Id Name, doctok::Value & val)
 //        case NS_rtf::LN_cellLeftColor: break;
 //        case NS_rtf::LN_cellBottomColor: break;
 //        case NS_rtf::LN_cellRightColor: break;
-        
+
 //        case NS_rtf::LN_LISTTABLE: break;
 //        case NS_rtf::LN_LFOTABLE: break;
 //        case NS_rtf::LN_FONTTABLE: break;
@@ -760,7 +760,7 @@ void ListTable::attribute(doctok::Id Name, doctok::Value & val)
             ++nVal;
             //<----debug
         }
-    }            
+    }
 }
 /*-- 23.06.2006 12:04:33---------------------------------------------------
 
@@ -769,8 +769,8 @@ void ListTable::sprm(doctok::Sprm & sprm_)
 {
     //fill the attributes of the style sheet
     if(m_pImpl->m_pCurrentEntry.get())
-    {        
-        m_pImpl->m_rDMapper.sprm( sprm_, 
+    {
+        m_pImpl->m_rDMapper.sprm( sprm_,
                 m_pImpl->m_pCurrentEntry->pCurrentProperties->GetProperties(), SPRM_LIST);
     }
 }
@@ -790,12 +790,12 @@ void ListTable::entry(int, doctok::Reference<Properties>::Pointer_t ref)
 /*-- 26.06.2006 10:27:55---------------------------------------------------
 
   -----------------------------------------------------------------------*/
-sal_uInt32 ListTable::size()
+sal_uInt32 ListTable::size() const
 {
     return m_pImpl->m_aListEntries.size();
 }
 /*-- 26.06.2006 10:33:56---------------------------------------------------
-        
+
   -----------------------------------------------------------------------*/
 uno::Reference< container::XIndexReplace > ListTable::GetNumberingRules(sal_Int32 nListId)
 {
@@ -809,11 +809,11 @@ uno::Reference< container::XIndexReplace > ListTable::GetNumberingRules(sal_Int3
             if( !(*aIt)->m_xNumRules.is() && m_pImpl->m_xFactory.is())
             {
                 try
-                {        
+                {
                     (*aIt)->m_xNumRules = uno::Reference< container::XIndexReplace >(
                             m_pImpl->m_xFactory->createInstance(::rtl::OUString(RTL_CONSTASCII_USTRINGPARAM("com.sun.star.text.NumberingRules"))),
                             uno::UNO_QUERY_THROW);
-                
+
                     //now fill the numbering levels appropriately
                     ::std::vector< ListPropertyMapPtr >::const_iterator aIter = (*aIt)->aLevelProperties.begin();
                     ::std::vector< ListPropertyMapPtr >::const_iterator aEnd = (*aIt)->aLevelProperties.end();
@@ -822,7 +822,7 @@ uno::Reference< container::XIndexReplace > ListTable::GetNumberingRules(sal_Int3
                     {
                         uno::Sequence< beans::PropertyValue> aValues = (*aIter)->GetPropertyValues();
                         (*aIt)->m_xNumRules->replaceByIndex(nLevel, uno::makeAny(aValues));
-                    
+
                         ++aIter;
                         ++nLevel;
                     }
@@ -830,7 +830,7 @@ uno::Reference< container::XIndexReplace > ListTable::GetNumberingRules(sal_Int3
                 }
                 catch( const uno::Exception& )
                 {
-                }            
+                }
             }
             xRet = (*aIt)->m_xNumRules;
             break;
