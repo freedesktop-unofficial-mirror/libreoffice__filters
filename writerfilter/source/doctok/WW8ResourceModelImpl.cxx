@@ -4,9 +4,9 @@
  *
  *  $RCSfile: WW8ResourceModelImpl.cxx,v $
  *
- *  $Revision: 1.11 $
+ *  $Revision: 1.12 $
  *
- *  last change: $Author: hbrinkm $ $Date: 2007-04-24 12:44:42 $
+ *  last change: $Author: os $ $Date: 2007-04-25 11:40:45 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -73,15 +73,15 @@ string xmlify(string str)
 
 // ------- WW8TableDataHandler ---------
 
-class WW8TableDataHandler : public TableDataHandler<string, 
+class WW8TableDataHandler : public TableDataHandler<string,
                             TablePropsPointer_t>
 {
 public:
     typedef boost::shared_ptr<WW8TableDataHandler> Pointer_t;
-    virtual void startTable(unsigned int nRows, unsigned int nDepth, 
+    virtual void startTable(unsigned int nRows, unsigned int nDepth,
                             TablePropsPointer_t pProps);
     virtual void endTable();
-    virtual void startRow(unsigned int nCols, 
+    virtual void startRow(unsigned int nCols,
                           TablePropsPointer_t pProps);
     virtual void endRow();
     virtual void startCell(const string & start, TablePropsPointer_t pProps);
@@ -126,7 +126,7 @@ void WW8TableDataHandler::endRow()
     output.addItem("</tabledata.row>");
 }
 
-void WW8TableDataHandler::startCell(const string & start, 
+void WW8TableDataHandler::startCell(const string & start,
                                     TablePropsPointer_t /*pProps*/)
 {
     output.addItem("<tabledata.cell>");
@@ -142,7 +142,7 @@ void WW8TableDataHandler::endCell(const string & end)
 
 // ----- WW8TableDataManager -------------------------------
 
-class WW8TableManager : 
+class WW8TableManager :
     public TableManager<string, TablePropsPointer_t>
 {
     typedef TableDataHandler<string, TablePropsPointer_t>
@@ -152,7 +152,7 @@ public:
     WW8TableManager();
     virtual ~WW8TableManager() {}
     virtual void endParagraphGroup();
-    virtual void sprm(Sprm & rSprm);
+    virtual bool sprm(Sprm & rSprm);
 };
 
 WW8TableManager::WW8TableManager()
@@ -161,10 +161,11 @@ WW8TableManager::WW8TableManager()
     setHandler(pHandler);
 }
 
-void WW8TableManager::sprm(Sprm & rSprm)
+bool WW8TableManager::sprm(Sprm & rSprm)
 {
     TableManager<string, TablePropsPointer_t>::sprm(rSprm);
     output.setDepth(getTableDepthNew());
+    return true;
 }
 
 void WW8TableManager::endParagraphGroup()
@@ -214,7 +215,7 @@ void WW8PropertiesReference::resolve(Properties & rHandler)
             {
                 WW8Sprm aSprm(pIt->get());
                 rHandler.sprm(aSprm);
-                
+
                 ++(*pIt);
             }
         }
@@ -259,10 +260,10 @@ WW8BinaryObjReference::getBinary()
     return doctok::Reference<BinaryObj>::Pointer_t
         (new WW8BinaryObjReference(*this));
 }
-                                             
+
 void WW8BinaryObjReference::resolve(BinaryObj & rHandler)
 {
-    doctok::Reference<Properties>::Pointer_t pRef = 
+    doctok::Reference<Properties>::Pointer_t pRef =
         doctok::Reference<Properties>::Pointer_t();
 
     if (getCount() > 0)
@@ -290,7 +291,7 @@ sal_uInt32 WW8Sprm::getId() const
     sal_uInt32 nResult = 0;
 
     if (mpProperty.get() != NULL)
-        nResult = mpProperty->getId(); 
+        nResult = mpProperty->getId();
     else if (mpBinary.get() != NULL)
         nResult = NS_rtf::LN_blob;
 
@@ -326,7 +327,7 @@ doctok::Reference<BinaryObj>::Pointer_t WW8Sprm::getBinary()
     else if (mpProperty.get() != NULL)
         pResult = createSprmBinary
             (dynamic_cast<WW8PropertyImpl &>(*(mpProperty.get())));
-    
+
     return pResult;
 }
 
@@ -406,7 +407,7 @@ int WW8IntValue::getInt() const
 uno::Any WW8IntValue::getAny() const
 {
     uno::Any aResult;
-    
+
     aResult <<= static_cast<sal_uInt32>(mValue);
 
     return aResult;
@@ -415,7 +416,7 @@ uno::Any WW8IntValue::getAny() const
 string WW8IntValue::toString() const
 {
     char sBuffer[255];
-    
+
     snprintf(sBuffer, sizeof(sBuffer), "%x", mValue);
 
     return string(sBuffer);
@@ -461,7 +462,7 @@ string WW8StringValue::toString() const
         {
             sal_Unicode nC = mString[n];
 
-            if (nC < 256)                
+            if (nC < 256)
                 result += sal::static_int_cast<char>(nC);
             else
                 result += ".";
@@ -483,7 +484,7 @@ WW8Value::Pointer_t createValue(const rtl::OUString & rStr)
     return WW8Value::Pointer_t(new WW8StringValue(rStr));
 }
 
-doctok::Reference<Properties>::Pointer_t WW8PropertiesValue::getProperties() 
+doctok::Reference<Properties>::Pointer_t WW8PropertiesValue::getProperties()
 {
     return mRef;
 }
@@ -591,13 +592,13 @@ void WW8StreamHandler::text(const sal_uInt8 * data, size_t len)
         {
         case '<':
             tmpStr += "&lt;";
-            
+
             break;
         case '>':
             tmpStr += "&gt;";
 
             break;
-            
+
         case '&':
             tmpStr += "&amp;";
 
@@ -608,9 +609,9 @@ void WW8StreamHandler::text(const sal_uInt8 * data, size_t len)
             else
             {
                 char sBuffer[256];
-                
+
                 snprintf(sBuffer, sizeof(sBuffer), "\\0x%02x", data[n]);
-                
+
                 tmpStr += sBuffer;
             }
         }
@@ -644,7 +645,7 @@ void WW8StreamHandler::utext(const sal_uInt8 * data, size_t len)
                 tmpStr += "&gt;";
                 break;
             default:
-                tmpStr += static_cast<char>(nChar);                
+                tmpStr += static_cast<char>(nChar);
             }
         }
         else
@@ -680,25 +681,25 @@ void WW8StreamHandler::table(Id name, doctok::Reference<Table>::Pointer_t ref)
 {
     WW8TableHandler aHandler;
 
-    output.addItem("<table id=\"" + (*QNameToString::Instance())(name) 
+    output.addItem("<table id=\"" + (*QNameToString::Instance())(name)
                    + "\">");
-    
+
     try
     {
         ref->resolve(aHandler);
     }
     catch (doctok::Exception e)
     {
-        output.addItem("<exception>" + e.getText() + "</exception>"); 
+        output.addItem("<exception>" + e.getText() + "</exception>");
     }
 
     output.addItem("</table>");
 }
 
-void WW8StreamHandler::substream(Id name, 
+void WW8StreamHandler::substream(Id name,
                                  doctok::Reference<Stream>::Pointer_t ref)
 {
-    output.addItem("<substream name=\"" + (*QNameToString::Instance())(name) 
+    output.addItem("<substream name=\"" + (*QNameToString::Instance())(name)
                    + "\">");
 
     gTableManager.startLevel();
@@ -723,11 +724,11 @@ void WW8PropertiesHandler::attribute(Id name, Value & val)
     aStr.convertToString(pStr.get(), RTL_TEXTENCODING_ASCII_US,
                          OUSTRING_TO_OSTRING_CVTFLAGS);
     string sXMLValue = xmlify(pStr->getStr());
-    
+
     char sBuffer[256];
     snprintf(sBuffer, sizeof(sBuffer), "0x%x", val.getInt());
-    
-    output.addItem("<attribute name=\"" + 
+
+    output.addItem("<attribute name=\"" +
                    (*QNameToString::Instance())(name) +
                    "\" value=\"" +
                    sXMLValue +
@@ -738,11 +739,11 @@ void WW8PropertiesHandler::attribute(Id name, Value & val)
 
     if (pProps.get() != NULL)
     {
-        output.addItem("<properties name=\"" + 
-                       (*QNameToString::Instance())(name) 
+        output.addItem("<properties name=\"" +
+                       (*QNameToString::Instance())(name)
                        + "\" type=\"" + pProps->getType() + "\">");
 
-        try 
+        try
         {
             pProps->resolve(*this);
         }
@@ -757,7 +758,7 @@ void WW8PropertiesHandler::attribute(Id name, Value & val)
 
     if (pStream.get() != NULL)
     {
-        try 
+        try
         {
             WW8StreamHandler aHandler;
 
@@ -772,7 +773,7 @@ void WW8PropertiesHandler::attribute(Id name, Value & val)
 
     if (pBinObj.get() != NULL)
     {
-        try 
+        try
         {
             WW8BinaryObjHandler aHandler;
 
@@ -780,7 +781,7 @@ void WW8PropertiesHandler::attribute(Id name, Value & val)
         }
         catch (ExceptionOutOfBounds e)
         {
-        }        
+        }
     }
 
     output.addItem("</attribute>");
@@ -823,7 +824,7 @@ void WW8PropertiesHandler::sprm(Sprm & sprm_)
     }
 
     doctok::Reference<Stream>::Pointer_t pStream = sprm_.getStream();
-    
+
     if (pStream.get() != NULL)
     {
         output.addItem("<stream>");
@@ -842,7 +843,7 @@ void WW8TableHandler::entry(int /*pos*/, doctok::Reference<Properties>::Pointer_
     output.addItem("<tableentry>");
 
     WW8PropertiesHandler aHandler;
-    
+
     try
     {
         ref->resolve(aHandler);
@@ -868,7 +869,7 @@ Stream::Pointer_t createAnalyzer()
     return Stream::Pointer_t(new WW8Analyzer());
 }
 
-void dump(OutputWithDepth<string> & /*o*/, const char * /*name*/, 
+void dump(OutputWithDepth<string> & /*o*/, const char * /*name*/,
           doctok::Reference<Properties>::Pointer_t /*props*/)
 {
 }
@@ -884,8 +885,8 @@ void dump(OutputWithDepth<string> & o, const char * name, sal_uInt32 n)
     o.addItem(tmpStr);
 }
 
-void dump(OutputWithDepth<string> & /*o*/, const char * /*name*/, 
-          const rtl::OUString & /*str*/) 
+void dump(OutputWithDepth<string> & /*o*/, const char * /*name*/,
+          const rtl::OUString & /*str*/)
 {
 }
 

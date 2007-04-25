@@ -4,9 +4,9 @@
  *
  *  $RCSfile: WW8PropertySetImpl.cxx,v $
  *
- *  $Revision: 1.4 $
+ *  $Revision: 1.5 $
  *
- *  last change: $Author: hbrinkm $ $Date: 2007-04-16 09:02:14 $
+ *  last change: $Author: os $ $Date: 2007-04-25 11:40:45 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -53,26 +53,26 @@ WW8Property::~WW8Property()
 WW8PropertySet::~WW8PropertySet()
 {
 }
-    
+
 WW8PropertySetIterator::~WW8PropertySetIterator()
 {
 }
 
-WW8PropertyImpl::WW8PropertyImpl(WW8Stream & rStream, 
+WW8PropertyImpl::WW8PropertyImpl(WW8Stream & rStream,
                                  sal_uInt32 nOffset, sal_uInt32 nCount)
 : WW8StructBase(rStream, nOffset, nCount)
 {
 }
 
 WW8PropertyImpl::WW8PropertyImpl(const WW8StructBase & rBase,
-                                 sal_uInt32 nOffset, 
+                                 sal_uInt32 nOffset,
                                  sal_uInt32 nCount)
 : WW8StructBase(rBase, nOffset, nCount)
 {
 }
 
 WW8PropertyImpl::WW8PropertyImpl(WW8StructBase * pBase,
-                                 sal_uInt32 nOffset, 
+                                 sal_uInt32 nOffset,
                                  sal_uInt32 nCount)
 : WW8StructBase(pBase, nOffset, nCount)
 {
@@ -93,7 +93,7 @@ sal_uInt32 WW8PropertyImpl::getParam() const
         nResult = getU8(2);
 
         break;
-        
+
     case 2:
     case 4:
     case 5:
@@ -146,7 +146,7 @@ sal_uInt32 WW8PropertyImpl::getByteLength() const
         nParamSize = 4;
 
         break;
-        
+
     case 7:
         nParamSize = 3;
 
@@ -166,22 +166,22 @@ sal_uInt32 WW8PropertyImpl::getParamOffset() const
 
     if (get_spra() == 6)
         nReturn = 1;
-        
+
     switch (getId())
     {
     case 0xd608:
     case 0xd609:
         nReturn = 3;
-            
+
         break;
-            
+
     default:
         break;
     }
 
     return nReturn;
 }
-    
+
 void WW8PropertyImpl::dump(OutputWithDepth<string> & o) const
 {
     o.addItem(toString());
