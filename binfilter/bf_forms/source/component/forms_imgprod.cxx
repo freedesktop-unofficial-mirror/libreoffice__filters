@@ -4,9 +4,9 @@
  *
  *  $RCSfile: forms_imgprod.cxx,v $
  *
- *  $Revision: 1.6 $
+ *  $Revision: 1.7 $
  *
- *  last change: $Author: rt $ $Date: 2007-04-25 14:34:36 $
+ *  last change: $Author: ihi $ $Date: 2007-07-11 12:58:44 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -97,7 +97,7 @@ ImgProdLockBytes::ImgProdLockBytes( ::com::sun::star::uno::Reference< ::com::sun
         do
         {
             ::com::sun::star::uno::Sequence< sal_Int8 > aReadSeq;
-            
+
             nRead = xStmRef->readSomeBytes( aReadSeq, nBytesToRead );
 
             if( nRead )
@@ -470,23 +470,23 @@ void ImageProducer::ImplInitConsumer( const Graphic& rGraphic )
             if( nPalCount )
             {
                 aRGBPal = ::com::sun::star::uno::Sequence< sal_Int32 >( nPalCount + 1 );
-                
+
                 sal_Int32* pTmp = aRGBPal.getArray();
 
                 for( sal_uInt32 i = 0; i < nPalCount; i++, pTmp++ )
                 {
                     const BitmapColor& rCol = pBmpAcc->GetPaletteColor( (sal_uInt16) i );
 
-                    *pTmp = ( (sal_Int32) rCol.GetRed() ) << 24L;
-                    *pTmp |= ( (sal_Int32) rCol.GetGreen() ) << 16L;
-                    *pTmp |= ( (sal_Int32) rCol.GetBlue() ) << 8L;
-                    *pTmp |= 0x000000ffL;
+                    *pTmp = ( (sal_Int32) rCol.GetRed() ) << (sal_Int32) 24L;
+                    *pTmp |= ( (sal_Int32) rCol.GetGreen() ) << (sal_Int32) 16L;
+                    *pTmp |= ( (sal_Int32) rCol.GetBlue() ) << (sal_Int32) 8L;
+                    *pTmp |= (sal_Int32) 0x000000ffL;
                 }
 
                 if( rGraphic.IsTransparent() )
                 {
                     // append transparent entry
-                    *pTmp = 0xffffff00L;
+                    *pTmp = (sal_Int32) 0xffffff00L;
                     mnTransIndex = nPalCount;
                     nPalCount++;
                 }
@@ -617,9 +617,9 @@ void ImageProducer::ImplUpdateConsumer( const Graphic& rGraphic )
                 {
                     const BitmapColor aCol( pBmpAcc->GetPixel( nY, nX ) );
 
-                    *pTmp = ( (sal_Int32) aCol.GetRed() ) << 24L;
-                    *pTmp |= ( (sal_Int32) aCol.GetGreen() ) << 16L;
-                    *pTmp |= ( (sal_Int32) aCol.GetBlue() ) << 8L;
+                    *pTmp = ( (sal_Int32) aCol.GetRed() ) << (sal_Int32) 24L;
+                    *pTmp |= ( (sal_Int32) aCol.GetGreen() ) << (sal_Int32) 16L;
+                    *pTmp |= ( (sal_Int32) aCol.GetBlue() ) << (sal_Int32) 8L;
 
                     if( pMskAcc->GetPixel( nY, nX ) != aWhite )
                         *pTmp |= 0x000000ffUL;
