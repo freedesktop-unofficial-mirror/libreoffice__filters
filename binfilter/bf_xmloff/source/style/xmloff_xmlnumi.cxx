@@ -4,9 +4,9 @@
  *
  *  $RCSfile: xmloff_xmlnumi.cxx,v $
  *
- *  $Revision: 1.5 $
+ *  $Revision: 1.6 $
  *
- *  last change: $Author: rt $ $Date: 2006-10-28 02:06:58 $
+ *  last change: $Author: ihi $ $Date: 2007-07-11 12:59:32 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -39,7 +39,7 @@
 #ifndef _URLOBJ_HXX
 #include <tools/urlobj.hxx>
 #endif
-#ifndef _TOOLS_DEBUG_HXX 
+#ifndef _TOOLS_DEBUG_HXX
 #include <tools/debug.hxx>
 #endif
 #ifndef _VCL_VCLENUM_HXX
@@ -75,7 +75,7 @@
 #ifndef _XMLOFF_XMLFONTSTYLESCONTEXT_HXX
 #include "XMLFontStylesContext.hxx"
 #endif
-#ifndef _XMLOFF_PROPMAPPINGTYPES_HXX 
+#ifndef _XMLOFF_PROPMAPPINGTYPES_HXX
 #include "maptype.hxx"
 #endif
 
@@ -218,7 +218,7 @@ class SvxXMLListLevelStyleContext_Impl : public SvXMLImportContext
 
     sal_Int16			nRelSize;
     Color				aColor;
-    
+
     sal_Bool			bBullet : 1;
     sal_Bool			bImage : 1;
     sal_Bool			bNum : 1;
@@ -423,7 +423,7 @@ Sequence<beans::PropertyValue> SvxXMLListLevelStyleContext_Impl::GetProperties(
     if( bImage )
     {
         eType = NumberingType::BITMAP;
-        nCount = 10L;
+        nCount = (sal_Int32) 10L;
 
         if( (sImageURL.getLength() > 0L) || xBase64Stream.is() )
             nCount++;
@@ -433,7 +433,7 @@ Sequence<beans::PropertyValue> SvxXMLListLevelStyleContext_Impl::GetProperties(
         eType = NumberingType::ARABIC;
         GetImport().GetMM100UnitConverter().convertNumFormat(
                 eType, sNumFormat, sNumLetterSync, sal_True );
-        nCount = 10L;
+        nCount = (sal_Int32) 10L;
     }
 
     if( ( bBullet || bNum ) && nRelSize )
@@ -762,7 +762,7 @@ SvxXMLListLevelStyleAttrContext_Impl::SvxXMLListLevelStyleAttrContext_Impl(
 
     if( sFontName.getLength() )
     {
-        const XMLFontStylesContext *pFontDecls = 
+        const XMLFontStylesContext *pFontDecls =
             GetImport().GetTextImport()->GetFontDecls();
         if( pFontDecls )
         {
@@ -805,7 +805,7 @@ SvxXMLListLevelStyleAttrContext_Impl::SvxXMLListLevelStyleAttrContext_Impl(
     {
         String sEmpty;
         Any aAny;
-        
+
         XMLFontFamilyNamePropHdl aFamilyNameHdl;
         if( aFamilyNameHdl.importXML( sFontFamily, aAny, rUnitConv ) )
         {
@@ -860,7 +860,7 @@ SvxXMLListLevelStyleAttrContext_Impl::SvxXMLListLevelStyleAttrContext_Impl(
             // TOP and BOTTOM are exchanged for a baseline relation
             switch( eVertOrient  )
             {
-            case VertOrientation::LINE_TOP:	
+            case VertOrientation::LINE_TOP:
                 eVertOrient = VertOrientation::BOTTOM;
                 break;
             case VertOrientation::LINE_CENTER:
