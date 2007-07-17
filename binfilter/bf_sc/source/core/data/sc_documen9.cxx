@@ -4,9 +4,9 @@
  *
  *  $RCSfile: sc_documen9.cxx,v $
  *
- *  $Revision: 1.8 $
+ *  $Revision: 1.9 $
  *
- *  last change: $Author: hr $ $Date: 2007-01-02 16:55:02 $
+ *  last change: $Author: obo $ $Date: 2007-07-17 09:12:24 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -95,7 +95,7 @@ namespace binfilter {
 /*N*/ 			SvtPathOptions aPathOpt;
 /*N*/ 			pColorTable = new XColorTable( aPathOpt.GetPalettePath() );
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		return pColorTable;
 /*N*/ 	}
 /*N*/ }
@@ -106,13 +106,13 @@ namespace binfilter {
 /*N*/ 	{
 /*?*/ 		SdrPage* pOldPage = pSrcDoc->pDrawLayer->GetPage(nSrcPos);
 /*?*/ 		SdrPage* pNewPage = pDrawLayer->GetPage(nDestPos);
-/*?*/ 
+/*?*/
 /*?*/ 		if (pOldPage && pNewPage)
 /*?*/ 		{
 /*?*/ 			SdrObjListIter aIter( *pOldPage, IM_FLAT );
 /*?*/ 			SdrObject* pOldObject = aIter.Next();
 /*?*/ 			while (pOldObject)
-/*?*/ 			{DBG_BF_ASSERT(0, "STRIP"); //STRIP001 
+/*?*/ 			{DBG_BF_ASSERT(0, "STRIP"); //STRIP001
 /*?*/ 			}
 /*?*/ 		}
 /*N*/ 	}
@@ -123,9 +123,9 @@ namespace binfilter {
 /*N*/ {
 /*N*/ 	if (pDocShell && !pShell)
 /*N*/ 		pShell = pDocShell;
-/*N*/ 
+/*N*/
 /*N*/ //	DBG_ASSERT(pShell,"InitDrawLayer ohne Shell");
-/*N*/ 
+/*N*/
 /*N*/ 	if (!pDrawLayer)
 /*N*/ 	{
 /*N*/ 		String aName;
@@ -134,17 +134,17 @@ namespace binfilter {
 /*N*/ 		pDrawLayer = new ScDrawLayer( this, aName );
 /*N*/ 		if (pLinkManager)
 /*N*/ 			pDrawLayer->SetLinkManager( pLinkManager );
-/*N*/ 
+/*N*/
 /*N*/ 		//	Drawing pages are accessed by table number, so they must also be present
 /*N*/ 		//	for preceding table numbers, even if the tables aren't allocated
 /*N*/ 		//	(important for clipboard documents).
-/*N*/ 
+/*N*/
 /*N*/ 		USHORT nDrawPages = 0;
 /*N*/ 		USHORT nTab;
 /*N*/ 		for (nTab=0; nTab<=MAXTAB; nTab++)
 /*N*/ 			if (pTab[nTab])
 /*N*/ 				nDrawPages = nTab + 1;			// needed number of pages
-/*N*/ 
+/*N*/
 /*N*/ 		for (nTab=0; nTab<nDrawPages; nTab++)
 /*N*/ 		{
 /*N*/ 			pDrawLayer->ScAddPage( nTab );		// always add page, with or without the table
@@ -153,7 +153,7 @@ namespace binfilter {
 /*N*/ 				String aName;
 /*N*/ 				pTab[nTab]->GetName(aName);
 /*N*/ 				pDrawLayer->ScRenamePage( nTab, aName );
-/*N*/ 
+/*N*/
 /*N*/ 				pTab[nTab]->SetDrawPageSize();	// #54782# sofort die richtige Groesse
 /*N*/ #if 0
 /*N*/ 				ULONG nx = (ULONG) ((double) (MAXCOL+1) * STD_COL_WIDTH			  * HMM_PER_TWIPS );
@@ -162,14 +162,14 @@ namespace binfilter {
 /*N*/ #endif
 /*N*/ 			}
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		pDrawLayer->SetDefaultTabulator( GetDocOptions().GetTabDistance() );
-/*N*/ 
+/*N*/
 /*N*/ 		UpdateDrawPrinter();
 /*N*/ 		UpdateDrawLanguages();
 /*N*/ 		if (bImportingXML)
 /*?*/ 			pDrawLayer->EnableAdjust(FALSE);
-/*N*/ 
+/*N*/
 /*N*/ 		pDrawLayer->SetForbiddenCharsTable( xForbiddenCharacters );
 /*N*/ 		pDrawLayer->SetCharCompressType( GetAsianCompression() );
 /*N*/ 		pDrawLayer->SetKernAsianPunctuation( GetAsianKerning() );
@@ -193,7 +193,7 @@ namespace binfilter {
 /*N*/ 	{
 /*N*/ 		// use the printer even if IsValid is false
 /*N*/ 		// Application::GetDefaultDevice causes trouble with changing MapModes
-/*N*/ 
+/*N*/
 /*N*/ 		OutputDevice* pRefDev = GetPrinter();
 /*N*/ 		pRefDev->SetMapMode( MAP_100TH_MM );
 /*N*/ 		pDrawLayer->SetRefDevice(pRefDev);
@@ -235,29 +235,29 @@ namespace binfilter {
 /*N*/ {
 /*N*/ 	InitDrawLayer();						// anlegen
 /*N*/ 	pDrawLayer->Load(rStream);
-/*N*/ 
+/*N*/
 /*N*/ 	//	nMaxTableNumber ist noch nicht initialisiert
-/*N*/ 
+/*N*/
 /*N*/ 	USHORT nTableCount = 0;
 /*N*/ 	while ( nTableCount <= MAXTAB && pTab[nTableCount] )
 /*N*/ 		++nTableCount;
-/*N*/ 
+/*N*/
 /*N*/ 	USHORT nPageCount = pDrawLayer->GetPageCount();
 /*N*/ 	if ( nPageCount > nTableCount && nTableCount != 0 )
 /*N*/ 	{
 /*?*/ 		//	Manchmal sind beim Kopieren/Verschieben/Undo von Tabellen zuviele
 /*?*/ 		//	(leere) Pages in der Tabelle stehengeblieben. Weg damit!
-/*?*/ 
+/*?*/
 /*?*/ 		DBG_ERROR("zuviele Draw-Pages in der Datei");
-/*?*/ 
+/*?*/
 /*?*/ 		for (USHORT i=nTableCount; i<nPageCount; i++)
 /*?*/ 			pDrawLayer->DeletePage(nTableCount);
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	//	Controls auf richtigen Layer setzen
 /*N*/ 	//	(zumindest in Dateien aus der 502 koennen sie falsch sein,
 /*N*/ 	//	 wegen des fehlenden Layers in alten Dateien)
-/*N*/ 
+/*N*/
 /*N*/ 	nPageCount = pDrawLayer->GetPageCount();
 /*N*/ 	for (USHORT i=0; i<nPageCount; i++)
 /*N*/ 	{
@@ -283,16 +283,10 @@ namespace binfilter {
 /*N*/ 		//	SetSavePortable wird mit VCL nicht mehr gebraucht
 /*N*/ 		//BOOL bIndep = SFX_APP()->GetOptions().IsIndepGrfFmt();
 /*N*/ 		//pDrawLayer->SetSavePortable( bIndep );
-/*N*/ 
-/*N*/ 		SvtSaveOptions aSaveOpt;
-/*N*/ 		SvtSaveOptions::SaveGraphicsMode eMode = aSaveOpt.GetSaveGraphicsMode();
-/*N*/ 
-/*N*/ 		BOOL bNative = ( eMode == SvtSaveOptions::SaveGraphicsOriginal );
-/*N*/ 		BOOL bCompr = bNative || ( eMode == SvtSaveOptions::SaveGraphicsCompressed );
-/*N*/ 
-/*N*/ 		pDrawLayer->SetSaveCompressed( bCompr );
-/*N*/ 		pDrawLayer->SetSaveNative( bNative );
-/*N*/ 
+/*N*/
+/*N*/       pDrawLayer->SetSaveCompressed( FALSE );
+/*N*/       pDrawLayer->SetSaveNative( FALSE );
+/*N*/
 /*N*/ 		pDrawLayer->GetItemPool().SetFileFormatVersion( (USHORT)rStream.GetVersion() );
 /*N*/ 		pDrawLayer->Store(rStream);
 /*N*/ 	}
@@ -320,9 +314,9 @@ namespace binfilter {
 /*N*/ 	DBG_ASSERT(pPage,"Page ?");
 /*N*/ 	if (!pPage)
 /*N*/ 		return FALSE;
-/*N*/ 
+/*N*/
 /*N*/ 	BOOL bFound = FALSE;
-/*N*/ 
+/*N*/
 /*N*/ 	SdrObjListIter aIter( *pPage, IM_FLAT );
 /*N*/ 	SdrObject* pObject = aIter.Next();
 /*N*/ 	while (pObject && !bFound)
@@ -335,7 +329,7 @@ namespace binfilter {
 /*N*/ 		}
 /*N*/ 		pObject = aIter.Next();
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	return bFound;
 /*N*/ }
 
@@ -343,7 +337,7 @@ namespace binfilter {
 /*N*/ {
 /*N*/ 	if (!pDrawLayer)
 /*N*/ 		return;
-/*N*/ 
+/*N*/
 /*N*/ 	BOOL bAnyIntObj = FALSE;
 /*N*/ 	USHORT nTab;
 /*N*/ 	ScPostIt aNote;
@@ -360,7 +354,7 @@ namespace binfilter {
 /*N*/ 				if ( pObject->GetLayer() == SC_LAYER_INTERN )
 /*N*/ 				{
 /*?*/ 					bAnyIntObj = TRUE;	// for all internal objects, including detective
-/*?*/ 
+/*?*/
 /*?*/ 					if ( pObject->ISA( SdrCaptionObj ) )
 /*?*/ 					{
 /*?*/ 						ScDrawObjData* pData = ScDrawLayer::GetObjData( pObject );
@@ -379,12 +373,12 @@ namespace binfilter {
 /*N*/ 			}
 /*N*/ 		}
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	if (bAnyIntObj)
 /*N*/ 	{
 /*?*/ 		//	update attributes for all note objects and the colors of detective objects
 /*?*/ 		//	(we don't know with which settings the file was created)
-/*?*/ 
+/*?*/
 /*N*/ 	ScDetectiveFunc aFunc( this, 0 ); // detective.sdc
 /*N*/ /*?*/ 		aFunc.UpdateAllComments();
 /*N*/ /*?*/ 		aFunc.UpdateAllArrowColors();
@@ -397,16 +391,16 @@ namespace binfilter {
 /*N*/ 	//	betroffen sind?
 /*N*/ 	//	(fuer Drawing-Optimierung, vor dem Hintergrund braucht dann nicht geloescht
 /*N*/ 	//	 zu werden)
-/*N*/ 
+/*N*/
 /*N*/ 	if (!pDrawLayer)
 /*N*/ 		return FALSE;
 /*N*/ 	SdrPage* pPage = pDrawLayer->GetPage(nTab);
 /*N*/ 	DBG_ASSERT(pPage,"Page ?");
 /*N*/ 	if (!pPage)
 /*N*/ 		return FALSE;
-/*N*/ 
+/*N*/
 /*N*/ 	BOOL bFound = FALSE;
-/*N*/ 
+/*N*/
 /*N*/ 	SdrObjListIter aIter( *pPage, IM_FLAT );
 /*N*/ 	SdrObject* pObject = aIter.Next();
 /*N*/ 	while (pObject && !bFound)
@@ -415,7 +409,7 @@ namespace binfilter {
 /*N*/ 			bFound = TRUE;
 /*N*/ 		pObject = aIter.Next();
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	return bFound;
 /*N*/ }
 
@@ -440,7 +434,7 @@ namespace binfilter {
 /*N*/ 		}
 /*N*/ 	delete pSelectionAttr;
 /*N*/ 	pSelectionAttr = NULL;
-/*N*/ 
+/*N*/
 /*N*/ 	if (pDrawLayer)
 /*N*/ 		pDrawLayer->Clear();
 /*N*/ }
@@ -448,7 +442,7 @@ namespace binfilter {
 /*N*/ BOOL ScDocument::HasControl( USHORT nTab, const Rectangle& rMMRect )
 /*N*/ {
 /*N*/ 	BOOL bFound = FALSE;
-/*N*/ 
+/*N*/
 /*N*/ 	if (pDrawLayer)
 /*N*/ 	{
 /*N*/ 		SdrPage* pPage = pDrawLayer->GetPage(nTab);
@@ -465,12 +459,12 @@ namespace binfilter {
 /*N*/ 					if ( aObjRect.IsOver( rMMRect ) )
 /*N*/ 						bFound = TRUE;
 /*N*/ 				}
-/*N*/ 
+/*N*/
 /*N*/ 				pObject = aIter.Next();
 /*N*/ 			}
 /*N*/ 		}
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	return bFound;
 /*N*/ }
 
@@ -479,9 +473,9 @@ namespace binfilter {
 /*N*/ {
 /*N*/ 	//	looks for detective objects, annotations don't count
 /*N*/ 	//	(used to adjust scale so detective objects hit their cells better)
-/*N*/ 
+/*N*/
 /*N*/ 	BOOL bFound = FALSE;
-/*N*/ 
+/*N*/
 /*N*/ 	if (pDrawLayer)
 /*N*/ 	{
 /*N*/ 		SdrPage* pPage = pDrawLayer->GetPage(nTab);
@@ -495,12 +489,12 @@ namespace binfilter {
 /*N*/ 				// anything on the internal layer except captions (annotations)
 /*N*/ 				if ( pObject->GetLayer() == SC_LAYER_INTERN && !pObject->ISA( SdrCaptionObj ) )
 /*N*/ 					bFound = TRUE;
-/*N*/ 
+/*N*/
 /*N*/ 				pObject = aIter.Next();
 /*N*/ 			}
 /*N*/ 		}
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	return bFound;
 /*N*/ }
 
@@ -511,15 +505,15 @@ namespace binfilter {
 /*N*/ 	//	Das muss fuer Dokumente bis incl SP2 nun nachgeholt werden:
 /*N*/ 	//	Alles, was nicht SYMBOL ist, wird auf den System-CharSet umgesetzt.
 /*N*/ 	//	Bei neuen Dokumenten (Version SC_FONTCHARSET) sollte der CharSet stimmen.
-/*N*/ 
+/*N*/
 /*N*/ 	BOOL bUpdateOld = ( nSrcVer < SC_FONTCHARSET );
-/*N*/ 
+/*N*/
 /*N*/ 	CharSet eSysSet = gsl_getSystemTextEncoding();
 /*N*/ 	if ( eSrcSet != eSysSet || bUpdateOld )
 /*N*/ 	{
 /*N*/ 		USHORT nCount,i;
 /*N*/ 		SvxFontItem* pItem;
-/*N*/ 
+/*N*/
 /*N*/ 		ScDocumentPool* pPool = xPoolHelper->GetDocPool();
 /*N*/ 		nCount = pPool->GetItemCount(ATTR_FONT);
 /*N*/ 		for (i=0; i<nCount; i++)
@@ -529,7 +523,7 @@ namespace binfilter {
 /*N*/ 							( bUpdateOld && pItem->GetCharSet() != RTL_TEXTENCODING_SYMBOL ) ) )
 /*N*/ 				pItem->GetCharSet() = eSysSet;
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		if ( pDrawLayer )
 /*N*/ 		{
 /*N*/ 			SfxItemPool& rDrawPool = pDrawLayer->GetItemPool();
