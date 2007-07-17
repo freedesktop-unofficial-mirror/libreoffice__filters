@@ -4,9 +4,9 @@
  *
  *  $RCSfile: sd_sdbinfilter.cxx,v $
  *
- *  $Revision: 1.5 $
+ *  $Revision: 1.6 $
  *
- *  last change: $Author: rt $ $Date: 2006-10-27 18:05:03 $
+ *  last change: $Author: obo $ $Date: 2007-07-17 09:58:03 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -33,7 +33,7 @@
  *
  ************************************************************************/
 
-#ifndef _RTL_LOGFILE_HXX_ 
+#ifndef _RTL_LOGFILE_HXX_
 #include <rtl/logfile.hxx>
 #endif
 
@@ -53,38 +53,38 @@
 #endif //!MAC
 
 
-#ifndef _XDEF_HXX 
+#ifndef _XDEF_HXX
 #include <bf_svx/xdef.hxx>
 #endif
 
-#ifndef _SVX_XFLGRIT_HXX 
+#ifndef _SVX_XFLGRIT_HXX
 #include <bf_svx/xflgrit.hxx>
 #endif
-#ifndef _SVX_XBTMPIT_HXX 
+#ifndef _SVX_XBTMPIT_HXX
 #include <bf_svx/xbtmpit.hxx>
 #endif
-#ifndef _SVX_XLNDSIT_HXX 
+#ifndef _SVX_XLNDSIT_HXX
 #include <bf_svx/xlndsit.hxx>
 #endif
-#ifndef _SVX_XLNSTIT_HXX 
+#ifndef _SVX_XLNSTIT_HXX
 #include <bf_svx/xlnstit.hxx>
 #endif
-#ifndef _SVX_XFLFTRIT_HXX 
+#ifndef _SVX_XFLFTRIT_HXX
 #include <bf_svx/xflftrit.hxx>
 #endif
-#ifndef _SVX_XFLHTIT_HXX 
+#ifndef _SVX_XFLHTIT_HXX
 #include <bf_svx/xflhtit.hxx>
 #endif
-#ifndef _SVX_XLNEDIT_HXX 
+#ifndef _SVX_XLNEDIT_HXX
 #include <bf_svx/xlnedit.hxx>
 #endif
-#ifndef _SVDOTEXT_HXX 
+#ifndef _SVDOTEXT_HXX
 #include <bf_svx/svdotext.hxx>
 #endif
-#ifndef _EEITEM_HXX 
+#ifndef _EEITEM_HXX
 #include <bf_svx/eeitem.hxx>
 #endif
-#ifndef _SVDITER_HXX 
+#ifndef _SVDITER_HXX
 #include <bf_svx/svditer.hxx>
 #endif
 
@@ -129,7 +129,7 @@ SdBINFilter::~SdBINFilter()
 // -----------------------------------------------------------------------------
 
 static void ImplPostLoadCheckStyleSheetPool( SfxStyleSheetPool* pStyleSheetPool, SdDrawDocument* pDoc )
-{	
+{
     if( pStyleSheetPool )
     {
         SfxStyleSheetBase* pStyleSheet = pStyleSheetPool->First();
@@ -276,7 +276,7 @@ static void ImplPostLoadFixTextStyles( SdDrawDocument* pDoc, SdrTextObj* pText )
             {
                 SfxItemSet& rStyleSet = pStyleSheet->GetItemSet();
                 SfxItemSet& rObjStyleSet = pObjectStyleSheet->GetItemSet();
-        
+
                 SfxItemSet aSet( pOutliner->GetParaAttribs( nPara ) );
 
                 USHORT nWhich;
@@ -419,7 +419,7 @@ sal_Bool SdBINFilter::Import()
             // load drawing model
             SvStorageStreamRef	xDocStm;
             sal_Bool			bAcceptableStreamFound = sal_False;
-            
+
             if( pStore->IsStream( pStarDrawDoc ) )
             {
                 bAcceptableStreamFound = sal_True;
@@ -458,7 +458,7 @@ sal_Bool SdBINFilter::Import()
 
                     xDocStm->SetBufferSize( 0 );
                 }
-                
+
                 bIsEmptyStreams = FALSE;
             }
         }
@@ -497,11 +497,9 @@ sal_Bool SdBINFilter::Export()
     RTL_LOGFILE_CONTEXT_TRACE1( aLog, "exporting %s", aFile.GetBuffer() );
 #endif
 
-    SvtSaveOptions							aOptions;
     SvStorage*								pStore = mrMedium.GetOutputStorage();
-    const SvtSaveOptions::SaveGraphicsMode	eSaveMode( aOptions.GetSaveGraphicsMode() );
-    const BOOL								bSaveNative = ( SvtSaveOptions::SaveGraphicsOriginal == eSaveMode );
-    const BOOL								bSaveCompressed = ( bSaveNative || ( SvtSaveOptions::SaveGraphicsCompressed == eSaveMode ) );
+    const BOOL                              bSaveNative = FALSE;
+    const BOOL                              bSaveCompressed = FALSE;
     sal_Bool								bRet = sal_False;
 
     mrDocument.SetSaveCompressed( bSaveCompressed );
@@ -542,7 +540,7 @@ sal_Bool SdBINFilter::Export()
             xPoolStm->SetCompressMode( nOldComprMode );
             bRet = ( xPoolStm->GetError() == 0 );
         }
-        else 
+        else
         {
             DBG_ERROR( "Error while writing the pool" );
             bRet = sal_False;
@@ -579,7 +577,7 @@ sal_Bool SdBINFilter::Export()
             DBG_ERROR( "Error while writing the model" );
             bRet = sal_False;
         }
-        
+
         if( !bRet || xDocStm->GetErrorCode() )
             mrDocShell.SetError( xDocStm->GetErrorCode() );
     }
