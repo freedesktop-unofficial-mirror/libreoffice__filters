@@ -4,9 +4,9 @@
  *
  *  $RCSfile: svx_impedit.cxx,v $
  *
- *  $Revision: 1.8 $
+ *  $Revision: 1.9 $
  *
- *  last change: $Author: hr $ $Date: 2007-01-02 17:20:20 $
+ *  last change: $Author: obo $ $Date: 2007-07-17 11:33:25 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -98,7 +98,7 @@ using namespace ::com::sun::star::linguistic2;
 /*N*/ 	nTravelXPos			= TRAVEL_X_DONTKNOW;
 /*N*/ 	nControl 			= EV_CNTRL_AUTOSCROLL | EV_CNTRL_ENABLEPASTE;
 /*N*/     bActiveDragAndDropListener = FALSE;
-/*N*/ 
+/*N*/
 /*N*/ 	aEditSelection.Min() = pEng->pImpEditEngine->GetEditDoc().GetStartPaM();
 /*N*/ 	aEditSelection.Max() = pEng->pImpEditEngine->GetEditDoc().GetEndPaM();
 /*N*/ }
@@ -106,10 +106,10 @@ using namespace ::com::sun::star::linguistic2;
 /*N*/ ImpEditView::~ImpEditView()
 /*N*/ {
 /*N*/     RemoveDragAndDropListeners();
-/*N*/ 
+/*N*/
 /*N*/     if ( pOutWin && ( pOutWin->GetCursor() == pCursor ) )
 /*N*/ 		pOutWin->SetCursor( NULL );
-/*N*/ 
+/*N*/
 /*N*/ 	delete pCursor;
 /*N*/ 	delete pBackgroundColor;
 /*N*/ 	delete pPointer;
@@ -119,8 +119,8 @@ using namespace ::com::sun::star::linguistic2;
 /*N*/ void ImpEditView::SetEditSelection( const EditSelection& rEditSelection )
 /*N*/ {
 /*N*/ 	// #100856# set state before notification
-/*N*/     aEditSelection = rEditSelection; 
-/*N*/ 
+/*N*/     aEditSelection = rEditSelection;
+/*N*/
 /*N*/     if ( pEditEngine->pImpEditEngine->GetNotifyHdl().IsSet() )
 /*N*/     {
 /*?*/         DBG_BF_ASSERT(0, "STRIP"); //STRIP001 EENotify aNotify( EE_NOTIFY_TEXTVIEWSELECTIONCHANGED );
@@ -136,39 +136,38 @@ using namespace ::com::sun::star::linguistic2;
 /*N*/ 	// zwei Paint-Events!
 /*N*/ 	// 19.10: Muss sogar vor Abfrage von bUpdate, falls nach Invalidate
 /*N*/ 	// noch Paints in der Queue, aber jemand schaltet den UpdateMode um!
-/*N*/ 
+/*N*/
 /*N*/ 	// pRegion: Wenn nicht NULL, dann nur Region berechnen.
 /*N*/ 	PolyPolygon* pPolyPoly = NULL;
 /*N*/ 	if ( pRegion )
 /*?*/ 		pPolyPoly = new PolyPolygon;
-/*N*/ 
+/*N*/
 /*N*/ 	sal_Bool bClipRegion = pOutWin->IsClipRegion();
 /*N*/ 	Region aOldRegion = pOutWin->GetClipRegion();
-/*N*/ 
+/*N*/
 /*N*/ 	if ( !pRegion )
 /*N*/ 	{
 /*N*/ 		if ( pEditEngine->pImpEditEngine->GetUpdateMode() == sal_False )
 /*N*/ 			return;
 /*N*/ 		if ( pEditEngine->pImpEditEngine->IsInUndo() )
 /*N*/ 			return;
-/*N*/ 
+/*N*/
 /*N*/ 		if ( !aTmpSel.HasRange() )
 /*N*/ 			return;
-/*N*/ 
+/*N*/
 /*?*/ 	    // aTmpOutArea: Falls OutputArea > Papierbreite und
 /*?*/ 	    // Text > Papierbreite ( uebergrosse Felder )
 /*?*/ 	    Rectangle aTmpOutArea( aOutArea );
 /*?*/ 	    if ( aTmpOutArea.GetWidth() > pEditEngine->pImpEditEngine->GetPaperSize().Width() )
 /*?*/ 		    aTmpOutArea.Right() = aTmpOutArea.Left() + pEditEngine->pImpEditEngine->GetPaperSize().Width();
 /*?*/ 		pOutWin->IntersectClipRegion( aTmpOutArea );
-/*?*/ 
+/*?*/
 /*?*/ 		if ( pOutWin->GetCursor() )
 /*?*/ 			pOutWin->GetCursor()->Hide();
 /*?*/ 	}
-/*?*/ 
-/*?*/ 	DBG_ASSERT( !pEditEngine->pImpEditEngine->aIdleFormatter.IsActive(), "DrawSelection: Not formatted!" );
+/*?*/
 /*?*/ 	aTmpSel.Adjust( pEditEngine->pImpEditEngine->GetEditDoc() );
-/*?*/ 
+/*?*/
 /*?*/ 	ContentNode* pStartNode = aTmpSel.Min().GetNode();
 /*?*/ 	ContentNode* pEndNode = aTmpSel.Max().GetNode();
 /*?*/ 	sal_uInt16 nStartPara = pEditEngine->pImpEditEngine->GetEditDoc().GetPos( pStartNode );
@@ -179,30 +178,30 @@ using namespace ::com::sun::star::linguistic2;
 /*?*/ 		ParaPortion* pTmpPortion = pEditEngine->pImpEditEngine->GetParaPortions().SaveGetObject( nPara );
 /*?*/ 		DBG_ASSERT( pTmpPortion, "Portion in Selektion nicht gefunden!" );
 /*?*/ 		DBG_ASSERT( !pTmpPortion->IsInvalid(), "Portion in Selektion nicht formatiert!" );
-/*?*/ 
+/*?*/
 /*?*/ 		if ( !pTmpPortion->IsVisible() || pTmpPortion->IsInvalid() )
 /*?*/ 			continue;
-/*?*/ 
+/*?*/
 /*?*/ 		long nParaStart = pEditEngine->pImpEditEngine->GetParaPortions().GetYOffset( pTmpPortion );
 /*?*/ 		if ( ( nParaStart + pTmpPortion->GetHeight() ) < GetVisDocTop() )
 /*?*/ 			continue;
 /*?*/ 		if ( nParaStart > GetVisDocBottom() )
 /*?*/ 			break;
-/*?*/ 
+/*?*/
 /*?*/ 		sal_uInt16 nStartLine = 0;
 /*?*/ 		sal_uInt16 nEndLine = pTmpPortion->GetLines().Count() -1;
 /*?*/ 		if ( nPara == nStartPara )
 /*?*/ 		{DBG_BF_ASSERT(0, "STRIP");} //STRIP001 	nStartLine = pTmpPortion->GetLines().FindLine( aTmpSel.Min().GetIndex(), sal_False );
 /*?*/ 		if ( nPara == nEndPara )
 /*?*/ 		{DBG_BF_ASSERT(0, "STRIP");} //STRIP001 	nEndLine = pTmpPortion->GetLines().FindLine( aTmpSel.Max().GetIndex(), sal_True );
-/*?*/ 
+/*?*/
 /*?*/ 		// ueber die Zeilen iterieren....
 /*?*/ 		for ( sal_uInt16 nLine = nStartLine; nLine <= nEndLine; nLine++ )
 /*?*/ 		{
 /*?*/ 			DBG_BF_ASSERT(0, "STRIP"); //STRIP001 EditLine* pLine = pTmpPortion->GetLines().GetObject( nLine );
 /*?*/ 		}
 /*?*/ 	}
-/*?*/ 
+/*?*/
 /*?*/ 	if ( pRegion )
 /*?*/ 	{
 /*?*/ 		*pRegion = Region( *pPolyPoly );
@@ -212,7 +211,7 @@ using namespace ::com::sun::star::linguistic2;
 /*?*/ 	{
 /*?*/ 		if ( pOutWin->GetCursor() )
 /*?*/ 			pOutWin->GetCursor()->Show();
-/*?*/ 
+/*?*/
 /*?*/ 		if ( bClipRegion )
 /*?*/ 			pOutWin->SetClipRegion( aOldRegion );
 /*?*/ 		else
@@ -227,17 +226,17 @@ using namespace ::com::sun::star::linguistic2;
 /*N*/ 	return pEditEngine->pImpEditEngine->IsVertical();
 /*N*/ }
 
-/*N*/ Rectangle ImpEditView::GetVisDocArea() const 
-/*N*/ { 
-/*N*/ 	return Rectangle( GetVisDocLeft(), GetVisDocTop(), GetVisDocRight(), GetVisDocBottom() ); 
+/*N*/ Rectangle ImpEditView::GetVisDocArea() const
+/*N*/ {
+/*N*/ 	return Rectangle( GetVisDocLeft(), GetVisDocTop(), GetVisDocRight(), GetVisDocBottom() );
 /*N*/ }
 
 /*N*/ Point ImpEditView::GetDocPos( const Point& rWindowPos ) const
 /*N*/ {
 /*N*/ 	// Fensterposition => Dokumentposition
 /*N*/ 	Point aPoint;
-/*N*/ 
-/*N*/ 	if ( !pEditEngine->pImpEditEngine->IsVertical() ) 
+/*N*/
+/*N*/ 	if ( !pEditEngine->pImpEditEngine->IsVertical() )
 /*N*/ 	{
 /*N*/ 		aPoint.X() = rWindowPos.X() - aOutArea.Left() + GetVisDocLeft();
 /*N*/ 		aPoint.Y() = rWindowPos.Y() - aOutArea.Top() + GetVisDocTop();
@@ -247,7 +246,7 @@ using namespace ::com::sun::star::linguistic2;
 /*?*/ 		aPoint.X() = rWindowPos.Y() - aOutArea.Top() + GetVisDocLeft();
 /*?*/ 		aPoint.Y() = aOutArea.Right() - rWindowPos.X() + GetVisDocTop();
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	return aPoint;
 /*N*/ }
 
@@ -255,8 +254,8 @@ using namespace ::com::sun::star::linguistic2;
 /*N*/ {
 /*N*/ 	// Dokumentposition => Fensterposition
 /*N*/ 	Point aPoint;
-/*N*/ 
-/*N*/ 	if ( !pEditEngine->pImpEditEngine->IsVertical() ) 
+/*N*/
+/*N*/ 	if ( !pEditEngine->pImpEditEngine->IsVertical() )
 /*N*/ 	{
 /*N*/ 		aPoint.X() = rDocPos.X() + aOutArea.Left() - GetVisDocLeft();
 /*N*/ 		aPoint.Y() = rDocPos.Y() + aOutArea.Top() - GetVisDocTop();
@@ -266,7 +265,7 @@ using namespace ::com::sun::star::linguistic2;
 /*?*/ 		aPoint.X() = aOutArea.Right() - rDocPos.Y() + GetVisDocTop();
 /*?*/ 		aPoint.Y() = rDocPos.X() + aOutArea.Top() - GetVisDocLeft();
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	return aPoint;
 /*N*/ }
 
@@ -276,13 +275,13 @@ using namespace ::com::sun::star::linguistic2;
 /*N*/ 	Point aPos( GetWindowPos( rDocRect.TopLeft() ) );
 /*N*/ 	Size aSz = rDocRect.GetSize();
 /*N*/ 	Rectangle aRect;
-/*N*/ 	if ( !pEditEngine->pImpEditEngine->IsVertical() ) 
+/*N*/ 	if ( !pEditEngine->pImpEditEngine->IsVertical() )
 /*N*/ 	{
 /*N*/ 		aRect = Rectangle( aPos, aSz );
 /*N*/ 	}
 /*N*/ 	else
 /*N*/ 	{
-/*?*/ 		Point aNewPos( aPos.X()-aSz.Height(), aPos.Y() );	
+/*?*/ 		Point aNewPos( aPos.X()-aSz.Height(), aPos.Y() );
 /*?*/ 		aRect = Rectangle( aNewPos, Size( aSz.Height(), aSz.Width() ) );
 /*N*/ 	}
 /*N*/ 	return aRect;
@@ -310,7 +309,7 @@ using namespace ::com::sun::star::linguistic2;
 /*N*/ 		aOutArea.Right() = aOutArea.Left();
 /*N*/ 	if ( aOutArea.Bottom() < aOutArea.Top() )
 /*N*/ 		aOutArea.Bottom() = aOutArea.Top();
-/*N*/ 
+/*N*/
 /*N*/ 	if ( DoBigScroll() )
 /*?*/ 		SetScrollDiffX( (sal_uInt16)aOutArea.GetWidth() * 3 / 10 );
 /*N*/ 	else
@@ -323,7 +322,7 @@ using namespace ::com::sun::star::linguistic2;
 /*N*/ void ImpEditView::CalcAnchorPoint()
 /*N*/ {
 /*N*/ 	// GetHeight() und GetWidth() -1, da Rectangle-Berechnung nicht erwuenscht.
-/*N*/ 
+/*N*/
 /*N*/ 	// X:
 /*N*/ 	switch ( eAnchorMode )
 /*N*/ 	{
@@ -349,7 +348,7 @@ using namespace ::com::sun::star::linguistic2;
 /*N*/ 		}
 /*N*/ 		break;
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	// Y:
 /*N*/ 	switch ( eAnchorMode )
 /*N*/ 	{
@@ -382,23 +381,23 @@ using namespace ::com::sun::star::linguistic2;
 /*N*/ 	// Kein ShowCursor bei einer leeren View...
 /*N*/ 	if ( ( aOutArea.Left() >= aOutArea.Right() ) && ( aOutArea.Top() >= aOutArea.Bottom() ) )
 /*N*/ 		return;
-/*N*/ 
+/*N*/
 /*?*/ }
 
 /*N*/ const SvxFieldItem* ImpEditView::GetField( const Point& rPos, sal_uInt16* pPara, sal_uInt16* pPos ) const
 /*N*/ {
 /*N*/ 	if( !GetOutputArea().IsInside( rPos ) )
 /*N*/ 		return 0;
-/*N*/ 
+/*N*/
 /*N*/ 	Point aDocPos( GetDocPos( rPos ) );
 /*N*/ 	EditPaM aPaM = pEditEngine->pImpEditEngine->GetPaM( aDocPos, sal_False );
-/*N*/ 
+/*N*/
 /*N*/ 	if ( aPaM.GetIndex() == aPaM.GetNode()->Len() )
 /*N*/ 	{
 /*N*/ 		// Sonst immer, wenn Feld ganz am Schluss und Mouse unter Text
 /*N*/ 		return 0;
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	const CharAttribArray& rAttrs = aPaM.GetNode()->GetCharAttribs().GetAttribs();
 /*N*/ 	sal_uInt16 nXPos = aPaM.GetIndex();
 /*N*/ 	for ( sal_uInt16 nAttr = rAttrs.Count(); nAttr; )
@@ -426,14 +425,14 @@ using namespace ::com::sun::star::linguistic2;
 /*N*/         GetWindow()->GetDragGestureRecognizer()->removeDragGestureListener( xDGL );
 /*N*/         uno::Reference< datatransfer::dnd::XDropTargetListener> xDTL( xDGL, uno::UNO_QUERY );
 /*N*/         GetWindow()->GetDropTarget()->removeDropTargetListener( xDTL );
-/*N*/         
+/*N*/
 /*N*/         if ( mxDnDListener.is() )
 /*N*/         {
 /*N*/             uno::Reference< lang::XEventListener> xEL( mxDnDListener, uno::UNO_QUERY );
 /*N*/             xEL->disposing( lang::EventObject() );  // #95154# Empty Source means it's the Client
 /*N*/             mxDnDListener.clear();
 /*N*/         }
-/*N*/ 
+/*N*/
 /*N*/         bActiveDragAndDropListener = FALSE;
 /*N*/     }
 /*N*/ }}
