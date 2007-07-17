@@ -4,9 +4,9 @@
  *
  *  $RCSfile: sw_viewopt.cxx,v $
  *
- *  $Revision: 1.7 $
+ *  $Revision: 1.8 $
  *
- *  last change: $Author: hr $ $Date: 2007-01-02 18:09:49 $
+ *  last change: $Author: obo $ $Date: 2007-07-17 12:07:56 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -41,9 +41,6 @@
 #endif
 #ifndef _SVX_SVXIDS_HRC //autogen
 #include <bf_svx/svxids.hrc>
-#endif
-#ifndef _MySVXACORR_HXX //autogen
-#include <bf_svx/svxacorr.hxx>
 #endif
 #ifndef _UNOTOOLS_LOCALEDATAWRAPPER_HXX
 #include <unotools/localedatawrapper.hxx>
@@ -100,10 +97,10 @@ namespace binfilter {
 /*M*/ Color SwViewOption::aPageBreakColor(COL_BLUE);
 /*N*/ Color SwViewOption::aNotesIndicatorColor(COL_YELLOW);
 /*N*/ Color SwViewOption::aScriptIndicatorColor(COL_GREEN);
-/*N*/ 
+/*N*/
 /*N*/ sal_Int32 SwViewOption::nAppearanceFlags = VIEWOPT_DOC_BOUNDARIES|VIEWOPT_OBJECT_BOUNDARIES;
 /*N*/ USHORT SwViewOption::nPixelTwips = 0;   //ein Pixel auf dem Bildschirm
-/*N*/ 
+/*N*/
 
 #define LINEBREAK_SIZE 12, 8
 #define TAB_SIZE 12, 6
@@ -203,15 +200,15 @@ static const char __FAR_DATA aPostItStr[] = "  ";
 /*M*/ 					VIEWOPT_1_SOLIDMARKHDL | VIEWOPT_1_POSTITS;
 /*M*/     nCore2Options = VIEWOPT_CORE2_BLACKFONT | VIEWOPT_CORE2_HIDDENPARA;
 /*M*/     nUIOptions    = VIEWOPT_2_MODIFIED | VIEWOPT_2_EXECHYPERLINKS | VIEWOPT_2_GRFKEEPZOOM |VIEWOPT_2_ANY_RULER;
-/*M*/ 
+/*M*/
 /*M*/ 	if(MEASURE_METRIC != GetAppLocaleData().getMeasurementSystemEnum())
 /*M*/ 		aSnapSize.Width() = aSnapSize.Height() = 720;	// 1/2"
 /*M*/ 	else
 /*M*/ 		aSnapSize.Width() = aSnapSize.Height() = 567;	// 1 cm
 /*M*/ 	nDivisionX = nDivisionY = 1;
-/*M*/ 
+/*M*/
 /*M*/     bSelectionInReadonly = SW_MOD()->GetAccessibilityOptions().IsSelectionInReadonly();
-/*M*/ 
+/*M*/
 /*M*/ #ifndef PRODUCT
 /*M*/ 	// korrespondieren zu den Angaben in ui/config/cfgvw.src
 /*M*/ 	bTest1 = bTest2 = bTest3 = bTest4 =
@@ -240,7 +237,7 @@ static const char __FAR_DATA aPostItStr[] = "  ";
 /*N*/ 	sSymbolFont 	= rVOpt.sSymbolFont;
 /*N*/ 	nShdwCrsrFillMode = rVOpt.nShdwCrsrFillMode;
 /*N*/ 	bStarOneSetting = rVOpt.bStarOneSetting;
-/*N*/ 
+/*N*/
 /*N*/ #ifndef PRODUCT
 /*N*/ 	bTest1          = rVOpt.bTest1      ;
 /*N*/ 	bTest2          = rVOpt.bTest2      ;
@@ -273,7 +270,7 @@ static const char __FAR_DATA aPostItStr[] = "  ";
 /*N*/ 	sSymbolFont 	= rVOpt.sSymbolFont;
 /*N*/ 	nShdwCrsrFillMode = rVOpt.nShdwCrsrFillMode;
 /*N*/ 	bStarOneSetting = rVOpt.bStarOneSetting;
-/*N*/ 
+/*N*/
 /*N*/ #ifndef PRODUCT
 /*N*/ 	bTest1          = rVOpt.bTest1      ;
 /*N*/ 	bTest2          = rVOpt.bTest2      ;
@@ -309,12 +306,6 @@ static const char __FAR_DATA aPostItStr[] = "  ";
 /*N*/ 	}
 /*N*/ }
 
-/*N*/ BOOL SwViewOption::IsAutoCompleteWords() const
-/*N*/ {
-/*N*/ 	const SvxSwAutoFmtFlags& rFlags = OFF_APP()->GetAutoCorrect()->GetSwFlags();
-/*N*/ 	return /*rFlags.bAutoCompleteWords &&*/ rFlags.bAutoCmpltCollectWords;
-/*N*/ }
-
 /*************************************************************************/
 /*
 /*************************************************************************/
@@ -334,7 +325,7 @@ static const char __FAR_DATA aPostItStr[] = "  ";
 /*N*/ {
 /*N*/ 	USHORT nRet = 0;
 /*N*/ 	if(!pShell || PTR_CAST(SwWebDocShell, pShell))
-/*N*/ 	{DBG_BF_ASSERT(0, "STRIP"); //STRIP001 
+/*N*/ 	{DBG_BF_ASSERT(0, "STRIP"); //STRIP001
 /*N*/ 	}
 /*N*/ 	return nRet;
 /*N*/ }
@@ -345,61 +336,61 @@ static const char __FAR_DATA aPostItStr[] = "  ";
 /*N*/ void SwViewOption::ApplyColorConfigValues(const svtools::ColorConfig& rConfig )
 /*N*/ {
 /*N*/     aDocColor.SetColor(rConfig.GetColorValue(svtools::DOCCOLOR).nColor);
-/*N*/ 
+/*N*/
 /*N*/     svtools::ColorConfigValue aValue = rConfig.GetColorValue(svtools::DOCBOUNDARIES);
 /*N*/     aDocBoundColor.SetColor(aValue.nColor);
 /*N*/     nAppearanceFlags = 0;
 /*N*/     if(aValue.bIsVisible)
 /*N*/         nAppearanceFlags |= VIEWOPT_DOC_BOUNDARIES;
-/*N*/ 
+/*N*/
 /*N*/     aAppBackgroundColor.SetColor(rConfig.GetColorValue(svtools::APPBACKGROUND).nColor);
-/*N*/ 
+/*N*/
 /*N*/     aValue = rConfig.GetColorValue(svtools::OBJECTBOUNDARIES);
 /*N*/     aObjectBoundColor.SetColor(aValue.nColor);
 /*N*/     if(aValue.bIsVisible)
 /*N*/         nAppearanceFlags |= VIEWOPT_OBJECT_BOUNDARIES;
-/*N*/ 
+/*N*/
 /*N*/     aValue = rConfig.GetColorValue(svtools::TABLEBOUNDARIES);
 /*N*/     aTableBoundColor.SetColor(aValue.nColor);
 /*N*/     if(aValue.bIsVisible)
 /*N*/         nAppearanceFlags |= VIEWOPT_TABLE_BOUNDARIES;
-/*N*/ 
+/*N*/
 /*N*/     aValue = rConfig.GetColorValue(svtools::WRITERIDXSHADINGS);
 /*N*/     aIndexShadingsColor.SetColor(aValue.nColor);
 /*N*/     if(aValue.bIsVisible)
 /*N*/         nAppearanceFlags |= VIEWOPT_INDEX_SHADINGS;
-/*N*/ 
+/*N*/
 /*N*/     aValue = rConfig.GetColorValue(svtools::LINKS);
 /*N*/     aLinksColor.SetColor(aValue.nColor);
 /*N*/     if(aValue.bIsVisible)
 /*N*/         nAppearanceFlags |= VIEWOPT_LINKS;
-/*N*/ 
+/*N*/
 /*N*/     aValue = rConfig.GetColorValue(svtools::LINKSVISITED);
 /*N*/     aVisitedLinksColor.SetColor(aValue.nColor);
 /*N*/     if(aValue.bIsVisible)
 /*N*/         nAppearanceFlags |= VIEWOPT_VISITED_LINKS;
-/*N*/ 
+/*N*/
 /*N*/     aDirectCursorColor.SetColor(rConfig.GetColorValue(svtools::WRITERDIRECTCURSOR).nColor);
-/*N*/ 
+/*N*/
 /*N*/     aTextGridColor.SetColor(rConfig.GetColorValue(svtools::WRITERTEXTGRID).nColor);
-/*N*/ 
+/*N*/
 /*N*/     aSpellColor.SetColor(rConfig.GetColorValue(svtools::SPELL).nColor);
-/*N*/ 
+/*N*/
 /*N*/     aFontColor.SetColor(rConfig.GetColorValue(svtools::FONTCOLOR).nColor);
-/*N*/ 
+/*N*/
 /*N*/     aValue = rConfig.GetColorValue(svtools::WRITERFIELDSHADINGS);
 /*N*/     aFieldShadingsColor.SetColor(aValue.nColor);
 /*N*/     if(aValue.bIsVisible)
 /*N*/         nAppearanceFlags |= VIEWOPT_FIELD_SHADINGS;
-/*N*/ 
+/*N*/
 /*N*/     aValue = rConfig.GetColorValue(svtools::WRITERSECTIONBOUNDARIES);
 /*N*/     aSectionBoundColor.SetColor(aValue.nColor);
 /*N*/     if(aValue.bIsVisible)
 /*N*/         nAppearanceFlags |= VIEWOPT_SECTION_BOUNDARIES;
-/*N*/ 
+/*N*/
 /*N*/     aValue = rConfig.GetColorValue(svtools::WRITERPAGEBREAKS);
 /*N*/     aPageBreakColor.SetColor(aValue.nColor);
-/*N*/ 
+/*N*/
 /*N*/     aNotesIndicatorColor.SetColor(rConfig.GetColorValue(svtools::WRITERNOTESINDICATOR).nColor);
 /*N*/     aScriptIndicatorColor.SetColor(rConfig.GetColorValue(svtools::WRITERSCRIPTINDICATOR).nColor);
 /*N*/ }
@@ -407,7 +398,7 @@ static const char __FAR_DATA aPostItStr[] = "  ";
 
  ---------------------------------------------------------------------------*/
 /*N*/ void SwViewOption::SetAppearanceFlag(sal_Int32 nFlag, BOOL bSet, BOOL bSaveInConfig )
-/*N*/ {DBG_BF_ASSERT(0, "STRIP"); //STRIP001 
+/*N*/ {DBG_BF_ASSERT(0, "STRIP"); //STRIP001
 /*N*/ }
 /* -----------------------------24.04.2002 10:42------------------------------
 
