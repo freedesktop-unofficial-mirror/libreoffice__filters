@@ -4,9 +4,9 @@
  *
  *  $RCSfile: sd_drawdoc.cxx,v $
  *
- *  $Revision: 1.10 $
+ *  $Revision: 1.11 $
  *
- *  last change: $Author: obo $ $Date: 2007-03-09 14:32:11 $
+ *  last change: $Author: obo $ $Date: 2007-07-17 09:57:05 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -48,17 +48,8 @@
 
 #include <bf_svx/svxids.hrc>
 
-#ifndef _OSPLCFG_HXX
-#include <bf_offmgr/osplcfg.hxx>
-#endif
-#ifndef _OFA_MISCCFG_HXX
-#include <bf_sfx2/misccfg.hxx>
-#endif
 #ifndef _SFX_PRINTER_HXX //autogen
 #include <bf_sfx2/printer.hxx>
-#endif
-#ifndef _SFX_TOPFRM_HXX //autogen wg. SfxTopViewFrame
-#include <bf_sfx2/topfrm.hxx>
 #endif
 #include <bf_sfx2/app.hxx>
 #include <bf_offmgr/app.hxx>
@@ -106,12 +97,6 @@
 #include <com/sun/star/lang/XMultiServiceFactory.hpp>
 #endif
 #include <bf_svx/xtable.hxx>
-#ifndef _COM_SUN_STAR_LINGUISTIC2_XHYPHENATOR_HPP_
-#include <com/sun/star/linguistic2/XHyphenator.hpp>
-#endif
-#ifndef _COM_SUN_STAR_LINGUISTIC2_XSPELLCHECKER1_HPP_
-#include <com/sun/star/linguistic2/XSpellChecker1.hpp>
-#endif
 #ifndef _COM_SUN_STAR_BEANS_XPROPERTYSET_HPP_
 #include <com/sun/star/beans/XPropertySet.hpp>
 #endif
@@ -158,7 +143,6 @@
 #include "../ui/inc/docshell.hxx"
 #include "../ui/inc/grdocsh.hxx"
 #include "../ui/inc/sdxfer.hxx"
-#include "../ui/inc/viewshel.hxx"
 #include "../ui/inc/grdocsh.hxx"
 #include "../ui/inc/optsitem.hxx"
 #include "../ui/inc/frmview.hxx"
@@ -167,23 +151,18 @@
 #include "grdocsh.hxx"
 #include "sdresid.hxx"
 #include "sdxfer.hxx"
-#include "viewshel.hxx"
 #include "grdocsh.hxx"
 #include "optsitem.hxx"
 #include "frmview.hxx"
 #endif
 
 #ifndef _LEGACYBINFILTERMGR_HXX
-#include <legacysmgr/legacy_binfilters_smgr.hxx>	//STRIP002 
+#include <legacysmgr/legacy_binfilters_smgr.hxx>	//STRIP002
 #endif
 
 // #90477#
 #ifndef _TOOLS_TENCCVT_HXX
 #include <tools/tenccvt.hxx>
-#endif
-
-#ifndef _SFX_SRCHITEM_HXX
-#include <bf_sfx2/srchitem.hxx>
 #endif
 
 namespace binfilter {
@@ -234,7 +213,6 @@ using namespace ::com::sun::star::linguistic2;
 /*N*/ 	pOnlineSpellingList(NULL),
 /*N*/ 	bInitialOnlineSpellingEnabled(TRUE),
 /*N*/ 	bHasOnlineSpellErrors(FALSE),
-/*N*/ 	pOnlineSearchItem(NULL),
 /*N*/ 	mpLocale(NULL),
 /*N*/ 	mpCharClass(NULL),
 /*N*/ 	bAllocDocSh(FALSE),
@@ -248,34 +226,34 @@ using namespace ::com::sun::star::linguistic2;
 /*N*/ 	mbStartWithPresentation( false )
 /*N*/ {
 /*N*/ 	SetObjectShell(pDrDocSh);		// fuer das VCDrawModel
-/*N*/ 
+/*N*/
 /*N*/ 	if (pDocSh)
 /*N*/ 	{
 /*N*/ 		SetSwapGraphics(TRUE);
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	// Masseinheit (von App) und Massstab (von SdMod) setzen
 /*N*/ 	INT32 nX, nY;
 /*N*/ 	SdOptions* pOptions = SD_MOD()->GetSdOptions(eDocType);
 /*N*/ 	pOptions->GetScale( nX, nY );
-/*N*/ 
+/*N*/
 /*N*/     // #92067# Allow UI scale only for draw documents.
 /*N*/     if( eType == DOCUMENT_TYPE_DRAW )
 /*N*/         SetUIUnit( (FieldUnit)pOptions->GetMetric(), Fraction( nX, nY ) );	// user-defined
 /*N*/     else
 /*N*/         SetUIUnit( (FieldUnit)pOptions->GetMetric(), Fraction( 1, 1 ) );	// default
-/*N*/ 
+/*N*/
 /*N*/ 	SetScaleUnit(MAP_100TH_MM);
 /*N*/ 	SetScaleFraction(Fraction(1, 1));
 /*N*/ 	SetDefaultFontHeight(847);     // 24p
-/*N*/ 
+/*N*/
 /*N*/ 	pItemPool->SetDefaultMetric(SFX_MAPUNIT_100TH_MM);
 /*N*/ 	pItemPool->FreezeIdRanges();
 /*N*/ 	SetTextDefaults();
-/*N*/ 
+/*N*/
 /*N*/ 	// die DrawingEngine muss auch wissen, wo er ist
 /*N*/ 	FmFormModel::SetStyleSheetPool( new SdStyleSheetPool( GetPool(), this ) );
-/*N*/ 
+/*N*/
 /*N*/ 	// Dem DrawOutliner den StyleSheetPool setzen, damit Textobjekte richtig
 /*N*/ 	// eingelesen werden koennen. Der Link zum StyleRequest-Handler des
 /*N*/ 	// Dokuments wird erst in NewOrLoadCompleted gesetzt, da erst dann alle
@@ -283,26 +261,26 @@ using namespace ::com::sun::star::linguistic2;
 /*N*/ 	SdrOutliner& rOutliner = GetDrawOutliner();
 /*N*/ 	rOutliner.SetStyleSheetPool((SfxStyleSheetPool*)GetStyleSheetPool());
 /*N*/ 	rOutliner.SetCalcFieldValueHdl(LINK(SD_MOD(), SdModule, CalcFieldValueHdl));
-/*N*/ 
+/*N*/
 /*N*/ 	// set linguistic options
 /*N*/ 	{
 /*N*/         const SvtLinguConfig    aLinguConfig;
 /*N*/ 		SvtLinguOptions			aOptions;
 /*N*/ 		aLinguConfig.GetOptions( aOptions );
-/*N*/ 
+/*N*/
 /*N*/ 		SetLanguage( aOptions.nDefaultLanguage, EE_CHAR_LANGUAGE );
 /*N*/ 		SetLanguage( aOptions.nDefaultLanguage_CJK, EE_CHAR_LANGUAGE_CJK );
 /*N*/ 		SetLanguage( aOptions.nDefaultLanguage_CTL, EE_CHAR_LANGUAGE_CTL );
-/*N*/ 
+/*N*/
 /*N*/ 		bOnlineSpell = aOptions.bIsSpellAuto;
 /*N*/ 		bHideSpell = aOptions.bIsSpellHideMarkings;
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	LanguageType eRealLanguage = MsLangId::getRealLanguage( eLanguage );
-/*N*/ 
+/*N*/
 /*N*/ 	mpLocale = new ::com::sun::star::lang::Locale( MsLangId::convertLanguageToLocale( eRealLanguage ));
 /*N*/ 	mpCharClass = new CharClass( *mpLocale );
-/*N*/ 
+/*N*/
 /*N*/ 	// If the current application language is a language that uses right-to-left text...
 /*N*/ 	LanguageType eRealCTLLanguage = Application::GetSettings().GetLanguage();
 /*N*/ 	if( (LANGUAGE_ARABIC == (eRealCTLLanguage & 0x00ff)) ||
@@ -311,55 +289,37 @@ using namespace ::com::sun::star::linguistic2;
 /*N*/ 	{
 /*?*/ 		DBG_BF_ASSERT(0, "STRIP"); //STRIP001 // ... then we have to set this as a default
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	// DefTab und SpellOptions setzen
 /*N*/ 	//OfaMiscCfg* pOfaMiscCfg = SFX_APP()->GetMiscConfig();
 /*N*/ 	// Jetzt am Modul (SD)
 /*N*/ 	USHORT nDefTab = pOptions->GetDefTab();
 /*N*/ 	SetDefaultTabulator( nDefTab );
-/*N*/ 
-/*N*/ 	try
-/*N*/ 	{
-/*N*/ 	    Reference< XSpellChecker1 > xSpellChecker( LinguMgr::GetSpellChecker() );
-/*N*/ 	    if ( xSpellChecker.is() )
-/*N*/ 		    rOutliner.SetSpeller( xSpellChecker );
-/*N*/ 
-/*N*/ 	    Reference< XHyphenator > xHyphenator( LinguMgr::GetHyphenator() );
-/*N*/ 	    if( xHyphenator.is() )
-/*N*/ 		    rOutliner.SetHyphenator( xHyphenator );
-/*N*/ 
-/*N*/ 		SetForbiddenCharsTable( new SvxForbiddenCharactersTable( ::legacy_binfilters::getLegacyProcessServiceFactory() ) );
-/*N*/ 	}
-/*N*/ 	catch(...)
-/*N*/ 	{
-/*N*/ 		DBG_ERROR("Can't get SpellChecker");
-/*N*/ 	}
-/*N*/ 	// END_CATCH
-/*N*/ 
+/*N*/
 /*N*/ 	rOutliner.SetDefaultLanguage( Application::GetSettings().GetLanguage() );
-/*N*/ 
+/*N*/
 /*N*/ 	aOldNotifyUndoActionHdl = GetNotifyUndoActionHdl();
 /*N*/ 	SetNotifyUndoActionHdl(LINK(this, SdDrawDocument, NotifyUndoActionHdl));
-/*N*/ 
+/*N*/
 /*N*/ 	if (pDocSh)
 /*N*/ 	{
 /*N*/ 		SetLinkManager( new SvxLinkManager(pDocSh) );
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	ULONG nCntrl = rOutliner.GetControlWord();
 /*N*/ 	nCntrl |= EE_CNTRL_ALLOWBIGOBJS;
 /*N*/ 	nCntrl |= EE_CNTRL_URLSFXEXECUTE;
-/*N*/ 
+/*N*/
 /*N*/ 	if (bHideSpell)
 /*N*/ 		nCntrl |= EE_CNTRL_NOREDLINES;
 /*N*/ 	else
 /*N*/ 		nCntrl &= ~EE_CNTRL_NOREDLINES;
-/*N*/ 
+/*N*/
 /*N*/ 	if (bOnlineSpell)
 /*N*/ 		nCntrl |= EE_CNTRL_ONLINESPELLING;
 /*N*/ 	else
 /*N*/ 		nCntrl &= ~EE_CNTRL_ONLINESPELLING;
-/*N*/ 
+/*N*/
 /*N*/ 	nCntrl &= ~ EE_CNTRL_ULSPACESUMMATION;
 /*N*/     if ( eDocType != DOCUMENT_TYPE_IMPRESS )
 /*N*/         SetSummationOfParagraphs( sal_False );
@@ -370,49 +330,34 @@ using namespace ::com::sun::star::linguistic2;
 /*N*/ 	    	nCntrl |= EE_CNTRL_ULSPACESUMMATION;
 /*N*/     }
 /*N*/ 	rOutliner.SetControlWord(nCntrl);
-/*N*/ 
+/*N*/
 /*N*/     // Initialize the printer independent layout mode.
 /*N*/     SetPrinterIndependentLayout (pOptions->GetPrinterIndependentLayout());
-/*N*/ 
+/*N*/
 /*N*/ 	// Dem HitTestOutliner den StyleSheetPool setzen.
 /*N*/ 	// Der Link zum StyleRequest-Handler des
 /*N*/ 	// Dokuments wird erst in NewOrLoadCompleted gesetzt, da erst dann alle
 /*N*/ 	// Vorlagen existieren.
 /*N*/ 	SfxItemSet aSet2( pHitTestOutliner->GetEmptyItemSet() );
 /*N*/ 	pHitTestOutliner->SetStyleSheetPool( (SfxStyleSheetPool*)GetStyleSheetPool() );
-/*N*/ 
+/*N*/
 /*N*/ 	pHitTestOutliner->SetCalcFieldValueHdl( LINK(SD_MOD(), SdModule, CalcFieldValueHdl) );
-/*N*/ 
-/*N*/ 	try
-/*N*/ 	{
-/*N*/ 	    Reference< XSpellChecker1 > xSpellChecker( LinguMgr::GetSpellChecker() );
-/*N*/ 	    if ( xSpellChecker.is() )
-/*N*/ 		    pHitTestOutliner->SetSpeller( xSpellChecker );
-/*N*/ 
-/*N*/ 	    Reference< XHyphenator > xHyphenator( LinguMgr::GetHyphenator() );
-/*N*/ 	    if( xHyphenator.is() )
-/*N*/ 		    pHitTestOutliner->SetHyphenator( xHyphenator );
-/*N*/ 	}
-/*N*/ 	catch(...)
-/*N*/ 	{
-/*N*/ 		DBG_ERROR("Can't get SpellChecker");
-/*N*/ 	}
-/*N*/ 	//END_CATCH
-/*N*/ 
+/*N*/
+/*N*/
 /*N*/ 	pHitTestOutliner->SetDefaultLanguage( Application::GetSettings().GetLanguage() );
-/*N*/ 
+/*N*/
 /*N*/ 	ULONG nCntrl2 = pHitTestOutliner->GetControlWord();
 /*N*/ 	nCntrl2 |= EE_CNTRL_ALLOWBIGOBJS;
 /*N*/ 	nCntrl2 |= EE_CNTRL_URLSFXEXECUTE;
 /*N*/ 	nCntrl2 |= EE_CNTRL_NOREDLINES;
 /*N*/ 	nCntrl2 &= ~EE_CNTRL_ONLINESPELLING;
-/*N*/ 
+/*N*/
 /*N*/ 	nCntrl2 &= ~ EE_CNTRL_ULSPACESUMMATION;
 /*N*/ 	if ( pOptions->IsSummationOfParagraphs() )
 /*N*/ 		nCntrl2 |= EE_CNTRL_ULSPACESUMMATION;
-/*N*/ 
+/*N*/
 /*N*/ 	pHitTestOutliner->SetControlWord( nCntrl2 );
-/*N*/ 
+/*N*/
     /**************************************************************************
     * Layer anlegen
     *
@@ -431,17 +376,17 @@ using namespace ::com::sun::star::linguistic2;
     **************************************************************************/
 /*N*/ 	{
 /*N*/ 		String aControlLayerName( SdResId(STR_LAYER_CONTROLS) );
-/*N*/ 
+/*N*/
 /*N*/ 		SdrLayerAdmin& rLayerAdmin = GetLayerAdmin();
 /*N*/ 		rLayerAdmin.NewLayer( String(SdResId(STR_LAYER_LAYOUT)) );
 /*N*/ 		rLayerAdmin.NewLayer( String(SdResId(STR_LAYER_BCKGRND)) );
 /*N*/ 		rLayerAdmin.NewLayer( String(SdResId(STR_LAYER_BCKGRNDOBJ)) );
 /*N*/ 		rLayerAdmin.NewLayer( aControlLayerName );
 /*N*/ 		rLayerAdmin.NewLayer( String(SdResId(STR_LAYER_MEASURELINES)) );
-/*N*/ 
+/*N*/
 /*N*/ 		rLayerAdmin.SetControlLayerName(aControlLayerName);
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	pFrameViewList = new List();
 /*N*/ }
 
@@ -454,26 +399,24 @@ using namespace ::com::sun::star::linguistic2;
 /*N*/ SdDrawDocument::~SdDrawDocument()
 /*N*/ {
 /*N*/ 	Broadcast(SdrHint(HINT_MODELCLEARED));
-/*N*/ 
+/*N*/
 /*N*/ 	if (pWorkStartupTimer)
 /*N*/ 	{
 /*N*/ 		if ( pWorkStartupTimer->IsActive() )
 /*?*/ 			pWorkStartupTimer->Stop();
-/*N*/ 
+/*N*/
 /*N*/ 		delete pWorkStartupTimer;
 /*N*/ 		pWorkStartupTimer = NULL;
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	StopOnlineSpelling();
-/*N*/ 	delete pOnlineSearchItem;
-/*N*/ 	pOnlineSearchItem = NULL;
-/*N*/ 
+/*N*/
 /*N*/ 	CloseBookmarkDoc();
 /*N*/ 	SetAllocDocSh(FALSE);
-/*N*/ 
+/*N*/
 /*N*/ 	SetNotifyUndoActionHdl(aOldNotifyUndoActionHdl);
 /*N*/ 	Clear();
-/*N*/ 
+/*N*/
 /*N*/ 	if (pLinkManager)
 /*N*/ 	{
 /*N*/ 		// BaseLinks freigeben
@@ -481,25 +424,25 @@ using namespace ::com::sun::star::linguistic2;
 /*?*/ 		{
 /*?*/ 			pLinkManager->Remove( 0, pLinkManager->GetLinks().Count() );
 /*?*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		delete pLinkManager;
 /*N*/ 		pLinkManager = NULL;
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	FrameView* pFrameView = NULL;
-/*N*/ 
+/*N*/
 /*N*/ 	for (ULONG i = 0; i < pFrameViewList->Count(); i++)
 /*N*/ 	{
 /*N*/ 		// Ggf. FrameViews loeschen
 /*N*/ 		pFrameView = (FrameView*) pFrameViewList->GetObject(i);
-/*N*/ 
+/*N*/
 /*N*/ 		if (pFrameView)
 /*N*/ 			delete pFrameView;
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	delete pFrameViewList;
 /*N*/ 	pFrameViewList = NULL;
-/*N*/ 
+/*N*/
 /*N*/ 	if (pCustomShowList)
 /*?*/ 	{
 /*?*/ 		for (ULONG j = 0; j < pCustomShowList->Count(); j++)
@@ -512,19 +455,19 @@ using namespace ::com::sun::star::linguistic2;
 /*?*/ 		delete pCustomShowList;
 /*?*/ 		pCustomShowList = NULL;
 /*?*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	delete pOutliner;
 /*N*/ 	pOutliner = NULL;
-/*N*/ 
+/*N*/
 /*N*/ 	delete pInternalOutliner;
 /*N*/ 	pInternalOutliner = NULL;
-/*N*/ 
+/*N*/
 /*N*/ 	delete pDeletedPresObjList;
 /*N*/ 	pDeletedPresObjList = NULL;
-/*N*/ 
+/*N*/
 /*N*/ 	delete mpLocale;
 /*N*/ 	mpLocale = NULL;
-/*N*/ 
+/*N*/
 /*N*/ 	delete mpCharClass;
 /*N*/ 	mpCharClass = NULL;
 /*N*/ }
@@ -553,33 +496,33 @@ using namespace ::com::sun::star::linguistic2;
 /*N*/ {
 /*N*/ 	// #90477# CharSet eSysSet = ::GetStoreCharSet( gsl_getSystemTextEncoding());
 /*N*/ 	CharSet eSysSet = GetSOStoreTextEncoding(gsl_getSystemTextEncoding(), (sal_uInt16)rOut.GetVersion());
-/*N*/ 
+/*N*/
     /**************************************************************************
     * Aktuelle FileFormat-Versionsnummer
     * Bei Aenderugen stets inkrementieren und beim Laden beruecksichtigen!
     **************************************************************************/
 /*N*/ 	rDoc.nFileFormatVersion = 18;
-/*N*/ 
+/*N*/
 /*N*/ 	// AutoLayouts muessen ggf. erzeugt werden
 /*N*/ 	rDoc.StopWorkStartupDelay();
-/*N*/ 
+/*N*/
 /*N*/ 	// Eindeutige Namen der StandardLayer erzeugen
 /*N*/ 	rDoc.MakeUniqueLayerNames();
-/*N*/ 
+/*N*/
 /*N*/ 	rOut << (FmFormModel&) rDoc;
-/*N*/ 
+/*N*/
 /*N*/ 	// Sprachabhaengige Namen der StandardLayer wieder herstellen
 /*N*/ 	rDoc.RestoreLayerNames();
-/*N*/ 
+/*N*/
 /*N*/ 	if ( rDoc.IsStreamingSdrModel() )
 /*N*/ 	{
 /*N*/ 		// Es wird nur das SdrModel gestreamt, nicht das SdDrawDocument!
 /*N*/ 		// Anwendungsfall: svdraw Clipboard-Format
 /*N*/ 		return(rOut);
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	SdIOCompat aIO(rOut, STREAM_WRITE, rDoc.nFileFormatVersion);
-/*N*/ 
+/*N*/
 /*N*/ 	BOOL bDummy = TRUE;
 /*N*/ 	rOut << bDummy; 				   // ehem. bPresentation
 /*N*/ 	rOut << rDoc.bPresAll;
@@ -588,12 +531,12 @@ using namespace ::com::sun::star::linguistic2;
 /*N*/ 	rOut << rDoc.bPresMouseVisible;
 /*N*/ 	rOut << rDoc.bPresMouseAsPen;
 /*N*/ 	rOut << rDoc.nPresFirstPage;
-/*N*/ 
+/*N*/
 /*N*/ 	// Es wird nun eine Liste von FrameViews geschrieben (siehe weiter unten),
 /*N*/ 	// daher wird an dieser Stelle ein FALSE vermerkt.
 /*N*/ 	BOOL bSingleFrameView = FALSE;
 /*N*/ 	rOut << bSingleFrameView;
-/*N*/ 
+/*N*/
     /**************************************************************************
     * Frueher (StarDraw Version 3.0, File-Format Version 3) wurde hier das
     * JobSetup geschrieben, nun der Printer (binaer-kompatibel, daher wurde
@@ -610,57 +553,18 @@ using namespace ::com::sun::star::linguistic2;
 /*N*/ 		JobSetup aJobSetup;
 /*N*/ 		rOut << aJobSetup;
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	rOut << (sal_uInt32) rDoc.eLanguage;
-/*N*/ 
+/*N*/
     /**************************************************************************
     * FrameViews schreiben
     **************************************************************************/
 /*N*/ 	sal_uInt32 nFrameViewCount = 0;
-/*N*/ 	SdViewShell* pViewSh = NULL;
-/*N*/ 	SfxViewShell* pSfxViewSh = NULL;
-/*N*/ 	SfxViewFrame* pSfxViewFrame = SfxViewFrame::GetFirst(rDoc.pDocSh,
-/*N*/ 														 TYPE(SfxTopViewFrame));
-/*N*/ 
-/*N*/ 	while (pSfxViewFrame)
-/*N*/ 	{
-/*N*/ 		// Anzahl FrameViews ermitteln
-/*N*/ 		pSfxViewSh = pSfxViewFrame->GetViewShell();
-/*N*/ 		pViewSh = PTR_CAST( SdViewShell, pSfxViewSh );
-/*N*/ 
-/*N*/ 		if ( pViewSh && pViewSh->GetFrameView() )
-/*N*/ 		{
-/*N*/ 			nFrameViewCount++;
-/*N*/ 		}
-/*N*/ 
-/*N*/ 		pSfxViewFrame = SfxViewFrame::GetNext(*pSfxViewFrame, rDoc.pDocSh,
-/*N*/ 											  TYPE(SfxTopViewFrame));
-/*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	// Anzahl FrameViews schreiben
 /*N*/ 	rOut << nFrameViewCount;
-/*N*/ 
-/*N*/ 	FrameView* pFrame = NULL;
-/*N*/ 	pViewSh = NULL;
-/*N*/ 	pSfxViewSh = NULL;
-/*N*/ 	pSfxViewFrame = SfxViewFrame::GetFirst(rDoc.pDocSh, TYPE(SfxTopViewFrame));
-/*N*/ 
-/*N*/ 	while (pSfxViewFrame)
-/*N*/ 	{
-/*N*/ 		// FrameViews schreiben
-/*N*/ 		pSfxViewSh = pSfxViewFrame->GetViewShell();
-/*N*/ 		pViewSh = PTR_CAST( SdViewShell, pSfxViewSh );
-/*N*/ 
-/*N*/ 		if ( pViewSh && pViewSh->GetFrameView() )
-/*N*/ 		{
-/*N*/ 			pViewSh->WriteFrameViewData();
-/*N*/ 			rOut << *pViewSh->GetFrameView();
-/*N*/ 		}
-/*N*/ 
-/*N*/ 		pSfxViewFrame = SfxViewFrame::GetNext(*pSfxViewFrame, rDoc.pDocSh,
-/*N*/ 											  TYPE(SfxTopViewFrame));
-/*N*/ 	}
-/*N*/ 
+/*N*/
+/*N*/
 /*N*/ 	rOut << rDoc.bStartPresWithNavigator;
 /*N*/ 	rOut << rDoc.bPresLockedPages;
 /*N*/ 	rOut << rDoc.bPresAlwaysOnTop;
@@ -669,23 +573,23 @@ using namespace ::com::sun::star::linguistic2;
 /*N*/ 	rOut << rDoc.bPresFullScreen;
 /*N*/ 	rOut.WriteByteString( rDoc.aPresPage, eSysSet );
 /*N*/ 	rOut << rDoc.bAnimationAllowed;
-/*N*/ 
+/*N*/
 /*N*/ 	UINT16 nDocType = (UINT16) rDoc.eDocType;
 /*N*/ 	rOut << nDocType;
-/*N*/ 
+/*N*/
 /*N*/ 	// CustomShow aktiv
 /*N*/ 	rOut << rDoc.bCustomShow;
-/*N*/ 
+/*N*/
 /*N*/ 	// Anzahl CustomShows schreiben
 /*N*/ 	sal_uInt32 nCustomShowCount = 0;
-/*N*/ 
+/*N*/
 /*N*/ 	if (rDoc.pCustomShowList)
 /*N*/ 	{
 /*?*/ 		nCustomShowCount = rDoc.pCustomShowList->Count();
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	rOut << nCustomShowCount;
-/*N*/ 
+/*N*/
 /*N*/ 	if (rDoc.pCustomShowList)
 /*N*/ 	{
 /*?*/ 		for (ULONG i = 0; i < nCustomShowCount; i++)
@@ -702,12 +606,12 @@ using namespace ::com::sun::star::linguistic2;
 
 /*N*/ 	// ab Version 15
 /*N*/ 	rOut << (sal_uInt32) rDoc.GetPageNumType();
-/*N*/ 
+/*N*/
 /*N*/ 	// ab Version 17
 /*N*/ 	rOut << rDoc.GetPresPause() << rDoc.IsPresShowLogo();
-/*N*/ 
+/*N*/
 /*N*/ 	// ab Version 18 (keine Aenderung)
-/*N*/ 
+/*N*/
 /*N*/ 	return rOut;
 /*N*/ }
 
@@ -721,29 +625,29 @@ using namespace ::com::sun::star::linguistic2;
 /*N*/ {
 /*N*/ 	// #90477# CharSet eSysSet = ::GetStoreCharSet( gsl_getSystemTextEncoding());
 /*N*/ 	CharSet eSysSet = GetSOLoadTextEncoding(gsl_getSystemTextEncoding(), (sal_uInt16)rIn.GetVersion());
-/*N*/ 
+/*N*/
 /*N*/ 	rIn >> (FmFormModel&) rDoc;
 /*N*/ 	rDoc.GetItemPool().LoadCompleted();
 /*N*/ 	rDoc.SetTextDefaults();		// overwrites loaded pool defaults
-/*N*/ 
+/*N*/
 /*N*/     // Turn off printer independent layout (make it printer *dependent*) for
 /*N*/     // pre-6.0 documents.
 /*N*/     rDoc.SetPrinterIndependentLayout (
 /*N*/         ::com::sun::star::document::PrinterIndependentLayout::DISABLED);
-/*N*/ 
+/*N*/
 /*N*/ 	// Fehler ?
 /*N*/ 	if (rIn.GetError() != 0)
 /*N*/ 		return (rIn);
-/*N*/ 
+/*N*/
 /*N*/ 	if ( rDoc.IsStreamingSdrModel() )
 /*N*/ 	{
 /*N*/ 		// Es wird nur das SdrModel gestreamt, nicht das SdDrawDocument!
 /*N*/ 		// Anwendungsfall: svdraw Clipboard-Format
 /*N*/ 		return(rIn);
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	SdIOCompat aIO(rIn, STREAM_READ);
-/*N*/ 
+/*N*/
 /*N*/ 	BOOL bDummy;
 /*N*/ 	rIn >> bDummy;					   // ehem. bPresentation
 /*N*/ 	rIn >> rDoc.bPresAll;
@@ -752,32 +656,32 @@ using namespace ::com::sun::star::linguistic2;
 /*N*/ 	rIn >> rDoc.bPresMouseVisible;
 /*N*/ 	rIn >> rDoc.bPresMouseAsPen;
 /*N*/ 	rIn >> rDoc.nPresFirstPage;
-/*N*/ 
+/*N*/
 /*N*/ 	rDoc.nFileFormatVersion = aIO.GetVersion();
-/*N*/ 
+/*N*/
 /*N*/ 	if (rDoc.nFileFormatVersion >= 1)
 /*N*/ 	{
 /*N*/ 		// Daten der Versionen >= 1 einlesen
-/*N*/ 
+/*N*/
 /*N*/ 		BOOL bSingleFrameView;
 /*N*/ 		rIn >> bSingleFrameView;
-/*N*/ 
+/*N*/
 /*N*/ 		if (bSingleFrameView)
 /*N*/ 		{
 /*N*/ 			FrameView * pFrameView = new FrameView( &rDoc );
 /*N*/ 			rIn >> *pFrameView;
 /*N*/ 			rDoc.pFrameViewList->Insert(pFrameView, LIST_APPEND);
-/*N*/ 
+/*N*/
 /*N*/ 			// Fehler ?
 /*N*/ 			if (rIn.GetError() != 0)
 /*N*/ 				return (rIn);
 /*N*/ 		}
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	if (rDoc.nFileFormatVersion >= 2)
 /*N*/ 	{
 /*N*/ 		// Daten der Versionen >= 2 einlesen
-/*N*/ 
+/*N*/
          /******************************************************************
          * Frueher (StarDraw Version 3.0, File-Format Version 3) wurde hier
          * das JobSetup eingelesen, nun wird der Printer erzeugt
@@ -793,20 +697,20 @@ using namespace ::com::sun::star::linguistic2;
 /*N*/ 		SdOptionsPrintItem aPrintItem(ATTR_OPTIONS_PRINT
 /*N*/ 									  ,SD_MOD()->GetSdOptions(rDoc.eDocType)
 /*N*/ 									  );
-/*N*/ 
+/*N*/
 /*N*/ 		SfxFlagItem aFlagItem( SID_PRINTER_CHANGESTODOC );
 /*N*/ 		USHORT		nFlags = 0;
-/*N*/ 
+/*N*/
 /*N*/ 		nFlags =  (aPrintItem.IsWarningSize() ? SFX_PRINTER_CHG_SIZE : 0) |
 /*N*/ 				(aPrintItem.IsWarningOrientation() ? SFX_PRINTER_CHG_ORIENTATION : 0);
 /*N*/ 		aFlagItem.SetValue( nFlags );
-/*N*/ 
+/*N*/
 /*N*/ 		pSet->Put( aPrintItem );
 /*N*/ 		pSet->Put( SfxBoolItem( SID_PRINTER_NOTFOUND_WARN, aPrintItem.IsWarningPrinter() ) );
 /*N*/ 		pSet->Put( aFlagItem );
-/*N*/ 
+/*N*/
 /*N*/ 		SfxPrinter* pPrinter = SfxPrinter::Create(rIn, pSet);
-/*N*/ 
+/*N*/
 /*N*/ 		MapMode aMM (pPrinter->GetMapMode());
 /*N*/ 		aMM.SetMapUnit(MAP_100TH_MM);
 /*N*/ 		pPrinter->SetMapMode(aMM);
@@ -815,14 +719,14 @@ using namespace ::com::sun::star::linguistic2;
 /*N*/ 		else
 /*N*/ 			delete pPrinter;
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	if (rDoc.nFileFormatVersion >= 3)
 /*N*/ 	{
 /*N*/ 		sal_uInt32 nTmp;
 /*N*/ 		rIn >> nTmp;
 /*N*/ 		rDoc.SetLanguage( (LanguageType) nTmp, EE_CHAR_LANGUAGE );
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	if (rDoc.nFileFormatVersion >= 4)
 /*N*/ 	{
          /**********************************************************************
@@ -830,7 +734,7 @@ using namespace ::com::sun::star::linguistic2;
          **********************************************************************/
 /*N*/ 		ULONG nCount = 0;
 /*N*/ 		FrameView* pFrameView = NULL;
-/*N*/ 
+/*N*/
 /*N*/ 		for (nCount=0; nCount<rDoc.pFrameViewList->Count(); nCount++)
 /*N*/ 		{
 /*N*/ 			// Ggf. FrameViews loeschen
@@ -839,22 +743,22 @@ using namespace ::com::sun::star::linguistic2;
             if (pFrameView)
                 delete pFrameView;
         }
-/*N*/ 
+/*N*/
 /*N*/ 		rDoc.pFrameViewList->Clear();
-/*N*/ 
+/*N*/
 /*N*/ 		// Anzahl FrameViews lesen
 /*N*/ 		const SvtSaveOptions aOptions;
 /*N*/ 		BOOL bIsSaveDocView = aOptions.IsSaveDocView();
-/*N*/ 
+/*N*/
 /*N*/ 		sal_uInt32 nFrameViewCount = 0;
 /*N*/ 		rIn >> nFrameViewCount;
-/*N*/ 
+/*N*/
 /*N*/ 		for (nCount=0; nCount<nFrameViewCount; nCount++)
 /*N*/ 		{
 /*N*/ 			// Einzelne FrameViews lesen
 /*N*/ 			pFrameView = new FrameView( &rDoc );
 /*N*/ 			rIn >> *pFrameView;
-/*N*/ 
+/*N*/
 /*N*/ 			if (bIsSaveDocView)
 /*N*/ 			{
 /*N*/ 				// FrameViews werden fuer die ViewShell gebraucht
@@ -866,49 +770,49 @@ using namespace ::com::sun::star::linguistic2;
 /*N*/ 				// FrameView kann wieder geloescht werden
 /*N*/ 				delete pFrameView;
 /*N*/ 			}
-/*N*/ 
+/*N*/
 /*N*/ 			// Fehler ?
 /*N*/ 			if (rIn.GetError() != 0)
 /*N*/ 				return (rIn);
 /*N*/ 		}
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	if (rDoc.nFileFormatVersion >= 5)
 /*N*/ 	{
 /*N*/ 		rIn >> rDoc.bStartPresWithNavigator;
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	if (rDoc.nFileFormatVersion >= 6)
 /*N*/ 	{
 /*N*/ 		rIn >> rDoc.bPresLockedPages;
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	if (rDoc.nFileFormatVersion >= 7)
 /*N*/ 	{
 /*N*/ 		rIn >> rDoc.bPresAlwaysOnTop;
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	if (rDoc.nFileFormatVersion >= 8)
 /*N*/ 	{
 /*N*/ 		rIn >> rDoc.bOnlineSpell;
 /*N*/ 		rIn >> rDoc.bHideSpell;
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	if (rDoc.nFileFormatVersion >= 9)
 /*N*/ 	{
 /*N*/ 		rIn >> rDoc.bPresFullScreen;
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	if (rDoc.nFileFormatVersion >= 10)
 /*N*/ 	{
 /*N*/ 		rIn.ReadByteString( rDoc.aPresPage, eSysSet );
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	if (rDoc.nFileFormatVersion >= 11)
 /*N*/ 	{
 /*N*/ 		rIn >> rDoc.bAnimationAllowed;
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	if (rDoc.nFileFormatVersion >= 12)
 /*N*/ 	{
 /*N*/ 		UINT16 nDocType;
@@ -923,20 +827,20 @@ using namespace ::com::sun::star::linguistic2;
 /*N*/ 				rDoc.eDocType = DOCUMENT_TYPE_IMPRESS;
 /*N*/ 		}
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	if (rDoc.nFileFormatVersion >= 13)
 /*N*/ 	{
 /*N*/ 		// Keine Aenderung
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	if (rDoc.nFileFormatVersion >= 14)
 /*N*/ 	{
 /*N*/ 		// CustomShow aktiv
 /*N*/ 		rIn >> rDoc.bCustomShow;
-/*N*/ 
+/*N*/
 /*N*/ 		sal_uInt32 nCustomShowCount = 0;
 /*N*/ 		rIn >> nCustomShowCount;
-/*N*/ 
+/*N*/
 /*N*/ 		if (nCustomShowCount > 0)
 /*N*/ 		{
             // Liste erzeugen
@@ -963,31 +867,31 @@ using namespace ::com::sun::star::linguistic2;
             rDoc.pCustomShowList->Seek(nCurPos);
         }
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	if (rDoc.nFileFormatVersion >= 15)
 /*N*/ 	{
 /*N*/ 		sal_uInt32 nTmp;
 /*N*/ 		rIn >> nTmp;
 /*N*/ 		rDoc.SetPageNumType( (SvxNumType) nTmp );
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	if (rDoc.nFileFormatVersion >= 17)
 /*N*/ 	{
 /*N*/ 		sal_uInt32 nPauseSec;
 /*N*/ 		BOOL	bShowLogo;
-/*N*/ 
+/*N*/
 /*N*/ 		rIn >> nPauseSec >> bShowLogo;
 /*N*/ 		rDoc.SetPresPause( nPauseSec );
 /*N*/ 		rDoc.SetPresShowLogo( bShowLogo );
 /*N*/ 	}
 /*N*/ 	else
 /*N*/ 		rDoc.SetPresPause( 0 );
-/*N*/ 
+/*N*/
 /*N*/ 	if (rDoc.nFileFormatVersion >= 18)
 /*N*/ 	{
 /*N*/ 		// Keine Aenderung
 /*N*/ 	}
-/*N*/ 
+/*N*/
     /**************************************************************************
     * So machts der Writer, und so muessen es alle machen:
     * Bug 9714: Der CharSet an den Fonts muss geaendert werden, wenn
@@ -997,7 +901,7 @@ using namespace ::com::sun::star::linguistic2;
 /*N*/ 	USHORT nMaxItems = rPool.GetItemCount(EE_CHAR_FONTINFO);
 /*N*/ 	SvxFontItem* pItem;
 /*N*/ 	CharSet eSrcSet = ((SdPage*) rDoc.GetPage(0))->GetCharSet();
-/*N*/ 
+/*N*/
 /*N*/ 	for (USHORT n = 0; n < nMaxItems; ++n)
 /*N*/ 	{
 /*N*/ 		pItem = (SvxFontItem*) rPool.GetItem(EE_CHAR_FONTINFO, n);
@@ -1006,7 +910,7 @@ using namespace ::com::sun::star::linguistic2;
 /*N*/ 			pItem->GetCharSet() = eSysSet;
 /*N*/ 		}
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	return rIn;
 /*N*/ }
 
@@ -1086,7 +990,7 @@ using namespace ::com::sun::star::linguistic2;
 /*N*/ 		{
 /*N*/  			// weitergeben an Basisklasse
 /*N*/  			FmFormModel::SetChanged(bFlag);
-/*N*/  
+/*N*/
 /*N*/  			// an ObjectShell weiterleiten
 /*N*/  			pDocSh->SetModified(bFlag);
 /*N*/ 		}
@@ -1127,18 +1031,18 @@ using namespace ::com::sun::star::linguistic2;
 /*N*/ 		// Praesentations- und Standardvorlagen erzeugen,
 /*N*/ 		// Pool fuer virtuelle Controls erzeugen
 /*N*/ 		CreateLayoutTemplates();
-/*N*/ 
+/*N*/
 /*N*/ 		((SdStyleSheetPool*)pStyleSheetPool)->CreatePseudosIfNecessary();
 /*N*/ 	}
 /*N*/ 	else if (eMode == DOC_LOADED)
 /*N*/ 	{
 /*N*/ 			// Dokument wurde geladen:
-/*N*/ 
+/*N*/
 /*N*/ 		CheckMasterPages();
-/*N*/ 
+/*N*/
 /*N*/ 		if ( GetMasterSdPageCount(PK_STANDARD) > 1 )
 /*N*/ 			RemoveUnnessesaryMasterPages( NULL, TRUE, FALSE );
-/*N*/ 
+/*N*/
 /*N*/ 		for ( USHORT i = 0; i < GetPageCount(); i++ )
 /*N*/ 		{
 /*N*/ 			// Check for correct layout names
@@ -1150,20 +1054,20 @@ using namespace ::com::sun::star::linguistic2;
 /*N*/ 					pPage->SetLayoutName( pMaster->GetLayoutName() );
 /*N*/ 			}
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		for ( USHORT nPage = 0; nPage < GetMasterPageCount(); nPage++)
 /*N*/ 		{
 /*N*/ 			// LayoutName and PageName must be the same
 /*N*/ 			SdPage* pPage = (SdPage*) GetMasterPage( nPage );
-/*N*/ 
+/*N*/
 /*N*/ 			String aName( pPage->GetLayoutName() );
 /*N*/ 			aName.Erase( aName.SearchAscii( SD_LT_SEPARATOR ) );
-/*N*/ 
+/*N*/
 /*N*/ 			if( aName != pPage->GetName() )
 /*N*/ 				pPage->SetName( aName );
-/*N*/ 
+/*N*/
 /*N*/ 			SdrObject* pPresObj = pPage->GetPresObj( PRESOBJ_BACKGROUND ) ;
-/*N*/ 
+/*N*/
 /*N*/ 			if( pPage->GetPageKind() == PK_STANDARD )
 /*N*/ 			{
 /*N*/ 				DBG_ASSERT( pPresObj, "Masterpage without a background object!" );
@@ -1181,23 +1085,23 @@ using namespace ::com::sun::star::linguistic2;
 /*N*/ 				}
 /*N*/ 			}
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		// Sprachabhaengige Namen der StandardLayer erzeugen
 /*N*/ 		RestoreLayerNames();
-/*N*/ 
+/*N*/
 /*N*/ 		// Sprachabhaengige Namen der Vorlagen setzen
 /*N*/ 		((SdStyleSheetPool*)pStyleSheetPool)->UpdateStdNames();
-/*N*/ 
+/*N*/
 /*N*/ 		// Ggf. fehlende Vorlagen erzeugen (es gab z.B. frueher keinen Subtitle)
 /*N*/ 		((SdStyleSheetPool*)pStyleSheetPool)->CreatePseudosIfNecessary();
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	// Standardvorlage an der Drawing Engine setzen
 /*N*/ 	String aName( SdResId(STR_STANDARD_STYLESHEET_NAME));
 /*N*/ 	SfxStyleSheet* pSheet = (SfxStyleSheet*)pStyleSheetPool->
 /*N*/ 									Find(aName, SFX_STYLE_FAMILY_PARA);
 /*N*/ 	SetDefaultStyleSheet(pSheet);
-/*N*/ 
+/*N*/
 /*N*/ 	// Draw-Outliner und  Dokument Outliner initialisieren,
 /*N*/ 	// aber nicht den globalen Outliner, den der ist ja nicht
 /*N*/ 	// dokumentspezifisch wie StyleSheetPool und StyleRequestHandler
@@ -1210,13 +1114,13 @@ using namespace ::com::sun::star::linguistic2;
 /*N*/ 	else
 /*N*/ 		nCntrl &= ~EE_CNTRL_ONLINESPELLING;
 /*N*/ 	rDrawOutliner.SetControlWord(nCntrl);
-/*N*/ 
+/*N*/
 /*N*/ 	// HitTest-Outliner und  Dokument Outliner initialisieren,
 /*N*/ 	// aber nicht den globalen Outliner, den der ist ja nicht
 /*N*/ 	// dokumentspezifisch wie StyleSheetPool und StyleRequestHandler
 /*N*/ 	pHitTestOutliner->SetStyleSheetPool((SfxStyleSheetPool*)GetStyleSheetPool());
 /*N*/    	pHitTestOutliner->SetMinDepth(0);
-/*N*/ 
+/*N*/
 /*N*/ 	if (pOutliner)
 /*?*/ 	{
 /*?*/ 		pOutliner->SetStyleSheetPool((SfxStyleSheetPool*)GetStyleSheetPool());
@@ -1238,13 +1142,13 @@ using namespace ::com::sun::star::linguistic2;
 /*N*/ 			// Bis Version 17 gab es noch diverse Probleme
 /*N*/ 			((SdStyleSheetPool*) pStyleSheetPool)->AdjustLRSpaceItems();
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		// Praesentationsobjekte muessen wieder Listener der entsprechenden
 /*N*/ 		// Vorlagen werden
 /*N*/ 		SdStyleSheetPool* pSPool = (SdStyleSheetPool*) GetStyleSheetPool();
 /*N*/ 		SfxStyleSheet*	  pSheet = NULL;
 /*N*/ 		USHORT nPage, nPageCount;
-/*N*/ 
+/*N*/
 /*N*/ 		// #96323# create missing layout style sheets for broken documents
 /*N*/ 		//		   that where created with the 5.2
 /*N*/ 		nPageCount = GetMasterSdPageCount( PK_STANDARD );
@@ -1253,15 +1157,15 @@ using namespace ::com::sun::star::linguistic2;
 /*N*/ 			SdPage* pPage = GetMasterSdPage(nPage, PK_STANDARD);
 /*N*/ 			pSPool->CreateLayoutStyleSheets( pPage->GetName(), sal_True );
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		// Standard- und Notizseiten:
 /*N*/ 		for (nPage = 0; nPage < GetPageCount(); nPage++)
 /*N*/ 		{
 /*N*/ 			SdPage* pPage = (SdPage*)GetPage(nPage);
-/*N*/ 
+/*N*/
 /*N*/ 			if( nFileFormatVersion <= 4 )
 /*N*/ 				pPage->CreateTitleAndLayout();
-/*N*/ 
+/*N*/
 /*N*/ 			SdrObjListIter aIter( *pPage );
 /*N*/ 			while( aIter.IsMore() )
 /*N*/ 			{
@@ -1270,11 +1174,11 @@ using namespace ::com::sun::star::linguistic2;
 /*N*/ 				{
 /*N*/ 					if( pOPO->GetOutlinerMode() == OUTLINERMODE_DONTKNOW )
 /*N*/ 						pOPO->SetOutlinerMode( OUTLINERMODE_TEXTOBJECT );
-/*N*/ 
+/*N*/
 /*N*/ 					pOPO->FinishLoad( pSPool );
 /*N*/ 				}
 /*N*/ 			}
-/*N*/ 
+/*N*/
 /*N*/ 			List* pPresObjList = pPage->GetPresObjList();
 /*N*/ 			ULONG nObjCount = pPresObjList->Count();
 /*N*/ 			if (nObjCount)
@@ -1282,11 +1186,11 @@ using namespace ::com::sun::star::linguistic2;
 /*N*/ 				// Listen mit Titel- und Gliederungsvorlagen erstellen
 /*N*/ 				String aName = pPage->GetLayoutName();
 /*N*/ 				aName.Erase( aName.SearchAscii( SD_LT_SEPARATOR ));
-/*N*/ 
+/*N*/
 /*N*/ 				List* pOutlineList = pSPool->CreateOutlineSheetList(aName);
 /*N*/ 				SfxStyleSheet* pTitleSheet = (SfxStyleSheet*)
 /*N*/ 												pSPool->GetTitleSheet(aName);
-/*N*/ 
+/*N*/
 /*N*/ 				// jetzt nach Titel- und Gliederungstextobjekten suchen und
 /*N*/ 				// Objekte zu Listenern machen
 /*N*/ 				SdrAttrObj* pObj = (SdrAttrObj*)pPresObjList->First();
@@ -1297,12 +1201,12 @@ using namespace ::com::sun::star::linguistic2;
 /*N*/ 						OutlinerParaObject* pOPO = pObj->GetOutlinerParaObject();
 /*N*/ 						SdPage* pPage = (SdPage*) pObj->GetPage();
 /*N*/ 						UINT16 nId = pObj->GetObjIdentifier();
-/*N*/ 
+/*N*/
 /*N*/ 						if (nId == OBJ_TITLETEXT)
 /*N*/ 						{
 /*N*/ 							if( pOPO && pOPO->GetOutlinerMode() == OUTLINERMODE_DONTKNOW )
 /*N*/ 								pOPO->SetOutlinerMode( OUTLINERMODE_TITLEOBJECT );
-/*N*/ 
+/*N*/
 /*N*/ 							// TRUE: harte Attribute dabei nicht loeschen
 /*N*/ 							if (pTitleSheet)
 /*N*/ 								pObj->SetStyleSheet(pTitleSheet, TRUE);
@@ -1311,26 +1215,26 @@ using namespace ::com::sun::star::linguistic2;
 /*N*/ 						{
 /*N*/ 							if( pOPO && pOPO->GetOutlinerMode() == OUTLINERMODE_DONTKNOW )
 /*N*/ 								pOPO->SetOutlinerMode( OUTLINERMODE_OUTLINEOBJECT );
-/*N*/ 
+/*N*/
 /*N*/ 							for (USHORT nSheet = 0; nSheet < 10; nSheet++)
 /*N*/ 							{
 /*N*/ 								pSheet = (SfxStyleSheet*)pOutlineList->GetObject(nSheet);
 /*N*/ 								if (pSheet)
 /*N*/ 								{
 /*N*/ 									pObj->StartListening(*pSheet);
-/*N*/ 
+/*N*/
 /*N*/ 									if( nSheet == 0)
 /*N*/ 										// Textrahmen hoert auf StyleSheet der Ebene1
 /*N*/ 										pObj->NbcSetStyleSheet(pSheet, TRUE);
 /*N*/ 								}
 /*N*/ 							}
 /*N*/ 						}
-/*N*/ 
+/*N*/
 /*N*/ 						if (pObj->ISA(SdrTextObj) && pObj->IsEmptyPresObj() && pPage)
 /*N*/ 						{
 /*N*/ 							PresObjKind ePresObjKind = pPage->GetPresObjKind(pObj);
 /*N*/ 							String aString = pPage->GetPresObjText(ePresObjKind);
-/*N*/ 
+/*N*/
 /*N*/ 							if (aString.Len())
 /*N*/ 							{
 /*N*/ 								SdOutliner* pInternalOutl = GetInternalOutliner(TRUE);
@@ -1343,11 +1247,11 @@ using namespace ::com::sun::star::linguistic2;
 /*N*/ 					}
 /*N*/ 					pObj = (SdrAttrObj*)pPresObjList->Next();
 /*N*/ 				}
-/*N*/ 
+/*N*/
 /*N*/ 				delete pOutlineList;
 /*N*/ 			}
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		// Masterpages:
 /*N*/ 		for (nPage = 0; nPage < GetMasterPageCount(); nPage++)
 /*N*/ 		{
@@ -1360,16 +1264,16 @@ using namespace ::com::sun::star::linguistic2;
 /*N*/ 				{
 /*N*/ 					if( pOPO->GetOutlinerMode() == OUTLINERMODE_DONTKNOW )
 /*N*/ 						pOPO->SetOutlinerMode( OUTLINERMODE_TEXTOBJECT );
-/*N*/ 
+/*N*/
 /*N*/ 					pOPO->FinishLoad( pSPool );
 /*N*/ 				}
 /*N*/ 			}
-/*N*/ 
+/*N*/
 /*N*/ 			// BackgroundObjekt vor Selektion schuetzen #62144#
 /*N*/ 			SdrObject* pBackObj = pPage->GetPresObj(PRESOBJ_BACKGROUND);
 /*N*/ 			if(pBackObj)
 /*N*/ 				pBackObj->SetMarkProtect(TRUE);
-/*N*/ 
+/*N*/
 /*N*/ 			List* pPresObjList = pPage->GetPresObjList();
 /*N*/ 			ULONG nObjCount = pPresObjList->Count();
 /*N*/ 			if (nObjCount)
@@ -1377,11 +1281,11 @@ using namespace ::com::sun::star::linguistic2;
 /*N*/ 				// Listen mit Titel- und Gliederungsvorlagen erstellen
 /*N*/ 				String aName = pPage->GetLayoutName();
 /*N*/ 				aName.Erase(aName.SearchAscii( SD_LT_SEPARATOR ));
-/*N*/ 
+/*N*/
 /*N*/ 				List* pOutlineList = pSPool->CreateOutlineSheetList(aName);
 /*N*/ 				SfxStyleSheet* pTitleSheet = (SfxStyleSheet*)
 /*N*/ 												pSPool->GetTitleSheet(aName);
-/*N*/ 
+/*N*/
 /*N*/ 				// jetzt nach Titel- und Gliederungstextobjekten suchen und
 /*N*/ 				// Objekte zu Listenern machen
 /*N*/ 				SdrAttrObj* pObj = (SdrAttrObj*)pPresObjList->First();
@@ -1391,12 +1295,12 @@ using namespace ::com::sun::star::linguistic2;
 /*N*/ 					{
 /*N*/ 						OutlinerParaObject* pOPO = pObj->GetOutlinerParaObject();
 /*N*/ 						UINT16 nId = pObj->GetObjIdentifier();
-/*N*/ 
+/*N*/
 /*N*/ 						if (nId == OBJ_TITLETEXT)
 /*N*/ 						{
 /*N*/ 							if( pOPO && pOPO->GetOutlinerMode() == OUTLINERMODE_DONTKNOW )
 /*N*/ 								pOPO->SetOutlinerMode( OUTLINERMODE_TITLEOBJECT );
-/*N*/ 
+/*N*/
 /*N*/ 							// TRUE: harte Attribute dabei nicht loeschen
 /*N*/ 							if (pTitleSheet)
 /*N*/ 								pObj->SetStyleSheet(pTitleSheet, TRUE);
@@ -1405,28 +1309,28 @@ using namespace ::com::sun::star::linguistic2;
 /*N*/ 						{
 /*N*/ 							if( pOPO && pOPO->GetOutlinerMode() == OUTLINERMODE_DONTKNOW )
 /*N*/ 								pOPO->SetOutlinerMode( OUTLINERMODE_OUTLINEOBJECT );
-/*N*/ 
+/*N*/
 /*N*/ 							for (USHORT nSheet = 0; nSheet < 10; nSheet++)
 /*N*/ 							{
 /*N*/ 								pSheet = (SfxStyleSheet*)pOutlineList->GetObject(nSheet);
 /*N*/ 								if (pSheet)
 /*N*/ 								{
 /*N*/ 									pObj->StartListening(*pSheet);
-/*N*/ 
+/*N*/
 /*N*/ 									if( nSheet == 0)
 /*N*/ 										// Textrahmen hoert auf StyleSheet der Ebene1
 /*N*/ 										pObj->NbcSetStyleSheet(pSheet, TRUE);
 /*N*/ 								}
 /*N*/ 							}
 /*N*/ 						}
-/*N*/ 
+/*N*/
 /*N*/ 						SdPage* pPage = (SdPage*) pObj->GetPage();
-/*N*/ 
+/*N*/
 /*N*/ 						if (pObj->ISA(SdrTextObj) && pObj->IsEmptyPresObj() && pPage)
 /*N*/ 						{
 /*N*/ 							PresObjKind ePresObjKind = pPage->GetPresObjKind(pObj);
 /*N*/ 							String aString = pPage->GetPresObjText(ePresObjKind);
-/*N*/ 
+/*N*/
 /*N*/ 							if (aString.Len())
 /*N*/ 							{
 /*N*/ 								SdOutliner* pInternalOutl = GetInternalOutliner(TRUE);
@@ -1439,32 +1343,32 @@ using namespace ::com::sun::star::linguistic2;
 /*N*/ 					}
 /*N*/ 					pObj = (SdrAttrObj*)pPresObjList->Next();
 /*N*/ 				}
-/*N*/ 
+/*N*/
 /*N*/ 				delete pOutlineList;
 /*N*/ 			}
 /*N*/ 		}
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	bNewOrLoadCompleted = TRUE;
-/*N*/ 
+/*N*/
     /**************************************************************************
     * Alle gelinkten Pages aktualisieren
     **************************************************************************/
 /*N*/ 	SdPage* pPage = NULL;
 /*N*/ 	USHORT nMaxSdPages = GetSdPageCount(PK_STANDARD);
-/*N*/ 
+/*N*/
 /*N*/ 	for (USHORT nSdPage=0; nSdPage < nMaxSdPages; nSdPage++)
 /*N*/ 	{
 /*N*/ 		pPage = (SdPage*) GetSdPage(nSdPage, PK_STANDARD);
-/*N*/ 
+/*N*/
 /*N*/ 		if (pPage && pPage->GetFileName().Len() && pPage->GetBookmarkName().Len())
 /*N*/ 		{
 /*N*/ 			pPage->SetModel(this);
 /*N*/ 		}
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	UpdateAllLinks();
-/*N*/ 
+/*N*/
 /*N*/ 	SetChanged( FALSE );
 /*N*/ }
 
@@ -1527,24 +1431,24 @@ using namespace ::com::sun::star::linguistic2;
 /*N*/  		// gespeichert werden muessen, kann/soll der Update-Mode immer FALSE bleiben.
 /*N*/  		pInternalOutliner->SetUpdateMode( FALSE );
 /*N*/  		pInternalOutliner->EnableUndo( FALSE );
-/*N*/  
+/*N*/
 /*N*/  		if (pDocSh)
 /*N*/  			pInternalOutliner->SetRefDevice( SD_MOD()->GetRefDevice( *pDocSh ) );
-/*N*/  
+/*N*/
 /*N*/  		pInternalOutliner->SetDefTab( nDefaultTabulator );
 /*N*/  		pInternalOutliner->SetStyleSheetPool((SfxStyleSheetPool*)GetStyleSheetPool());
 /*N*/  		pInternalOutliner->SetMinDepth(0);
 /*N*/  	}
-/*N*/ 
+/*N*/
 /*N*/ 	DBG_ASSERT( !pInternalOutliner || ( pInternalOutliner->GetUpdateMode() == FALSE ) , "InternalOutliner: UpdateMode = TRUE !" );
 /*N*/ 	DBG_ASSERT( !pInternalOutliner || ( pInternalOutliner->IsUndoEnabled() == FALSE ), "InternalOutliner: Undo = TRUE !" );
-/*N*/ 
+/*N*/
 /*N*/ 	// MT: Wer ihn vollmuellt, macht ihn auch gleich wieder leer:
 /*N*/ 	// Vorteile:
 /*N*/ 	// a) Keine unnoetigen Clear-Aufrufe
 /*N*/ 	// b) Kein Muell im Speicher.
 /*N*/ 	DBG_ASSERT( !pInternalOutliner || ( ( pInternalOutliner->GetParagraphCount() == 1 ) && ( pInternalOutliner->GetText( pInternalOutliner->GetParagraph( 0 ) ).Len() == 0 ) ), "InternalOutliner: Nicht leer!" );
-/*N*/ 
+/*N*/
 /*N*/ 	return pInternalOutliner;
 /*N*/ }
 
@@ -1596,7 +1500,7 @@ using namespace ::com::sun::star::linguistic2;
 /*N*/ uno::Reference< uno::XInterface > SdDrawDocument::createUnoModel()
 /*N*/ {
 /*N*/ 	uno::Reference< uno::XInterface > xModel;
-/*N*/ 
+/*N*/
 /*N*/ 	try
 /*N*/ 	{
 /*N*/ 		xModel = pDocSh->GetModel();
@@ -1605,7 +1509,7 @@ using namespace ::com::sun::star::linguistic2;
 /*N*/ 	{
 /*N*/ 		e;	                            // to avoid a compiler warning...
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	return xModel;
 /*N*/ }
 
@@ -1618,14 +1522,14 @@ using namespace ::com::sun::star::linguistic2;
 /*N*/ {
 /*N*/ 	// #108104#
 /*N*/     // DBG_ASSERT (pDocSh!=NULL, "No available document shell to set ref device at.");
-/*N*/     
+/*N*/
 /*N*/ 	switch (nMode)
 /*N*/     {
 /*N*/         case ::com::sun::star::document::PrinterIndependentLayout::DISABLED:
 /*N*/         case ::com::sun::star::document::PrinterIndependentLayout::ENABLED:
 /*N*/             // Just store supported modes and inform the doc shell.
 /*N*/             mnPrinterIndependentLayout = nMode;
-/*N*/ 
+/*N*/
 /*N*/ 			// #108104#
 /*N*/ 			// Since it is possible that a SdDrawDocument is constructed without a
 /*N*/ 			// SdDrawDocShell the pointer member pDocSh needs to be tested
@@ -1634,9 +1538,9 @@ using namespace ::com::sun::star::linguistic2;
 /*N*/ 			{
 /*N*/ 				pDocSh->UpdateRefDevice ();
 /*N*/ 			}
-/*N*/ 
+/*N*/
 /*N*/             break;
-/*N*/ 
+/*N*/
 /*N*/         default:
 /*N*/             // Ignore unknown values.
 /*N*/             break;
