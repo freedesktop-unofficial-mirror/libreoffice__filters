@@ -4,9 +4,9 @@
  *
  *  $RCSfile: sc_document.cxx,v $
  *
- *  $Revision: 1.12 $
+ *  $Revision: 1.13 $
  *
- *  last change: $Author: hr $ $Date: 2007-01-02 16:55:15 $
+ *  last change: $Author: obo $ $Date: 2007-07-17 09:12:43 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -112,7 +112,7 @@ namespace binfilter {
 /*N*/ 		String aString = ScGlobal::GetRscString(STR_TABLE_DEF); //"Tabelle"
 /*N*/ 		aString += String::CreateFromInt32(nTab+1);
 /*N*/ 		CreateValidTabName( aString );	// keine doppelten
-/*N*/ 
+/*N*/
 /*N*/ 		pTab[nTab] = new ScTable(this, nTab, aString);
 /*N*/ 		++nMaxTableNumber;
 /*N*/ 	}
@@ -124,7 +124,7 @@ namespace binfilter {
 /*N*/ 	if (VALIDTAB(nTab))
 /*N*/ 		if (pTab[nTab])
 /*N*/ 			return TRUE;
-/*N*/ 
+/*N*/
 /*N*/ 	return FALSE;
 /*N*/ }
 
@@ -147,7 +147,7 @@ namespace binfilter {
 /*N*/ 	String aUpperName = rName;
 /*N*/ 	ScGlobal::pCharClass->toUpper(aUpperName);
 /*N*/ 	String aCompName;
-/*N*/ 
+/*N*/
 /*N*/ 	for (USHORT i=0; i<=MAXTAB; i++)
 /*N*/ 		if (pTab[i])
 /*N*/ 		{
@@ -198,16 +198,16 @@ namespace binfilter {
 /*N*/ 	if ( !ValidTabName(rName) )
 /*N*/ 	{
 /*?*/ 		// neu erzeugen
-/*?*/ 
+/*?*/
 /*?*/ 		const String aStrTable( ScResId(SCSTR_TABLE) );
 /*?*/ 		BOOL		 bOk   = FALSE;
-/*?*/ 
+/*?*/
 /*?*/ 		//	vorneweg testen, ob der Prefix als gueltig erkannt wird
 /*?*/ 		//	wenn nicht, nur doppelte vermeiden
 /*?*/ 		BOOL bPrefix = ValidTabName( aStrTable );
 /*?*/ 		DBG_ASSERT(bPrefix, "ungueltiger Tabellenname");
 /*?*/ 		USHORT nDummy;
-/*?*/ 
+/*?*/
 /*?*/ 		USHORT nLoops = 0;		// "zur Sicherheit"
 /*?*/ 		for ( USHORT i = nMaxTableNumber+1; !bOk && nLoops <= MAXTAB; i++ )
 /*?*/ 		{
@@ -219,7 +219,7 @@ namespace binfilter {
 /*?*/ 				bOk = !GetTable( rName, nDummy );
 /*?*/ 			++nLoops;
 /*?*/ 		}
-/*?*/ 
+/*?*/
 /*?*/ 		DBG_ASSERT(bOk, "kein gueltiger Tabellenname gefunden");
 /*?*/ 		if ( !bOk )
 /*?*/ 			rName = aStrTable;
@@ -227,7 +227,7 @@ namespace binfilter {
 /*N*/ 	else
 /*N*/ 	{
 /*N*/ 		// uebergebenen Namen ueberpruefen
-/*N*/ 
+/*N*/
 /*N*/ 		if ( !ValidNewTabName(rName) )
 /*N*/ 		{
 /*N*/ 			USHORT i = 1;
@@ -283,7 +283,7 @@ namespace binfilter {
 /*N*/ 				UpdateRefAreaLinks( URM_INSDEL, aRange, 0,0,1 );
 /*N*/ 				if ( pUnoBroadcaster )
 /*N*/ 					pUnoBroadcaster->Broadcast( ScUpdateRefHint( URM_INSDEL, aRange, 0,0,1 ) );
-/*N*/ 
+/*N*/
 /*N*/ 				USHORT i;
 /*N*/ 				for (i = 0; i <= MAXTAB; i++)
 /*N*/ 					if (pTab[i])
@@ -298,14 +298,14 @@ namespace binfilter {
 /*N*/ 				for (i = 0; i <= MAXTAB; i++)
 /*N*/ 					if (pTab[i])
 /*N*/ 						pTab[i]->StartAllListeners();
-/*N*/ 
+/*N*/
 /*N*/ 				//	update conditional formats after table is inserted
 /*N*/ 				if ( pCondFormList )
 /*N*/ 					pCondFormList->UpdateReference( URM_INSDEL, aRange, 0,0,1 );
 /*N*/ 				// #81844# sheet names of references are not valid until sheet is inserted
 /*N*/ 				if ( pChartListenerCollection )
 /*N*/ 					pChartListenerCollection->UpdateScheduledSeriesRanges();
-/*N*/ 
+/*N*/
 /*N*/ 				SetDirty();
 /*N*/ 				bValid = TRUE;
 /*N*/ 			}
@@ -331,7 +331,7 @@ namespace binfilter {
 /*N*/ 				SetAutoCalc( FALSE );	// Mehrfachberechnungen vermeiden
 /*N*/ 				ScRange aRange( 0, 0, nTab, MAXCOL, MAXROW, nTab );
 /*N*/ 				DelBroadcastAreasInRange( aRange );
-/*N*/ 
+/*N*/
 /*N*/ 				aRange.aEnd.SetTab( MAXTAB );
 /*N*/ 				xColNameRanges->UpdateReference( URM_INSDEL, this, aRange, 0,0,-1 );
 /*N*/ 				xRowNameRanges->UpdateReference( URM_INSDEL, this, aRange, 0,0,-1 );
@@ -351,7 +351,7 @@ namespace binfilter {
 /*N*/ 					pCondFormList->UpdateReference( URM_INSDEL, aRange, 0,0,-1 );
 /*N*/ 				if ( pUnoBroadcaster )
 /*N*/ 					pUnoBroadcaster->Broadcast( ScUpdateRefHint( URM_INSDEL, aRange, 0,0,-1 ) );
-/*N*/ 
+/*N*/
 /*N*/ 				USHORT i;
 /*N*/ 				for (i=0; i<=MAXTAB; i++)
 /*N*/ 					if (pTab[i])
@@ -428,7 +428,7 @@ namespace binfilter {
 /*N*/ 	if (VALIDTAB(nTab))
 /*N*/ 		if (pTab[nTab])
 /*N*/ 			return pTab[nTab]->IsVisible();
-/*N*/ 
+/*N*/
 /*N*/ 	return FALSE;
 /*N*/ }
 
@@ -447,7 +447,7 @@ namespace binfilter {
 /*N*/ 	if (VALIDTAB(nTab))
 /*N*/ 		if (pTab[nTab])
 /*N*/ 			return pTab[nTab]->GetCellArea( rEndCol, rEndRow );
-/*N*/ 
+/*N*/
 /*N*/ 	rEndCol = 0;
 /*N*/ 	rEndRow = 0;
 /*N*/ 	return FALSE;
@@ -459,7 +459,7 @@ namespace binfilter {
 /*N*/ 	if (VALIDTAB(nTab))
 /*N*/ 		if (pTab[nTab])
 /*N*/ 			return pTab[nTab]->GetTableArea( rEndCol, rEndRow );
-/*N*/ 
+/*N*/
 /*N*/ 	rEndCol = 0;
 /*N*/ 	rEndRow = 0;
 /*N*/ 	return FALSE;
@@ -493,12 +493,12 @@ namespace binfilter {
 /*N*/ 	PutInOrder( nStartRow, nEndRow );
 /*N*/ 	PutInOrder( nStartTab, nEndTab );
 /*N*/ 	USHORT nSize = nEndRow - nStartRow + 1;
-/*N*/ 
+/*N*/
 /*N*/ 	BOOL bTest = TRUE;
 /*N*/ 	for (USHORT i=nStartTab; i<=nEndTab && bTest; i++)
 /*N*/ 		if (pTab[i])
 /*N*/ 			bTest &= pTab[i]->TestInsertRow( nStartCol, nEndCol, nSize );
-/*N*/ 
+/*N*/
 /*N*/ 	return bTest;
 /*N*/ }
 
@@ -509,7 +509,7 @@ namespace binfilter {
 /*N*/ {
 /*N*/ 	PutInOrder( nStartCol, nEndCol );
 /*N*/ 	PutInOrder( nStartTab, nEndTab );
-/*N*/ 
+/*N*/
 /*N*/ 	BOOL bTest = TRUE;
 /*N*/ 	BOOL bRet = FALSE;
 /*N*/ 	BOOL bOldAutoCalc = GetAutoCalc();
@@ -522,7 +522,7 @@ namespace binfilter {
 /*N*/ 	{
 /*N*/ 		// UpdateBroadcastAreas muss vor UpdateReference gerufen werden, damit nicht
 /*N*/ 		// Eintraege verschoben werden, die erst bei UpdateReference neu erzeugt werden
-/*N*/ 
+/*N*/
 /*N*/ 		UpdateBroadcastAreas( URM_INSDEL, ScRange(
 /*N*/ 			ScAddress( nStartCol, nStartRow, nStartTab ),
 /*N*/ 			ScAddress( nEndCol, MAXROW, nEndTab )), 0, nSize, 0 );
@@ -532,7 +532,7 @@ namespace binfilter {
 /*N*/ 		for (i=nStartTab; i<=nEndTab; i++)
 /*N*/ 			if (pTab[i])
 /*N*/ 				pTab[i]->InsertRow( nStartCol, nEndCol, nStartRow, nSize );
-/*N*/ 
+/*N*/
 /*N*/ 		//	#82991# UpdateRef for drawing layer must be after inserting,
 /*N*/ 		//	when the new row heights are known.
 /*N*/ 		for (i=nStartTab; i<=nEndTab; i++)
@@ -540,7 +540,7 @@ namespace binfilter {
 /*N*/ 				pTab[i]->UpdateDrawRef( URM_INSDEL,
 /*N*/ 							nStartCol, nStartRow, nStartTab, nEndCol, MAXROW, nEndTab,
 /*N*/ 							0, nSize, 0 );
-/*N*/ 
+/*N*/
 /*N*/ 		if ( pChangeTrack && pChangeTrack->IsInDeleteUndo() )
 /*N*/ 		{	// durch Restaurierung von Referenzen auf geloeschte Bereiche ist
 /*N*/ 			// ein neues Listening faellig, bisherige Listener wurden in
@@ -583,10 +583,10 @@ namespace binfilter {
 /*N*/ {
 /*N*/ 	PutInOrder( nStartCol, nEndCol );
 /*N*/ 	PutInOrder( nStartTab, nEndTab );
-/*N*/ 
+/*N*/
 /*N*/ 	BOOL bOldAutoCalc = GetAutoCalc();
 /*N*/ 	SetAutoCalc( FALSE );	// Mehrfachberechnungen vermeiden
-/*N*/ 
+/*N*/
 /*N*/ 	if ( nStartRow+nSize <= MAXROW )
 /*N*/ 	{
 /*N*/ 		DelBroadcastAreasInRange( ScRange(
@@ -600,22 +600,22 @@ namespace binfilter {
 /*N*/ 		DelBroadcastAreasInRange( ScRange(
 /*N*/ 			ScAddress( nStartCol, nStartRow, nStartTab ),
 /*N*/ 			ScAddress( nEndCol, MAXROW, nEndTab ) ) );
-/*N*/ 
+/*N*/
 /*N*/ 	if ( nStartRow+nSize <= MAXROW )
 /*N*/ 	{
 /*N*/ 		UpdateReference( URM_INSDEL, nStartCol, nStartRow+nSize, nStartTab,
 /*N*/ 						 nEndCol, MAXROW, nEndTab,
 /*N*/ 						 0, -(short) nSize, 0, pRefUndoDoc );
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	if (pUndoOutline)
 /*N*/ 		*pUndoOutline = FALSE;
-/*N*/ 
+/*N*/
 /*N*/ 	USHORT i=0;
 /*N*/ 	for (i=nStartTab; i<=nEndTab; i++)
 /*N*/ 		if (pTab[i])
 /*N*/ 			pTab[i]->DeleteRow( nStartCol, nEndCol, nStartRow, nSize, pUndoOutline );
-/*N*/ 
+/*N*/
 /*N*/ 	if ( nStartRow+nSize <= MAXROW )
 /*N*/     {   // Name listeners have been removed in UpdateReference
 /*N*/ 		for (i=0; i<=MAXTAB; i++)
@@ -627,7 +627,7 @@ namespace binfilter {
 /*N*/ 			if (pTab[i])
 /*N*/ 				pTab[i]->SetRelNameDirty();
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	SetAutoCalc( bOldAutoCalc );
 /*N*/ 	pChartListenerCollection->UpdateDirtyCharts();
 /*N*/ }
@@ -654,12 +654,12 @@ namespace binfilter {
 /*N*/ 	PutInOrder( nStartRow, nEndRow );
 /*N*/ 	PutInOrder( nStartTab, nEndTab );
 /*N*/ 	USHORT nSize = nEndCol - nStartCol + 1;
-/*N*/ 
+/*N*/
 /*N*/ 	BOOL bTest = TRUE;
 /*N*/ 	for (USHORT i=nStartTab; i<=nEndTab && bTest; i++)
 /*N*/ 		if (pTab[i])
 /*N*/ 			bTest &= pTab[i]->TestInsertCol( nStartRow, nEndRow, nSize );
-/*N*/ 
+/*N*/
 /*N*/ 	return bTest;
 /*N*/ }
 
@@ -670,7 +670,7 @@ namespace binfilter {
 /*N*/ {
 /*N*/ 	PutInOrder( nStartRow, nEndRow );
 /*N*/ 	PutInOrder( nStartTab, nEndTab );
-/*N*/ 
+/*N*/
 /*N*/ 	BOOL bTest = TRUE;
 /*N*/ 	BOOL bRet = FALSE;
 /*N*/ 	BOOL bOldAutoCalc = GetAutoCalc();
@@ -690,7 +690,7 @@ namespace binfilter {
 /*N*/ 		for (i=nStartTab; i<=nEndTab; i++)
 /*N*/ 			if (pTab[i])
 /*N*/ 				pTab[i]->InsertCol( nStartCol, nStartRow, nEndRow, nSize );
-/*N*/ 
+/*N*/
 /*N*/ 		if ( pChangeTrack && pChangeTrack->IsInDeleteUndo() )
 /*N*/ 		{	// durch Restaurierung von Referenzen auf geloeschte Bereiche ist
 /*N*/ 			// ein neues Listening faellig, bisherige Listener wurden in
@@ -732,10 +732,10 @@ namespace binfilter {
 /*N*/ {
 /*N*/ 	PutInOrder( nStartRow, nEndRow );
 /*N*/ 	PutInOrder( nStartTab, nEndTab );
-/*N*/ 
+/*N*/
 /*N*/ 	BOOL bOldAutoCalc = GetAutoCalc();
 /*N*/ 	SetAutoCalc( FALSE );	// Mehrfachberechnungen vermeiden
-/*N*/ 
+/*N*/
 /*N*/ 	if ( nStartCol+nSize <= MAXCOL )
 /*N*/ 	{
 /*N*/ 		DelBroadcastAreasInRange( ScRange(
@@ -749,22 +749,22 @@ namespace binfilter {
 /*N*/ 		DelBroadcastAreasInRange( ScRange(
 /*N*/ 			ScAddress( nStartCol, nStartRow, nStartTab ),
 /*N*/ 			ScAddress( MAXCOL, nEndRow, nEndTab ) ) );
-/*N*/ 
+/*N*/
 /*N*/ 	if ( nStartCol+nSize <= MAXCOL )
 /*N*/ 	{
 /*N*/ 		UpdateReference( URM_INSDEL, nStartCol+nSize, nStartRow, nStartTab,
 /*N*/ 						 MAXCOL, nEndRow, nEndTab,
 /*N*/ 						 -(short) nSize, 0, 0, pRefUndoDoc );
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	if (pUndoOutline)
 /*N*/ 		*pUndoOutline = FALSE;
-/*N*/ 
+/*N*/
 /*N*/ 	USHORT i=0;
 /*N*/ 	for (i=nStartTab; i<=nEndTab; i++)
 /*N*/ 		if (pTab[i])
 /*N*/ 			pTab[i]->DeleteCol( nStartCol, nStartRow, nEndRow, nSize, pUndoOutline );
-/*N*/ 
+/*N*/
 /*N*/ 	if ( nStartCol+nSize <= MAXCOL )
 /*N*/     {   // Name listeners have been removed in UpdateReference
 /*N*/ 		for (i=0; i<=MAXTAB; i++)
@@ -776,7 +776,7 @@ namespace binfilter {
 /*N*/ 			if (pTab[i])
 /*N*/ 				pTab[i]->SetRelNameDirty();
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	SetAutoCalc( bOldAutoCalc );
 /*N*/ 	pChartListenerCollection->UpdateDirtyCharts();
 /*N*/ }
@@ -858,13 +858,13 @@ namespace binfilter {
 /*N*/ 	if (bIsUndo)
 /*N*/ 	{
 /*N*/ 		Clear();
-/*N*/ 
+/*N*/
 /*N*/ 		xPoolHelper = pSrcDoc->xPoolHelper;
-/*N*/ 
+/*N*/
 /*N*/ 		String aString;
 /*N*/ 		for (USHORT nTab = nTab1; nTab <= nTab2; nTab++)
 /*N*/ 			pTab[nTab] = new ScTable(this, nTab, aString, bColInfo, bRowInfo);
-/*N*/ 
+/*N*/
 /*N*/ 		nMaxTableNumber = nTab2 + 1;
 /*N*/ 	}
 /*N*/ 	else
@@ -880,7 +880,7 @@ namespace binfilter {
 /*N*/ 		for (USHORT nTab = nTab1; nTab <= nTab2; nTab++)
 /*N*/ 			if (!pTab[nTab])
 /*N*/ 				pTab[nTab] = new ScTable(this, nTab, aString, bColInfo, bRowInfo);
-/*N*/ 
+/*N*/
 /*N*/ 		if ( nMaxTableNumber <= nTab2 )
 /*N*/ 			nMaxTableNumber = nTab2 + 1;
 /*N*/ 	}
@@ -927,7 +927,7 @@ namespace binfilter {
 /*N*/ {
 /*N*/ 	ScRange aNewRange = rRange;
 /*N*/ 	aNewRange.Justify();
-/*N*/ 
+/*N*/
 /*N*/ 	if( !pDestDoc->aDocName.Len() )
 /*N*/ 		pDestDoc->aDocName = aDocName;
 /*N*/ 	BOOL bOldAutoCalc = pDestDoc->GetAutoCalc();
@@ -951,7 +951,7 @@ namespace binfilter {
 /*N*/ 							BOOL bKeepScenarioFlags, BOOL bIncludeObjects)
 /*N*/ {
 /*N*/ 	DBG_ASSERT( bAllTabs || pMarks, "CopyToClip: ScMarkData fehlt" );
-/*N*/ 
+/*N*/
 /*N*/ 	if (!bIsClip)
 /*N*/ 	{
 /*N*/ 		PutInOrder( nCol1, nCol2 );
@@ -960,7 +960,7 @@ namespace binfilter {
 /*N*/ 		{
 DBG_BF_ASSERT(0, "STRIP"); //STRIP001 /*?*/ 			DBG_ERROR("CopyToClip: no ClipDoc");
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		pClipDoc->aDocName = aDocName;
 /*N*/ 		pClipDoc->aClipRange = ScRange( nCol1,nRow1,0, nCol2,nRow2,0 );
 /*N*/ 		pClipDoc->ResetClip( this, pMarks );
@@ -990,15 +990,15 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 /*?*/ 			DBG_ERROR("CopyToClip: no ClipDoc
 /*N*/ 				if ( bAllTabs || !pMarks || pMarks->GetTableSelect(i) )
 /*N*/ 				{
 DBG_BF_ASSERT(0, "STRIP"); //STRIP001 /*?*/ 					pTab[i]->CopyToClip(nCol1, nRow1, nCol2, nRow2, pClipDoc->pTab[i], bKeepScenarioFlags);
-/*N*/ 
+/*N*/
 /*N*/ 					if ( pDrawLayer && bIncludeObjects )
 /*N*/ 					{
 /*N*/ 						//	also copy drawing objects
-/*N*/ 
+/*N*/
 DBG_BF_ASSERT(0, "STRIP"); //STRIP001 /*?*/ 						Rectangle aObjRect = GetMMRect( nCol1, nRow1, nCol2, nRow2, i );
 /*N*/ 					}
 /*N*/ 				}
-/*N*/ 
+/*N*/
 /*N*/ 		pClipDoc->bCutMode = bCut;
 /*N*/ 	}
 /*N*/ }
@@ -1068,7 +1068,7 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 //STRIP001 	//	call CopyBlockFromClip for 
 /*N*/ 		{
 /*N*/ 			BOOL bOldAutoCalc = GetAutoCalc();
 /*N*/ 			SetAutoCalc( FALSE );	// avoid multiple recalculations
-/*N*/ 
+/*N*/
 /*N*/ 			SvNumberFormatter* pThisFormatter = xPoolHelper->GetFormTable();
 /*N*/ 			SvNumberFormatter* pOtherFormatter = pClipDoc->xPoolHelper->GetFormTable();
 /*N*/ 			if (pOtherFormatter && pOtherFormatter != pThisFormatter)
@@ -1078,14 +1078,14 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 //STRIP001 	//	call CopyBlockFromClip for 
 /*N*/ 				if (pExchangeList->Count() > 0)
 /*N*/ 					pFormatExchangeList = pExchangeList;
 /*N*/ 			}
-/*N*/ 
+/*N*/
 /*N*/ 			USHORT nClipRangeNames = pClipDoc->pRangeName->GetCount();
 /*N*/ 			// array containing range names which might need update of indices
 /*N*/ 			ScRangeData** pClipRangeNames = nClipRangeNames ? new ScRangeData* [nClipRangeNames] : NULL;
 /*N*/ 			// the index mapping thereof
 /*N*/ 			ScIndexMap aClipRangeMap( nClipRangeNames );
 /*N*/ 			BOOL bRangeNameReplace = FALSE;
-/*N*/ 
+/*N*/
 /*N*/ 			USHORT i, k;
 /*N*/ 			for (i = 0; i < nClipRangeNames; i++)		//! DB-Bereiche Pivot-Bereiche auch
 /*N*/ 			{
@@ -1134,7 +1134,7 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 //STRIP001 	//	call CopyBlockFromClip for 
 /*N*/ 			USHORT nRow1 = rDestRange.aStart.Row();
 /*N*/ 			USHORT nCol2 = rDestRange.aEnd.Col();
 /*N*/ 			USHORT nRow2 = rDestRange.aEnd.Row();
-/*N*/ 
+/*N*/
 /*N*/ 			USHORT nXw = pClipDoc->aClipRange.aEnd.Col();
 /*N*/ 			USHORT nYw = pClipDoc->aClipRange.aEnd.Row();
 /*N*/ 			pClipDoc->ExtendMerge( pClipDoc->aClipRange.aStart.Col(),
@@ -1146,7 +1146,7 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 //STRIP001 	//	call CopyBlockFromClip for 
 /*N*/ 			pClipDoc->GetClipArea( nDestAddX, nDestAddY, bIncludeFiltered );
 /*N*/ 			nXw += nDestAddX;
 /*N*/ 			nYw += nDestAddY;								// ClipArea, plus ExtendMerge value
-/*N*/ 
+/*N*/
 /*N*/ 			//	Inhalte entweder komplett oder gar nicht loeschen:
 /*N*/ 			USHORT nDelFlag = IDF_NONE;
 /*N*/ 			if ( nInsFlag & IDF_CONTENTS )
@@ -1156,7 +1156,7 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 //STRIP001 	//	call CopyBlockFromClip for 
 /*N*/ 			if ( ( nInsFlag & IDF_ATTRIB ) && !bSkipAttrForEmpty )
 /*N*/ 				nDelFlag |= IDF_ATTRIB;
 /*N*/ 			DeleteArea(nCol1, nRow1, nCol2, nRow2, rMark, nDelFlag);
-/*N*/ 
+/*N*/
 /*N*/ 			bInsertingFromOtherDoc = TRUE;	// kein Broadcast/Listener aufbauen bei Insert
 /*N*/ 			USHORT nC1 = nCol1;
 /*N*/ 			USHORT nR1 = nRow1;
@@ -1164,7 +1164,7 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 //STRIP001 	//	call CopyBlockFromClip for 
 /*N*/ 			USHORT nR2 = nR1 + nYw;
 /*N*/ 			USHORT nClipStartCol = pClipDoc->aClipRange.aStart.Col();
 /*N*/ 			USHORT nClipStartRow = pClipDoc->aClipRange.aStart.Row();
-/*N*/ 
+/*N*/
 /*N*/ 			ScCopyBlockFromClipParams aCBFCP;
 /*N*/ 			aCBFCP.pRefUndoDoc = pRefUndoDoc;
 /*N*/ 			aCBFCP.pClipDoc = pClipDoc;
@@ -1173,11 +1173,11 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 //STRIP001 	//	call CopyBlockFromClip for 
 /*N*/ 			aCBFCP.bSkipAttrForEmpty = bSkipAttrForEmpty;
 /*N*/ 			aCBFCP.nTabStart = MAXTAB;		// wird in der Schleife angepasst
 /*N*/ 			aCBFCP.nTabEnd = 0;				// wird in der Schleife angepasst
-/*N*/ 
+/*N*/
 /*N*/ 			//	Inc/DecRecalcLevel einmal aussen, damit nicht fuer jeden Block
 /*N*/ 			//	die Draw-Seitengroesse neu berechnet werden muss
 /*N*/ 			//!	nur wenn ganze Zeilen/Spalten kopiert werden?
-/*N*/ 
+/*N*/
 /*N*/ 			for (i = 0; i <= MAXTAB; i++)
 /*N*/ 				if (pTab[i] && rMark.GetTableSelect(i))
 /*N*/ 				{
@@ -1186,13 +1186,13 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 //STRIP001 	//	call CopyBlockFromClip for 
 /*N*/ 					aCBFCP.nTabEnd = i;
 /*N*/ 					pTab[i]->IncRecalcLevel();
 /*N*/ 				}
-/*N*/ 
+/*N*/
 /*N*/ 			// bei mindestens 64 Zeilen wird in ScColumn::CopyFromClip voralloziert
 /*N*/ 			BOOL bDoDouble = ( nYw < 64 && nRow2 - nRow1 > 64);
 /*N*/ 			BOOL bOldDouble = ScColumn::bDoubleAlloc;
 /*N*/ 			if (bDoDouble)
 /*N*/ 				ScColumn::bDoubleAlloc = TRUE;
-/*N*/ 
+/*N*/
 /*N*/ 			do
 /*N*/ 			{
 /*N*/ 				do
@@ -1213,13 +1213,13 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 //STRIP001 	//	call CopyBlockFromClip for 
 /*N*/ 				nR2 = Min((USHORT)(nR1 + nYw), nRow2);
 /*N*/ 			}
 /*N*/ 			while (nR1 <= nRow2);
-/*N*/ 
+/*N*/
 /*N*/ 			ScColumn::bDoubleAlloc = bOldDouble;
-/*N*/ 
+/*N*/
 /*N*/ 			for (i = 0; i <= MAXTAB; i++)
 /*N*/ 				if (pTab[i] && rMark.GetTableSelect(i))
 /*N*/ 					pTab[i]->DecRecalcLevel();
-/*N*/ 
+/*N*/
 /*N*/ 			bInsertingFromOtherDoc = FALSE;
 /*N*/ 			pFormatExchangeList = NULL;
 /*N*/ 			if ( bRangeNameReplace )
@@ -1294,13 +1294,13 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 //STRIP001 	if (bIsClip)
 /*N*/ 		if ( bForceTab && !pTab[nTab] )
 /*N*/ 		{
 /*N*/ 			BOOL bExtras = !bIsUndo;		// Spaltenbreiten, Zeilenhoehen, Flags
-/*N*/ 
+/*N*/
 /*N*/ 			pTab[nTab] = new ScTable(this, nTab,
 /*N*/ 							String::CreateFromAscii(RTL_CONSTASCII_STRINGPARAM("temp")),
 /*N*/ 							bExtras, bExtras);
 /*N*/ 			++nMaxTableNumber;
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		if (pTab[nTab])
 /*N*/ 			pTab[nTab]->PutCell( nCol, nRow, pCell );
 /*N*/ 	}
@@ -1313,13 +1313,13 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 //STRIP001 	if (bIsClip)
 /*N*/ 	if ( bForceTab && !pTab[nTab] )
 /*N*/ 	{
 /*?*/ 		BOOL bExtras = !bIsUndo;		// Spaltenbreiten, Zeilenhoehen, Flags
-/*?*/ 
+/*?*/
 /*?*/ 		pTab[nTab] = new ScTable(this, nTab,
 /*?*/ 						String::CreateFromAscii(RTL_CONSTASCII_STRINGPARAM("temp")),
 /*?*/ 						bExtras, bExtras);
 /*?*/ 		++nMaxTableNumber;
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	if (pTab[nTab])
 /*N*/ 		pTab[nTab]->PutCell( rPos, pCell );
 /*N*/ }
@@ -1441,12 +1441,12 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 //STRIP001 	if (bIsClip)
 /*N*/ BOOL ScDocument::GetNote( USHORT nCol, USHORT nRow, USHORT nTab, ScPostIt& rNote )
 /*N*/ {
 /*N*/ 	BOOL bHasNote = FALSE;
-/*N*/ 
+/*N*/
 /*N*/ 	if ( VALIDTAB(nTab) && pTab[nTab] )
 /*N*/ 		bHasNote = pTab[nTab]->GetNote( nCol, nRow, rNote );
 /*N*/ 	else
 /*?*/ 		rNote.Clear();
-/*N*/ 
+/*N*/
 /*N*/ 	return bHasNote;
 /*N*/ }
 
@@ -1488,7 +1488,7 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 //STRIP001 	if (bIsClip)
 /*N*/ 	USHORT nTab = rPos.Tab();
 /*N*/ 	if ( pTab[nTab] )
 /*N*/ 		return pTab[nTab]->GetCell( rPos );
-/*N*/ 
+/*N*/
 /*N*/ 	DBG_ERROR("GetCell ohne Tabelle");
 /*N*/ 	return NULL;
 /*N*/ }
@@ -1522,13 +1522,13 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 //STRIP001 	if (bIsClip)
 /*N*/ 	bAutoCalc = FALSE;		// keine Mehrfachberechnung
 /*N*/ 	for (USHORT i=0; i<=MAXTAB; i++)
 /*N*/ 		if (pTab[i]) pTab[i]->SetDirty();
-/*N*/ 
+/*N*/
 /*N*/ 	//	Charts werden zwar auch ohne AutoCalc im Tracking auf Dirty gesetzt,
 /*N*/ 	//	wenn alle Formeln dirty sind, werden die Charts aber nicht mehr erwischt
 /*N*/ 	//	(#45205#) - darum alle Charts nochmal explizit
 /*N*/ 	if (pChartListenerCollection)
 /*N*/ 		pChartListenerCollection->SetDirty();
-/*N*/ 
+/*N*/
 /*N*/ 	SetAutoCalc( bOldAutoCalc );
 /*N*/ }
 
@@ -1595,15 +1595,15 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 //STRIP001 	if (bIsClip)
 /*N*/ 	SetAutoCalc( FALSE );
 /*N*/     ScProgress aProgress( GetDocumentShell(), ScGlobal::GetRscString(
 /*N*/                 STR_PROGRESS_CALCULATING ), GetXMLImportedFormulaCount() );
-/*N*/ 
+/*N*/
 /*N*/ 	for (USHORT i=0; i<=MAXTAB; i++)
 /*N*/ 		if (pTab[i]) pTab[i]->CompileXML( aProgress );
-/*N*/ 
+/*N*/
 /*N*/ 	if ( pCondFormList )
 /*N*/ 		pCondFormList->CompileXML();
 /*N*/ 	if ( pValidationList )
 /*N*/ 		pValidationList->CompileXML();
-/*N*/ 
+/*N*/
 /*N*/ 	SetDirty();
 /*N*/ 	SetAutoCalc( bOldAutoCalc );
 /*N*/ }
@@ -1613,7 +1613,7 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 //STRIP001 	if (bIsClip)
 /*N*/ {
 /*N*/ 	if (bIsClip)	// Excel-Dateien werden aus dem Clipboard in ein Clip-Doc geladen
 /*N*/ 		return;		// dann wird erst beim Einfuegen in das richtige Doc berechnet
-/*N*/ 
+/*N*/
 /*N*/ 	bCalcingAfterLoad = TRUE;
 /*N*/ 	USHORT i=0;
 /*N*/ 	for (i=0; i<=MAXTAB; i++)
@@ -1621,7 +1621,7 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 //STRIP001 	if (bIsClip)
 /*N*/ 	for (i=0; i<=MAXTAB; i++)
 /*N*/ 		if (pTab[i]) pTab[i]->SetDirtyAfterLoad();
 /*N*/ 	bCalcingAfterLoad = FALSE;
-/*N*/ 
+/*N*/
 /*N*/ 	SetDetectiveDirty(FALSE);	// noch keine wirklichen Aenderungen
 /*N*/ }
 
@@ -2035,10 +2035,10 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 //STRIP001 	if (bIsClip)
 /*N*/ 	BOOL	bEqual = TRUE;
 /*N*/ 	BOOL	bFound;
 /*N*/ 	USHORT	i;
-/*N*/ 
+/*N*/
 /*N*/ 	const ScStyleSheet* pStyle = NULL;
 /*N*/ 	const ScStyleSheet* pNewStyle;
-/*N*/ 
+/*N*/
 /*N*/ 	if ( rMark.IsMultiMarked() )
 /*N*/ 		for (i=0; i<=MAXTAB && bEqual; i++)
 /*N*/ 			if (pTab[i] && rMark.GetTableSelect(i))
@@ -2069,7 +2069,7 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 //STRIP001 	if (bIsClip)
 /*N*/ 				}
 /*N*/ 			}
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	return bEqual ? pStyle : NULL;
 /*N*/ }
 
@@ -2083,11 +2083,11 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 //STRIP001 	if (bIsClip)
 /*N*/ 		if (pTab[i])
 /*N*/ 			pTab[i]->StyleSheetChanged
 /*N*/ 				( pStyleSheet, bRemoved, pDev, nPPTX, nPPTY, rZoomX, rZoomY );
-/*N*/ 
+/*N*/
 /*N*/ 	if ( pStyleSheet && pStyleSheet->GetName() == ScGlobal::GetRscString(STR_STYLENAME_STANDARD) )
 /*N*/ 	{
 /*N*/ 		//	update attributes for all note objects
-/*N*/ 
+/*N*/
 /*N*/ 		ScDetectiveFunc aFunc( this, 0 );
 /*N*/ 		aFunc.UpdateAllComments();
 /*N*/ 	}
@@ -2095,7 +2095,7 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 //STRIP001 	if (bIsClip)
 
 
 /*N*/ BOOL ScDocument::IsStyleSheetUsed( const ScStyleSheet& rStyle, BOOL bGatherAllStyles ) const
-/*N*/ {DBG_BF_ASSERT(0, "STRIP"); return FALSE; //STRIP001 
+/*N*/ {DBG_BF_ASSERT(0, "STRIP"); return FALSE; //STRIP001
 /*N*/ }
 
 
@@ -2108,7 +2108,7 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 //STRIP001 	if (bIsClip)
 /*N*/ 	if (VALIDTAB(nTab))
 /*N*/ 		if (pTab[nTab])
 /*N*/ 			return pTab[nTab]->ApplyFlags( nStartCol, nStartRow, nEndCol, nEndRow, nFlags );
-/*N*/ 
+/*N*/
 /*N*/ 	DBG_ERROR("ApplyFlags: falsche Tabelle");
 /*N*/ 	return FALSE;
 /*N*/ }
@@ -2118,7 +2118,7 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 //STRIP001 	if (bIsClip)
 
 /*N*/ BOOL ScDocument::RemoveFlagsTab( USHORT nStartCol, USHORT nStartRow,
 /*N*/ 						USHORT nEndCol, USHORT nEndRow, USHORT nTab, INT16 nFlags )
-/*N*/ {DBG_BF_ASSERT(0, "STRIP"); //STRIP001 
+/*N*/ {DBG_BF_ASSERT(0, "STRIP"); //STRIP001
 /*N*/ 	return FALSE;
 /*N*/ }
 
@@ -2131,7 +2131,7 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 //STRIP001 	if (bIsClip)
 /*N*/ {
 /*N*/ 	SfxItemSet* pSet = NULL;
 /*N*/ 	USHORT i;
-/*N*/ 
+/*N*/
 /*N*/ 	if ( rMark.IsMultiMarked() )								// multi selection
 /*N*/ 	{
 /*N*/ 		for (i=0; i<=MAXTAB; i++)
@@ -2148,7 +2148,7 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 //STRIP001 	if (bIsClip)
 /*N*/ 								aRange.aStart.Col(), aRange.aStart.Row(),
 /*N*/ 								aRange.aEnd.Col(), aRange.aEnd.Row(), bDeep );
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	DBG_ASSERT( pSet, "SelectionPattern Null" );
 /*N*/ 	if (pSet)
 /*N*/ 		return new ScPatternAttr( pSet );
@@ -2174,15 +2174,15 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 //STRIP001 	if (bIsClip)
 /*N*/ 	rLineOuter.SetLine(NULL, BOX_LINE_LEFT);
 /*N*/ 	rLineOuter.SetLine(NULL, BOX_LINE_RIGHT);
 /*N*/ 	rLineOuter.SetDistance(0);
-/*N*/ 
+/*N*/
 /*N*/ 	rLineInner.SetLine(NULL, BOXINFO_LINE_HORI);
 /*N*/ 	rLineInner.SetLine(NULL, BOXINFO_LINE_VERT);
 /*N*/ 	rLineInner.SetTable(TRUE);
 /*N*/ 	rLineInner.SetDist((BOOL)FALSE);
 /*N*/ 	rLineInner.SetMinDist(FALSE);
-/*N*/ 
+/*N*/
 /*N*/ 	ScLineFlags aFlags;
-/*N*/ 
+/*N*/
 /*N*/ 	if (rMark.IsMarked())
 /*N*/ 	{
 /*N*/ 		ScRange aRange;
@@ -2194,9 +2194,9 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 //STRIP001 	if (bIsClip)
 /*N*/ 										  aRange.aStart.Col(), aRange.aStart.Row(),
 /*N*/ 										  aRange.aEnd.Col(),   aRange.aEnd.Row() );
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 		//	Don't care Status auswerten
-/*N*/ 
+/*N*/
 /*N*/ 	rLineInner.SetValid( VALID_LEFT,   ( aFlags.nLeft != SC_LINE_DONTCARE ) );
 /*N*/ 	rLineInner.SetValid( VALID_RIGHT,  ( aFlags.nRight != SC_LINE_DONTCARE ) );
 /*N*/ 	rLineInner.SetValid( VALID_TOP,    ( aFlags.nTop != SC_LINE_DONTCARE ) );
@@ -2213,9 +2213,9 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 //STRIP001 	if (bIsClip)
 /*N*/ 	{
 /*N*/ 		//	Attribut im Dokument ueberhaupt verwendet?
 /*N*/ 		//	(wie in fillinfo)
-/*N*/ 
+/*N*/
 /*N*/ 		ScDocumentPool* pPool = xPoolHelper->GetDocPool();
-/*N*/ 
+/*N*/
 /*N*/ 		BOOL bAnyItem = FALSE;
 /*N*/ 		USHORT nRotCount = pPool->GetItemCount( ATTR_ROTATE_VALUE );
 /*N*/ 		for (USHORT nItem=0; nItem<nRotCount; nItem++)
@@ -2227,14 +2227,14 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 //STRIP001 	if (bIsClip)
 /*N*/ 		if (!bAnyItem)
 /*N*/ 			nMask &= ~HASATTR_ROTATE;
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	if ( nMask & HASATTR_RTL )
 /*N*/ 	{
 /*?*/ 		//	first check if right-to left is in the pool at all
 /*?*/ 		//	(the same item is used in cell and page format)
-/*?*/ 
+/*?*/
 /*?*/ 		ScDocumentPool* pPool = xPoolHelper->GetDocPool();
-/*?*/ 
+/*?*/
 /*?*/ 		BOOL bHasRtl = FALSE;
 /*?*/ 		USHORT nDirCount = pPool->GetItemCount( ATTR_WRITINGDIR );
 /*?*/ 		for (USHORT nItem=0; nItem<nDirCount; nItem++)
@@ -2249,10 +2249,10 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 //STRIP001 	if (bIsClip)
 /*?*/ 		if (!bHasRtl)
 /*?*/ 			nMask &= ~HASATTR_RTL;
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	if (!nMask)
 /*N*/ 		return FALSE;
-/*N*/ 
+/*N*/
 /*N*/ 	BOOL bFound = FALSE;
 /*N*/ 	for (USHORT i=nTab1; i<=nTab2 && !bFound; i++)
 /*N*/ 		if (pTab[i])
@@ -2262,10 +2262,10 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 //STRIP001 	if (bIsClip)
 /*?*/ 				if ( GetEditTextDirection(i) == EE_HTEXTDIR_R2L )		// sheet default
 /*?*/ 					bFound = TRUE;
 /*N*/ 			}
-/*N*/ 
+/*N*/
 /*N*/ 			bFound |= pTab[i]->HasAttrib( nCol1, nRow1, nCol2, nRow2, nMask );
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 	return bFound;
 /*N*/ }
 
@@ -2324,12 +2324,12 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 //STRIP001 	if (bIsClip)
 /*N*/ 			*pOnlyNotBecauseOfMatrix = FALSE;
 /*N*/ 		return FALSE;
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	if (VALIDTAB(nTab))
 /*N*/ 		if (pTab[nTab])
 /*N*/ 			return pTab[nTab]->IsBlockEditable( nStartCol, nStartRow, nEndCol,
 /*N*/ 				nEndRow, pOnlyNotBecauseOfMatrix );
-/*N*/ 
+/*N*/
 /*N*/ 	DBG_ERROR("Falsche Tabellennummer");
 /*N*/ 	if ( pOnlyNotBecauseOfMatrix )
 /*N*/ 		*pOnlyNotBecauseOfMatrix = FALSE;
@@ -2347,10 +2347,10 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 //STRIP001 	if (bIsClip)
 /*N*/ 			*pOnlyNotBecauseOfMatrix = FALSE;
 /*N*/ 		return FALSE;
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	ScRange aRange;
 /*N*/ 	rMark.GetMarkArea(aRange);
-/*N*/ 
+/*N*/
 /*N*/ 	BOOL bOk = TRUE;
 /*N*/ 	BOOL bMatrix = ( pOnlyNotBecauseOfMatrix != NULL );
 /*N*/ 	for ( USHORT i=0; i<=MAXTAB && (bOk || bMatrix); i++ )
@@ -2379,10 +2379,10 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 //STRIP001 	if (bIsClip)
 /*N*/ 			}
 /*N*/ 		}
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	if ( pOnlyNotBecauseOfMatrix )
 /*N*/ 		*pOnlyNotBecauseOfMatrix = ( !bOk && bMatrix );
-/*N*/ 
+/*N*/
 /*N*/ 	return bOk;
 /*N*/ }
 
@@ -2396,7 +2396,7 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 //STRIP001 	if (bIsClip)
 /*N*/ BOOL ScDocument::GetMatrixFormulaRange( const ScAddress& rCellPos, ScRange& rMatrix )
 /*N*/ {
 /*N*/ 	//	if rCell is part of a matrix formula, return its complete range
-/*N*/ 
+/*N*/
 /*N*/ 	BOOL bRet = FALSE;
 /*N*/ 	ScBaseCell* pCell = GetCell( rCellPos );
 /*N*/ 	if (pCell && pCell->GetCellType() == CELLTYPE_FORMULA)
@@ -2425,7 +2425,7 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 //STRIP001 	if (bIsClip)
 /*N*/ 					ScAddress aEnd( aOrigin.Col() + nSizeX - 1,
 /*N*/ 									aOrigin.Row() + nSizeY - 1,
 /*N*/ 									aOrigin.Tab() );
-/*N*/ 
+/*N*/
 /*N*/ 					rMatrix.aStart = aOrigin;
 /*N*/ 					rMatrix.aEnd = aEnd;
 /*N*/ 					bRet = TRUE;
@@ -2452,9 +2452,9 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 //STRIP001 	if (bIsClip)
 /*N*/ 				while (((ScMergeFlagAttr*)GetAttr(nCol,rStartRow,nTab,ATTR_MERGE_FLAG))->
 /*N*/ 							IsVerOverlapped())
 /*N*/ 					--rStartRow;
-/*N*/ 
+/*N*/
 /*N*/ 			//!		weiterreichen ?
-/*N*/ 
+/*N*/
 /*N*/ 			ScAttrArray* pAttrArray = pTab[nTab]->aCol[nOldCol].pAttrArray;
 /*N*/ 			short nIndex;
 /*N*/ 			pAttrArray->Search( nOldRow, nIndex );
@@ -2462,7 +2462,7 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 //STRIP001 	if (bIsClip)
 /*N*/ 			while (nAttrPos<=nEndRow)
 /*N*/ 			{
 /*N*/ 				DBG_ASSERT( nIndex < (short) pAttrArray->nCount, "Falscher Index im AttrArray" );
-/*N*/ 
+/*N*/
 /*N*/ 				if (((ScMergeFlagAttr&)pAttrArray->pData[nIndex].pPattern->
 /*N*/ 						GetItem(ATTR_MERGE_FLAG)).IsHorOverlapped())
 /*N*/ 				{
@@ -2485,7 +2485,7 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 //STRIP001 	if (bIsClip)
 /*N*/ 	}
 /*N*/ 	else
 /*N*/ 		DBG_ERROR("ExtendOverlapped: falscher Bereich");
-/*N*/ 
+/*N*/
 /*N*/ 	return bFound;
 /*N*/ }
 
@@ -2499,13 +2499,13 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 //STRIP001 	if (bIsClip)
 /*N*/ 	{
 /*N*/ 		if (pTab[nTab])
 /*N*/ 			bFound = pTab[nTab]->ExtendMerge( nStartCol, nStartRow, rEndCol, rEndRow, bRefresh, bAttrs );
-/*N*/ 
+/*N*/
 /*N*/ 		if (bRefresh)
 DBG_BF_ASSERT(0, "STRIP"); //STRIP001 /*?*/ 			RefreshAutoFilter( nStartCol, nStartRow, rEndCol, rEndRow, nTab );
 /*N*/ 	}
 /*N*/ 	else
 /*N*/ 		DBG_ERROR("ExtendMerge: falscher Bereich");
-/*N*/ 
+/*N*/
 /*N*/ 	return bFound;
 /*N*/ }
 
@@ -2517,7 +2517,7 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 /*?*/ 			RefreshAutoFilter( nStartCol, nSt
 /*N*/ 	USHORT nEndTab   = rRange.aEnd.Tab();
 /*N*/ 	USHORT nEndCol   = rRange.aEnd.Col();
 /*N*/ 	USHORT nEndRow   = rRange.aEnd.Row();
-/*N*/ 
+/*N*/
 /*N*/ 	PutInOrder( nStartTab, nEndTab );
 /*N*/ 	for (USHORT nTab = nStartTab; nTab <= nEndTab; nTab++ )
 /*N*/ 	{
@@ -2532,10 +2532,10 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 /*?*/ 			RefreshAutoFilter( nStartCol, nSt
 /*N*/ 			if (nExtendRow > nEndRow) nEndRow = nExtendRow;
 /*N*/ 		}
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	rRange.aEnd.SetCol(nEndCol);
 /*N*/ 	rRange.aEnd.SetRow(nEndRow);
-/*N*/ 
+/*N*/
 /*N*/ 	return bFound;
 /*N*/ }
 
@@ -2547,7 +2547,7 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 /*?*/ 			RefreshAutoFilter( nStartCol, nSt
 /*N*/ 	USHORT nEndTab   = rRange.aEnd.Tab();
 /*N*/ 	USHORT nStartCol = rRange.aStart.Col();
 /*N*/ 	USHORT nStartRow = rRange.aStart.Row();
-/*N*/ 
+/*N*/
 /*N*/ 	PutInOrder( nStartTab, nEndTab );
 /*N*/ 	for (USHORT nTab = nStartTab; nTab <= nEndTab; nTab++ )
 /*N*/ 	{
@@ -2566,10 +2566,10 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 /*?*/ 			RefreshAutoFilter( nStartCol, nSt
 /*N*/ 			bFound = TRUE;
 /*N*/ 		}
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	rRange.aStart.SetCol(nStartCol);
 /*N*/ 	rRange.aStart.SetRow(nStartRow);
-/*N*/ 
+/*N*/
 /*N*/ 	return bFound;
 /*N*/ }
 
@@ -2627,7 +2627,7 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 /*?*/ 			RefreshAutoFilter( nStartCol, nSt
 /*N*/ 	for (i=ATTR_PATTERN_START; i<=ATTR_PATTERN_END && !bSet; i++)
 /*N*/ 		if (pSet->GetItemState(i) == SFX_ITEM_SET)
 /*N*/ 			bSet = TRUE;
-/*N*/ 
+/*N*/
 /*N*/ 	if (bSet)
 /*N*/ 	{
 /*N*/ 		// ApplySelectionCache needs multi mark
@@ -2693,11 +2693,11 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 /*?*/ 			RefreshAutoFilter( nStartCol, nSt
 /*N*/ 								BOOL bMarked, BOOL bUnprotected, const ScMarkData& rMark )
 /*N*/ {
 /*N*/ 	DBG_ASSERT( !nMovX || !nMovY, "GetNextPos: nur X oder Y" );
-/*N*/ 
+/*N*/
 /*N*/ 	ScMarkData aCopyMark = rMark;
 /*N*/ 	aCopyMark.SetMarking(FALSE);
 /*N*/ 	aCopyMark.MarkToMulti();
-/*N*/ 
+/*N*/
 /*N*/ 	if (nTab<=MAXTAB && pTab[nTab])
 /*N*/ 		pTab[nTab]->GetNextPos( rCol, rRow, nMovX, nMovY, bMarked, bUnprotected, aCopyMark );
 /*N*/ }
@@ -2710,9 +2710,9 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 /*?*/ 			RefreshAutoFilter( nStartCol, nSt
 /*N*/ void ScDocument::UpdStlShtPtrsFrmNms()
 /*N*/ {
 /*N*/ 	ScPatternAttr::pDoc = this;
-/*N*/ 
+/*N*/
 /*N*/ 	ScDocumentPool* pPool = xPoolHelper->GetDocPool();
-/*N*/ 
+/*N*/
 /*N*/ 	USHORT nCount = pPool->GetItemCount(ATTR_PATTERN);
 /*N*/ 	ScPatternAttr* pPattern;
 /*N*/ 	for (USHORT i=0; i<nCount; i++)
@@ -2730,7 +2730,7 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 /*?*/ 			RefreshAutoFilter( nStartCol, nSt
 /*N*/ void lcl_RemoveMergeFromStyles( ScStyleSheetPool* pStylePool )
 /*N*/ {
 /*N*/ 	pStylePool->SetSearchMask( SFX_STYLE_FAMILY_ALL );
-/*N*/ 
+/*N*/
 /*N*/ 	USHORT nCount = pStylePool->Count();
 /*N*/ 	for (USHORT i=0; i<nCount; i++)
 /*N*/ 	{
@@ -2738,11 +2738,11 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 /*?*/ 			RefreshAutoFilter( nStartCol, nSt
 /*N*/ 		SfxStyleSheetBase* pStyle = (*pStylePool)[i];
 /*N*/ 		if ( pStyle->GetMask() & SFXSTYLEBIT_READONLY )
 /*N*/ 			pStyle->SetMask( pStyle->GetMask() & ~SFXSTYLEBIT_READONLY );
-/*N*/ 
+/*N*/
 /*N*/ 		SfxItemSet& rSet = pStyle->GetItemSet();
 /*N*/ 		rSet.ClearItem( ATTR_MERGE );
 /*N*/ 		rSet.ClearItem( ATTR_MERGE_FLAG );
-/*N*/ 
+/*N*/
 /*N*/ 		//	Das SvxBoxInfoItem wurde bis zur 358 falsch geladen, so dass
 /*N*/ 		//	Seitenvorlagen falsche Items mit bDist = FALSE enthalten koennen
 /*N*/ 		if ( pStyle->GetFamily() == SFX_STYLE_FAMILY_PAGE )
@@ -2794,23 +2794,23 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 /*?*/ 			RefreshAutoFilter( nStartCol, nSt
 /*N*/ {
 /*N*/ 	//	bLoadingDone wird beim Laden des StylePools (ScStyleSheet::GetItemSet) gebraucht
 /*N*/ 	bLoadingDone = FALSE;
-/*N*/ 
+/*N*/
 /*N*/ 	USHORT nOldBufSize = rStream.GetBufferSize();
 /*N*/ 	rStream.SetBufferSize( 32768 );
 /*N*/ 	CharSet eOldSet = rStream.GetStreamCharSet();
-/*N*/ 
+/*N*/
 /*N*/ 	SetPrinter( NULL );
-/*N*/ 
+/*N*/
 /*N*/ 	ScPatternAttr::pDoc = this;
-/*N*/ 
+/*N*/
 /*N*/ 	if ( xPoolHelper.isValid() && !bIsClip )
 /*N*/ 		xPoolHelper->SourceDocumentGone();
-/*N*/ 
+/*N*/
 /*N*/ 	xPoolHelper = new ScPoolHelper( this );
-/*N*/ 
+/*N*/
 /*N*/ 	xPoolHelper->GetDocPool()->SetFileFormatVersion( (USHORT)rStream.GetVersion() );
 /*N*/ 	BOOL bStylesFound = FALSE;
-/*N*/ 
+/*N*/
 /*N*/ 	BOOL bRet = FALSE;
 /*N*/ 	USHORT nID;
 /*N*/ 	rStream >> nID;
@@ -2854,25 +2854,25 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 /*?*/ 			RefreshAutoFilter( nStartCol, nSt
 /*?*/ 					DBG_ERROR("unbekannter Sub-Record in ScDocument::LoadPool");
 /*N*/ 			}
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		UpdStlShtPtrsFrmNms();
 /*N*/ 		bRet = TRUE;
 /*N*/ 	}
 /*N*/ 	else
 /*?*/ 		DBG_ERROR("LoadPool: SCID_POOLS nicht gefunden");
-/*N*/ 
+/*N*/
 /*N*/ 	if (!bStylesFound)
 /*?*/ 		xPoolHelper->GetStylePool()->CreateStandardStyles();
-/*N*/ 
+/*N*/
 /*N*/ 	rStream.SetStreamCharSet( eOldSet );
 /*N*/ 	rStream.SetBufferSize( nOldBufSize );
-/*N*/ 
+/*N*/
 /*N*/ 	bLoadingDone = TRUE;
-/*N*/ 
+/*N*/
 /*N*/ 	//	Das Uno-Objekt merkt sich einen Pointer auf den NumberFormatter
 /*N*/ 	//	-> mitteilen, dass der alte Pointer ungueltig geworden ist
 /*N*/ 	BroadcastUno( ScPointerChangedHint(SC_POINTERCHANGED_NUMFMT) );
-/*N*/ 
+/*N*/
 /*N*/ 	return bRet;
 /*N*/ }
 
@@ -2880,66 +2880,64 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 /*?*/ 			RefreshAutoFilter( nStartCol, nSt
 /*N*/ BOOL ScDocument::SavePool( SvStream& rStream ) const
 /*N*/ {
 /*N*/ 	xPoolHelper->GetDocPool()->SetFileFormatVersion( (USHORT)rStream.GetVersion() );
-/*N*/ 
+/*N*/
 /*N*/ 	USHORT nOldBufSize = rStream.GetBufferSize();
 /*N*/ 	rStream.SetBufferSize( 32768 );
 /*N*/ 	CharSet eOldSet = rStream.GetStreamCharSet();
 /*N*/     CharSet eStoreCharSet = ::GetSOStoreTextEncoding(
 /*N*/         gsl_getSystemTextEncoding(), (USHORT)rStream.GetVersion() );
 /*N*/     rStream.SetStreamCharSet( eStoreCharSet );
-/*N*/ 
+/*N*/
 /*N*/ 	//	::com::press-Mode fuer Grafiken in Brush-Items (Hintergrund im Seitenformat)
-/*N*/ 
+/*N*/
 /*N*/ 	USHORT nComprMode = rStream.GetCompressMode() & ~(COMPRESSMODE_ZBITMAP | COMPRESSMODE_NATIVE);
-/*N*/ 	SvtSaveOptions aSaveOpt;
-/*N*/ 	SvtSaveOptions::SaveGraphicsMode eMode = aSaveOpt.GetSaveGraphicsMode();
-/*N*/ 	BOOL bNative = ( eMode == SvtSaveOptions::SaveGraphicsOriginal );
-/*N*/ 	BOOL bCompr = bNative || ( eMode == SvtSaveOptions::SaveGraphicsCompressed );
-/*N*/ 
+/*N*/   BOOL bNative = FALSE;
+/*N*/   BOOL bCompr = FALSE;
+/*N*/
 /*N*/ 	if ( rStream.GetVersion() >= SOFFICE_FILEFORMAT_40 && bCompr )
 /*N*/ 		nComprMode |= COMPRESSMODE_ZBITMAP;				//	komprimiert ab 4.0
 /*N*/ 	if ( rStream.GetVersion() > SOFFICE_FILEFORMAT_40 && bNative )
 /*N*/ 		nComprMode |= COMPRESSMODE_NATIVE;				//	Originalformat ab 5.0
 /*N*/ 	rStream.SetCompressMode( nComprMode );
-/*N*/ 
+/*N*/
 /*N*/ 	{
 /*N*/ 		rStream << (USHORT) SCID_NEWPOOLS;
 /*N*/ 		ScWriteHeader aHdr( rStream );
-/*N*/ 
+/*N*/
 /*N*/ 		{
 /*N*/ 			rStream << (USHORT) SCID_CHARSET;
 /*N*/ 			ScWriteHeader aSetHdr( rStream, 2 );
 /*N*/ 			rStream << (BYTE) 0		// dummy, old System::GetGUIType()
 /*N*/                     << (BYTE) eStoreCharSet;
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		//	Force the default style's name to be "Standard" for all languages in the file.
 /*N*/ 		//	This is needed for versions up to 5.1, to find the default pattern's style in
 /*N*/ 		//	the UpdateStyleSheet call.
 /*N*/ 		//	#89078# this has to be set for the DocPool save, too, so the default style name
 /*N*/ 		//	is adjusted for the patterns, or a wrong style would be used if other styles
 /*N*/ 		//	match the default style's name after CharacterSet conversion.
-/*N*/ 
+/*N*/
 /*N*/ 		String aFileStdName = String::CreateFromAscii(RTL_CONSTASCII_STRINGPARAM(STRING_STANDARD));
 /*N*/ 		if ( aFileStdName != ScGlobal::GetRscString(STR_STYLENAME_STANDARD) )
 /*N*/ 			xPoolHelper->GetStylePool()->SetForceStdName( &aFileStdName );
-/*N*/ 
+/*N*/
 /*N*/ 		{
 /*N*/ 			rStream << (USHORT) SCID_DOCPOOL;
 /*N*/ 			ScWriteHeader aDocPoolHdr( rStream );
 /*N*/ 			xPoolHelper->GetDocPool()->Store( rStream );
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		{
 /*N*/ 			rStream << (USHORT) SCID_STYLEPOOL;
 /*N*/ 			ScWriteHeader aStylePoolHdr( rStream );
 /*N*/ 			xPoolHelper->GetStylePool()->SetSearchMask( SFX_STYLE_FAMILY_ALL );
-/*N*/ 
+/*N*/
 /*N*/ 			xPoolHelper->GetStylePool()->Store( rStream, FALSE );
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		xPoolHelper->GetStylePool()->SetForceStdName( NULL );
-/*N*/ 
+/*N*/
 /*N*/ 		if ( rStream.GetVersion() >= SOFFICE_FILEFORMAT_50 )
 /*N*/ 		{
 /*N*/ 			rStream << (USHORT) SCID_EDITPOOL;
@@ -2948,7 +2946,7 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 /*?*/ 			RefreshAutoFilter( nStartCol, nSt
 /*N*/ 			xPoolHelper->GetEditPool()->Store( rStream );
 /*N*/ 		}
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	rStream.SetStreamCharSet( eOldSet );
 /*N*/ 	rStream.SetBufferSize( nOldBufSize );
 /*N*/ 	return TRUE;
@@ -2958,11 +2956,11 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 /*?*/ 			RefreshAutoFilter( nStartCol, nSt
 /*N*/ long ScDocument::GetCellCount() const
 /*N*/ {
 /*N*/ 	long nCellCount = 0L;
-/*N*/ 
+/*N*/
 /*N*/ 	for ( USHORT nTab=0; nTab<=MAXTAB; nTab++ )
 /*N*/ 		if ( pTab[nTab] )
 /*N*/ 			nCellCount += pTab[nTab]->GetCellCount();
-/*N*/ 
+/*N*/
 /*N*/ 	return nCellCount;
 /*N*/ }
 
@@ -2970,11 +2968,11 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 /*?*/ 			RefreshAutoFilter( nStartCol, nSt
 /*N*/ long ScDocument::GetWeightedCount() const
 /*N*/ {
 /*N*/ 	long nCellCount = 0L;
-/*N*/ 
+/*N*/
 /*N*/ 	for ( USHORT nTab=0; nTab<=MAXTAB; nTab++ )
 /*N*/ 		if ( pTab[nTab] )
 /*N*/ 			nCellCount += pTab[nTab]->GetWeightedCount();
-/*N*/ 
+/*N*/
 /*N*/ 	return nCellCount;
 /*N*/ }
 
@@ -2992,7 +2990,7 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 /*?*/ 			RefreshAutoFilter( nStartCol, nSt
 /*N*/ {
 /*N*/ 	if ( nTab <= MAXTAB && pTab[nTab] )
 /*N*/ 		return pTab[nTab]->GetPageStyle();
-/*N*/ 
+/*N*/
 /*N*/ 	return EMPTY_STRING;
 /*N*/ }
 
@@ -3007,7 +3005,7 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 /*?*/ 			RefreshAutoFilter( nStartCol, nSt
 /*N*/ {
 /*N*/ 	if ( nTab <= MAXTAB && pTab[nTab] )
 /*N*/ 		return pTab[nTab]->GetPageSize();
-/*N*/ 
+/*N*/
 /*N*/ 	DBG_ERROR("falsche Tab");
 /*N*/ 	return Size();
 /*N*/ }
@@ -3038,11 +3036,11 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 /*?*/ 			RefreshAutoFilter( nStartCol, nSt
 /*N*/ BOOL ScDocument::HasPrintRange()
 /*N*/ {
 /*N*/ 	BOOL bResult = FALSE;
-/*N*/ 
+/*N*/
 /*N*/ 	for ( USHORT i=0; !bResult && i<nMaxTableNumber; i++ )
 /*N*/ 		if ( pTab[i] )
 /*N*/ 			bResult = ( pTab[i]->GetPrintRangeCount() > 0 );
-/*N*/ 
+/*N*/
 /*N*/ 	return bResult;
 /*N*/ }
 
@@ -3051,7 +3049,7 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 /*?*/ 			RefreshAutoFilter( nStartCol, nSt
 /*N*/ {
 /*N*/ 	if (nTab<=MAXTAB && pTab[nTab])
 /*N*/ 		return pTab[nTab]->GetPrintRangeCount();
-/*N*/ 
+/*N*/
 /*N*/ 	return 0;
 /*N*/ }
 
@@ -3060,7 +3058,7 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 /*?*/ 			RefreshAutoFilter( nStartCol, nSt
 /*N*/ {
 /*N*/ 	if (nTab<=MAXTAB && pTab[nTab])
 /*N*/ 		return pTab[nTab]->GetPrintRange(nPos);
-/*N*/ 
+/*N*/
 /*N*/ 	return NULL;
 /*N*/ }
 
@@ -3069,7 +3067,7 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 /*?*/ 			RefreshAutoFilter( nStartCol, nSt
 /*N*/ {
 /*N*/ 	if (nTab<=MAXTAB && pTab[nTab])
 /*N*/ 		return pTab[nTab]->GetRepeatColRange();
-/*N*/ 
+/*N*/
 /*N*/ 	return NULL;
 /*N*/ }
 
@@ -3078,7 +3076,7 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 /*?*/ 			RefreshAutoFilter( nStartCol, nSt
 /*N*/ {
 /*N*/ 	if (nTab<=MAXTAB && pTab[nTab])
 /*N*/ 		return pTab[nTab]->GetRepeatRowRange();
-/*N*/ 
+/*N*/
 /*N*/ 	return NULL;
 /*N*/ }
 
