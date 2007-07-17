@@ -4,9 +4,9 @@
  *
  *  $RCSfile: sd_sdmod.cxx,v $
  *
- *  $Revision: 1.7 $
+ *  $Revision: 1.8 $
  *
- *  last change: $Author: rt $ $Date: 2007-04-26 07:11:55 $
+ *  last change: $Author: obo $ $Date: 2007-07-17 10:01:43 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -33,9 +33,6 @@
  *
  ************************************************************************/
 
-#ifndef _SV_STATUS_HXX //autogen
-#include <vcl/status.hxx>
-#endif
 #ifndef _SV_VIRDEV_HXX
 #include <vcl/virdev.hxx>
 #endif
@@ -43,7 +40,7 @@
 #include <svtools/zforlist.hxx>
 #endif
 
-#ifndef _EHDL_HXX 
+#ifndef _EHDL_HXX
 #include <svtools/ehdl.hxx>
 #endif
 
@@ -64,26 +61,13 @@
 #include "res_bmp.hrc"
 
 #ifndef _LEGACYBINFILTERMGR_HXX
-#include <legacysmgr/legacy_binfilters_smgr.hxx>	//STRIP002 
-#endif
-
-#ifndef _SFX_SRCHITEM_HXX
-#include <bf_sfx2/srchitem.hxx>
+#include <legacysmgr/legacy_binfilters_smgr.hxx>	//STRIP002
 #endif
 
 namespace binfilter {
 
 /*N*/ TYPEINIT1( SdModuleDummy, SfxModule );
 /*N*/ TYPEINIT1( SdModule, SdModuleDummy );
-
-/*N*/ #define SdModule
-/*N*/ #include "sdslots.hxx"
-
-
-/*N*/ SFX_IMPL_INTERFACE(SdModule, SfxModule, SdResId(STR_APPLICATIONOBJECTBAR))
-/*N*/ {
-/*N*/ 	SFX_STATUSBAR_REGISTRATION(SdResId(RID_DRAW_STATUSBAR));
-/*N*/ }
 
 /*N*/ SFX_IMPL_MODULE_DLL(Sd)
 
@@ -102,19 +86,16 @@ namespace binfilter {
 /*N*/     pTransferSelection(NULL),
 /*N*/ 	pImpressOptions(NULL),
 /*N*/ 	pDrawOptions(NULL),
-/*N*/ 	pSearchItem(NULL),
 /*N*/ 	pNumberFormatter( NULL )
 /*N*/ {
 /*N*/ 	SetName( UniString::CreateFromAscii( RTL_CONSTASCII_STRINGPARAM( "StarDraw" ) ) );	// Nicht uebersetzen!
-/*N*/ 	pSearchItem = new SvxSearchItem(ITEMID_SEARCH);
-/*N*/ 	pSearchItem->SetAppFlag(SVX_SEARCHAPP_DRAW);
 /*N*/ 	StartListening( *SFX_APP() );
-/*N*/ 
+/*N*/
 /*N*/ 	mpErrorHdl = new SfxErrorHandler( RID_SD_ERRHDL,
 /*N*/ 										 ERRCODE_AREA_SD,
 /*N*/ 										 ERRCODE_AREA_SD_END,
 /*N*/ 										 GetResMgr() );
-/*N*/ 
+/*N*/
 /*N*/     mpVirtualRefDevice = new VirtualDevice;
 /*N*/     mpVirtualRefDevice->SetMapMode( MAP_100TH_MM );
 /*N*/ }
@@ -129,8 +110,6 @@ namespace binfilter {
 
 /*N*/ SdModule::~SdModule()
 /*N*/ {
-/*N*/ 	delete pSearchItem;
-
 /*N*/ 	if( pNumberFormatter )
 /*N*/ 		delete pNumberFormatter;
 
@@ -208,34 +187,34 @@ void SdModule::Free()
 /*N*/ SdOptions* SdModule::GetSdOptions(DocumentType eDocType)
 /*N*/ {
 /*N*/ 	SdOptions* pOptions = NULL;
-/*N*/ 
+/*N*/
 /*N*/ 	if (eDocType == DOCUMENT_TYPE_DRAW)
 /*N*/ 	{
 /*N*/ 		if (!pDrawOptions)
 /*N*/ 			pDrawOptions = new SdOptions( SDCFG_DRAW );
-/*N*/ 
+/*N*/
 /*N*/ 		pOptions = pDrawOptions;
 /*N*/ 	}
 /*N*/ 	else if (eDocType == DOCUMENT_TYPE_IMPRESS)
 /*N*/ 	{
 /*N*/ 		if (!pImpressOptions)
 /*N*/ 			pImpressOptions = new SdOptions( SDCFG_IMPRESS );
-/*N*/ 
+/*N*/
 /*N*/ 		pOptions = pImpressOptions;
 /*N*/ 	}
 /*N*/ 	if( pOptions )
 /*N*/  	{
 /*N*/  		UINT16 nMetric = pOptions->GetMetric();
-/*N*/  
+/*N*/
 /*N*/  		SdDrawDocShell* pDocSh = PTR_CAST( SdDrawDocShell, SfxObjectShell::Current() );
 /*N*/  		SdDrawDocument* pDoc = NULL;
 /*N*/  		if (pDocSh)
 /*?*/ 			pDoc = pDocSh->GetDoc();
-/*N*/ 
+/*N*/
 /*N*/ 		if( nMetric != 0xffff && pDoc && eDocType == pDoc->GetDocumentType() )
 /*?*/ 			PutItem( SfxUInt16Item( SID_ATTR_METRIC, nMetric ) );
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	return(pOptions);
 /*N*/ }
 
@@ -256,7 +235,7 @@ void SdModule::Free()
 /*N*/ {
 /*N*/ 	if( !pNumberFormatter )
 /*N*/ 		pNumberFormatter = new SvNumberFormatter( ::legacy_binfilters::getLegacyProcessServiceFactory(), LANGUAGE_SYSTEM );
-/*N*/ 
+/*N*/
 /*N*/ 	return pNumberFormatter;
 /*N*/ }
 
