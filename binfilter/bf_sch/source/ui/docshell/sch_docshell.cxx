@@ -4,9 +4,9 @@
  *
  *  $RCSfile: sch_docshell.cxx,v $
  *
- *  $Revision: 1.10 $
+ *  $Revision: 1.11 $
  *
- *  last change: $Author: rt $ $Date: 2006-10-27 17:47:24 $
+ *  last change: $Author: obo $ $Date: 2007-07-17 09:49:32 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -42,39 +42,19 @@
 #define ITEMID_DASH_LIST		SID_DASH_LIST
 #define ITEMID_LINEEND_LIST 	SID_LINEEND_LIST
 
+#include <bf_sfx2/app.hxx>
 #include <bf_svx/svxids.hrc>
-#ifndef _SO_CLSIDS_HXX //autogen
 #include <so3/clsids.hxx>
-#endif
-#ifndef _SFX_PRINTER_HXX //autogen
 #include <bf_sfx2/printer.hxx>
-#endif
-#ifndef _CTRLTOOL_HXX
 #include <svtools/ctrltool.hxx>
-#endif
-#ifndef _SFX_PROGRESS_HXX
 #include <bf_sfx2/progress.hxx>
-#endif
-#ifndef _SFXSTBMGR_HXX //autogen
-#include <bf_sfx2/stbmgr.hxx>
-#endif
-#ifndef _SFXECODE_HXX //autogen
 #include <svtools/sfxecode.hxx>
-#endif
-#ifndef _SVX_DRAWITEM_HXX //autogen
 #include <bf_svx/drawitem.hxx>
-#endif
-#ifndef _SFXSTYLE_HXX //autogen
 #include <svtools/style.hxx>
-#endif
-#ifndef INCLUDED_SVTOOLS_SAVEOPT_HXX
 #include <svtools/saveopt.hxx>
-#endif
-#ifndef INCLUDED_SVTOOLS_PATHOPTIONS_HXX
 #include <svtools/pathoptions.hxx>
-#endif
-
 #include <bf_svx/svxids.hrc>
+#include <rtl/logfile.hxx>
 
 #include "app.hrc"
 #include "strings.hrc"
@@ -85,19 +65,9 @@
 
 #include "ChXChartDocument.hxx"
 #include "ChXChartData.hxx"
-
-// header for class SfxFilter
-
-#ifndef	_RTL_LOGFILE_HXX_
-#include <rtl/logfile.hxx>
-#endif
-
-// XML filter
 #include "SchXMLWrapper.hxx"
-
-#ifndef _SCH_MEMCHRT_HXX
 #include "memchrt.hxx"
-#endif
+
 namespace binfilter {
 
 #define POOL_BUFFER_SIZE		(USHORT)32768
@@ -123,9 +93,6 @@ static const String __FAR_DATA aStarChartDoc = String( RTL_CONSTASCII_USTRINGPAR
 |* SFX-Slotmaps und -Definitionen
 |*
 \************************************************************************/
-
-#define SchChartDocShell
-#include "schslots.hxx"
 
 
 namespace
@@ -160,10 +127,6 @@ private:
 };
 }
 
-/*N*/ SFX_IMPL_INTERFACE( SchChartDocShell, SfxObjectShell, SchResId( 0 ) )
-/*N*/ // from macro: void SchChartDocShell::InitInterface_Impl()
-/*N*/ {}
-
 using namespace ::com::sun::star;
 
 /*N*/ SFX_IMPL_OBJECTFACTORY_DLL(SchChartDocShell, schart,
@@ -185,10 +148,10 @@ using namespace ::com::sun::star;
 /*N*/     if( pUndoManager )
 /*?*/         delete pUndoManager;
 /*N*/     pUndoManager = new SfxUndoManager;
-/*N*/ 
+/*N*/
 /*N*/ 	// Listen, bzw. Tables im ItemSet der DocShell anlegen
 /*N*/ 	UpdateTablePointers();
-/*N*/ 
+/*N*/
 /*N*/ 	if (pChDoc->GetPageCount() == 0L)
 /*N*/ 	{
 /*N*/ 		// Seite einfuegen
@@ -196,10 +159,10 @@ using namespace ::com::sun::star;
 /*N*/ 		pPage->SetSize(GetVisArea(ASPECT_CONTENT).GetSize());
 /*N*/ 		pChDoc->InsertPage(pPage);
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/     // #i2914# remove menu item for 'Save Copy as...'
 /*N*/     SvVerbList * pVerbList = new SvVerbList( GetVerbList() );
-/*N*/ 
+/*N*/
 /*N*/     ULONG nCount = pVerbList->Count();
 /*N*/     ULONG i = 0;
 /*N*/     for( ; i < nCount; ++i )
@@ -212,7 +175,7 @@ using namespace ::com::sun::star;
 /*N*/         }
 /*N*/     }
 /*N*/     SetVerbList( pVerbList, TRUE );
-/*N*/ 
+/*N*/
 /*N*/ }
 
 /*N*/ void SchChartDocShell::DataModified( chart::ChartDataChangeEvent& aEvent ) throw()
@@ -270,70 +233,22 @@ using namespace ::com::sun::star;
 /*N*/ SchChartDocShell::~SchChartDocShell() throw()
 /*N*/ {
 /*N*/ 	CHART_TRACE( "SchChartDocShell::~SchChartDocShell" );
-/*N*/ 
+/*N*/
 /*N*/ 	delete pFontList;
-/*N*/ 
+/*N*/
 /*N*/ 	delete pUndoManager;
-/*N*/ 
+/*N*/
 /*N*/ 	if( pChDoc )
 /*N*/ 	{
 /*N*/ 		pChDoc->ClearUndoBuffer();				// clear draw undo actions
 /*N*/ 		pChDoc->SetMaxUndoActionCount( 1 );		// don't add further undo actions
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	if(bOwnPrinter)
 /*N*/ 		delete pPrinter;
-/*N*/ 
+/*N*/
 /*N*/ 	delete pChDoc;
 /*N*/ }
-
-/*************************************************************************
-|*
-|* SFX-Requests bearbeiten
-|*
-\************************************************************************/
-
-/*?*/ void SchChartDocShell::Execute(SfxRequest& rReq) throw()
-/*?*/ {
-/*?*/ 	DBG_BF_ASSERT(0, "STRIP"); //STRIP001 	switch (rReq.GetSlot())
-/*?*/ }
-
-/*************************************************************************
-|*
-|* Slot-Stati setzen
-|*
-\************************************************************************/
-
-/*?*/ void SchChartDocShell::GetState(SfxItemSet &rSet) throw()
-/*?*/ {
-/*?*/ 	DBG_BF_ASSERT(0, "STRIP"); //STRIP001 	SfxWhichIter aIter(rSet);
-/*            case SID_DOC_MODIFIED:
-                rSet.Put( SfxStringItem( SID_DOC_MODIFIED,
-                                         IsModified() ? '*' : ' ' ) );
-                //rSet.Put(SfxBoolItem(SID_DOC_MODIFIED, IsModified()));
-                break;
-*/
-/*?*/ }
-
-/*************************************************************************
-|*
-|* SFX-Aktivierung
-|*
-\************************************************************************/
-
-
-/*************************************************************************
-|*
-|* SFX-Deaktivierung
-|*
-\************************************************************************/
-
-
-/*************************************************************************
-|*
-|* SFX-Undomanager zurueckgeben
-|*
-\************************************************************************/
 
 /*N*/ SfxUndoManager* SchChartDocShell::GetUndoManager() throw()
 /*N*/ {
@@ -357,21 +272,21 @@ using namespace ::com::sun::star;
 /*N*/ 		pSet->Put(aItem);
 /*N*/ 		pPrinter = new SfxPrinter(pSet);
 /*N*/ 		bOwnPrinter = TRUE;
-/*N*/ 
+/*N*/
 /*N*/ 		MapMode aMapMode = pPrinter->GetMapMode();
 /*N*/ 		aMapMode.SetMapUnit(MAP_100TH_MM);
 /*N*/ 		pPrinter->SetMapMode(aMapMode);
-/*N*/ 
+/*N*/
 /*N*/ 		if (pChDoc)
 /*N*/ 		{
 /*N*/ 			if (pPrinter != pChDoc->GetRefDevice())
 /*N*/ 				pChDoc->SetRefDevice(pPrinter);
-/*N*/ 
+/*N*/
 /*N*/ 			if (pPrinter != pChDoc->GetOutliner()->GetRefDevice())
 /*N*/ 				pChDoc->GetOutliner()->SetRefDevice(pPrinter);
 /*N*/ 		}
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	return pPrinter;
 /*N*/ }
 
@@ -384,7 +299,7 @@ using namespace ::com::sun::star;
 /*N*/ void SchChartDocShell::SetPrinter( SfxPrinter* pNewPrinter, BOOL bIsDeletedHere ) throw()
 /*N*/ {
 /*N*/     bool bFirstTimeSettingPrinter = ( pPrinter == NULL );
-/*N*/ 
+/*N*/
 /*N*/     // Printer may only be used, if the MapUnit is correct
 /*N*/ 	if( pNewPrinter &&
 /*N*/         pNewPrinter->GetMapMode().GetMapUnit() == MAP_100TH_MM )
@@ -394,9 +309,9 @@ using namespace ::com::sun::star;
 /*?*/ 			delete pPrinter;
 /*?*/ 			bOwnPrinter = FALSE;
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		bOwnPrinter = bIsDeletedHere;
-/*N*/ 
+/*N*/
 /*N*/ 		pPrinter = pNewPrinter;
 /*N*/ 		if(pFontList)delete pFontList;
 /*N*/ 		OutputDevice* pOut = Application::GetDefaultDevice();	// #67730#
@@ -406,7 +321,7 @@ using namespace ::com::sun::star;
 /*N*/ 	else
 /*?*/ 		if( bIsDeletedHere )
 /*?*/ 			delete pNewPrinter;
-/*N*/ 
+/*N*/
 /*N*/     OutputDevice * pRefDev = GetRefDevice();
 /*N*/     if( pChDoc &&
 /*N*/         pRefDev &&
@@ -418,12 +333,12 @@ using namespace ::com::sun::star;
 /*N*/         {
 /*N*/             pChDoc->SetRefDevice( pRefDev );
 /*N*/             pChDoc->GetOutliner()->SetRefDevice( pRefDev );
-/*N*/ 
+/*N*/
 /*N*/             // re-render chart with new ref-device
-/*N*/ 
+/*N*/
 /*N*/             // call EnableSetModified( FALSE ) temporarily and safely
 /*N*/             lcl_NoModificationGuard aNoModGuard( this );
-/*N*/ 
+/*N*/
 /*N*/             if( ! bFirstTimeSettingPrinter &&
 /*N*/                 pChDoc->IsInitialized() )
 /*N*/             {
@@ -459,7 +374,7 @@ using namespace ::com::sun::star;
 /*N*/         if ( pOutDev )
 /*N*/             return pOutDev;
 /*N*/     }
-/*N*/ 
+/*N*/
 /*N*/     return GetPrinter();
 /*N*/ }
 
@@ -472,7 +387,7 @@ using namespace ::com::sun::star;
 /*N*/ BOOL SchChartDocShell::InitNew( SvStorage * pStor ) throw()
 /*N*/ {
 /*N*/ 	CHART_TRACE1( "SchChartDocShell::InitNew pModel=%lx", (long)pChDoc );
-/*N*/ 
+/*N*/
 /*N*/ 	if( SfxInPlaceObject::InitNew( pStor ))
 /*N*/ 	{
 /*N*/ 		if(!pChDoc)
@@ -491,12 +406,12 @@ using namespace ::com::sun::star;
 /*N*/ 			else
 /*N*/ 				pChDoc->NewOrLoadCompleted(NEW_DOC);
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		SetVisArea(Rectangle(Point(0, 0), Size( SCH_DEFAULT_CHART_SIZE_WIDTH, SCH_DEFAULT_CHART_SIZE_HEIGHT )));
-/*N*/ 
+/*N*/
 /*N*/ 		return TRUE;
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	return FALSE;
 /*N*/ }
 
@@ -509,19 +424,19 @@ using namespace ::com::sun::star;
 /*N*/ BOOL SchChartDocShell::Load(SvStorage * pStor) throw()
 /*N*/ {
 /*N*/ 	RTL_LOGFILE_CONTEXT_AUTHOR (context, "sch", "af119097", "::SchChartDocShell::Load");
-/*N*/ 
+/*N*/
 /*N*/ 	CHART_TRACE( "SchChartDocShell::Load" );
-/*N*/ 
+/*N*/
 /*N*/ 	BOOL bRet = FALSE;
-/*N*/ 
+/*N*/
 /*N*/ 	pChDoc = new ChartModel( SvtPathOptions().GetPalettePath(), this );
 /*N*/ 	SetPool( &pChDoc->GetItemPool());
 /*N*/ 	ChXChartDocument* pImpl = ChXChartDocument::getImplementation( GetModel() );
 /*N*/ 	if( pImpl )
 /*?*/ 		pImpl->SetChartModel( pChDoc );
-/*N*/ 
+/*N*/
 /*N*/     sal_Bool bIsXML = pStor->GetVersion() >= SOFFICE_FILEFORMAT_60;
-/*N*/ 
+/*N*/
 /*N*/ 	if( bIsXML )
 /*N*/ 	{
 /*N*/ 	}
@@ -529,12 +444,12 @@ using namespace ::com::sun::star;
 /*N*/ 	{
 /*N*/ 		ULONG nStorFmt = pStor->GetFormat();
 /*N*/ 		RTL_LOGFILE_CONTEXT_TRACE1 (context, "binary format %lu", nStorFmt);
-/*N*/ 
+/*N*/
 /*N*/         // do some initializations
 /*N*/ 		Construct();
-/*N*/ 
+/*N*/
 /*N*/         pProgress = NULL;
-/*N*/ 
+/*N*/
 /*N*/ 		if ( nStorFmt == SOT_FORMATSTR_ID_STARCHART_50 ||
 /*N*/ 			 nStorFmt == SOT_FORMATSTR_ID_STARCHART_40 ||
 /*N*/ 			 nStorFmt == SOT_FORMATSTR_ID_STARCHART    ||
@@ -543,22 +458,22 @@ using namespace ::com::sun::star;
 /*N*/ 		{
 /*N*/ 			if( GetCreateMode() != SFX_CREATE_MODE_EMBEDDED )
 /*N*/ 				pProgress = new SfxProgress( this, String( SchResId( STR_OPEN_DOCUMENT )), 100 );
-/*N*/ 
+/*N*/
 /*N*/ 			if( pProgress )
 /*N*/ 				pProgress->SetState( 0, 100 );
-/*N*/ 
+/*N*/
 /*N*/ 			bRet = SfxInPlaceObject::Load( pStor );
-/*N*/ 
+/*N*/
 /*N*/ 			if( pProgress )
 /*N*/ 				pProgress->SetState( 30 );
-/*N*/ 
+/*N*/
 /*N*/ 			if( bRet )
 /*N*/ 			{
 /*N*/ 				SetWaitCursor( TRUE );
-/*N*/ 
+/*N*/
 /*N*/ 				// Pool und StyleSheet Pool laden
 /*N*/ 				String aStyleSheetsStr( SCH_STYLE_SHEET_NAME );
-/*N*/ 
+/*N*/
 /*N*/ 				if (pStor->IsStream(aStyleSheetsStr))
 /*N*/ 				{
 /*N*/ 					ULONG nError;
@@ -590,10 +505,10 @@ using namespace ::com::sun::star;
 /*N*/ 					else bRet = FALSE;
 /*N*/ 				}
 /*N*/ 				else bRet = FALSE;
-/*N*/ 
+/*N*/
 /*N*/ 				if( pProgress )
 /*N*/ 					pProgress->SetState( 70 );
-/*N*/ 
+/*N*/
 /*N*/ 				// wenn gewuenscht, das Dokument laden
 /*N*/ 				if (bRet && (GetCreateMode() != SFX_CREATE_MODE_ORGANIZER))
 /*N*/ 				{
@@ -607,12 +522,12 @@ using namespace ::com::sun::star;
 /*N*/ 						{
 /*N*/ 							rDocumentStream->SetBufferSize( DOCUMENT_BUFFER_SIZE );
 /*N*/ 							rDocumentStream->SetKey( pStor->GetKey()); // set password
-/*N*/ 
+/*N*/
 /*N*/                             // read ChartModel
 /*N*/ 							*rDocumentStream >> *pChDoc;
-/*N*/ 
+/*N*/
 /*N*/                             bRet = ( rDocumentStream->GetError() == 0 );
-/*N*/ 
+/*N*/
 /*N*/ 							// garbled with password?
 /*N*/ 							if( ! bRet )
 /*N*/ 							{
@@ -627,17 +542,17 @@ using namespace ::com::sun::star;
 /*?*/ 									SetError( ERRCODE_SFX_WRONGPASSWORD );
 /*?*/ 								}
 /*N*/ 							}
-/*N*/ 
+/*N*/
 /*N*/ 							rDocumentStream->SetBufferSize( 0 );
 /*N*/ 						}
 /*N*/ 						else bRet = FALSE;
 /*N*/ 					}
 /*N*/ 					else bRet = FALSE;
 /*N*/ 				}
-/*N*/ 
+/*N*/
 /*N*/ 				if( pProgress )
 /*N*/ 					pProgress->SetState( 100 );
-/*N*/ 
+/*N*/
 /*N*/ 				// (noch) keine ungesicherten Aenderungen im Model
 /*N*/ 				if (bRet)
 /*N*/ 				{
@@ -673,13 +588,13 @@ using namespace ::com::sun::star;
 /*N*/ 					pChDoc->SetChanged( FALSE );
 /*N*/ 					pChDoc->NewOrLoadCompleted( DOC_LOADED );
 /*N*/ 				}
-/*N*/ 
+/*N*/
 /*N*/ 				SetWaitCursor( FALSE );
 /*N*/ 			}
-/*N*/ 
+/*N*/
 /*N*/ 			if( pProgress )
 /*N*/ 				pProgress->SetState( 100 );
-/*N*/ 
+/*N*/
 /*N*/ 			if (bRet)
 /*N*/ 			{
 /*N*/ 				UpdateTablePointers();
@@ -690,14 +605,14 @@ using namespace ::com::sun::star;
 /*N*/ 		{
 /*?*/ 			pStor->SetError( SVSTREAM_WRONGVERSION );
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		if( pProgress )
 /*N*/ 		{
 /*N*/ 			delete pProgress;
 /*N*/ 			pProgress = NULL;
 /*N*/ 		}
 /*N*/ 	}
-/*N*/ 	
+/*N*/
 /*N*/ 	return bRet;
 /*N*/ }
 
@@ -723,19 +638,19 @@ using namespace ::com::sun::star;
 /*N*/ BOOL SchChartDocShell::Save() throw()
 /*N*/ {
 /*N*/ 	RTL_LOGFILE_CONTEXT_AUTHOR (context, "sch", "af119097", "::SchChartDocShell::Save");
-/*N*/ 	
+/*N*/
 /*N*/ 	SvStorage* pStor = GetStorage();
 /*N*/ 	DBG_ASSERT( pStor, "Save() without Storage called!" );
-/*N*/ 
+/*N*/
 /*N*/     long nFileFormat = pStor->GetVersion();
 /*N*/     sal_Bool bIsXML = nFileFormat >= SOFFICE_FILEFORMAT_60;
 /*N*/ 	BOOL bRet = FALSE;
-/*N*/ 
+/*N*/
 /*N*/ 	if( bIsXML )
 /*N*/ 	{
 /*N*/ 		RTL_LOGFILE_CONTEXT_TRACE (context, "XML format");
 /*N*/ 		bRet = SfxInPlaceObject::Save();
-/*N*/ 
+/*N*/
         /**********************************************************************
          * StarOffice XML-Filter Export
          **********************************************************************/
@@ -744,82 +659,70 @@ using namespace ::com::sun::star;
 /*N*/             Reference< ::com::sun::star::frame::XModel> xModel(GetModel());
 /*N*/ 			SchXMLWrapper aFilter( xModel, *pStor,
 /*N*/ 								   GetCreateMode() != SFX_CREATE_MODE_EMBEDDED );
-/*N*/ 
+/*N*/
 /*N*/ 			// update user info before writing
 /*N*/ 			UpdateDocInfoForSave();
-/*N*/ 
+/*N*/
 /*N*/ 			bRet = aFilter.Export();
 /*N*/ 		}
 /*N*/ 		else
 /*N*/ 		{
 /*N*/ 			DBG_ERROR( "SaveAs (XML): got no Storage in Medium!" );
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/   		FinishedLoading( SFX_LOADED_ALL );
 /*N*/ 	}
 /*N*/ 	else		// binary format <= 5.0
 /*N*/ 	{
 /*N*/ 		pChDoc->PrepareAxisStorage();
 /*N*/ 		SvStorageStreamRef rDocumentStream = pStor->OpenStream( aStarChartDoc );
-/*N*/ 
+/*N*/
 /*N*/         if( rDocumentStream.Is() && ! rDocumentStream->GetError() )
 /*N*/ 		{
 /*N*/ 			rDocumentStream->SetVersion( pStor->GetVersion() );
-/*N*/ 
+/*N*/
 /*N*/             if( nFileFormat <= SOFFICE_FILEFORMAT_40 && pChDoc->IsReal3D())
 /*N*/             {
 /*?*/                 CHART_TRACE( "Fileformat 4.0" );
 /*?*/                 pChDoc->PrepareOld3DStorage();
 /*N*/             }
-/*N*/ 
+/*N*/
 /*N*/             bRet = SfxInPlaceObject::Save();
-/*N*/             SfxStatusBarManager* pStbMgr =
-/*N*/                 (GetCreateMode() == SFX_CREATE_MODE_EMBEDDED) ?
-/*N*/                 NULL : SFX_APP()->GetStatusBarManager();
-/*N*/ 
-/*N*/             if (pStbMgr)
-/*?*/                 pStbMgr->StartProgressMode(SchResId(STR_SAVE_DOCUMENT), 100);
-/*N*/ 
+/*N*/
 /*N*/             // komprimiert/native speichern?
-/*N*/             SvtSaveOptions							aOptions;
-/*N*/             const SvtSaveOptions::SaveGraphicsMode	eSaveMode( aOptions.GetSaveGraphicsMode() );
-/*N*/             const BOOL								bSaveNative = ( SvtSaveOptions::SaveGraphicsOriginal == eSaveMode );
-/*N*/             const BOOL								bSaveCompressed = ( bSaveNative || ( SvtSaveOptions::SaveGraphicsCompressed == eSaveMode ) );
-/*N*/ 
+/*N*/             const BOOL                                bSaveNative = FALSE;
+/*N*/             const BOOL                                bSaveCompressed = FALSE;
+/*N*/
 /*N*/             pChDoc->SetSaveCompressed( bSaveCompressed );
 /*N*/             pChDoc->SetSaveNative( bSaveNative );
-/*N*/ 
+/*N*/
 /*N*/             if( bRet )
 /*N*/             {
 /*N*/                 pChDoc->PreSave();
-/*N*/ 
+/*N*/
 /*N*/                 SetWaitCursor( TRUE );
-/*N*/ 
+/*N*/
 /*N*/                 SvStorageStreamRef rPoolStream = pStor->OpenStream( SCH_STYLE_SHEET_NAME );
 /*N*/                 if( ! rPoolStream->GetError())
 /*N*/                 {
 /*N*/                     rPoolStream->SetSize( 0 );
 /*N*/                     rPoolStream->SetBufferSize( POOL_BUFFER_SIZE );
 /*N*/                     GetPool().Store( *rPoolStream );
-/*N*/ 
-/*N*/                     if( pStbMgr )
-/*?*/                         pStbMgr->SetProgressState( 20 );
-/*N*/ 
+/*N*/
+/*N*/
 /*N*/                     // the style sheet pool uses next() and first() methods without resetting
 /*N*/                     // the search mask (?) so it has to be done here
 /*N*/                     GetStyleSheetPool()->SetSearchMask( SFX_STYLE_FAMILY_ALL );
 /*N*/                     // FALSE = also save unused style sheets
 /*N*/                     GetStyleSheetPool()->Store( *rPoolStream, FALSE );
 /*N*/                     rPoolStream->SetBufferSize( 0 );
-/*N*/ 
-/*N*/                     if( pStbMgr )
-/*?*/                         pStbMgr->SetProgressState( 50 );
+/*N*/
 /*N*/                 }
 /*N*/                 else bRet = FALSE;
 /*N*/                 if (bRet)
 /*N*/                     bRet = rPoolStream->GetError() == 0;
 /*N*/                 DBG_ASSERT(bRet, "Fehler beim Schreiben der Pools");
-/*N*/ 
+/*N*/
 /*N*/                 if( ! rDocumentStream->GetError())
 /*N*/                 {
                           // #i56310# set SomeData strings according to
@@ -847,30 +750,26 @@ using namespace ::com::sun::star;
 /*N*/                 }
 /*N*/                 else
 /*N*/                     bRet = FALSE;
-/*N*/ 
+/*N*/
 /*N*/                 if (bRet)
 /*N*/                     bRet = rDocumentStream->GetError() == 0;
 /*N*/                 DBG_ASSERT(bRet, "Fehler beim Schreiben des Models");
-/*N*/ 
+/*N*/
 /*N*/                 // finished
-/*N*/                 if( pStbMgr )
-/*?*/                     pStbMgr->SetProgressState( 100 );
-/*N*/ 
+/*N*/
 /*N*/                 SetWaitCursor( FALSE );
-/*N*/ 
+/*N*/
 /*N*/                 pChDoc->PostSave();
 /*N*/             }
-/*N*/ 
-/*N*/             if (pStbMgr)
-/*?*/                 pStbMgr->EndProgressMode();
-/*N*/ 
+/*N*/
+/*N*/
 /*N*/             if(nFileFormat <= SOFFICE_FILEFORMAT_40 && pChDoc->IsReal3D())
 /*N*/             {
 /*?*/                 pChDoc->CleanupOld3DStorage();
 /*N*/             }
 /*N*/         }
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	return bRet;
 /*N*/ }
 
@@ -883,26 +782,26 @@ using namespace ::com::sun::star;
 /*N*/ BOOL SchChartDocShell::SaveAs(SvStorage * pStor) throw()
 /*N*/ {
 /*N*/ 	RTL_LOGFILE_CONTEXT_AUTHOR (context, "sch", "af119097", "::SchChartDocShell::SaveAs");
-/*N*/ 	
+/*N*/
 /*N*/ 	CHART_TRACE( "SchChartDocShell::SaveAs" );
-/*N*/ 
+/*N*/
 /*N*/ 	BOOL bRet = FALSE;
-/*N*/ 
+/*N*/
 /*N*/     long nOldFormat = GetStorage()->GetVersion();
 /*N*/     long nNewFormat = pStor->GetVersion();
-/*N*/ 
+/*N*/
 /*N*/ 	BOOL bIsXML = nNewFormat >= SOFFICE_FILEFORMAT_60;
 /*N*/     BOOL bFormatChanges = (nOldFormat != nNewFormat);
-/*N*/ 
+/*N*/
 /*N*/ 	//	If chart was loaded from binary format it has never been built.
 /*N*/ 	if( ! pChDoc->IsInitialized())
 /*N*/ 		pChDoc->Initialize();
-/*N*/ 
+/*N*/
 /*N*/ 	if( bIsXML )
 /*N*/ 	{
 /*N*/ 		RTL_LOGFILE_CONTEXT_TRACE (context, "XML format");
 /*N*/ 		bRet = SfxInPlaceObject::SaveAs( pStor );
-/*N*/ 
+/*N*/
          /**********************************************************************
           * StarOffice XML-Filter Export
           **********************************************************************/
@@ -911,10 +810,10 @@ using namespace ::com::sun::star;
 /*N*/             Reference< ::com::sun::star::frame::XModel> xModel(GetModel());
 /*N*/ 			SchXMLWrapper aFilter( xModel, *pStor,
 /*N*/ 								   GetCreateMode() != SFX_CREATE_MODE_EMBEDDED );
-/*N*/ 
+/*N*/
 /*N*/ 			// update user info before writing
 /*N*/ 			UpdateDocInfoForSave();
-/*N*/ 
+/*N*/
 /*N*/             // old storage was binary format
 /*N*/             if( bFormatChanges )
 /*N*/             {
@@ -933,7 +832,7 @@ SvGlobalName aGlobalName;
  /*?*/                     pParent->FillClass( &aGlobalName, &nFileFormat,
  /*?*/                                         &aAppName, &aFullName, &aShortName,
  /*?*/                                         SOFFICE_FILEFORMAT_60 );
- /*?*/ 
+ /*?*/
  /*?*/                     // calc does this conversion itself except when object was
  /*?*/                     // copied to clipboard. In this case SomeData3 was filled before.
  /*?*/                     if( nFileFormat == SOT_FORMATSTR_ID_STARCALC_60 )
@@ -951,7 +850,7 @@ SvGlobalName aGlobalName;
 
  /*N*/                 }
 /*N*/             }
-/*N*/ 
+/*N*/
 /*N*/ 			bRet = aFilter.Export();
 /*N*/ 		}
 /*N*/ 		else
@@ -969,61 +868,50 @@ SvGlobalName aGlobalName;
 /*N*/ 			pChDoc->PrepareOld3DStorage();
 /*N*/ 			CHART_TRACE( "Fileformat 4.0" );
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		bRet = SfxInPlaceObject::SaveAs( pStor );
-/*N*/ 		SfxStatusBarManager* pStbMgr =
-/*N*/ 			(GetCreateMode() == SFX_CREATE_MODE_EMBEDDED) ?
-/*N*/ 			NULL : SFX_APP()->GetStatusBarManager();
-/*N*/ 		if (pStbMgr)
-/*N*/ 			pStbMgr->StartProgressMode(SchResId(STR_SAVE_DOCUMENT), 100);
-/*N*/ 
+/*N*/
 /*N*/ 		// compressed or native format
-/*N*/ 		SvtSaveOptions							aOptions;
-/*N*/ 		const SvtSaveOptions::SaveGraphicsMode	eSaveMode( aOptions.GetSaveGraphicsMode() );
-/*N*/ 		const BOOL								bSaveNative = ( SvtSaveOptions::SaveGraphicsOriginal == eSaveMode );
-/*N*/ 		const BOOL								bSaveCompressed = ( bSaveNative || ( SvtSaveOptions::SaveGraphicsCompressed == eSaveMode ) );
-/*N*/ 
+/*N*/       const BOOL                              bSaveNative = FALSE;
+/*N*/       const BOOL                              bSaveCompressed = FALSE;
+/*N*/
 /*N*/ 		pChDoc->SetSaveCompressed( bSaveCompressed );
 /*N*/ 		pChDoc->SetSaveNative( bSaveNative );
-/*N*/ 
+/*N*/
 /*N*/ 		if (bRet)
 /*N*/ 		{
 /*N*/ 			pChDoc->PreSave();
 /*N*/ 			SvStorageStreamRef rPoolStream = pStor->OpenStream( SCH_STYLE_SHEET_NAME );
 /*N*/ 			rPoolStream->SetVersion( pStor->GetVersion ());
-/*N*/ 
+/*N*/
 /*N*/ 			SetWaitCursor( TRUE );
-/*N*/ 
+/*N*/
 /*N*/ 			if( ! rPoolStream->GetError())
 /*N*/ 			{
 /*N*/ 				rPoolStream->SetBufferSize(POOL_BUFFER_SIZE);
 /*N*/ 				GetPool().SetFileFormatVersion( (USHORT)pStor->GetVersion ());
 /*N*/ 				GetPool().Store( *rPoolStream );
-/*N*/ 
-/*N*/ 				if( pStbMgr )
-/*N*/ 					pStbMgr->SetProgressState( 20 );
-/*N*/ 
+/*N*/
+/*N*/
 /*N*/ 				// the style sheet pool uses next() and first() methods without resetting
 /*N*/ 				// the search mask (?) so it has to be done here
 /*N*/ 				GetStyleSheetPool()->SetSearchMask( SFX_STYLE_FAMILY_ALL );
 /*N*/ 				// FALSE = also save unused style sheets
 /*N*/ 				GetStyleSheetPool()->Store( *rPoolStream, FALSE );
 /*N*/ 				rPoolStream->SetBufferSize( 0 );
-/*N*/ 
-/*N*/ 				if( pStbMgr )
-/*N*/ 					pStbMgr->SetProgressState( 50 );
+/*N*/
 /*N*/ 			}
 /*N*/ 			else
 /*N*/ 				bRet = FALSE;
-/*N*/ 
+/*N*/
 /*N*/ 			if( bRet )
 /*N*/ 				bRet = rPoolStream->GetError() == 0;
 /*N*/ 			DBG_ASSERT( bRet, "Fehler beim Schreiben der Pools" );
-/*N*/ 
+/*N*/
 /*N*/ 			SvStorageStreamRef rDocumentStream = pStor->OpenStream( aStarChartDoc );
 /*N*/ 			rDocumentStream->SetVersion( pStor->GetVersion());
 /*N*/ 			GetPool().SetFileFormatVersion ( (USHORT)pStor->GetVersion ());
-/*N*/ 
+/*N*/
 /*N*/ 			if( ! rDocumentStream->GetError())
 /*N*/ 			{
 /*N*/                 // old storage was XML format
@@ -1041,14 +929,14 @@ SvGlobalName aGlobalName;
 /*N*/                         pParent->FillClass( &aGlobalName, &nFileFormat,
 /*N*/                                             &aAppName, &aFullName, &aShortName,
 /*N*/                                             SOFFICE_FILEFORMAT_60 );
-/*N*/ 
+/*N*/
 /*N*/                         if( nFileFormat == SOT_FORMATSTR_ID_STARCALC_60 )
 /*?*/                          pChDoc->GetChartData()->ConvertChartRangeForCalc( FALSE );
 /*N*/                         else if( nFileFormat == SOT_FORMATSTR_ID_STARWRITER_60 )
 /*N*/                             pChDoc->GetChartData()->ConvertChartRangeForWriter( FALSE );
 /*N*/                     }
 /*N*/ //                 }
-/*N*/ 
+/*N*/
 /*N*/                 rDocumentStream->SetBufferSize( DOCUMENT_BUFFER_SIZE );
 /*N*/ 				rDocumentStream->SetKey( pStor->GetKey());	// set password
 /*N*/ 				*rDocumentStream << *pChDoc;
@@ -1058,25 +946,21 @@ SvGlobalName aGlobalName;
 /*N*/ 			if( bRet )
 /*N*/ 				bRet = rDocumentStream->GetError() == 0;
 /*N*/ 			DBG_ASSERT( bRet, "Fehler beim Schreiben des Models" );
-/*N*/ 
+/*N*/
 /*N*/ 			// finished
-/*N*/ 			if( pStbMgr )
-/*N*/ 				pStbMgr->SetProgressState( 100 );
-/*N*/ 
+/*N*/
 /*N*/ 			SetWaitCursor( FALSE );
-/*N*/ 
+/*N*/
 /*N*/ 			pChDoc->PostSave();
 /*N*/ 		}
-/*N*/ 
-/*N*/ 		if( pStbMgr )
-/*N*/ 			pStbMgr->EndProgressMode();
-/*N*/ 
+/*N*/
+/*N*/
 /*N*/ 		if( nFileFormat <= SOFFICE_FILEFORMAT_40 && pChDoc->IsReal3D())
 /*N*/ 		{
 /*N*/ 			pChDoc->CleanupOld3DStorage();
 /*N*/ 		}
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	return bRet;
 /*N*/ }
 
@@ -1089,9 +973,9 @@ SvGlobalName aGlobalName;
 /*N*/ BOOL SchChartDocShell::SaveCompleted( SvStorage * pStor ) throw()
 /*N*/ {
 /*N*/ 	CHART_TRACE( "SchChartDocShell::SaveCompleted" );
-/*N*/ 
+/*N*/
 /*N*/ 	BOOL bRet = SfxInPlaceObject::SaveCompleted( pStor );
-/*N*/ 
+/*N*/
 /*N*/ 	if( bRet )
 /*N*/ 	{
 /*N*/ 	    if( pStor && pChDoc )
@@ -1100,7 +984,7 @@ SvGlobalName aGlobalName;
 /*N*/             // removed this, since it is not clear why this was introduced in
 /*N*/             // rev. 1.48 (loading of files with additional graphics does not set
 /*N*/             // the modified flag to true)
-/*N*/ 
+/*N*/
 /*N*/             // throw away old graphics streams
 /*N*/ 		    pChDoc->HandsOff();
 /*N*/         }
@@ -1121,9 +1005,9 @@ SvGlobalName aGlobalName;
 /*N*/ 	PutItem(SvxBitmapListItem(pChDoc->GetBitmapList()));
 /*N*/ 	PutItem(SvxDashListItem(pChDoc->GetDashList()));
 /*N*/ 	PutItem(SvxLineEndListItem(pChDoc->GetLineEndList()));
-/*N*/ 
+/*N*/
 /*N*/ 	if(pFontList)delete pFontList;
-/*N*/ 
+/*N*/
 /*N*/ 	if ( GetCreateMode() == SFX_CREATE_MODE_EMBEDDED && !pPrinter )
 /*N*/ 	{
 /*N*/ 		// OLE-Objekt: kein Printer anlegen
@@ -1133,10 +1017,10 @@ SvGlobalName aGlobalName;
 /*N*/ 	{
 /*N*/ 		pFontList = new FontList(GetPrinter(), NULL, FALSE);
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	SvxFontListItem aFontListItem(pFontList);
 /*N*/ 	PutItem(aFontListItem);
-/*N*/ 
+/*N*/
 /*N*/ //	PutItem(SvxNumberInfoItem(pChDoc->GetNumFormatter()));
 /*N*/ }
 
@@ -1155,7 +1039,7 @@ SvGlobalName aGlobalName;
 /*N*/ {
 /*N*/ 	SfxInPlaceObject::FillClass(pClassName, pFormat, pAppName, pFullTypeName,
 /*N*/ 								pShortTypeName, nFileFormat);
-/*N*/ 
+/*N*/
 /*N*/ 	if (nFileFormat == SOFFICE_FILEFORMAT_31)
 /*N*/ 	{
 /*N*/ 		*pClassName     = SvGlobalName(BF_SO3_SCH_CLASSID_30);
@@ -1174,7 +1058,7 @@ SvGlobalName aGlobalName;
 /*N*/ 	else if (nFileFormat == SOFFICE_FILEFORMAT_50)
 /*N*/ 	{
 /*N*/ 		*pClassName		= SvGlobalName(BF_SO3_SCH_CLASSID_50);
-            
+
             // for binfilter, we need the FormatIDs to be set. Not setting them
             // has always been an error (!)
             *pFormat        = SOT_FORMATSTR_ID_STARCHART_50;
@@ -1185,7 +1069,7 @@ SvGlobalName aGlobalName;
 /*N*/ 	else if (nFileFormat == SOFFICE_FILEFORMAT_60)
 /*N*/ 	{
 /*N*/ 		*pClassName		= SvGlobalName(BF_SO3_SCH_CLASSID_60);
-            
+
             // for binfilter, we need the FormatIDs to be set. Not setting them
             // has always been an error (!)
             *pFormat        = SOT_FORMATSTR_ID_STARCHART_60;
