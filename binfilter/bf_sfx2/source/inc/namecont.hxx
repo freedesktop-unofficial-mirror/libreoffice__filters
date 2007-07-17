@@ -4,9 +4,9 @@
  *
  *  $RCSfile: namecont.hxx,v $
  *
- *  $Revision: 1.8 $
+ *  $Revision: 1.9 $
  *
- *  last change: $Author: obo $ $Date: 2007-03-15 15:26:27 $
+ *  last change: $Author: obo $ $Date: 2007-07-17 11:05:22 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -92,7 +92,7 @@ namespace binfilter {
 
 class BasicManager;
 
-typedef ::cppu::WeakImplHelper4< 
+typedef ::cppu::WeakImplHelper4<
     ::com::sun::star::lang::XInitialization,
     ::com::sun::star::script::XLibraryContainer2,
     ::com::sun::star::script::XLibraryContainerPassword,
@@ -164,45 +164,45 @@ public:
         { mpxEventSource = pxEventSource; }
 
     // Methods XElementAccess
-    virtual ::com::sun::star::uno::Type SAL_CALL getElementType(  ) 
+    virtual ::com::sun::star::uno::Type SAL_CALL getElementType(  )
         throw(::com::sun::star::uno::RuntimeException);
-    virtual sal_Bool SAL_CALL hasElements(  ) 
+    virtual sal_Bool SAL_CALL hasElements(  )
         throw(::com::sun::star::uno::RuntimeException);
 
     // Methods XNameAccess
-    virtual ::com::sun::star::uno::Any SAL_CALL getByName( const ::rtl::OUString& aName ) 
-        throw(::com::sun::star::container::NoSuchElementException, 
-              ::com::sun::star::lang::WrappedTargetException, 
+    virtual ::com::sun::star::uno::Any SAL_CALL getByName( const ::rtl::OUString& aName )
+        throw(::com::sun::star::container::NoSuchElementException,
+              ::com::sun::star::lang::WrappedTargetException,
               ::com::sun::star::uno::RuntimeException);
-    virtual ::com::sun::star::uno::Sequence< ::rtl::OUString > SAL_CALL getElementNames(  ) 
+    virtual ::com::sun::star::uno::Sequence< ::rtl::OUString > SAL_CALL getElementNames(  )
         throw(::com::sun::star::uno::RuntimeException);
-    virtual sal_Bool SAL_CALL hasByName( const ::rtl::OUString& aName ) 
+    virtual sal_Bool SAL_CALL hasByName( const ::rtl::OUString& aName )
         throw(::com::sun::star::uno::RuntimeException);
 
     // Methods XNameReplace
-    virtual void SAL_CALL replaceByName( const ::rtl::OUString& aName, const ::com::sun::star::uno::Any& aElement ) 
-        throw(::com::sun::star::lang::IllegalArgumentException, 
-              ::com::sun::star::container::NoSuchElementException, 
-              ::com::sun::star::lang::WrappedTargetException, 
+    virtual void SAL_CALL replaceByName( const ::rtl::OUString& aName, const ::com::sun::star::uno::Any& aElement )
+        throw(::com::sun::star::lang::IllegalArgumentException,
+              ::com::sun::star::container::NoSuchElementException,
+              ::com::sun::star::lang::WrappedTargetException,
               ::com::sun::star::uno::RuntimeException);
 
     // Methods XNameContainer
     virtual void SAL_CALL insertByName( const ::rtl::OUString& aName, const ::com::sun::star::uno::Any& aElement )
-        throw(::com::sun::star::lang::IllegalArgumentException, 
-              ::com::sun::star::container::ElementExistException, 
-              ::com::sun::star::lang::WrappedTargetException, 
+        throw(::com::sun::star::lang::IllegalArgumentException,
+              ::com::sun::star::container::ElementExistException,
+              ::com::sun::star::lang::WrappedTargetException,
               ::com::sun::star::uno::RuntimeException);
-    virtual void SAL_CALL removeByName( const ::rtl::OUString& Name ) 
-        throw(::com::sun::star::container::NoSuchElementException, 
-              ::com::sun::star::lang::WrappedTargetException, 
+    virtual void SAL_CALL removeByName( const ::rtl::OUString& Name )
+        throw(::com::sun::star::container::NoSuchElementException,
+              ::com::sun::star::lang::WrappedTargetException,
               ::com::sun::star::uno::RuntimeException);
 
     // Methods XContainer
-    virtual void SAL_CALL addContainerListener( const ::com::sun::star::uno::Reference< 
-        ::com::sun::star::container::XContainerListener >& xListener ) 
+    virtual void SAL_CALL addContainerListener( const ::com::sun::star::uno::Reference<
+        ::com::sun::star::container::XContainerListener >& xListener )
             throw (::com::sun::star::uno::RuntimeException);
-    virtual void SAL_CALL removeContainerListener( const ::com::sun::star::uno::Reference< 
-        ::com::sun::star::container::XContainerListener >& xListener ) 
+    virtual void SAL_CALL removeContainerListener( const ::com::sun::star::uno::Reference<
+        ::com::sun::star::container::XContainerListener >& xListener )
             throw (::com::sun::star::uno::RuntimeException);
 
 };
@@ -249,22 +249,24 @@ protected:
 
     InitMode meInitMode;
 
-    sal_Bool implLoadLibraryIndexFile( SfxLibrary_Impl* pLib, ::xmlscript::LibDescriptor& rLib, 
+    void implStoreLibraryIndexFile( SfxLibrary_Impl* pLib,
+        const ::xmlscript::LibDescriptor& rLib, SotStorageRef xStorage );
+    sal_Bool implLoadLibraryIndexFile( SfxLibrary_Impl* pLib, ::xmlscript::LibDescriptor& rLib,
                                        SotStorageRef xStorage, const ::rtl::OUString& aIndexFileName );
     void implImportLibDescriptor( SfxLibrary_Impl* pLib, ::xmlscript::LibDescriptor& rLib );
 
     // Methods to distinguish between deffirent library types
     virtual SfxLibrary_Impl* SAL_CALL implCreateLibrary( void ) = 0;
     virtual SfxLibrary_Impl* SAL_CALL implCreateLibraryLink
-        ( const ::rtl::OUString& aLibInfoFileURL, 
+        ( const ::rtl::OUString& aLibInfoFileURL,
           const ::rtl::OUString& StorageURL, sal_Bool ReadOnly ) = 0;
     virtual ::com::sun::star::uno::Any SAL_CALL createEmptyLibraryElement( void ) = 0;
     virtual sal_Bool SAL_CALL isLibraryElementValid( ::com::sun::star::uno::Any aElement ) = 0;
     virtual void SAL_CALL writeLibraryElement
-    ( 
+    (
         ::com::sun::star::uno::Any aElement,
-        const ::rtl::OUString& aElementName, 
-        ::com::sun::star::uno::Reference< ::com::sun::star::io::XOutputStream > xOutput 
+        const ::rtl::OUString& aElementName,
+        ::com::sun::star::uno::Reference< ::com::sun::star::io::XOutputStream > xOutput
     )
         throw(::com::sun::star::uno::Exception) = 0;
 
@@ -272,15 +274,18 @@ protected:
         ( const ::rtl::OUString& aFile, SotStorageStreamRef xElementStream ) = 0;
     virtual void SAL_CALL importFromOldStorage( const ::rtl::OUString& aFile ) = 0;
 
+    void implStoreLibrary( SfxLibrary_Impl* pLib,
+        const ::rtl::OUString& aName, SotStorageRef xStorage );
+
     // Password encryption
-    virtual sal_Bool implStorePasswordLibrary( SfxLibrary_Impl* pLib, const ::rtl::OUString& aName, 
+    virtual sal_Bool implStorePasswordLibrary( SfxLibrary_Impl* pLib, const ::rtl::OUString& aName,
         SotStorageRef xStorage );
     virtual sal_Bool implLoadPasswordLibrary( SfxLibrary_Impl* pLib, const ::rtl::OUString& Name,
-        sal_Bool bVerifyPasswordOnly=false ) 
-            throw(::com::sun::star::lang::WrappedTargetException, 
+        sal_Bool bVerifyPasswordOnly=false )
+            throw(::com::sun::star::lang::WrappedTargetException,
                   ::com::sun::star::uno::RuntimeException);
 
-    // #56666, Creates another library container 
+    // #56666, Creates another library container
     //         instance of the same derived class
     virtual SfxLibraryContainer_Impl* createInstanceImpl( void ) = 0;
 
@@ -299,8 +304,8 @@ protected:
     // Handle maLibInfoFileURL and maStorageURL correctly
     void checkStorageURL
     (
-        const ::rtl::OUString& aSourceURL, 
-        ::rtl::OUString& aLibInfoFileURL, 
+        const ::rtl::OUString& aSourceURL,
+        ::rtl::OUString& aLibInfoFileURL,
         ::rtl::OUString& aStorageURL,
         ::rtl::OUString& aUnexpandedStorageURL
     );
@@ -312,16 +317,16 @@ protected:
 public:
     SfxLibraryContainer_Impl( void );
     ~SfxLibraryContainer_Impl();
-    
+
     // Interface to release and reset storage for saving
     void setStorage( SotStorageRef xStorage )
-    { 
-        mxStorage = xStorage; 
+    {
+        mxStorage = xStorage;
     }
 
     // Interface to set the BasicManager (Hack for password implementation)
     void setBasicManager( BasicManager* pBasMgr )
-    { 
+    {
         mpBasMgr = pBasMgr;
     }
 
@@ -333,91 +338,91 @@ public:
     // Methods XElementAccess
     virtual ::com::sun::star::uno::Type SAL_CALL getElementType()
         throw(::com::sun::star::uno::RuntimeException);
-    virtual sal_Bool SAL_CALL hasElements() 
+    virtual sal_Bool SAL_CALL hasElements()
         throw(::com::sun::star::uno::RuntimeException);
 
     // Methods XNameAccess
-    virtual ::com::sun::star::uno::Any SAL_CALL getByName( const ::rtl::OUString& aName ) 
-        throw(::com::sun::star::container::NoSuchElementException, 
-              ::com::sun::star::lang::WrappedTargetException, 
+    virtual ::com::sun::star::uno::Any SAL_CALL getByName( const ::rtl::OUString& aName )
+        throw(::com::sun::star::container::NoSuchElementException,
+              ::com::sun::star::lang::WrappedTargetException,
               ::com::sun::star::uno::RuntimeException);
     virtual ::com::sun::star::uno::Sequence< ::rtl::OUString > SAL_CALL getElementNames()
         throw(::com::sun::star::uno::RuntimeException);
-    virtual sal_Bool SAL_CALL hasByName( const ::rtl::OUString& aName ) 
+    virtual sal_Bool SAL_CALL hasByName( const ::rtl::OUString& aName )
         throw(::com::sun::star::uno::RuntimeException);
 
     // Methods XLibraryContainer
-    virtual ::com::sun::star::uno::Reference< ::com::sun::star::container::XNameContainer > SAL_CALL 
-        createLibrary( const ::rtl::OUString& Name ) 
-            throw(::com::sun::star::lang::IllegalArgumentException, 
-                  ::com::sun::star::container::ElementExistException, 
+    virtual ::com::sun::star::uno::Reference< ::com::sun::star::container::XNameContainer > SAL_CALL
+        createLibrary( const ::rtl::OUString& Name )
+            throw(::com::sun::star::lang::IllegalArgumentException,
+                  ::com::sun::star::container::ElementExistException,
                   ::com::sun::star::uno::RuntimeException);
     virtual ::com::sun::star::uno::Reference< ::com::sun::star::container::XNameAccess > SAL_CALL createLibraryLink
-        ( const ::rtl::OUString& Name, const ::rtl::OUString& StorageURL, sal_Bool ReadOnly ) 
-            throw(::com::sun::star::lang::IllegalArgumentException, 
-                  ::com::sun::star::container::ElementExistException, 
+        ( const ::rtl::OUString& Name, const ::rtl::OUString& StorageURL, sal_Bool ReadOnly )
+            throw(::com::sun::star::lang::IllegalArgumentException,
+                  ::com::sun::star::container::ElementExistException,
                   ::com::sun::star::uno::RuntimeException);
-    virtual void SAL_CALL removeLibrary( const ::rtl::OUString& Name ) 
-        throw(::com::sun::star::container::NoSuchElementException, 
-              ::com::sun::star::lang::WrappedTargetException, 
+    virtual void SAL_CALL removeLibrary( const ::rtl::OUString& Name )
+        throw(::com::sun::star::container::NoSuchElementException,
+              ::com::sun::star::lang::WrappedTargetException,
               ::com::sun::star::uno::RuntimeException);
-    virtual sal_Bool SAL_CALL isLibraryLoaded( const ::rtl::OUString& Name ) 
-        throw(::com::sun::star::container::NoSuchElementException, 
+    virtual sal_Bool SAL_CALL isLibraryLoaded( const ::rtl::OUString& Name )
+        throw(::com::sun::star::container::NoSuchElementException,
               ::com::sun::star::uno::RuntimeException);
-    virtual void SAL_CALL loadLibrary( const ::rtl::OUString& Name ) 
-        throw(::com::sun::star::container::NoSuchElementException, 
-              ::com::sun::star::lang::WrappedTargetException, 
+    virtual void SAL_CALL loadLibrary( const ::rtl::OUString& Name )
+        throw(::com::sun::star::container::NoSuchElementException,
+              ::com::sun::star::lang::WrappedTargetException,
               ::com::sun::star::uno::RuntimeException);
 
     // Methods XInitialization
-    virtual void SAL_CALL initialize( const ::com::sun::star::uno::Sequence< 
-        ::com::sun::star::uno::Any >& aArguments ) 
-            throw (::com::sun::star::uno::Exception, 
+    virtual void SAL_CALL initialize( const ::com::sun::star::uno::Sequence<
+        ::com::sun::star::uno::Any >& aArguments )
+            throw (::com::sun::star::uno::Exception,
                    ::com::sun::star::uno::RuntimeException) = 0;
 
     // Methods XLibraryContainer2
-    virtual sal_Bool SAL_CALL isLibraryLink( const ::rtl::OUString& Name ) 
-        throw (::com::sun::star::container::NoSuchElementException, 
+    virtual sal_Bool SAL_CALL isLibraryLink( const ::rtl::OUString& Name )
+        throw (::com::sun::star::container::NoSuchElementException,
                ::com::sun::star::uno::RuntimeException);
-    virtual ::rtl::OUString SAL_CALL getLibraryLinkURL( const ::rtl::OUString& Name ) 
-        throw (::com::sun::star::lang::IllegalArgumentException, 
-               ::com::sun::star::container::NoSuchElementException, 
+    virtual ::rtl::OUString SAL_CALL getLibraryLinkURL( const ::rtl::OUString& Name )
+        throw (::com::sun::star::lang::IllegalArgumentException,
+               ::com::sun::star::container::NoSuchElementException,
                ::com::sun::star::uno::RuntimeException);
-    virtual sal_Bool SAL_CALL isLibraryReadOnly( const ::rtl::OUString& Name ) 
-        throw (::com::sun::star::container::NoSuchElementException, 
+    virtual sal_Bool SAL_CALL isLibraryReadOnly( const ::rtl::OUString& Name )
+        throw (::com::sun::star::container::NoSuchElementException,
                ::com::sun::star::uno::RuntimeException);
-    virtual void SAL_CALL setLibraryReadOnly( const ::rtl::OUString& Name, sal_Bool bReadOnly ) 
-        throw (::com::sun::star::container::NoSuchElementException, 
+    virtual void SAL_CALL setLibraryReadOnly( const ::rtl::OUString& Name, sal_Bool bReadOnly )
+        throw (::com::sun::star::container::NoSuchElementException,
                ::com::sun::star::uno::RuntimeException);
-    virtual void SAL_CALL renameLibrary( const ::rtl::OUString& Name, const ::rtl::OUString& NewName ) 
-        throw (::com::sun::star::container::NoSuchElementException, 
-               ::com::sun::star::container::ElementExistException, 
+    virtual void SAL_CALL renameLibrary( const ::rtl::OUString& Name, const ::rtl::OUString& NewName )
+        throw (::com::sun::star::container::NoSuchElementException,
+               ::com::sun::star::container::ElementExistException,
                ::com::sun::star::uno::RuntimeException);
 
     // Methods XLibraryContainerPassword
-    virtual sal_Bool SAL_CALL isLibraryPasswordProtected( const ::rtl::OUString& Name ) 
-        throw (::com::sun::star::container::NoSuchElementException, 
+    virtual sal_Bool SAL_CALL isLibraryPasswordProtected( const ::rtl::OUString& Name )
+        throw (::com::sun::star::container::NoSuchElementException,
                ::com::sun::star::uno::RuntimeException);
-    virtual sal_Bool SAL_CALL isLibraryPasswordVerified( const ::rtl::OUString& Name ) 
-        throw (::com::sun::star::lang::IllegalArgumentException, 
-               ::com::sun::star::container::NoSuchElementException, 
+    virtual sal_Bool SAL_CALL isLibraryPasswordVerified( const ::rtl::OUString& Name )
+        throw (::com::sun::star::lang::IllegalArgumentException,
+               ::com::sun::star::container::NoSuchElementException,
                ::com::sun::star::uno::RuntimeException);
-    virtual sal_Bool SAL_CALL verifyLibraryPassword( const ::rtl::OUString& Name, const ::rtl::OUString& Password ) 
-        throw (::com::sun::star::lang::IllegalArgumentException, 
-               ::com::sun::star::container::NoSuchElementException, 
+    virtual sal_Bool SAL_CALL verifyLibraryPassword( const ::rtl::OUString& Name, const ::rtl::OUString& Password )
+        throw (::com::sun::star::lang::IllegalArgumentException,
+               ::com::sun::star::container::NoSuchElementException,
                ::com::sun::star::uno::RuntimeException);
-    virtual void SAL_CALL changeLibraryPassword( const ::rtl::OUString& Name, 
-        const ::rtl::OUString& OldPassword, const ::rtl::OUString& NewPassword ) 
-        throw (::com::sun::star::lang::IllegalArgumentException, 
-               ::com::sun::star::container::NoSuchElementException, 
+    virtual void SAL_CALL changeLibraryPassword( const ::rtl::OUString& Name,
+        const ::rtl::OUString& OldPassword, const ::rtl::OUString& NewPassword )
+        throw (::com::sun::star::lang::IllegalArgumentException,
+               ::com::sun::star::container::NoSuchElementException,
                ::com::sun::star::uno::RuntimeException);
 
     // Methods XContainer
-    virtual void SAL_CALL addContainerListener( const ::com::sun::star::uno::Reference< 
-        ::com::sun::star::container::XContainerListener >& xListener ) 
+    virtual void SAL_CALL addContainerListener( const ::com::sun::star::uno::Reference<
+        ::com::sun::star::container::XContainerListener >& xListener )
             throw (::com::sun::star::uno::RuntimeException);
-    virtual void SAL_CALL removeContainerListener( const ::com::sun::star::uno::Reference< 
-        ::com::sun::star::container::XContainerListener >& xListener ) 
+    virtual void SAL_CALL removeContainerListener( const ::com::sun::star::uno::Reference<
+        ::com::sun::star::container::XContainerListener >& xListener )
             throw (::com::sun::star::uno::RuntimeException);
 };
 
@@ -479,51 +484,51 @@ public:
     virtual void SAL_CALL release() throw() { OComponentHelper::release(); }
 
     // Methods XElementAccess
-    virtual ::com::sun::star::uno::Type SAL_CALL getElementType(  ) 
+    virtual ::com::sun::star::uno::Type SAL_CALL getElementType(  )
         throw(::com::sun::star::uno::RuntimeException);
-    virtual sal_Bool SAL_CALL hasElements(  ) 
+    virtual sal_Bool SAL_CALL hasElements(  )
         throw(::com::sun::star::uno::RuntimeException);
 
     // Methods XNameAccess
-    virtual ::com::sun::star::uno::Any SAL_CALL getByName( const ::rtl::OUString& aName ) 
-        throw(::com::sun::star::container::NoSuchElementException, 
-              ::com::sun::star::lang::WrappedTargetException, 
+    virtual ::com::sun::star::uno::Any SAL_CALL getByName( const ::rtl::OUString& aName )
+        throw(::com::sun::star::container::NoSuchElementException,
+              ::com::sun::star::lang::WrappedTargetException,
               ::com::sun::star::uno::RuntimeException);
-    virtual ::com::sun::star::uno::Sequence< ::rtl::OUString > SAL_CALL getElementNames(  ) 
+    virtual ::com::sun::star::uno::Sequence< ::rtl::OUString > SAL_CALL getElementNames(  )
         throw(::com::sun::star::uno::RuntimeException);
-    virtual sal_Bool SAL_CALL hasByName( const ::rtl::OUString& aName ) 
+    virtual sal_Bool SAL_CALL hasByName( const ::rtl::OUString& aName )
         throw(::com::sun::star::uno::RuntimeException);
 
     // Methods XNameReplace
-    virtual void SAL_CALL replaceByName( const ::rtl::OUString& aName, const ::com::sun::star::uno::Any& aElement ) 
-        throw(::com::sun::star::lang::IllegalArgumentException, 
-              ::com::sun::star::container::NoSuchElementException, 
-              ::com::sun::star::lang::WrappedTargetException, 
+    virtual void SAL_CALL replaceByName( const ::rtl::OUString& aName, const ::com::sun::star::uno::Any& aElement )
+        throw(::com::sun::star::lang::IllegalArgumentException,
+              ::com::sun::star::container::NoSuchElementException,
+              ::com::sun::star::lang::WrappedTargetException,
               ::com::sun::star::uno::RuntimeException);
 
     // Methods XNameContainer
     virtual void SAL_CALL insertByName( const ::rtl::OUString& aName, const ::com::sun::star::uno::Any& aElement )
-        throw(::com::sun::star::lang::IllegalArgumentException, 
-              ::com::sun::star::container::ElementExistException, 
-              ::com::sun::star::lang::WrappedTargetException, 
+        throw(::com::sun::star::lang::IllegalArgumentException,
+              ::com::sun::star::container::ElementExistException,
+              ::com::sun::star::lang::WrappedTargetException,
               ::com::sun::star::uno::RuntimeException);
-    virtual void SAL_CALL removeByName( const ::rtl::OUString& Name ) 
-        throw(::com::sun::star::container::NoSuchElementException, 
-              ::com::sun::star::lang::WrappedTargetException, 
+    virtual void SAL_CALL removeByName( const ::rtl::OUString& Name )
+        throw(::com::sun::star::container::NoSuchElementException,
+              ::com::sun::star::lang::WrappedTargetException,
               ::com::sun::star::uno::RuntimeException);
 
     // XTypeProvider
-    ::com::sun::star::uno::Sequence< ::com::sun::star::uno::Type > SAL_CALL getTypes(  ) 
+    ::com::sun::star::uno::Sequence< ::com::sun::star::uno::Type > SAL_CALL getTypes(  )
         throw( ::com::sun::star::uno::RuntimeException );
-    ::com::sun::star::uno::Sequence<sal_Int8> SAL_CALL getImplementationId(  ) 
+    ::com::sun::star::uno::Sequence<sal_Int8> SAL_CALL getImplementationId(  )
         throw( ::com::sun::star::uno::RuntimeException );
 
     // Methods XContainer
-    virtual void SAL_CALL addContainerListener( const ::com::sun::star::uno::Reference< 
-        ::com::sun::star::container::XContainerListener >& xListener ) 
+    virtual void SAL_CALL addContainerListener( const ::com::sun::star::uno::Reference<
+        ::com::sun::star::container::XContainerListener >& xListener )
             throw (::com::sun::star::uno::RuntimeException);
-    virtual void SAL_CALL removeContainerListener( const ::com::sun::star::uno::Reference< 
-        ::com::sun::star::container::XContainerListener >& xListener ) 
+    virtual void SAL_CALL removeContainerListener( const ::com::sun::star::uno::Reference<
+        ::com::sun::star::container::XContainerListener >& xListener )
             throw (::com::sun::star::uno::RuntimeException);
 };
 
