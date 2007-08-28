@@ -4,9 +4,9 @@
  *
  *  $RCSfile: svx_svdobj.cxx,v $
  *
- *  $Revision: 1.14 $
+ *  $Revision: 1.15 $
  *
- *  last change: $Author: obo $ $Date: 2007-07-17 11:44:37 $
+ *  last change: $Author: vg $ $Date: 2007-08-28 12:41:08 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -249,23 +249,23 @@ static double SMALLEST_DASH_WIDTH(26.95);
 /*N*/     // and preserves the true value for the Get*Width accessors.
 /*N*/ 	nLineWidth = ((const XLineWidthItem&)(rSet.Get(XATTR_LINEWIDTH))).GetValue();
 /*N*/ 	eLineStyle = (XLineStyle)((const XLineStyleItem&)rSet.Get(XATTR_LINESTYLE)).GetValue();
-/*N*/ 
+/*N*/
 /*N*/ 	nStartWidth = ((const XLineStartWidthItem&)(rSet.Get(XATTR_LINESTARTWIDTH))).GetValue();
 /*N*/ 	if(nStartWidth < 0)
 /*N*/ 		nStartWidth = -nLineWidth * nStartWidth / 100;
-/*N*/ 
+/*N*/
 /*N*/ 	nEndWidth = ((const XLineEndWidthItem&)(rSet.Get(XATTR_LINEENDWIDTH))).GetValue();
 /*N*/ 	if(nEndWidth < 0)
 /*N*/ 		nEndWidth = -nLineWidth * nEndWidth / 100;
-/*N*/ 
+/*N*/
 /*N*/ 	bStartCentered = ((const XLineStartCenterItem&)(rSet.Get(XATTR_LINESTARTCENTER))).GetValue();
 /*N*/ 	bEndCentered = ((const XLineEndCenterItem&)(rSet.Get(XATTR_LINEENDCENTER))).GetValue();
-/*N*/ 
+/*N*/
 /*N*/ 	fDegreeStepWidth = 10.0;
 /*N*/ 	eLineJoint = ((const XLineJointItem&)(rSet.Get(XATTR_LINEJOINT))).GetValue();
-/*N*/ 
+/*N*/
 /*N*/ 	aDash = ((const XLineDashItem&)(rSet.Get(XATTR_LINEDASH))).GetValue();
-/*N*/ 
+/*N*/
 /*N*/ 	// fill local dash info
 /*N*/ 	UINT16 nNumDotDashArray = (GetDots() + GetDashes()) * 2;
 /*N*/ 	aDotDashArray.resize( nNumDotDashArray, 0.0 );
@@ -275,13 +275,13 @@ static double SMALLEST_DASH_WIDTH(26.95);
 /*N*/ 	double fSingleDashLen = (double)GetDashLen();
 /*N*/ 	double fSingleDotLen = (double)GetDotLen();
 /*N*/ 	double fLineWidth = (double)GetDisplayLineWidth();
-/*N*/ 
+/*N*/
 /*N*/ 	if(GetDashStyle() == XDASH_RECTRELATIVE || GetDashStyle() == XDASH_ROUNDRELATIVE)
 /*?*/ 	{
 /*?*/ 		if(GetDisplayLineWidth())
 /*?*/ 		{
 /*?*/ 			double fFactor = fLineWidth / 100.0;
-/*?*/ 
+/*?*/
 /*?*/ 			if(GetDashes())
 /*?*/ 			{
 /*?*/ 				if(GetDashLen())
@@ -295,7 +295,7 @@ static double SMALLEST_DASH_WIDTH(26.95);
 /*?*/ 					fSingleDashLen = fLineWidth;
 /*?*/ 				}
 /*?*/ 			}
-/*?*/ 
+/*?*/
 /*?*/ 			if(GetDots())
 /*?*/ 			{
 /*?*/ 				if(GetDotLen())
@@ -309,7 +309,7 @@ static double SMALLEST_DASH_WIDTH(26.95);
 /*?*/ 					fSingleDotLen = fLineWidth;
 /*?*/ 				}
 /*?*/ 			}
-/*?*/ 
+/*?*/
 /*?*/ 			if(GetDashes() || GetDots())
 /*?*/ 			{
 /*?*/ 				if(GetDashDistance())
@@ -333,7 +333,7 @@ static double SMALLEST_DASH_WIDTH(26.95);
 /*?*/ 					fSingleDashLen = SMALLEST_DASH_WIDTH;
 /*?*/ 				}
 /*?*/ 			}
-/*?*/ 
+/*?*/
 /*?*/ 			if(GetDots())
 /*?*/ 			{
 /*?*/ 				if(GetDotLen())
@@ -347,7 +347,7 @@ static double SMALLEST_DASH_WIDTH(26.95);
 /*?*/ 					fSingleDotLen = SMALLEST_DASH_WIDTH;
 /*?*/ 				}
 /*?*/ 			}
-/*?*/ 
+/*?*/
 /*?*/ 			if(GetDashes() || GetDots())
 /*?*/ 			{
 /*?*/ 				if(GetDashDistance())
@@ -367,7 +367,7 @@ static double SMALLEST_DASH_WIDTH(26.95);
 /*N*/ 	{
 /*N*/ 		// smallest dot size compare value
 /*N*/ 		double fDotCompVal(GetDisplayLineWidth() ? fLineWidth : SMALLEST_DASH_WIDTH);
-/*N*/ 
+/*N*/
 /*N*/ 		// absolute values
 /*N*/ 		if(GetDashes())
 /*N*/ 		{
@@ -384,7 +384,7 @@ static double SMALLEST_DASH_WIDTH(26.95);
 /*?*/ 					fSingleDashLen = fDotCompVal;
 /*N*/ 			}
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		if(GetDots())
 /*N*/ 		{
 /*N*/ 			if(GetDotLen())
@@ -400,7 +400,7 @@ static double SMALLEST_DASH_WIDTH(26.95);
 /*?*/ 					fSingleDotLen = fDotCompVal;
 /*N*/ 			}
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		if(GetDashes() || GetDots())
 /*N*/ 		{
 /*N*/ 			if(GetDashDistance())
@@ -417,9 +417,9 @@ static double SMALLEST_DASH_WIDTH(26.95);
 /*N*/ 			}
 /*N*/ 		}
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	fFullDashDotLen = 0.0;
-/*N*/ 
+/*N*/
 /*N*/ 	for(a=0;a<GetDots();a++)
 /*N*/ 	{
 /*N*/ 		aDotDashArray[nIns++] = fSingleDotLen;
@@ -427,7 +427,7 @@ static double SMALLEST_DASH_WIDTH(26.95);
 /*N*/ 		aDotDashArray[nIns++] = fDashDotDistance;
 /*N*/ 		fFullDashDotLen += fDashDotDistance;
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	for(a=0;a<GetDashes();a++)
 /*N*/ 	{
 /*N*/ 		aDotDashArray[nIns++] = fSingleDashLen;
@@ -445,16 +445,16 @@ static double SMALLEST_DASH_WIDTH(26.95);
 /*N*/ {
 /*N*/ 	double fIndPos = fPos - (fFullDashDotLen * (double)((UINT32)(fPos / fFullDashDotLen)));
 /*N*/ 	UINT16 nPos = 0;
-/*N*/ 
+/*N*/
 /*N*/ 	while(fIndPos && fIndPos - aDotDashArray[nPos] > -SMALL_DVALUE)
 /*N*/ 	{
 /*N*/ 		fIndPos -= aDotDashArray[nPos];
 /*N*/ 		nPos = (static_cast< size_t >(nPos + 1) == aDotDashArray.size()) ? 0 : nPos + 1;
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	rfDist = aDotDashArray[nPos] - fIndPos;
 /*N*/ 	nPos = (static_cast< size_t >(nPos + 1) == aDotDashArray.size()) ? 0 : nPos + 1;
-/*N*/ 
+/*N*/
 /*N*/ 	return nPos;
 /*N*/ }
 
@@ -473,7 +473,7 @@ static double SMALLEST_DASH_WIDTH(26.95);
 /*N*/ {
 /*N*/ 	double fZwi = (rEdge1Delta.X() * rEdge2Delta.Y()) - (rEdge1Delta.Y() * rEdge2Delta.X());
 /*N*/ 	double fRetval = 0.0;
-/*N*/ 
+/*N*/
 /*N*/ 	if(fabs(fZwi) > SMALL_DVALUE)
 /*N*/ 	{
 /*N*/ 		fRetval = (rEdge2Delta.Y() * (rEdge2Start.X() - rEdge1Start.X())
@@ -488,32 +488,32 @@ static double SMALLEST_DASH_WIDTH(26.95);
 /*N*/ 	{
 /*N*/ 		double fHalfLineWidth((double)mrLineAttr.GetDisplayLineWidth() / 2.0);
 /*N*/ 		Vector3D aEdge = *pRight - *pLeft;
-/*N*/ 
+/*N*/
 /*N*/ 		// #78972#
 /*N*/ 		Vector3D aPerpend(-aEdge.Y(), aEdge.X(), 0.0);
 /*N*/ 		aPerpend.Normalize();
-/*N*/ 		
+/*N*/
 /*N*/ 		XLineJoint eJoint = mrLineAttr.GetLineJoint();
-/*N*/ 
+/*N*/
 /*N*/ 		// joints need eventually not be done
 /*N*/ 		if((eJoint == XLINEJOINT_MIDDLE || eJoint == XLINEJOINT_MITER) && (!pPrev && !pNext))
 /*N*/ 			eJoint = XLINEJOINT_NONE;
-/*N*/ 
+/*N*/
 /*N*/ 		switch(eJoint)
 /*N*/ 		{
 /*?*/ 			case XLINEJOINT_NONE: 		// no rounding
 /*?*/ 			{
 /*?*/ 				Polygon3D aNewPoly(4);
-/*?*/ 
+/*?*/
 /*?*/ 				aPerpend *= fHalfLineWidth;
 /*?*/ 				aNewPoly[0] = *pLeft + aPerpend;
 /*?*/ 				aNewPoly[1] = *pRight + aPerpend;
 /*?*/ 				aNewPoly[2] = *pRight - aPerpend;
 /*?*/ 				aNewPoly[3] = *pLeft - aPerpend;
-/*?*/ 
+/*?*/
 /*?*/ 				aNewPoly.SetClosed(TRUE);
 /*?*/ 				mrPolyPoly3D.Insert(aNewPoly);
-/*?*/ 
+/*?*/
 /*?*/ 				break;
 /*?*/ 			}
 /*?*/ 			case XLINEJOINT_MIDDLE: 	// calc middle value between joints
@@ -521,36 +521,36 @@ static double SMALLEST_DASH_WIDTH(26.95);
 /*?*/ 				Polygon3D aNewPoly(4);
 /*?*/ 				Vector3D aPerpendLeft(aPerpend);
 /*?*/ 				Vector3D aPerpendRight(aPerpend);
-/*?*/ 
+/*?*/
 /*?*/ 				if(pPrev)
 /*?*/ 				{
 /*?*/ 					aPerpendLeft = *pLeft - *pPrev;
-/*?*/ 					
+/*?*/
 /*?*/ 					// #78972#
 /*?*/ 					aPerpendLeft = Vector3D(-aPerpendLeft.Y(), aPerpendLeft.X(), 0.0);
 /*?*/ 					aPerpendLeft.Normalize();
 /*?*/ 				}
-/*?*/ 
+/*?*/
 /*?*/ 				if(pNext)
 /*?*/ 				{
 /*?*/ 					aPerpendRight = *pNext - *pRight;
-/*?*/ 
+/*?*/
 /*?*/ 					// #78972#
 /*?*/ 					aPerpendRight = Vector3D(-aPerpendRight.Y(), aPerpendRight.X(), 0.0);
 /*?*/ 					aPerpendRight.Normalize();
 /*?*/ 				}
-/*?*/ 
+/*?*/
 /*?*/ 				aPerpendLeft = (aPerpend + aPerpendLeft) * (fHalfLineWidth / 2.0);
 /*?*/ 				aPerpendRight = (aPerpend + aPerpendRight) * (fHalfLineWidth / 2.0);
-/*?*/ 
+/*?*/
 /*?*/ 				aNewPoly[0] = *pLeft + aPerpendLeft;
 /*?*/ 				aNewPoly[1] = *pRight + aPerpendRight;
 /*?*/ 				aNewPoly[2] = *pRight - aPerpendRight;
 /*?*/ 				aNewPoly[3] = *pLeft - aPerpendLeft;
-/*?*/ 
+/*?*/
 /*?*/ 				aNewPoly.SetClosed(TRUE);
 /*?*/ 				mrPolyPoly3D.Insert(aNewPoly);
-/*?*/ 
+/*?*/
 /*?*/ 				break;
 /*?*/ 			}
 /*N*/ 			case XLINEJOINT_BEVEL: 		// join edges with line
@@ -558,45 +558,45 @@ static double SMALLEST_DASH_WIDTH(26.95);
 /*N*/ 			{
 /*N*/ 				Vector3D aPerpendRight(aPerpend);
 /*N*/ 				BOOL bCreateSimplePart(TRUE);
-/*N*/ 
+/*N*/
 /*N*/ 				if(pNext)
 /*N*/ 				{
 /*N*/ 					aPerpendRight = *pNext - *pRight;
-/*N*/ 
+/*N*/
 /*N*/ 					// #78972#
 /*N*/ 					aPerpendRight = Vector3D(-aPerpendRight.Y(), aPerpendRight.X(), 0.0);
 /*N*/ 					aPerpendRight.Normalize();
-/*N*/ 
+/*N*/
 /*N*/ 					double fAngle = atan2(aPerpend.Y(), aPerpend.X());
 /*N*/ 					double fRightAngle = atan2(aPerpendRight.Y(), aPerpendRight.X());
 /*N*/ 					double fAngleDiff = fAngle - fRightAngle;
 /*N*/ 					double fDegreeStepWidth = mrLineAttr.GetDegreeStepWidth() * F_PI180;
-/*N*/ 
+/*N*/
 /*N*/ 					// go to range [0.0..2*F_PI[
 /*N*/ 					while(fAngleDiff < 0.0)
 /*N*/ 						fAngleDiff += (F_PI * 2.0);
 /*N*/ 					while(fAngleDiff >= (F_PI * 2.0))
 /*N*/ 						fAngleDiff -= (F_PI * 2.0);
-/*N*/ 
+/*N*/
 /*N*/ 					if((fAngleDiff > fDegreeStepWidth) && (fAngleDiff < ((F_PI * 2.0) - fDegreeStepWidth)))
 /*N*/ 					{
 /*N*/ 						bCreateSimplePart = FALSE;
 /*N*/ 						aPerpend *= fHalfLineWidth;
 /*N*/ 						aPerpendRight *= fHalfLineWidth;
-/*N*/ 
+/*N*/
 /*N*/ 						if(eJoint == XLINEJOINT_BEVEL)
 /*?*/ 						{
 /*?*/ 							UINT16 nPolyPoints(pPrev ? 7 : 6);
 /*?*/ 							Polygon3D aNewPoly(nPolyPoints);
-/*?*/ 
+/*?*/
 /*?*/ 							aNewPoly[0] = *pLeft + aPerpend;
 /*?*/ 							aNewPoly[1] = *pRight + aPerpend;
 /*?*/ 							aNewPoly[4] = *pRight - aPerpend;
 /*?*/ 							aNewPoly[5] = *pLeft - aPerpend;
-/*?*/ 
+/*?*/
 /*?*/ 							if(pPrev)
 /*?*/ 								aNewPoly[6] = *pLeft;
-/*?*/ 
+/*?*/
 /*?*/ 							if(fAngleDiff > F_PI)
 /*?*/ 							{
 /*?*/ 								// lower side
@@ -609,7 +609,7 @@ static double SMALLEST_DASH_WIDTH(26.95);
 /*?*/ 								aNewPoly[2] = *pRight + aPerpendRight;
 /*?*/ 								aNewPoly[3] = *pRight;
 /*?*/ 							}
-/*?*/ 
+/*?*/
 /*?*/ 							aNewPoly.SetClosed(TRUE);
 /*?*/ 							mrPolyPoly3D.Insert(aNewPoly);
 /*?*/ 						}
@@ -617,7 +617,7 @@ static double SMALLEST_DASH_WIDTH(26.95);
 /*N*/ 						{
 /*N*/ 							BOOL bUseLowerSide(fAngleDiff > F_PI);
 /*N*/ 							UINT16 nSegments;
-/*N*/ 
+/*N*/
 /*N*/ 							if(bUseLowerSide)
 /*N*/ 							{
 /*?*/ 								fAngleDiff = (F_PI * 2.0) - fAngleDiff;
@@ -627,32 +627,32 @@ static double SMALLEST_DASH_WIDTH(26.95);
 /*N*/ 							{
 /*N*/ 								nSegments = (UINT16)(fAngleDiff / fDegreeStepWidth);
 /*N*/ 							}
-/*N*/ 
+/*N*/
 /*N*/ 							UINT16 nPolyPoints(pPrev ? 7 : 6);
 /*N*/ 							Polygon3D aNewPoly(nPolyPoints + nSegments);
-/*N*/ 
+/*N*/
 /*N*/ 							aNewPoly[0] = *pLeft + aPerpend;
 /*N*/ 							aNewPoly[1] = *pRight + aPerpend;
 /*N*/ 							aNewPoly[4 + nSegments] = *pRight - aPerpend;
 /*N*/ 							aNewPoly[5 + nSegments] = *pLeft - aPerpend;
-/*N*/ 
+/*N*/
 /*N*/ 							if(pPrev)
 /*N*/ 								aNewPoly[6 + nSegments] = *pLeft;
-/*N*/ 
+/*N*/
 /*N*/ 							fAngleDiff /= (double)(nSegments + 1);
-/*N*/ 
+/*N*/
 /*N*/ 							if(bUseLowerSide)
 /*N*/ 							{
 /*N*/ 								// lower side
 /*?*/ 								aNewPoly[2] = *pRight;
 /*?*/ 								aNewPoly[3] = *pRight - aPerpendRight;
-/*?*/ 
+/*?*/
 /*?*/ 								for(UINT16 a=0;a<nSegments;a++)
 /*?*/ 								{
 /*?*/ 									double fDegree = fRightAngle - (double)a * fAngleDiff;
 /*?*/ 									Vector3D aNewPos(
 /*?*/ 										pRight->X() - (cos(fDegree) * fHalfLineWidth),
-/*?*/ 										pRight->Y() - (sin(fDegree) * fHalfLineWidth), 
+/*?*/ 										pRight->Y() - (sin(fDegree) * fHalfLineWidth),
 /*?*/ 										pRight->Z()); // #78972#
 /*?*/ 									aNewPoly[4 + a] = aNewPos;
 /*N*/ 								}
@@ -662,57 +662,57 @@ static double SMALLEST_DASH_WIDTH(26.95);
 /*N*/ 								// upper side
 /*N*/ 								aNewPoly[2 + nSegments] = *pRight + aPerpendRight;
 /*N*/ 								aNewPoly[3 + nSegments] = *pRight;
-/*N*/ 
+/*N*/
 /*N*/ 								for(UINT16 a=0;a<nSegments;a++)
 /*N*/ 								{
 /*N*/ 									double fDegree = fAngle - (double)a * fAngleDiff;
 /*N*/ 									Vector3D aNewPos(
 /*N*/ 										pRight->X() + (cos(fDegree) * fHalfLineWidth),
-/*N*/ 										pRight->Y() + (sin(fDegree) * fHalfLineWidth), 
+/*N*/ 										pRight->Y() + (sin(fDegree) * fHalfLineWidth),
 /*N*/ 										pRight->Z()); // #78972#
 /*N*/ 									aNewPoly[2 + a] = aNewPos;
 /*N*/ 								}
 /*N*/ 							}
-/*N*/ 
+/*N*/
 /*N*/ 							aNewPoly.SetClosed(TRUE);
 /*N*/ 							mrPolyPoly3D.Insert(aNewPoly);
 /*N*/ 						}
 /*N*/ 					}
 /*N*/ 				}
-/*N*/ 
+/*N*/
 /*N*/ 				if(bCreateSimplePart)
 /*N*/ 				{
 /*N*/ 					// angle smaller DegreeStepWidth, create simple segment
 /*N*/ 					UINT16 nNumPnt(4);
-/*N*/ 
+/*N*/
 /*N*/ 					if(pPrev)
 /*N*/ 						nNumPnt++;
-/*N*/ 
+/*N*/
 /*N*/ 					if(pNext)
 /*N*/ 						nNumPnt++;
-/*N*/ 
+/*N*/
 /*N*/ 					Polygon3D aNewPoly(nNumPnt);
-/*N*/ 
+/*N*/
 /*N*/ 					aPerpend *= fHalfLineWidth;
 /*N*/ 					aPerpendRight *= fHalfLineWidth;
 /*N*/ 					nNumPnt = 0;
-/*N*/ 
+/*N*/
 /*N*/ 					if(pPrev)
 /*N*/ 						aNewPoly[nNumPnt++] = *pLeft;
-/*N*/ 
+/*N*/
 /*N*/ 					aNewPoly[nNumPnt++] = *pLeft + aPerpend;
 /*N*/ 					aNewPoly[nNumPnt++] = *pRight + aPerpendRight;
-/*N*/ 
+/*N*/
 /*N*/ 					if(pNext)
 /*N*/ 						aNewPoly[nNumPnt++] = *pRight;
-/*N*/ 
+/*N*/
 /*N*/ 					aNewPoly[nNumPnt++] = *pRight - aPerpendRight;
 /*N*/ 					aNewPoly[nNumPnt++] = *pLeft - aPerpend;
-/*N*/ 
+/*N*/
 /*N*/ 					aNewPoly.SetClosed(TRUE);
 /*N*/ 					mrPolyPoly3D.Insert(aNewPoly);
 /*N*/ 				}
-/*N*/ 
+/*N*/
 /*N*/ 				break;
 /*N*/ 			}
 /*N*/ 			case XLINEJOINT_MITER: 		// extend till cut
@@ -721,22 +721,22 @@ static double SMALLEST_DASH_WIDTH(26.95);
 /*?*/ 				aPerpend *= fHalfLineWidth;
 /*?*/ 				BOOL bLeftSolved(FALSE);
 /*?*/ 				BOOL bRightSolved(FALSE);
-/*?*/ 
+/*?*/
 /*?*/ 				if(pPrev)
 /*?*/ 				{
 /*?*/ 					Vector3D aLeftVec(*pLeft - *pPrev);
-/*?*/ 
+/*?*/
 /*?*/ 					// #78972#
 /*?*/ 					Vector3D aPerpendLeft(-aLeftVec.Y(), aLeftVec.X(), 0.0);
 /*?*/ 					aPerpendLeft.Normalize();
-/*?*/ 					
+/*?*/
 /*?*/ 					aPerpendLeft *= fHalfLineWidth;
 /*?*/ 					double fUpperCut = ImpSimpleFindCutPoint(*pPrev + aPerpendLeft, aLeftVec, *pRight + aPerpend, -aEdge);
-/*?*/ 
+/*?*/
 /*?*/ 					if(fUpperCut != 0.0 && fUpperCut < mrLineAttr.GetLinejointMiterUpperBound())
 /*?*/ 					{
 /*?*/ 						double fLowerCut = ImpSimpleFindCutPoint(*pPrev - aPerpendLeft, aLeftVec, *pRight - aPerpend, -aEdge);
-/*?*/ 
+/*?*/
 /*?*/ 						if(fLowerCut < mrLineAttr.GetLinejointMiterUpperBound())
 /*?*/ 						{
 /*?*/ 							Vector3D aParam1 = *pPrev + aPerpendLeft;
@@ -754,23 +754,23 @@ static double SMALLEST_DASH_WIDTH(26.95);
 /*?*/ 					aNewPoly[0] = *pLeft + aPerpend;
 /*?*/ 					aNewPoly[3] = *pLeft - aPerpend;
 /*?*/ 				}
-/*?*/ 
+/*?*/
 /*?*/ 				if(pNext)
 /*?*/ 				{
 /*?*/ 					Vector3D aRightVec(*pRight - *pNext);
 /*?*/ 					Vector3D aPerpendRight = -aRightVec;
-/*?*/ 
+/*?*/
 /*?*/ 					// #78972#
 /*?*/ 					aPerpendRight = Vector3D(-aPerpendRight.Y(), aPerpendRight.X(), 0.0);
 /*?*/ 					aPerpendRight.Normalize();
-/*?*/ 
+/*?*/
 /*?*/ 					aPerpendRight *= fHalfLineWidth;
 /*?*/ 					double fUpperCut = ImpSimpleFindCutPoint(*pNext + aPerpendRight, aRightVec, *pRight + aPerpend, aEdge);
-/*?*/ 
+/*?*/
 /*?*/ 					if(fUpperCut != 0.0 && fUpperCut < mrLineAttr.GetLinejointMiterUpperBound())
 /*?*/ 					{
 /*?*/ 						double fLowerCut = ImpSimpleFindCutPoint(*pNext - aPerpendRight, aRightVec, *pRight - aPerpend, aEdge);
-/*?*/ 
+/*?*/
 /*?*/ 						if(fLowerCut < mrLineAttr.GetLinejointMiterUpperBound())
 /*?*/ 						{
 /*?*/ 							Vector3D aParam1 = *pNext + aPerpendRight;
@@ -788,10 +788,10 @@ static double SMALLEST_DASH_WIDTH(26.95);
 /*?*/ 					aNewPoly[1] = *pRight + aPerpend;
 /*?*/ 					aNewPoly[2] = *pRight - aPerpend;
 /*?*/ 				}
-/*?*/ 
+/*?*/
 /*?*/ 				aNewPoly.SetClosed(TRUE);
 /*?*/ 				mrPolyPoly3D.Insert(aNewPoly);
-/*?*/ 
+/*?*/
 /*?*/ 				break;
 /*?*/ 			}
 /*?*/ 		}
@@ -799,10 +799,10 @@ static double SMALLEST_DASH_WIDTH(26.95);
 /*N*/ 	else
 /*N*/ 	{
 /*?*/ 		Polygon3D aNewPoly(2);
-/*?*/ 
+/*?*/
 /*?*/ 		aNewPoly[0] = *pLeft;
 /*?*/ 		aNewPoly[1] = *pRight;
-/*?*/ 
+/*?*/
 /*?*/ 		aNewPoly.SetClosed(FALSE);
 /*?*/ 		mrPolyLine3D.Insert(aNewPoly);
 /*N*/ 	}
@@ -817,32 +817,32 @@ static double SMALLEST_DASH_WIDTH(26.95);
 /*N*/ 	BOOL bFirst(TRUE);
 /*N*/ 	BOOL bLast(FALSE);
 /*N*/ 	UINT16 nInd = mrLineAttr.GetFirstDashDotIndex(fPolyPos, fDist);
-/*N*/ 
+/*N*/
 /*N*/ 	do {
 /*N*/ 		// nInd right edge, fDist to it
 /*N*/ 		if((nInd % 2) && fDist > SMALL_DVALUE)
 /*N*/ 		{
 /*N*/ 			// left is fpos, get right
 /*N*/ 			double fRight = fPos + fDist;
-/*N*/ 
+/*N*/
 /*N*/ 			if(fRight > fLen)
 /*N*/ 			{
 /*N*/ 				fRight = fLen;
 /*N*/ 				bLast = TRUE;
 /*N*/ 			}
-/*N*/ 
+/*N*/
 /*N*/ 			// create segment from fPos to fRight
 /*N*/ 			Vector3D aLeft(*pLeft);
 /*N*/ 			Vector3D aRight(*pRight);
-/*N*/ 
+/*N*/
 /*N*/ 			if(!bFirst)
 /*N*/ 				aLeft.CalcInBetween(*pLeft, *pRight, fPos / fLen);
 /*N*/ 			if(!bLast)
 /*N*/ 				aRight.CalcInBetween(*pLeft, *pRight, fRight / fLen);
-/*N*/ 
+/*N*/
 /*N*/ 			ImpCreateLineSegment(bFirst ? pPrev : 0L, &aLeft, &aRight, bLast ? pNext : 0L);
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		bFirst = FALSE;
 /*N*/ 		fPos += fDist;
 /*N*/ 		nInd = mrLineAttr.GetNextDashDotIndex(nInd, fDist);
@@ -857,7 +857,7 @@ static double SMALLEST_DASH_WIDTH(26.95);
 /*N*/ 	double fScaleValue(fWantedWidth / aPolySize.GetWidth());
 /*N*/ 	Matrix4D aTrans;
 /*N*/ 	Vector3D aCenter;
-/*N*/ 
+/*N*/
 /*N*/ 	if(bCentered)
 /*N*/ 	{
 /*N*/ 		aCenter = Vector3D(
@@ -868,14 +868,14 @@ static double SMALLEST_DASH_WIDTH(26.95);
 /*N*/ 	{
 /*N*/ 		aCenter = Vector3D(rArrowPoly.GetMiddle());
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	aTrans.Translate(-aCenter);
 /*N*/ 	aTrans.Scale(fScaleValue, fScaleValue, fScaleValue);
-/*N*/ 
+/*N*/
 /*N*/ 	if(bCentered)
 /*N*/ 	{
 /*N*/ 		Vector3D aLowerCenter(aCenter.X(), aPolySize.MinVec().Y(), 0.0);
-/*N*/ 
+/*N*/
 /*N*/ 		aLowerCenter *= aTrans;
 /*N*/ 		aCenter *= aTrans;
 /*N*/ 		fOffset = (aCenter - aLowerCenter).GetLength();
@@ -885,62 +885,62 @@ static double SMALLEST_DASH_WIDTH(26.95);
 /*N*/ 	{
 /*N*/ 		Vector3D aLowerCenter(aCenter.X(), aPolySize.MinVec().Y(), 0.0);
 /*N*/ 		Vector3D aUpperCenter(aCenter.X(), aPolySize.MaxVec().Y(), 0.0);
-/*N*/ 
+/*N*/
 /*N*/ 		aUpperCenter *= aTrans;
 /*N*/ 		aLowerCenter *= aTrans;
 /*N*/ 		fOffset = (aUpperCenter - aLowerCenter).GetLength();
 /*N*/ 		fRetval = fOffset * 0.8;
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	Vector3D aHead = (bFront) ? rSourcePoly[0] : rSourcePoly[rSourcePoly.GetPointCount() - 1];
 /*N*/ 	Vector3D aTail = (bFront) ? rSourcePoly[1] : rSourcePoly[rSourcePoly.GetPointCount() - 2];
-/*N*/ 
+/*N*/
 /*N*/ 	if(fOffset != 0.0)
 /*N*/ 	{
 /*N*/ 		if(!bFront)
 /*N*/ 			fOffset = rSourcePoly.GetLength() - fOffset;
 /*N*/ 		aTail = rSourcePoly.GetPosition(fOffset);
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	Vector3D aDirection = aHead - aTail;
 /*N*/ 	aDirection.Normalize();
 /*N*/ 	double fRotation = atan2(aDirection.Y(), aDirection.X()) - (90.0 * F_PI180);
-/*N*/ 
+/*N*/
 /*N*/ 	aTrans.RotateZ(fRotation);
 /*N*/ 	aTrans.Translate(aHead);
-/*N*/ 
+/*N*/
 /*N*/ 	if(!bCentered)
 /*N*/ 	{
 /*N*/ 		Vector3D aUpperCenter(aCenter.X(), aPolySize.MaxVec().Y(), 0.0);
-/*N*/ 
+/*N*/
 /*N*/ 		aUpperCenter *= aTrans;
 /*N*/ 		aCenter *= aTrans;
 /*N*/ 		aTrans.Translate(aCenter - aUpperCenter);
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	rArrowPoly.Transform(aTrans);
 /*N*/ 	rArrowPoly.SetClosed(TRUE);
-/*N*/ 
+/*N*/
 /*N*/ 	return fRetval;
 /*N*/ }
 
 /*N*/ void ImpLineGeometryCreator::ImpCreateLineGeometry(const Polygon3D& rSourcePoly)
 /*N*/ {
 /*N*/ 	UINT16 nPntCnt = rSourcePoly.GetPointCount();
-/*N*/ 
+/*N*/
 /*N*/ 	if(nPntCnt > 1)
 /*N*/ 	{
 /*N*/ 		BOOL bClosed = rSourcePoly.IsClosed();
 /*N*/ 		UINT16 nCount = nPntCnt;
 /*N*/ 		Polygon3D aPoly = rSourcePoly;
-/*N*/ 
+/*N*/
 /*N*/ 		if(!bClosed)
 /*N*/ 		{
 /*N*/ 			nCount = nPntCnt-1;
 /*N*/ 			double fPolyLength = rSourcePoly.GetLength();
 /*N*/ 			double fStart = 0.0;
 /*N*/ 			double fEnd = fPolyLength;
-/*N*/ 
+/*N*/
 /*N*/ 			if(mrLineAttr.IsStartActive())
 /*N*/ 			{
 /*?*/ 				// create line start polygon and move line end
@@ -950,7 +950,7 @@ static double SMALLEST_DASH_WIDTH(26.95);
 /*?*/ 					(double)mrLineAttr.GetStartWidth(), mrLineAttr.IsStartCentered());
 /*?*/ 				mrPolyPoly3D.Insert(aArrowPoly);
 /*N*/ 			}
-/*N*/ 
+/*N*/
 /*N*/ 			if(mrLineAttr.IsEndActive())
 /*N*/ 			{
 /*?*/ 				// create line end polygon and move line end
@@ -960,19 +960,19 @@ static double SMALLEST_DASH_WIDTH(26.95);
 /*?*/ 					(double)mrLineAttr.GetEndWidth(), mrLineAttr.IsEndCentered());
 /*?*/ 				mrPolyPoly3D.Insert(aArrowPoly);
 /*N*/ 			}
-/*N*/ 
+/*N*/
 /*N*/ 			if(fStart != 0.0 || fEnd != fPolyLength)
 /*N*/ 			{
 /*?*/ 				// build new poly, consume something from old poly
 /*?*/ 				aPoly = Polygon3D(nCount);
 /*?*/ 				UINT16 nInsPos(0);
 /*?*/ 				double fPolyPos = 0.0;
-/*?*/ 
+/*?*/
 /*?*/ 				for(UINT16 a=0;a<nCount;a++)
 /*?*/ 				{
 /*?*/ 					Vector3D aEdge = rSourcePoly[a+1] - rSourcePoly[a];
 /*?*/ 					double fLength = aEdge.GetLength();
-/*?*/ 
+/*?*/
 /*?*/ 					if(fStart != 0.0)
 /*?*/ 					{
 /*?*/ 						if(fStart - fLength > -SMALL_DVALUE)
@@ -991,7 +991,7 @@ static double SMALLEST_DASH_WIDTH(26.95);
 /*?*/ 					{
 /*?*/ 						aPoly[nInsPos++] = rSourcePoly[a];
 /*?*/ 					}
-/*?*/ 
+/*?*/
 /*?*/ 					if((fPolyPos + fLength) - fEnd > -SMALL_DVALUE)
 /*?*/ 					{
 /*?*/ 						Vector3D aNewPos;
@@ -999,15 +999,15 @@ static double SMALLEST_DASH_WIDTH(26.95);
 /*?*/ 						aPoly[nInsPos++] = aNewPos;
 /*?*/ 						a = nCount;
 /*?*/ 					}
-/*?*/ 
+/*?*/
 /*?*/ 					// next PolyPos
 /*?*/ 					fPolyPos += fLength;
 /*?*/ 				}
-/*?*/ 
+/*?*/
 /*?*/ 				nCount = aPoly.GetPointCount() - 1;
 /*N*/ 			}
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		if(nCount)
 /*N*/ 		{
 /*N*/ 			if(!mrLineAttr.GetDisplayLineWidth()
@@ -1023,15 +1023,15 @@ static double SMALLEST_DASH_WIDTH(26.95);
 /*N*/ 				const Vector3D* pRight = NULL;
 /*N*/ 				const Vector3D* pNext = NULL;
 /*N*/ 				double fPolyPos = 0.0;
-/*N*/ 
+/*N*/
 /*N*/ 				for(UINT16 a=0;a<nCount;a++)
 /*N*/ 				{
 /*N*/ 					BOOL bStart(!a);
 /*N*/ 					BOOL bEnd(a+1 == nCount);
-/*N*/ 
+/*N*/
 /*N*/ 					// get left, right positions
 /*N*/ 					pLeft = &aPoly[a];
-/*N*/ 
+/*N*/
 /*N*/ 					// get length
 /*N*/ 					if(bClosed)
 /*N*/ 					{
@@ -1042,7 +1042,7 @@ static double SMALLEST_DASH_WIDTH(26.95);
 /*N*/ 					else
 /*N*/ 					{
 /*?*/ 						pRight = &aPoly[a+1];
-/*?*/ 
+/*?*/
 /*?*/ 						if(bStart)
 /*?*/ 						{
 /*?*/ 							pPrev = NULL;
@@ -1051,7 +1051,7 @@ static double SMALLEST_DASH_WIDTH(26.95);
 /*?*/ 						{
 /*?*/ 							pPrev = &aPoly[a-1];
 /*?*/ 						}
-/*?*/ 
+/*?*/
 /*?*/ 						if(bEnd)
 /*?*/ 						{
 /*?*/ 							pNext = NULL;
@@ -1067,7 +1067,7 @@ static double SMALLEST_DASH_WIDTH(26.95);
 /*?*/ 						ImpCreateSegmentsForLine(pPrev, pLeft, pRight, pNext, fPolyPos);
 /*N*/ 					else
 /*?*/ 						ImpCreateLineSegment(pPrev, pLeft, pRight, pNext);
-/*N*/ 
+/*N*/
 /*N*/ 					// increment PolyPos
 /*N*/ 					Vector3D aEdge = *pRight - *pLeft;
 /*N*/ 					fPolyPos += aEdge.GetLength();
@@ -1086,14 +1086,14 @@ static double SMALLEST_DASH_WIDTH(26.95);
 /*N*/ 	{
 /*N*/ 		SdrObjListIter aIter((const SdrObjGroup&)rObj, IM_DEEPNOGROUPS);
 /*N*/ 		mpData = new List();
-/*N*/ 
+/*N*/
 /*N*/ 		while(aIter.IsMore())
 /*N*/ 		{
 /*N*/ 			SdrObject* pObj = aIter.Next();
 /*N*/ 			if(pObj)
 /*N*/ 				((List*)mpData)->Insert(new Rectangle(pObj->GetBoundRect()), LIST_APPEND);
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		mnCount = ((List*)mpData)->Count();
 /*N*/ 	}
 /*N*/ 	else
@@ -1175,7 +1175,7 @@ static double SMALLEST_DASH_WIDTH(26.95);
 /*N*/ 	uno::Reference< lang::XComponent > xShape( mxUnoShape, uno::UNO_QUERY );
 /*N*/ 	if( xShape.is() )
 /*N*/ 		xShape->dispose();
-/*N*/ 
+/*N*/
 /*N*/ 	DBG_DTOR(SdrObject,NULL);
 /*N*/ 	SendUserCall(SDRUSERCALL_DELETE,GetBoundRect());
 /*N*/ 	if (pPlusData!=NULL) delete pPlusData;
@@ -1206,7 +1206,7 @@ static double SMALLEST_DASH_WIDTH(26.95);
 /*N*/ 			pPage = NULL;
 /*N*/ 		}
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	pModel = pNewModel;
 /*N*/ }
 
@@ -1228,7 +1228,7 @@ static double SMALLEST_DASH_WIDTH(26.95);
 
 // init global static itempool
 /*N*/ SdrItemPool* SdrObject::mpGlobalItemPool = NULL;
-/*N*/ 
+/*N*/
 /*N*/ SdrItemPool* SdrObject::GetGlobalDrawObjectItemPool()
 /*N*/ {
 /*N*/ 	if(!mpGlobalItemPool)
@@ -1239,7 +1239,7 @@ static double SMALLEST_DASH_WIDTH(26.95);
 /*N*/ 		mpGlobalItemPool->SetDefaultMetric((SfxMapUnit)SdrEngineDefaults::GetMapUnit());
 /*N*/ 		mpGlobalItemPool->FreezeIdRanges();
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	return mpGlobalItemPool;
 /*N*/ }
 
@@ -1248,7 +1248,7 @@ static double SMALLEST_DASH_WIDTH(26.95);
 /*N*/ {
 /*N*/ 	if(pModel)
 /*N*/ 		return (SdrItemPool*)(&pModel->GetItemPool());
-/*N*/ 
+/*N*/
 /*N*/ 	// use a static global default pool
 /*N*/ 	return SdrObject::GetGlobalDrawObjectItemPool();
 /*N*/ }
@@ -1393,20 +1393,20 @@ static double SMALLEST_DASH_WIDTH(26.95);
 /*N*/ {
 /*N*/ 	if( pModel && pModel->isLocked() )
 /*N*/ 		return;
-/*N*/ 
+/*N*/
 /*N*/ 	BOOL bBrd(pPlusData && pPlusData->pBroadcast);
 /*N*/ 	BOOL bPnt(bInserted && pModel);
-/*N*/ 
+/*N*/
 /*N*/ 	if(bPnt || bBrd)
 /*N*/ 	{
 /*N*/ 		SdrHint aHint(*this, rRect);
-/*N*/ 
+/*N*/
 /*N*/ 		if(bBrd)
 /*?*/ 			pPlusData->pBroadcast->Broadcast(aHint);
-/*N*/ 
+/*N*/
 /*N*/ 		if(bPnt)
 /*N*/ 			pModel->Broadcast(aHint);
-/*N*/ 
+/*N*/
 /*N*/ 		// alle Animationen wegen Obj-Aenderung neustarten
 /*N*/ 		RestartAnimation(NULL);
 /*N*/ 	}
@@ -1416,21 +1416,21 @@ static double SMALLEST_DASH_WIDTH(26.95);
 /*N*/ {
 /*N*/ 	if( pModel && pModel->isLocked() )
 /*N*/ 		return;
-/*N*/ 
+/*N*/
 /*N*/ 	BOOL bBrd(pPlusData && pPlusData->pBroadcast);
 /*N*/ 	BOOL bPnt(bInserted && pModel);
-/*N*/ 
+/*N*/
 /*N*/ 	if(bPnt || bBrd)
 /*N*/ 	{
 /*N*/ 		SdrHint aHint(*this);
 /*N*/ 		aHint.SetNeedRepaint(!bNoPaintNeeded);
-/*N*/ 
+/*N*/
 /*N*/ 		if(bBrd)
 /*N*/ 			pPlusData->pBroadcast->Broadcast(aHint);
-/*N*/ 
+/*N*/
 /*N*/ 		if(bPnt)
 /*N*/ 			pModel->Broadcast(aHint);
-/*N*/ 
+/*N*/
 /*N*/ 		// alle Animationen wegen Obj-Aenderung neustarten
 /*N*/ 		RestartAnimation(NULL);
 /*N*/ 	}
@@ -1448,40 +1448,40 @@ static double SMALLEST_DASH_WIDTH(26.95);
 /*N*/ 	rXOut.OverrideLineColor( aRedColor );
 /*N*/ 	rXOut.OverrideFillColor( aYellowColor );
 /*N*/ 	rXOut.DrawRect(GetBoundRect());
-/*N*/ 
+/*N*/
 /*N*/ 	return TRUE;
 /*N*/ }
 
-/*N*/ ::std::auto_ptr< SdrLineGeometry >  SdrObject::CreateLinePoly( OutputDevice& 		rOut, 
-/*N*/                                                                BOOL 				bForceOnePixel, 
-/*N*/                                                                BOOL 				bForceTwoPixel, 
+/*N*/ ::std::auto_ptr< SdrLineGeometry >  SdrObject::CreateLinePoly( OutputDevice& 		rOut,
+/*N*/                                                                BOOL 				bForceOnePixel,
+/*N*/                                                                BOOL 				bForceTwoPixel,
 /*N*/                                                                BOOL 				bIsLineDraft	) const
 /*N*/ {
 /*N*/     PolyPolygon3D aPolyPoly3D;
 /*N*/     PolyPolygon3D aLinePoly3D;
-/*N*/ 
+/*N*/
 /*N*/ 	// get XOR Poly as base
 /*N*/ 	XPolyPolygon aTmpPolyPolygon;
 /*N*/ 	TakeXorPoly(aTmpPolyPolygon, TRUE);
-/*N*/ 
+/*N*/
 /*N*/ 	// get ImpLineStyleParameterPack
 /*N*/ 	ImpLineStyleParameterPack aLineAttr(GetItemSet(), bForceOnePixel || bForceTwoPixel || bIsLineDraft, &rOut);
 /*N*/ 	ImpLineGeometryCreator aLineCreator(aLineAttr, aPolyPoly3D, aLinePoly3D, bIsLineDraft);
-/*N*/ 
+/*N*/
 /*N*/ 	// compute single lines
 /*N*/ 	for(UINT16 a=0;a<aTmpPolyPolygon.Count();a++)
 /*N*/ 	{
 /*N*/ 		// expand splines into polygons and convert to double
 /*N*/ 		Polygon3D aPoly3D(XOutCreatePolygon(aTmpPolyPolygon[a], &rOut));
 /*N*/ 		aPoly3D.RemoveDoublePoints();
-/*N*/ 
+/*N*/
 /*N*/ 		// convert line to single Polygons; make sure the part
 /*N*/ 		// polygons are all clockwise oriented
 /*N*/ 		aLineCreator.AddPolygon3D(aPoly3D);
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/     if(aPolyPoly3D.Count() || aLinePoly3D.Count())
-/*N*/         return ::std::auto_ptr< SdrLineGeometry > (new SdrLineGeometry(aPolyPoly3D, aLinePoly3D, 
+/*N*/         return ::std::auto_ptr< SdrLineGeometry > (new SdrLineGeometry(aPolyPoly3D, aLinePoly3D,
 /*N*/                                                                        aLineAttr, bForceOnePixel, bForceTwoPixel));
 /*N*/     else
 /*?*/ 		return ::std::auto_ptr< SdrLineGeometry > (NULL);
@@ -1535,24 +1535,24 @@ class ImpSkeleton;
 /*N*/ 		aSize = rXOut.GetOutDev()->LogicToPixel(aSize);
 /*N*/ 		BOOL bForceOnePixel(aSize.Width() <= 1 || aSize.Height() <= 1);
 /*N*/ 		BOOL bForceTwoPixel(!bForceOnePixel && (aSize.Width() <= 2 || aSize.Height() <= 2));
-/*N*/ 
+/*N*/
 /*N*/ 		// no force to two pixel when connected to MetaFile, so that not
 /*N*/ 		// four lines instead of one is recorded (e.g.)
 /*N*/ 		if(bForceTwoPixel && rXOut.GetOutDev()->GetConnectMetaFile())
 /*N*/ 			bForceTwoPixel = FALSE;
-/*N*/ 
+/*N*/
 /*N*/ 		// #78210# switch off bForceTwoPixel when line draft mode
 /*N*/ 		if(bForceTwoPixel && bIsLineDraft)
 /*N*/ 		{
 /*N*/ 			bForceTwoPixel = FALSE;
 /*N*/ 			bForceOnePixel = TRUE;
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		// create line geometry
 /*N*/ 		return CreateLinePoly(*rXOut.GetOutDev(),
 /*N*/                               bForceOnePixel, bForceTwoPixel, bIsLineDraft);
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	return ::std::auto_ptr< SdrLineGeometry > (0L);
 /*N*/ }
 
@@ -1562,23 +1562,23 @@ class ImpSkeleton;
 /*N*/ {
 /*N*/ 	Color aColor = ((XLineColorItem&)rSet.Get(XATTR_LINECOLOR)).GetValue();
 /*N*/ 	sal_uInt16 nTrans = ((const XLineTransparenceItem&)(rSet.Get(XATTR_LINETRANSPARENCE))).GetValue();
-/*N*/ 
+/*N*/
 /*N*/ 	// draw the line geometry
 /*N*/ 	ImpDrawLineGeometry(rXOut, aColor, nTrans, rLineGeometry);
 /*N*/ }
 
-/*N*/ void SdrObject::ImpDrawLineGeometry(   ExtOutputDevice& 	rXOut, 
-/*N*/                                        Color&              rColor, 
-/*N*/                                        sal_uInt16        	nTransparence, 
+/*N*/ void SdrObject::ImpDrawLineGeometry(   ExtOutputDevice& 	rXOut,
+/*N*/                                        Color&              rColor,
+/*N*/                                        sal_uInt16        	nTransparence,
 /*N*/                                        SdrLineGeometry&    rLineGeometry,
-/*N*/                                        sal_Int32          	nDX, 
+/*N*/                                        sal_Int32          	nDX,
 /*N*/                                        sal_Int32          	nDY				) const
 /*N*/ {
 /*N*/     Color aLineColor( rColor );
-/*N*/ 
+/*N*/
 /*N*/ 	// #72796# black/white option active?
 /*N*/ 	const UINT32 nOldDrawMode(rXOut.GetOutDev()->GetDrawMode());
-/*N*/ 
+/*N*/
 /*N*/ 	// #72796# if yes, force to DRAWMODE_BLACKFILL for these are LINES to be drawn as polygons
 /*N*/ 	if( ( nOldDrawMode & DRAWMODE_WHITEFILL ) && ( nOldDrawMode & DRAWMODE_BLACKLINE ) )
 /*N*/     {
@@ -1591,22 +1591,22 @@ class ImpSkeleton;
 /*?*/         aLineColor = Color( aColorConfig.GetColorValue( svtools::FONTCOLOR ).nColor );
 /*?*/         rXOut.GetOutDev()->SetDrawMode( nOldDrawMode & (~DRAWMODE_SETTINGSFILL) );
 /*N*/     }
-/*N*/ 
+/*N*/
 /*N*/     // #103692# Hold local copy of geometry
 /*N*/     PolyPolygon3D aPolyPoly = rLineGeometry.GetPolyPoly3D();
-/*N*/     PolyPolygon3D aLinePoly = rLineGeometry.GetLinePoly3D();    
-/*N*/ 
+/*N*/     PolyPolygon3D aLinePoly = rLineGeometry.GetLinePoly3D();
+/*N*/
 /*N*/     // #103692# Offset geometry (extracted from SdrObject::ImpDrawShadowLineGeometry)
 /*N*/ 	if( nDX || nDY )
 /*N*/ 	{
 /*?*/ 		// transformation necessary
 /*?*/ 		Matrix4D aTrans;
-/*?*/ 
+/*?*/
 /*?*/ 		aTrans.Translate((double)nDX, -(double)nDY, 0.0);
 /*?*/ 		aPolyPoly.Transform(aTrans);
 /*?*/ 		aLinePoly.Transform(aTrans);
 /*N*/ 	}
-/*N*/     
+/*N*/
 /*N*/     // #100127# Bracket output with a comment, if recording a Mtf
 /*N*/     GDIMetaFile* pMtf=NULL;
 /*N*/     bool bMtfCommentWritten( false );
@@ -1614,14 +1614,14 @@ class ImpSkeleton;
 /*N*/     {
 /*N*/         XPolyPolygon aPolyPoly;
 /*N*/         TakeXorPoly(aPolyPoly, TRUE);
-/*N*/ 
+/*N*/
 /*N*/         // #103692# Offset original geometry, too
 /*N*/         if( nDX || nDY )
 /*N*/         {
 /*?*/             // transformation necessary
 /*?*/             aPolyPoly.Move( nDX, nDY );
 /*N*/         }
-/*N*/ 
+/*N*/
 /*N*/         // for geometries with more than one polygon, dashing, arrows
 /*N*/         // etc. become ambiguous (e.g. measure objects have no arrows
 /*N*/         // on the end line), thus refrain from writing the comment
@@ -1631,58 +1631,58 @@ class ImpSkeleton;
 /*N*/             // add completely superfluous color action (gets overwritten
 /*N*/             // below), to store our line color reliably
 /*N*/             rXOut.GetOutDev()->SetLineColor(aLineColor);
-/*N*/ 
+/*N*/
 /*N*/             const ImpLineStyleParameterPack& rLineParameters = rLineGeometry.GetLineAttr();
-/*N*/ 
+/*N*/
 /*N*/             XPolygon aStartPoly( rLineParameters.GetStartPolygon() );
 /*N*/             XPolygon aEndPoly( rLineParameters.GetEndPolygon() );
-/*N*/             
+/*N*/
 /*N*/             // scale arrows to specified stroke width
 /*N*/             if( aStartPoly.GetPointCount() )
 /*?*/             {
 /*?*/                 Rectangle aBounds( aStartPoly.GetBoundRect() );
-/*?*/ 
+/*?*/
 /*?*/                 // mirror and translate to origin
 /*?*/                 aStartPoly.Scale(-1,-1);
 /*?*/                 aStartPoly.Translate( Point(aBounds.GetWidth() / 2, aBounds.GetHeight()) );
-/*?*/ 
+/*?*/
 /*?*/                 if( aBounds.GetWidth() )
 /*?*/                 {
 /*?*/ 					// #104527# Avoid division by zero. If rLineParameters.GetLineWidth
 /*?*/ 					// is zero this is a hairline which can be handled as 1.0.
 /*?*/ 					double fLineWidth(rLineParameters.GetLineWidth() ? (double)rLineParameters.GetLineWidth() : 1.0);
-/*?*/ 
-/*?*/                     double fScale( (double)rLineParameters.GetStartWidth() / fLineWidth * 
+/*?*/
+/*?*/                     double fScale( (double)rLineParameters.GetStartWidth() / fLineWidth *
 /*?*/                                    (double)SvtGraphicStroke::normalizedArrowWidth / (double)aBounds.GetWidth() );
 /*?*/                     aStartPoly.Scale( fScale, fScale );
-/*?*/                 }                    
-/*?*/ 
+/*?*/                 }
+/*?*/
 /*?*/                 if( rLineParameters.IsStartCentered() )
 /*?*/                     aStartPoly.Translate( Point(0, -aStartPoly.GetBoundRect().GetHeight() / 2) );
 /*?*/             }
 /*N*/             if( aEndPoly.GetPointCount() )
 /*?*/             {
 /*?*/                 Rectangle aBounds( aEndPoly.GetBoundRect() );
-/*?*/ 
+/*?*/
 /*?*/                 // mirror and translate to origin
 /*?*/                 aEndPoly.Scale(-1,-1);
 /*?*/                 aEndPoly.Translate( Point(aBounds.GetWidth() / 2, aBounds.GetHeight()) );
-/*?*/ 
+/*?*/
 /*?*/                 if( aBounds.GetWidth() )
 /*?*/                 {
 /*?*/ 					// #104527# Avoid division by zero. If rLineParameters.GetLineWidth
 /*?*/ 					// is zero this is a hairline which we can be handled as 1.0.
 /*?*/ 					double fLineWidth(rLineParameters.GetLineWidth() ? (double)rLineParameters.GetLineWidth() : 1.0);
-/*?*/ 
-/*?*/                     double fScale( (double)rLineParameters.GetEndWidth() / fLineWidth * 
+/*?*/
+/*?*/                     double fScale( (double)rLineParameters.GetEndWidth() / fLineWidth *
 /*?*/                                    (double)SvtGraphicStroke::normalizedArrowWidth / (double)aBounds.GetWidth() );
 /*?*/                     aEndPoly.Scale( fScale, fScale );
 /*?*/                 }
-/*?*/ 
+/*?*/
 /*?*/                 if( rLineParameters.IsEndCentered() )
 /*?*/                     aEndPoly.Translate( Point(0, -aEndPoly.GetBoundRect().GetHeight() / 2) );
 /*?*/             }
-/*N*/ 
+/*N*/
 /*N*/             SvtGraphicStroke aStroke( XOutCreatePolygonBezier( aPolyPoly[0], rXOut.GetOutDev() ),
 /*N*/                                       XOutCreatePolygonBezier( aStartPoly, rXOut.GetOutDev() ),
 /*N*/                                       XOutCreatePolygonBezier( aEndPoly, rXOut.GetOutDev() ),
@@ -1692,22 +1692,22 @@ class ImpSkeleton;
 /*N*/                                       SvtGraphicStroke::joinRound,
 /*N*/                                       rLineParameters.GetLinejointMiterUpperBound(),
 /*N*/                                       rLineParameters.GetLineStyle() == XLINE_DASH ? rLineParameters.GetDotDash() : SvtGraphicStroke::DashArray() );
-/*N*/ 
+/*N*/
 /*N*/ #ifdef DBG_UTIL
 /*N*/             ::rtl::OString aStr( aStroke.toString() );
 /*N*/ #endif
-/*N*/ 
+/*N*/
 /*N*/             SvMemoryStream	aMemStm;
-/*N*/         
+/*N*/
 /*N*/             aMemStm << aStroke;
-/*N*/ 
-/*N*/             pMtf->AddAction( new MetaCommentAction( "XPATHSTROKE_SEQ_BEGIN", 0, 
-/*N*/                                                     static_cast<const BYTE*>(aMemStm.GetData()), 
+/*N*/
+/*N*/             pMtf->AddAction( new MetaCommentAction( "XPATHSTROKE_SEQ_BEGIN", 0,
+/*N*/                                                     static_cast<const BYTE*>(aMemStm.GetData()),
 /*N*/                                                     aMemStm.Seek( STREAM_SEEK_TO_END ) ) );
 /*N*/             bMtfCommentWritten = true;
 /*N*/         }
 /*N*/     }
-/*N*/ 
+/*N*/
 /*N*/ 	if(nTransparence)
 /*?*/ 	{
 /*?*/ 		if(nTransparence != 100)
@@ -1720,29 +1720,29 @@ class ImpSkeleton;
 /*?*/ 			VirtualDevice aVDev;
 /*?*/ 			Volume3D aVolume;
 /*?*/ 			MapMode aMap(rXOut.GetOutDev()->GetMapMode());
-/*?*/ 
+/*?*/
 /*?*/ 			// StepCount to someting small
 /*?*/ 			aGradient.SetSteps(3);
-/*?*/ 
+/*?*/
 /*?*/ 			// get bounds of geometry
 /*?*/ 			if(aPolyPoly.Count())
 /*?*/ 				aVolume.Union(aPolyPoly.GetPolySize());
 /*?*/ 			if(aLinePoly.Count())
 /*?*/ 				aVolume.Union(aLinePoly.GetPolySize());
-/*?*/ 
+/*?*/
 /*?*/ 			// get pixel size in logic coor for 1,2 pixel cases
 /*?*/ 			Size aSizeSinglePixel(1, 1);
-/*?*/ 
+/*?*/
 /*?*/ 			if(rLineGeometry.DoForceOnePixel() || rLineGeometry.DoForceTwoPixel())
 /*?*/ 				aSizeSinglePixel = rXOut.GetOutDev()->PixelToLogic(aSizeSinglePixel);
-/*?*/ 
+/*?*/
 /*?*/ 			// create BoundRectangle
 /*?*/ 			Rectangle aBound(
 /*?*/ 				(INT32)aVolume.MinVec().X(),
 /*?*/ 				(INT32)-aVolume.MaxVec().Y(),
 /*?*/ 				(INT32)aVolume.MaxVec().X(),
 /*?*/ 				(INT32)-aVolume.MinVec().Y());
-/*?*/ 
+/*?*/
 /*?*/ 			if(rLineGeometry.DoForceOnePixel() || rLineGeometry.DoForceTwoPixel())
 /*?*/ 			{
 /*?*/ 				// enlarge aBound
@@ -1757,7 +1757,7 @@ class ImpSkeleton;
 /*?*/ 					aBound.Bottom() += (aSizeSinglePixel.Height() - 1);
 /*?*/ 				}
 /*?*/ 			}
-/*?*/ 
+/*?*/
 /*?*/ 			// prepare VDev and MetaFile
 /*?*/ 			aVDev.EnableOutput(FALSE);
 /*?*/ 			aVDev.SetMapMode(rXOut.GetOutDev()->GetMapMode());
@@ -1767,39 +1767,39 @@ class ImpSkeleton;
 /*?*/ 			aVDev.SetFont(rXOut.GetOutDev()->GetFont());
 /*?*/ 			aVDev.SetDrawMode(rXOut.GetOutDev()->GetDrawMode());
 /*?*/ 			aVDev.SetRefPoint(rXOut.GetOutDev()->GetRefPoint());
-/*?*/ 
+/*?*/
 /*?*/ 			// create output
 /*?*/ 			if(aPolyPoly.Count())
 /*?*/ 			{
 /*?*/ 				PolyPolygon aVCLPolyPoly = aPolyPoly.GetPolyPolygon();
-/*?*/ 
+/*?*/
 /*?*/ 				for(UINT16 a=0;a<aVCLPolyPoly.Count();a++)
 /*?*/ 					aMetaFile.AddAction(new MetaPolygonAction(aVCLPolyPoly[a]));
 /*?*/ 			}
-/*?*/ 
+/*?*/
 /*?*/ 			if(aLinePoly.Count())
 /*?*/ 			{
 /*?*/ 				PolyPolygon aVCLLinePoly = aLinePoly.GetPolyPolygon();
-/*?*/ 
+/*?*/
 /*?*/ 				if(rLineGeometry.DoForceTwoPixel())
 /*?*/ 				{
 /*?*/ 					UINT16 a;
-/*?*/ 
+/*?*/
 /*?*/ 					for(a=0;a<aVCLLinePoly.Count();a++)
 /*?*/ 						aMetaFile.AddAction(new MetaPolyLineAction(aVCLLinePoly[a]));
-/*?*/ 
+/*?*/
 /*?*/ 					aVCLLinePoly.Move(aSizeSinglePixel.Width() - 1, 0);
-/*?*/ 
+/*?*/
 /*?*/ 					for(a=0;a<aVCLLinePoly.Count();a++)
 /*?*/ 						aMetaFile.AddAction(new MetaPolyLineAction(aVCLLinePoly[a]));
-/*?*/ 
+/*?*/
 /*?*/ 					aVCLLinePoly.Move(0, aSizeSinglePixel.Height() - 1);
-/*?*/ 
+/*?*/
 /*?*/ 					for(a=0;a<aVCLLinePoly.Count();a++)
 /*?*/ 						aMetaFile.AddAction(new MetaPolyLineAction(aVCLLinePoly[a]));
-/*?*/ 
+/*?*/
 /*?*/ 					aVCLLinePoly.Move(-aSizeSinglePixel.Width() - 1, 0);
-/*?*/ 
+/*?*/
 /*?*/ 					for(a=0;a<aVCLLinePoly.Count();a++)
 /*?*/ 						aMetaFile.AddAction(new MetaPolyLineAction(aVCLLinePoly[a]));
 /*?*/ 				}
@@ -1809,7 +1809,7 @@ class ImpSkeleton;
 /*?*/ 						aMetaFile.AddAction(new MetaPolyLineAction(aVCLLinePoly[a]));
 /*?*/ 				}
 /*?*/ 			}
-/*?*/ 
+/*?*/
 /*?*/ 			// draw metafile
 /*?*/ 			aMetaFile.Stop();
 /*?*/ 			aMetaFile.WindStart();
@@ -1825,46 +1825,46 @@ class ImpSkeleton;
 /*N*/ 		if(aPolyPoly.Count())
 /*N*/ 		{
 /*N*/ 			PolyPolygon aVCLPolyPoly = aPolyPoly.GetPolyPolygon();
-/*N*/ 
+/*N*/
 /*N*/ 			rXOut.GetOutDev()->SetLineColor();
 /*N*/ 			rXOut.GetOutDev()->SetFillColor(aLineColor);
-/*N*/ 
+/*N*/
 /*N*/ 			for(UINT16 a=0;a<aVCLPolyPoly.Count();a++)
 /*N*/ 				rXOut.GetOutDev()->DrawPolygon(aVCLPolyPoly[a]);
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		if(aLinePoly.Count())
 /*N*/ 		{
 /*N*/ 			PolyPolygon aVCLLinePoly = aLinePoly.GetPolyPolygon();
-/*N*/ 
+/*N*/
 /*N*/ 			rXOut.GetOutDev()->SetLineColor(aLineColor);
 /*N*/ 			rXOut.GetOutDev()->SetFillColor();
-/*N*/ 
+/*N*/
 /*N*/ 			if(rLineGeometry.DoForceTwoPixel())
 /*?*/ 			{
 /*?*/ 				PolyPolygon aPolyPolyPixel( rXOut.GetOutDev()->LogicToPixel(aVCLLinePoly) );
 /*?*/ 				BOOL bWasEnabled = rXOut.GetOutDev()->IsMapModeEnabled();
 /*?*/ 				rXOut.GetOutDev()->EnableMapMode(FALSE);
 /*?*/ 				UINT16 a;
-/*?*/ 
+/*?*/
 /*?*/ 				for(a=0;a<aVCLLinePoly.Count();a++)
 /*?*/ 					rXOut.GetOutDev()->DrawPolyLine(aPolyPolyPixel[a]);
-/*?*/ 
+/*?*/
 /*?*/ 				aPolyPolyPixel.Move(1,0);
-/*?*/ 
+/*?*/
 /*?*/ 				for(a=0;a<aVCLLinePoly.Count();a++)
 /*?*/ 					rXOut.GetOutDev()->DrawPolyLine(aPolyPolyPixel[a]);
-/*?*/ 
+/*?*/
 /*?*/ 				aPolyPolyPixel.Move(0,1);
-/*?*/ 
+/*?*/
 /*?*/ 				for(a=0;a<aVCLLinePoly.Count();a++)
 /*?*/ 					rXOut.GetOutDev()->DrawPolyLine(aPolyPolyPixel[a]);
-/*?*/ 
+/*?*/
 /*?*/ 				aPolyPolyPixel.Move(-1,0);
-/*?*/ 
+/*?*/
 /*?*/ 				for(a=0;a<aVCLLinePoly.Count();a++)
 /*?*/ 					rXOut.GetOutDev()->DrawPolyLine(aPolyPolyPixel[a]);
-/*?*/ 
+/*?*/
 /*?*/ 				rXOut.GetOutDev()->EnableMapMode(bWasEnabled);
 /*?*/ 			}
 /*N*/ 			else
@@ -1873,20 +1873,20 @@ class ImpSkeleton;
 /*N*/                 {
 /*N*/                     const Polygon&  rPoly = aVCLLinePoly[ a ];
 /*N*/                     BOOL            bDrawn = FALSE;
-/*N*/ 
+/*N*/
 /*N*/                     if( rPoly.GetSize() == 2 )
 /*N*/                     {
 /*N*/ 						if ( !rXOut.GetOutDev()->GetConnectMetaFile() )
 /*N*/ 						{
 /*?*/ 							const Line  aLine( rXOut.GetOutDev()->LogicToPixel( rPoly[ 0 ] ),
 /*?*/ 											   rXOut.GetOutDev()->LogicToPixel( rPoly[ 1 ] ) );
-/*?*/ 
+/*?*/
 /*?*/ 							if( aLine.GetLength() > 16000 )
 /*?*/ 							{
 /*?*/ 								Point       aPoint;
 /*?*/ 								Rectangle   aOutRect( aPoint, rXOut.GetOutDev()->GetOutputSizePixel() );
 /*?*/ 								Line        aIntersection;
-/*?*/ 
+/*?*/
 /*?*/ 								if( aLine.Intersection( aOutRect, aIntersection ) )
 /*?*/ 								{
 /*?*/ 									rXOut.GetOutDev()->DrawLine( rXOut.GetOutDev()->PixelToLogic( aIntersection.GetStart() ),
@@ -1902,11 +1902,11 @@ class ImpSkeleton;
 /*N*/ 			}
 /*N*/ 		}
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/     // #100127# Bracket output with a comment, if recording a Mtf
 /*N*/     if( bMtfCommentWritten && pMtf )
 /*N*/         pMtf->AddAction( new MetaCommentAction( "XPATHSTROKE_SEQ_END" ) );
-/*N*/ 
+/*N*/
 /*N*/     rXOut.GetOutDev()->SetDrawMode( nOldDrawMode );
 /*N*/ }
 
@@ -1915,7 +1915,7 @@ class ImpSkeleton;
 
 
 /*N*/ SdrObject* SdrObject::CheckHit(const Point& rPnt, USHORT nTol, const SetOfByte* pVisiLayer) const
-/*N*/ {DBG_BF_ASSERT(0, "STRIP");  return NULL;//STRIP001 
+/*N*/ {DBG_BF_ASSERT(0, "STRIP");  return NULL;//STRIP001
 /*N*/ }
 
 /*N*/ SdrObject* SdrObject::Clone() const
@@ -1955,14 +1955,14 @@ class ImpSkeleton;
 /*N*/ 	bEmptyPresObj =rObj.bEmptyPresObj;
 /*N*/ 	//NotVisibleAsMaster wird nicht kopiert: nun doch! (25-07-1995, Joe)
 /*N*/ 	bNotVisibleAsMaster=rObj.bNotVisibleAsMaster;
-/*N*/ 
+/*N*/
 /*N*/ 	bBoundRectDirty=rObj.bBoundRectDirty;
 /*N*/ 	bSnapRectDirty=TRUE; //rObj.bSnapRectDirty;
 /*N*/ 	bNotMasterCachable=rObj.bNotMasterCachable;
 /*N*/ 	if (pPlusData!=NULL) { delete pPlusData; pPlusData=NULL; }
-/*N*/ 	if (rObj.pPlusData!=NULL) {DBG_BF_ASSERT(0, "STRIP"); //STRIP001 
+/*N*/ 	if (rObj.pPlusData!=NULL) {DBG_BF_ASSERT(0, "STRIP"); //STRIP001
 /*N*/ 	}
-/*N*/ 	if (pPlusData!=NULL && pPlusData->pBroadcast!=NULL) {DBG_BF_ASSERT(0, "STRIP"); //STRIP001 
+/*N*/ 	if (pPlusData!=NULL && pPlusData->pBroadcast!=NULL) {DBG_BF_ASSERT(0, "STRIP"); //STRIP001
 /*N*/ 	}
 /*N*/ }
 
@@ -1982,35 +1982,35 @@ class ImpSkeleton;
 /*N*/ 	GDIMetaFile     aMtf;
 /*N*/ 	SdrPaintInfoRec aPaintInfo;
 /*N*/ 	XPolygon		aXPoly;
-/*N*/ 
+/*N*/
 /*N*/ 	aBlackHole.EnableOutput( FALSE );
 /*N*/ 	aBlackHole.SetDrawMode( DRAWMODE_NOFILL );
-/*N*/ 
+/*N*/
 /*N*/ 	ExtOutputDevice	aXOut( &aBlackHole );
 /*N*/ 	SdrObject*		pClone = Clone();
-/*N*/ 
+/*N*/
 /*N*/ 	if(pClone && ISA(SdrEdgeObj))
 /*N*/ 	{
 /*N*/ 		// #102344# Flat cloned SdrEdgeObj, copy connections to original object(s).
 /*N*/ 		// This is deleted later at delete pClone.
 /*N*/ 		SdrObject* pLeft = ((SdrEdgeObj*)this)->GetConnectedNode(TRUE);
 /*N*/ 		SdrObject* pRight = ((SdrEdgeObj*)this)->GetConnectedNode(FALSE);
-/*N*/ 
+/*N*/
 /*N*/ 		if(pLeft)
 /*N*/ 		{
 /*N*/ 			pClone->ConnectToNode(TRUE, pLeft);
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		if(pRight)
 /*N*/ 		{
 /*N*/ 			pClone->ConnectToNode(FALSE, pRight);
 /*N*/ 		}
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	pClone->SetItem(XLineStyleItem(XLINE_SOLID));
 /*N*/ 	pClone->SetItem(XLineColorItem(String(), Color(COL_BLACK)));
 /*N*/ 	pClone->SetItem(XFillStyleItem(XFILL_NONE));
-/*N*/ 
+/*N*/
 /*N*/ 	aMtf.Record( &aBlackHole );
 /*N*/ 	aPaintInfo.nPaintMode = SDRPAINTMODE_DRAFTTEXT | SDRPAINTMODE_DRAFTGRAF;
 /*N*/ 	pClone->Paint( aXOut, aPaintInfo );
@@ -2018,18 +2018,18 @@ class ImpSkeleton;
 /*N*/ 	aMtf.Stop();
 /*N*/ 	aMtf.WindStart();
 /*N*/ 	rPoly.Clear();
-/*N*/ 
+/*N*/
 /*N*/ 	for( ULONG nActionNum = 0, nActionAnz = aMtf.GetActionCount(); nActionNum < nActionAnz; nActionNum++ )
 /*N*/ 	{
 /*N*/ 		const MetaAction&   rAct = *aMtf.GetAction( nActionNum );
 /*N*/ 		BOOL                bXPoly = FALSE;
-/*N*/ 
+/*N*/
 /*N*/ 		switch( rAct.GetType() )
 /*N*/ 		{
 /*?*/ 			case META_RECT_ACTION:
 /*?*/ 			{
 /*?*/ 				const Rectangle& rRect = ( (const MetaRectAction&) rAct ).GetRect();
-/*?*/ 
+/*?*/
 /*?*/ 				if( rRect.GetWidth() && rRect.GetHeight() )
 /*?*/ 				{
 /*?*/ 					aXPoly = rRect;
@@ -2037,11 +2037,11 @@ class ImpSkeleton;
 /*?*/ 				}
 /*?*/ 			}
 /*?*/ 			break;
-/*?*/ 
+/*?*/
 /*?*/ 			case META_ELLIPSE_ACTION:
 /*?*/ 			{
 /*?*/ 				const Rectangle& rRect = ( (const MetaEllipseAction&) rAct ).GetRect();
-/*?*/ 
+/*?*/
 /*?*/ 				if( rRect.GetWidth() && rRect.GetHeight() )
 /*?*/ 				{
 /*?*/ 					aXPoly = XPolygon( rRect.Center(), rRect.GetWidth() >> 1, rRect.GetHeight() >> 1 );
@@ -2049,11 +2049,11 @@ class ImpSkeleton;
 /*?*/ 				}
 /*?*/ 			}
 /*?*/ 			break;
-/*?*/ 
+/*?*/
 /*N*/ 			case META_POLYGON_ACTION:
 /*N*/ 			{
 /*N*/ 				const Polygon& rPoly = ( (const MetaPolygonAction&) rAct ).GetPolygon();
-/*N*/ 
+/*N*/
 /*N*/ 				if( rPoly.GetSize() > 2 )
 /*N*/ 				{
 /*N*/ 					aXPoly = rPoly;
@@ -2061,16 +2061,16 @@ class ImpSkeleton;
 /*N*/ 				}
 /*N*/ 			}
 /*N*/ 			break;
-/*N*/ 
+/*N*/
 /*?*/ 			case META_POLYPOLYGON_ACTION:
-/*?*/ 			{DBG_BF_ASSERT(0, "STRIP"); //STRIP001 
+/*?*/ 			{DBG_BF_ASSERT(0, "STRIP"); //STRIP001
 /*?*/ 			}
 /*?*/ 			break;
-/*?*/ 
+/*?*/
 /*N*/ 			case META_POLYLINE_ACTION:
 /*N*/ 			{
 /*N*/ 				const Polygon& rPoly = ( (const MetaPolyLineAction&) rAct ).GetPolygon();
-/*N*/ 
+/*N*/
 /*N*/ 				if( rPoly.GetSize() > 1 )
 /*N*/ 				{
 /*N*/ 					aXPoly = rPoly;
@@ -2078,7 +2078,7 @@ class ImpSkeleton;
 /*N*/ 				}
 /*N*/ 			}
 /*N*/ 			break;
-/*N*/ 
+/*N*/
 /*N*/ 			case META_LINE_ACTION:
 /*N*/ 			{
 /*N*/ 				aXPoly = XPolygon( 2 );
@@ -2087,15 +2087,15 @@ class ImpSkeleton;
 /*N*/ 				bXPoly = TRUE;
 /*N*/ 			}
 /*N*/ 			break;
-/*N*/ 
+/*N*/
 /*N*/ 			default:
 /*N*/ 			break;
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		if( bXPoly )
 /*N*/ 			rPoly.Insert( aXPoly );
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	// if we only have the outline of the object, we have _no_ contouir
 /*N*/ 	if( rPoly.Count() == 1 )
 /*N*/ 		rPoly.Clear();
@@ -2295,19 +2295,19 @@ class ImpSkeleton;
 /*N*/ 		SendUserCall(SDRUSERCALL_MOVEONLY,aBoundRect0);
 /*N*/ 	}
 /*N*/ }
-/*N*/ 
+/*N*/
 /*N*/ Point SdrObject::GetRelativePos() const
 /*N*/ {
 /*N*/ 	return GetSnapRect().TopLeft()-aAnchor;
 /*N*/ }
-/*N*/ 
+/*N*/
 /*N*/ void SdrObject::NbcSetAnchorPos(const Point& rPnt)
 /*N*/ {
 /*N*/ 	Size aSiz(rPnt.X()-aAnchor.X(),rPnt.Y()-aAnchor.Y());
 /*N*/ 	aAnchor=rPnt;
 /*N*/ 	NbcMove(aSiz); // Der ruft auch das SetRectsDirty()
 /*N*/ }
-/*N*/ 
+/*N*/
 /*N*/ void SdrObject::SetAnchorPos(const Point& rPnt)
 /*N*/ {
 /*N*/ 	if (rPnt!=aAnchor) {
@@ -2319,7 +2319,7 @@ class ImpSkeleton;
 /*N*/ 		SendUserCall(SDRUSERCALL_MOVEONLY,aBoundRect0);
 /*N*/ 	}
 /*N*/ }
-/*N*/ 
+/*N*/
 /*N*/ const Point& SdrObject::GetAnchorPos() const
 /*N*/ {
 /*N*/ 	return aAnchor;
@@ -2510,7 +2510,7 @@ class ImpSkeleton;
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /*N*/ SdrObjGeoData* SdrObject::NewGeoData() const
-/*N*/ {DBG_BF_ASSERT(0, "STRIP"); return NULL;//STRIP001 
+/*N*/ {DBG_BF_ASSERT(0, "STRIP"); return NULL;//STRIP001
 /*N*/ }
 
 /*N*/ void SdrObject::SaveGeoData(SdrObjGeoData& rGeo) const
@@ -2522,7 +2522,7 @@ class ImpSkeleton;
 /*N*/ 	rGeo.bNoPrint      =bNoPrint      ;
 /*N*/ 	rGeo.bClosedObj    =bClosedObj    ;
 /*N*/ 	rGeo.nLayerId      =nLayerId      ;
-/*N*/ 
+/*N*/
 /*N*/ 	// Benutzerdefinierte Klebepunkte
 /*N*/ 	if (pPlusData!=NULL && pPlusData->pGluePoints!=NULL) {
 /*?*/ 		if (rGeo.pGPL!=NULL) {
@@ -2537,9 +2537,9 @@ class ImpSkeleton;
 /*?*/ 		}
 /*N*/ 	}
 /*N*/ }
-/*N*/ 
+/*N*/
 /*N*/ void SdrObject::RestGeoData(const SdrObjGeoData& rGeo)
-/*N*/ {DBG_BF_ASSERT(0, "STRIP"); //STRIP001 
+/*N*/ {DBG_BF_ASSERT(0, "STRIP"); //STRIP001
 /*N*/ }
 
 /*N*/ SdrObjGeoData* SdrObject::GetGeoData() const
@@ -2573,12 +2573,12 @@ class ImpSkeleton;
 /*N*/ void SdrObject::SetItem( const SfxPoolItem& rItem )
 /*N*/ {
 /*N*/ 	sal_uInt16 nWhichID(rItem.Which());
-/*N*/ 
+/*N*/
 /*N*/ 	if(AllowItemChange(nWhichID, &rItem))
 /*N*/ 	{
 /*N*/ 		ItemChange(nWhichID, &rItem);
 /*N*/ 		PostItemChange(nWhichID);
-/*N*/ 
+/*N*/
 /*N*/ 		SfxItemSet aSet( *GetItemPool(), nWhichID, nWhichID, 0 );
 /*N*/ 		aSet.Put( rItem );
 /*N*/ 		ItemSetChanged( aSet );
@@ -2591,12 +2591,12 @@ class ImpSkeleton;
 /*N*/ 	{
 /*N*/ 		ItemChange(nWhich);
 /*N*/ 		PostItemChange(nWhich);
-/*N*/ 
+/*N*/
 /*N*/ 		SfxItemSet aSet( *GetItemPool(), nWhich, nWhich, 0 );
 /*N*/ 		ItemSetChanged( aSet );
 /*N*/ 	}
 /*N*/ }
-/*N*/ 
+/*N*/
 /*N*/ void SdrObject::SetItemSet( const SfxItemSet& rSet )
 /*N*/ {
 /*N*/ 	SfxWhichIter aWhichIter(rSet);
@@ -2605,7 +2605,7 @@ class ImpSkeleton;
 /*N*/ 	std::vector< sal_uInt16 > aPostItemChangeList;
 /*N*/ 	BOOL bDidChange(FALSE);
 /*N*/ 	SfxItemSet aSet( *GetItemPool(), SDRATTR_START, EE_ITEMS_END, 0 );
-/*N*/ 
+/*N*/
 /*N*/ 	while(nWhich)
 /*N*/ 	{
 /*N*/ 		if(SFX_ITEM_SET == rSet.GetItemState(nWhich, FALSE, &pPoolItem))
@@ -2620,7 +2620,7 @@ class ImpSkeleton;
 /*N*/ 		}
 /*N*/ 		nWhich = aWhichIter.NextWhich();
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	if(bDidChange)
 /*N*/ 	{
 /*N*/ 		std::vector< sal_uInt16 >::iterator aIter = aPostItemChangeList.begin();
@@ -2630,25 +2630,25 @@ class ImpSkeleton;
 /*N*/ 			PostItemChange((*aIter));
 /*N*/ 			aIter++;
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		ItemSetChanged( aSet );
 /*N*/ 	}
 /*N*/ }
-/*N*/ 
+/*N*/
 /*N*/ ////////////////////////////////////////////////////////////////////////////////////////////////////
 /*N*/ // ItemSet was changed, maybe user wants to react
-/*N*/ 
+/*N*/
 /*N*/ void SdrObject::ItemSetChanged(const SfxItemSet& rSet)
 /*N*/ {
 /*N*/ }
-/*N*/ 
+/*N*/
 /*N*/ void SdrObject::BroadcastItemChange(const SdrBroadcastItemChange& rChange)
 /*N*/ {
 /*N*/ 	sal_uInt32 nCount(rChange.GetRectangleCount());
-/*N*/ 
+/*N*/
 /*N*/ 	sal_uInt32 a; for(a=0; a < nCount; a++)
 /*N*/ 		SendRepaintBroadcast(rChange.GetRectangle(a));
-/*N*/ 
+/*N*/
 /*N*/ 	if(ISA(SdrObjGroup))
 /*N*/ 	{
 /*N*/ 		SdrObjListIter aIter(*((SdrObjGroup*)this), IM_DEEPNOGROUPS);
@@ -2660,7 +2660,7 @@ class ImpSkeleton;
 /*N*/ 	}
 /*N*/ 	else
 /*N*/ 		SendRepaintBroadcast(GetBoundRect());
-/*N*/ 
+/*N*/
 /*N*/ 	for(a = 0; a < nCount; a++)
 /*N*/ 		SendUserCall(SDRUSERCALL_CHGATTR, rChange.GetRectangle(a));
 /*N*/ }
@@ -2713,13 +2713,13 @@ class ImpSkeleton;
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /*N*/ void SdrObject::ApplyNotPersistAttr(const SfxItemSet& rAttr)
-/*N*/ {DBG_BF_ASSERT(0, "STRIP"); //STRIP001 
+/*N*/ {DBG_BF_ASSERT(0, "STRIP"); //STRIP001
 /*N*/ }
 
 
 
 /*N*/ void SdrObject::TakeNotPersistAttr(SfxItemSet& rAttr, FASTBOOL bMerge) const
-/*N*/ {DBG_BF_ASSERT(0, "STRIP"); //STRIP001 
+/*N*/ {DBG_BF_ASSERT(0, "STRIP"); //STRIP001
 /*N*/ }
 
 /*N*/ SfxStyleSheet* SdrObject::GetStyleSheet() const
@@ -2769,7 +2769,7 @@ class ImpSkeleton;
 /*N*/ }
 
 /*N*/ SdrGluePointList* SdrObject::ForceGluePointList()
-/*N*/ { 
+/*N*/ {
 /*N*/ 	ImpForcePlusData();
 /*N*/ 	if (pPlusData->pGluePoints==NULL) {
 /*N*/ 		pPlusData->pGluePoints=new SdrGluePointList;
@@ -2782,7 +2782,7 @@ class ImpSkeleton;
 /*N*/ 	// erst Const-Aufruf um zu sehen, ob
 /*N*/ 	// ueberhaupt Klebepunkte da sind
 /*N*/ 	// const-Aufruf erzwingen!
-/*N*/ 	if (GetGluePointList()!=NULL) {DBG_BF_ASSERT(0, "STRIP"); //STRIP001 
+/*N*/ 	if (GetGluePointList()!=NULL) {DBG_BF_ASSERT(0, "STRIP"); //STRIP001
 /*N*/ 	}
 /*N*/ }
 
@@ -2791,7 +2791,7 @@ class ImpSkeleton;
 /*N*/ 	// erst Const-Aufruf um zu sehen, ob
 /*N*/ 	// ueberhaupt Klebepunkte da sind
 /*N*/ 	// const-Aufruf erzwingen!
-/*N*/ 	if (GetGluePointList()!=NULL) {DBG_BF_ASSERT(0, "STRIP"); //STRIP001 
+/*N*/ 	if (GetGluePointList()!=NULL) {DBG_BF_ASSERT(0, "STRIP"); //STRIP001
 /*N*/ 	}
 /*N*/ }
 
@@ -2800,7 +2800,7 @@ class ImpSkeleton;
 /*N*/ 	// erst Const-Aufruf um zu sehen, ob
 /*N*/ 	// ueberhaupt Klebepunkte da sind
 /*N*/ 	// const-Aufruf erzwingen!
-/*N*/ 	if (GetGluePointList()!=NULL) {DBG_BF_ASSERT(0, "STRIP"); //STRIP001 
+/*N*/ 	if (GetGluePointList()!=NULL) {DBG_BF_ASSERT(0, "STRIP"); //STRIP001
 /*N*/ 	}
 /*N*/ }
 
@@ -2809,7 +2809,7 @@ class ImpSkeleton;
 /*N*/ 	// erst Const-Aufruf um zu sehen, ob
 /*N*/ 	// ueberhaupt Klebepunkte da sind
 /*N*/ 	// const-Aufruf erzwingen!
-/*N*/ 	if (GetGluePointList()!=NULL) {DBG_BF_ASSERT(0, "STRIP"); //STRIP001 
+/*N*/ 	if (GetGluePointList()!=NULL) {DBG_BF_ASSERT(0, "STRIP"); //STRIP001
 /*N*/ 	}
 /*N*/ }
 
@@ -2835,11 +2835,11 @@ class ImpSkeleton;
 /*N*/ SdrObject* SdrObject::ConvertToPolyObj(BOOL bBezier, BOOL bLineToArea) const
 /*N*/ {
 /*N*/ 	SdrObject* pRet = DoConvertToPolyObj(bBezier);
-/*N*/ 
+/*N*/
 /*N*/ 	if(pRet && bLineToArea)
-/*N*/ 	{DBG_BF_ASSERT(0, "STRIP"); //STRIP001 
+/*N*/ 	{DBG_BF_ASSERT(0, "STRIP"); //STRIP001
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	return pRet;
 /*N*/ }
 
@@ -2882,26 +2882,19 @@ class ImpSkeleton;
 /*N*/ 	{
 /*N*/ 		// find out which application is running
 /*N*/ 		SfxObjectShell* pObjectShell = ((FmFormModel*)GetModel())->GetObjectShell();
-/*N*/ 
 /*N*/ 		if(pObjectShell)
 /*N*/ 		{
-/*N*/ //			SfxInterface* pInterface = pObjectShell->GetInterface();
-/*N*/ 
-/*N*/ //			if(pInterface)
                 SfxObjectFactory& rFac = pObjectShell->GetFactory();
-                if ( rFac.GetShortName() == "sdraw" || rFac.GetShortName() == "simpress" )
+                if ( rFac.GetShortName() &&
+                    ( strcmp(rFac.GetShortName(), "sdraw") == 0 ||
+                      strcmp(rFac.GetShortName(), "simpress") == 0 ) )
 /*N*/ 			{
-/*N*/ 				//sal_uInt16 nInterfaceID = pInterface->GetInterfaceId();
-/*N*/ 
-/*N*/ 				//if(nInterfaceID >= SFX_INTERFACE_SD_START && nInterfaceID <= SFX_INTERFACE_SD_END)
-/*N*/ 				{
-/*N*/ 					// it's a draw/Impress, reset anchor pos hard
-/*N*/ 					aAnchor = Point(0, 0);
-/*N*/ 				}
+/*N*/               // it's a draw/Impress, reset anchor pos hard
+/*N*/               aAnchor = Point(0, 0);
 /*N*/ 			}
 /*N*/ 		}
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	BOOL bTemp;
 /*N*/ 	rIn>>bTemp; bMovProt=bTemp;
 /*N*/ 	rIn>>bTemp; bSizProt=bTemp;
@@ -2928,7 +2921,7 @@ class ImpSkeleton;
 /*N*/ 		Polygon aTmpPoly;
 /*N*/ 		rIn>>aTmpPoly; // aConnectors; ehemals Konnektoren
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	if (pPlusData!=NULL && pPlusData->pUserDataList!=NULL) {
 /*N*/ 		delete pPlusData->pUserDataList;
 /*N*/ 		pPlusData->pUserDataList=NULL;
@@ -3006,7 +2999,7 @@ class ImpSkeleton;
 /*N*/ 	bTemp=bMarkProt;      rOut<<bTemp;
 /*N*/ 	bTemp=bEmptyPresObj;  rOut<<bTemp;
 /*N*/ 	bTemp=bNotVisibleAsMaster; rOut<<bTemp;
-/*N*/ 
+/*N*/
 /*N*/ 	// Konnektoren
 /*N*/ 	bTemp=pPlusData!=NULL && pPlusData->pGluePoints!=NULL && pPlusData->pGluePoints->GetCount()!=0;
 /*N*/ 	rOut<<bTemp; // Flag fuer GluePointList vorhanden
@@ -3036,7 +3029,7 @@ class ImpSkeleton;
 /*N*/ 			pPlusData->pUserDataList->GetUserData(i)->WriteData(rOut);
 /*N*/ 		}
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ }
 
 /*N*/ SvStream& operator>>(SvStream& rIn, SdrObject& rObj)
@@ -3051,7 +3044,7 @@ class ImpSkeleton;
 /*N*/ {
 /*N*/ 	DBG_ASSERT(!rObj.IsNotPersistent(),"operator<<(SdrObject): Ein nicht persistentes Zeichenobjekts wird gestreamt");
 /*N*/ 	SdrObjIOHeader aHead(rOut,STREAM_WRITE,&rObj);
-/*N*/ 
+/*N*/
 /*N*/ 	if(rObj.ISA(SdrVirtObj))
 /*N*/ 	{
 /*N*/ 		// #108784#
@@ -3063,7 +3056,7 @@ class ImpSkeleton;
 /*N*/ 	{
 /*N*/ 		rObj.WriteData(rOut);
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	return rOut;
 /*N*/ }
 
@@ -3076,7 +3069,7 @@ class ImpSkeleton;
 /*N*/ 		Rectangle aBoundRect0(GetBoundRect());
 /*N*/ 		if (bIns) SendUserCall(SDRUSERCALL_INSERTED,aBoundRect0);
 /*N*/ 		else SendUserCall(SDRUSERCALL_REMOVED,aBoundRect0);
-/*N*/ 
+/*N*/
 /*N*/ 		if (pPlusData!=NULL && pPlusData->pBroadcast!=NULL) { // #42522#
 /*N*/ 			SdrHint aHint(*this);
 /*N*/ 			aHint.SetKind(bIns?HINT_OBJINSERTED:HINT_OBJREMOVED);
@@ -3108,7 +3101,7 @@ class ImpSkeleton;
 /*N*/ }
 
 /*N*/ void SdrObject::SetPrintable(FASTBOOL bPrn)
-/*N*/ {DBG_BF_ASSERT(0, "STRIP"); //STRIP001 
+/*N*/ {DBG_BF_ASSERT(0, "STRIP"); //STRIP001
 /*N*/ }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -3124,7 +3117,7 @@ class ImpSkeleton;
 /*N*/ 	if (pPlusData==NULL || pPlusData->pUserDataList==NULL) return NULL;
 /*N*/ 	return pPlusData->pUserDataList->GetUserData(nNum);
 /*N*/ }
-/*N*/ 
+/*N*/
 /*N*/ void SdrObject::InsertUserData(SdrObjUserData* pData, USHORT nPos)
 /*N*/ {
 /*N*/ 	if (pData!=NULL) {
@@ -3140,57 +3133,57 @@ class ImpSkeleton;
 /*N*/ void SdrObject::SendUserCall(SdrUserCallType eUserCall, const Rectangle& rBoundRect)
 /*N*/ {
 /*N*/ 	SdrObjGroup* pGroup = NULL;
-/*N*/ 
+/*N*/
 /*N*/ 	if( pObjList && pObjList->GetListKind() == SDROBJLIST_GROUPOBJ )
 /*N*/ 		pGroup = (SdrObjGroup*) pObjList->GetOwnerObj();
-/*N*/ 
+/*N*/
 /*N*/ 	if ( pUserCall )
 /*N*/ 	{
 /*N*/ 		// UserCall ausfuehren
 /*N*/ 		pUserCall->Changed( *this, eUserCall, rBoundRect );
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	while( pGroup )
 /*N*/ 	{
 /*N*/ 		// Gruppe benachrichtigen
 /*N*/ 		if( pGroup->GetUserCall() )
 /*N*/ 		{
 /*N*/ 			SdrUserCallType eChildUserType = SDRUSERCALL_CHILD_CHGATTR;
-/*N*/ 
+/*N*/
 /*N*/ 			switch( eUserCall )
 /*N*/ 			{
 /*N*/ 				case SDRUSERCALL_MOVEONLY:
 /*N*/ 					eChildUserType = SDRUSERCALL_CHILD_MOVEONLY;
 /*N*/ 				break;
-/*N*/ 
+/*N*/
 /*N*/ 				case SDRUSERCALL_RESIZE:
 /*N*/ 					eChildUserType = SDRUSERCALL_CHILD_RESIZE;
 /*N*/ 				break;
-/*N*/ 
+/*N*/
 /*N*/ 				case SDRUSERCALL_CHGATTR:
 /*N*/ 					eChildUserType = SDRUSERCALL_CHILD_CHGATTR;
 /*N*/ 				break;
-/*N*/ 
+/*N*/
 /*N*/ 				case SDRUSERCALL_DELETE:
 /*N*/ 					eChildUserType = SDRUSERCALL_CHILD_DELETE;
 /*N*/ 				break;
-/*N*/ 
+/*N*/
 /*N*/ 				case SDRUSERCALL_COPY:
 /*N*/ 					eChildUserType = SDRUSERCALL_CHILD_COPY;
 /*N*/ 				break;
-/*N*/ 
+/*N*/
 /*N*/ 				case SDRUSERCALL_INSERTED:
 /*N*/ 					eChildUserType = SDRUSERCALL_CHILD_INSERTED;
 /*N*/ 				break;
-/*N*/ 
+/*N*/
 /*N*/ 				case SDRUSERCALL_REMOVED:
 /*N*/ 					eChildUserType = SDRUSERCALL_CHILD_REMOVED;
 /*N*/ 				break;
 /*N*/ 			}
-/*N*/ 
+/*N*/
 /*N*/ 			pGroup->GetUserCall()->Changed( *this, eChildUserType, rBoundRect );
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		if( pGroup->GetObjList()                                       &&
 /*N*/ 			pGroup->GetObjList()->GetListKind() == SDROBJLIST_GROUPOBJ &&
 /*N*/ 			pGroup != (SdrObjGroup*) pObjList->GetOwnerObj() )
@@ -3211,7 +3204,7 @@ class ImpSkeleton;
 /*N*/ {
 /*N*/ 	// try weak reference first
 /*N*/ 	uno::Reference< uno::XInterface > xShape( mxUnoShape );
-/*N*/ 
+/*N*/
 /*N*/ 	if( !xShape.is() && pPage )
 /*N*/ 	{
 /*N*/ 		uno::Reference< uno::XInterface > xPage( pPage->getUnoPage() );
@@ -3226,7 +3219,7 @@ class ImpSkeleton;
 /*N*/ 			}
 /*N*/ 		}
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	return xShape;
 /*N*/ }
 
@@ -3244,11 +3237,11 @@ class ImpSkeleton;
 /*N*/ {
 /*N*/ 	// any kind of SdrObject, just use SnapRect
 /*N*/ 	Rectangle aRectangle(GetSnapRect());
-/*N*/ 
+/*N*/
 /*N*/ 	// convert to transformation values
 /*N*/ 	Vector2D aScale((double)aRectangle.GetWidth(), (double)aRectangle.GetHeight());
 /*N*/ 	Vector2D aTranslate((double)aRectangle.Left(), (double)aRectangle.Top());
-/*N*/ 
+/*N*/
 /*N*/ 	// position maybe relative to anchorpos, convert
 /*N*/ 	if( pModel->IsWriter() )
 /*N*/ 	{
@@ -3268,12 +3261,12 @@ class ImpSkeleton;
 /*?*/ 				// #104018#
 /*?*/ 				aTranslate.X() = ImplTwipsToMM(aTranslate.X());
 /*?*/ 				aTranslate.Y() = ImplTwipsToMM(aTranslate.Y());
-/*?*/ 
+/*?*/
 /*?*/ 				// size
 /*?*/ 				// #104018#
 /*?*/ 				aScale.X() = ImplTwipsToMM(aScale.X());
 /*?*/ 				aScale.Y() = ImplTwipsToMM(aScale.Y());
-/*?*/ 
+/*?*/
 /*?*/ 				break;
 /*?*/ 			}
 /*?*/ 			default:
@@ -3289,7 +3282,7 @@ class ImpSkeleton;
 /*N*/ 		rMat.Scale(aScale.X(), aScale.Y());
 /*N*/ 	if(aTranslate.X() != 0.0 || aTranslate.Y() != 0.0)
 /*N*/ 		rMat.Translate(aTranslate.X(), aTranslate.Y());
-/*N*/ 
+/*N*/
 /*N*/ 	return FALSE;
 /*N*/ }
 
@@ -3302,7 +3295,7 @@ class ImpSkeleton;
 /*N*/ 	Vector2D aScale, aTranslate;
 /*N*/ 	double fShear, fRotate;
 /*N*/ 	rMat.DecomposeAndCorrect(aScale, fShear, fRotate, aTranslate);
-/*N*/ 
+/*N*/
 /*N*/ 	// force metric to pool metric
 /*N*/ 	SfxMapUnit eMapUnit = pModel->GetItemPool().GetMetric(0);
 /*N*/ 	if(eMapUnit != SFX_MAPUNIT_100TH_MM)
@@ -3315,12 +3308,12 @@ class ImpSkeleton;
 /*?*/ 				// #104018#
 /*?*/ 				aTranslate.X() = ImplMMToTwips(aTranslate.X());
 /*?*/ 				aTranslate.Y() = ImplMMToTwips(aTranslate.Y());
-/*?*/ 
+/*?*/
 /*?*/ 				// size
 /*?*/ 				// #104018#
 /*?*/ 				aScale.X() = ImplMMToTwips(aScale.X());
 /*?*/ 				aScale.Y() = ImplMMToTwips(aScale.Y());
-/*?*/ 
+/*?*/
 /*?*/ 				break;
 /*?*/ 			}
 /*?*/ 			default:
@@ -3336,11 +3329,11 @@ class ImpSkeleton;
 /*?*/ 		if(GetAnchorPos().X() != 0 || GetAnchorPos().Y() != 0)
 /*?*/ 			aTranslate -= Vector2D(GetAnchorPos().X(), GetAnchorPos().Y());
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	// build BaseRect
 /*N*/ 	Point aPoint(FRound(aTranslate.X()), FRound(aTranslate.Y()));
 /*N*/ 	Rectangle aBaseRect(aPoint, Size(FRound(aScale.X()), FRound(aScale.Y())));
-/*N*/ 
+/*N*/
 /*N*/ 	// set BaseRect
 /*N*/ 	SetSnapRect(aBaseRect);
 /*N*/ }
@@ -3362,7 +3355,7 @@ class ImpSkeleton;
 /*N*/ 	if(pModel == NULL && pPage != NULL)
 /*N*/ 		pModel = pPage->GetModel();
 /*N*/ 	SdrObject* pObj = NULL;
-/*N*/ 
+/*N*/
 /*N*/ 	if(nInvent == SdrInventor)
 /*N*/ 	{
 /*N*/ 		switch (nIdent)
@@ -3411,12 +3404,12 @@ class ImpSkeleton;
 /*N*/ 		}
 /*N*/ 		delete pFact;
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	if(pObj == NULL)
 /*N*/ 	{
 /*N*/ 		// Na wenn's denn keiner will ...
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	if(pObj != NULL)
 /*N*/ 	{
 /*N*/ 		if(pPage != NULL)
