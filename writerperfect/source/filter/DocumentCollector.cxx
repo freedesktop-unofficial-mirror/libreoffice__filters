@@ -28,7 +28,13 @@
  * Corel Corporation or Corel Corporation Limited."
  */
 
+#if defined _MSC_VER
+#pragma warning( push, 1 )
+#endif
 #include <libwpd/libwpd.h>
+#if defined _MSC_VER
+#pragma warning( pop )
+#endif
 #include <string.h> // for strcmp
 
 #include "DocumentCollector.hxx"
@@ -114,7 +120,7 @@ bool DocumentCollector::filter()
     for (std::map<WPXString, SpanStyle *, ltstr>::iterator iterSpanStyle = mSpanStyleHash.begin(); iterSpanStyle != mSpanStyleHash.end(); iterSpanStyle++) {
         delete iterSpanStyle->second;
     }
-    
+
     for (std::map<WPXString, FontStyle *, ltstr>::iterator iterFont = mFontHash.begin(); iterFont != mFontHash.end(); iterFont++) {
         delete iterFont->second;
     }
@@ -154,7 +160,7 @@ void DocumentCollector::_writeDefaultStyles(DocumentHandler *pHandler)
 
     TagCloseElement defaultParagraphStyleCloseElement("style:default-style");
     defaultParagraphStyleCloseElement.write(pHandler);
-    
+
     TagOpenElement standardStyleOpenElement("style:style");
         standardStyleOpenElement.addAttribute("style:name", "Standard");
         standardStyleOpenElement.addAttribute("style:family", "paragraph");

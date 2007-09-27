@@ -32,7 +32,13 @@
 #define _DOCUMENTCOLLECTOR_HXX
 #include "SectionStyle.hxx"
 
+#if defined _MSC_VER
+#pragma warning( push, 1 )
+#endif
 #include <libwpd/libwpd.h>
+#if defined _MSC_VER
+#pragma warning( pop )
+#endif
 #include <vector>
 #include <map>
 #include <stack>
@@ -53,7 +59,7 @@ typedef struct _WriterDocumentState WriterDocumentState;
 struct _WriterDocumentState
 {
     _WriterDocumentState();
-        
+
     bool mbFirstElement;
     bool mbInFakeSection;
     bool mbListElementOpenedAtCurrentLevel;
@@ -96,7 +102,7 @@ public:
 
     virtual void openParagraph(const WPXPropertyList &propList, const WPXPropertyListVector &tabStops);
     virtual void closeParagraph();
-    
+
     virtual void openSpan(const WPXPropertyList &propList);
     virtual void closeSpan();
 
@@ -106,13 +112,13 @@ public:
      virtual void insertLineBreak();
 
     virtual void defineOrderedListLevel(const WPXPropertyList &propList);
-    virtual void defineUnorderedListLevel(const WPXPropertyList &propList);	
+    virtual void defineUnorderedListLevel(const WPXPropertyList &propList);
     virtual void openOrderedListLevel(const WPXPropertyList &propList);
     virtual void openUnorderedListLevel(const WPXPropertyList &propList);
     virtual void closeOrderedListLevel();
     virtual void closeUnorderedListLevel();
     virtual void openListElement(const WPXPropertyList &propList, const WPXPropertyListVector &tabStops);
-    virtual void closeListElement();       
+    virtual void closeListElement();
 
     virtual void openFootnote(const WPXPropertyList &propList);
     virtual void closeFootnote();
