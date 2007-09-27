@@ -1,8 +1,8 @@
-/* FontStyle: Stores (and writes) font-based information that is needed at 
+/* FontStyle: Stores (and writes) font-based information that is needed at
  * the head of an OO document.
  *
  * Copyright (C) 2002-2003 William Lachance (william.lachance@sympatico.ca)
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -21,12 +21,18 @@
  *
  */
 
-/* "This product is not manufactured, approved, or supported by 
+/* "This product is not manufactured, approved, or supported by
  * Corel Corporation or Corel Corporation Limited."
  */
 #ifndef _FONTSTYLE_H
 #define _FONTSTYLE_H
+#if defined _MSC_VER
+#pragma warning( push, 1 )
+#endif
 #include <libwpd/libwpd.h>
+#if defined _MSC_VER
+#pragma warning( pop )
+#endif
 
 #include "Style.hxx"
 #include "WriterProperties.hxx"
