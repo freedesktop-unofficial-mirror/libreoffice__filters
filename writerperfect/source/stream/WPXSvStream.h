@@ -7,9 +7,15 @@
 #ifndef _COM_SUN_STAR_IO_XINPUTSTREAM_H_
 #include <com/sun/star/io/XSeekable.hpp>
 #endif
- 
 
+
+#if defined _MSC_VER
+#pragma warning( push, 1 )
+#endif
 #include <libwpd/WPXStream.h>
+#if defined _MSC_VER
+#pragma warning( pop )
+#endif
 
 class WPXSvInputStream : public WPXInputStream
 {
