@@ -68,7 +68,7 @@ long WPXSvInputStream::tell()
     }
 }
 
-int WPXSvInputStream::seek(long offset, WPX_SEEK_TYPE seekType) 
+int WPXSvInputStream::seek(long offset, WPX_SEEK_TYPE seekType)
 {
     if ((mnLength == 0) || !mxStream.is() || !mxSeekable.is())
         return -1;
