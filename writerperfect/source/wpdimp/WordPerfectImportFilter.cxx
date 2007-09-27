@@ -5,26 +5,26 @@
  * Copyright (C) 2002-2004 William Lachance (wlach@interlog.com)
  * Copyright (C) 2004 Net Integration Technologies (http://www.net-itech.com)
  * Copyright (C) 2004 Fridrich Strba <fridrich.strba@bluewin.ch>
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
  * 02111-1307, USA.
  *
  *  Contributor(s): Martin Gallwey (gallwey@sun.com)
  *
  */
-/* "This product is not manufactured, approved, or supported by 
+/* "This product is not manufactured, approved, or supported by
  * Corel Corporation or Corel Corporation Limited."
  */
 
@@ -73,7 +73,14 @@
 #include "filter/DocumentCollector.hxx"
 #include "stream/WPXSvStream.h"
 
+#if defined _MSC_VER
+#pragma warning( push, 1 )
+#endif
 #include <libwpd/WPDocument.h>
+#if defined _MSC_VER
+#pragma warning( pop )
+#endif
+
 #include "WordPerfectCollector.hxx"
 #include "WordPerfectImportFilter.hxx"
 
@@ -108,7 +115,7 @@ sal_Bool SAL_CALL WordPerfectImportFilter::importImpl( const Sequence< ::com::su
     throw (RuntimeException)
 {
     WRITER_DEBUG_MSG(("WordPerfectImportFilter::importImpl: Got here!\n"));
-    
+
     sal_Int32 nLength = aDescriptor.getLength();
     const PropertyValue * pValue = aDescriptor.getConstArray();
     OUString sURL;
@@ -127,7 +134,7 @@ sal_Bool SAL_CALL WordPerfectImportFilter::importImpl( const Sequence< ::com::su
     }
     OString sFileName;
     sFileName = OUStringToOString(sURL, RTL_TEXTENCODING_INFO_ASCII);
-    
+
     // An XML import service: what we push sax messages to..
     OUString sXMLImportService ( RTL_CONSTASCII_USTRINGPARAM ( "com.sun.star.comp.Writer.XMLImporter" ) );
     uno::Reference < XDocumentHandler > xInternalHandler( mxMSF->createInstance( sXMLImportService ), UNO_QUERY );
@@ -145,16 +152,16 @@ sal_Bool SAL_CALL WordPerfectImportFilter::importImpl( const Sequence< ::com::su
     WordPerfectCollector collector(&input, &xHandler);
     collector.filter();
 
-    return true; 
+    return true;
 }
 
-sal_Bool SAL_CALL WordPerfectImportFilter::filter( const Sequence< ::com::sun::star::beans::PropertyValue >& aDescriptor ) 
+sal_Bool SAL_CALL WordPerfectImportFilter::filter( const Sequence< ::com::sun::star::beans::PropertyValue >& aDescriptor )
     throw (RuntimeException)
 {
     WRITER_DEBUG_MSG(("WordPerfectImportFilter::filter: Got here!\n"));
     return importImpl ( aDescriptor );
 }
-void SAL_CALL WordPerfectImportFilter::cancel(  ) 
+void SAL_CALL WordPerfectImportFilter::cancel(  )
     throw (RuntimeException)
 {
     WRITER_DEBUG_MSG(("WordPerfectImportFilter::cancel: Got here!\n"));
@@ -174,7 +181,7 @@ OUString SAL_CALL WordPerfectImportFilter::detect( com::sun::star::uno::Sequence
     throw( com::sun::star::uno::RuntimeException )
 {
     WRITER_DEBUG_MSG(("WordPerfectImportFilter::detect: Got here!\n"));
-    
+
     WPDConfidence confidence = WPD_CONFIDENCE_NONE;
     OUString sTypeName = OUString( RTL_CONSTASCII_USTRINGPARAM ( "" ) );
     sal_Int32 nLength = Descriptor.getLength();
