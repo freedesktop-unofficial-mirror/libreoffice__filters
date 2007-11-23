@@ -4,9 +4,9 @@
  *
  *  $RCSfile: impdialog.cxx,v $
  *
- *  $Revision: 1.26 $
+ *  $Revision: 1.27 $
  *
- *  last change: $Author: ihi $ $Date: 2007-11-20 17:01:52 $
+ *  last change: $Author: ihi $ $Date: 2007-11-23 10:41:07 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -578,7 +578,7 @@ void ImpPDFTabGeneralPage::SetFilterConfigItem( const ImpPDFTabDialog* paParent 
 
 // -----------------------------------------------------------------------------
 void ImpPDFTabGeneralPage::GetFilterConfigItem( ImpPDFTabDialog* paParent )
-{
+{    
 // updating the FilterData sequence and storing FilterData to configuration
     paParent->mbUseLosslessCompression = maRbLosslessCompression.IsChecked();
     paParent->mnQuality = static_cast<sal_Int32>(maNfQuality.GetValue());
@@ -1372,3 +1372,5 @@ IMPL_LINK( ImpPDFTabLinksPage, ClickRbOpnLnksBrowserHdl, void*, EMPTYARG )
     mbOpnLnksBrowserUserState = maRbOpnLnksBrowser.IsChecked();
     return 0;
 }
+
+
