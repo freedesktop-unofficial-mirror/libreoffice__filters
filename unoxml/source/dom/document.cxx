@@ -4,9 +4,9 @@
  *
  *  $RCSfile: document.cxx,v $
  *
- *  $Revision: 1.11 $
+ *  $Revision: 1.12 $
  *
- *  last change: $Author: ihi $ $Date: 2007-11-19 16:42:22 $
+ *  last change: $Author: vg $ $Date: 2007-12-06 11:17:37 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -56,7 +56,7 @@
 
 namespace DOM
 {
-    
+
 
     void CDocument::addnode(xmlNodePtr aNode)
     {
@@ -68,7 +68,7 @@ namespace DOM
     }
 
     CDocument::~CDocument()
-    {                
+    {
         Reference< XNode >* pRef;
         nodereflist_t::const_iterator r = m_aNodeRefList.begin();
         while (r!=m_aNodeRefList.end())
@@ -199,7 +199,7 @@ namespace DOM
 
     // Creates an Attr of the given name.
     Reference< XAttr > SAL_CALL CDocument::createAttribute(const OUString& name)
-        throw (DOMException)
+        throw (RuntimeException, DOMException)
     {
         OString o1 = OUStringToOString(name, RTL_TEXTENCODING_UTF8);
         xmlChar *xName = (xmlChar*)o1.getStr();
@@ -210,7 +210,7 @@ namespace DOM
     // Creates an attribute of the given qualified name and namespace URI.
     Reference< XAttr > SAL_CALL CDocument::createAttributeNS(
             const OUString& ns, const OUString& qname)
-        throw (DOMException)
+        throw (RuntimeException, DOMException)
     {
 
         // libxml does not allow a NS definition to be attached to an
@@ -240,7 +240,7 @@ namespace DOM
         // create the carrier node
         xmlNodePtr pNode = xmlNewDocNode(m_aDocPtr, NULL, (xmlChar*)"__private", NULL);
         xmlNsPtr pNs = xmlNewNs(pNode, xUri, xPrefix);
-        xmlAttrPtr pAttr = xmlNewNsProp(pNode, pNs, xName, NULL);        
+        xmlAttrPtr pAttr = xmlNewNsProp(pNode, pNs, xName, NULL);
         return Reference< XAttr >(static_cast< CAttr* >(CNode::get((xmlNodePtr)pAttr)));
     };
 
@@ -273,7 +273,7 @@ namespace DOM
 
     // Creates an element of the type specified.
     Reference< XElement > SAL_CALL CDocument::createElement(const OUString& tagName)
-        throw (DOMException)
+        throw (RuntimeException, DOMException)
     {
         OString o1 = OUStringToOString(tagName, RTL_TEXTENCODING_UTF8);
         xmlChar *xName = (xmlChar*)o1.getStr();
@@ -284,8 +284,8 @@ namespace DOM
     // Creates an element of the given qualified name and namespace URI.
     Reference< XElement > SAL_CALL CDocument::createElementNS(
             const OUString& ns, const OUString& qname)
-        throw (DOMException)
-    {        
+        throw (RuntimeException, DOMException)
+    {
         sal_Int32 i = qname.indexOf(':');
         if (ns.getLength() == 0) throw RuntimeException();
         xmlChar *xPrefix;
@@ -315,7 +315,7 @@ namespace DOM
 
     //Creates an EntityReference object.
     Reference< XEntityReference > SAL_CALL CDocument::createEntityReference(const OUString& name)
-        throw (DOMException)
+        throw (RuntimeException, DOMException)
     {
         OString o1 = OUStringToOString(name, RTL_TEXTENCODING_UTF8);
         xmlChar *xName = (xmlChar*)o1.getStr();
@@ -327,7 +327,7 @@ namespace DOM
     // data strings.
     Reference< XProcessingInstruction > SAL_CALL CDocument::createProcessingInstruction(
             const OUString& target, const OUString& data)
-        throw (DOMException)
+        throw (RuntimeException, DOMException)
     {
         OString o1 = OUStringToOString(target, RTL_TEXTENCODING_UTF8);
         xmlChar *xTarget = (xmlChar*)o1.getStr();
@@ -381,7 +381,7 @@ namespace DOM
 
     static xmlNodePtr _search_element_by_id(const xmlNodePtr cur, const xmlChar* id)
     {
-        
+
         if (cur == NULL)
             return NULL;
         // look in current node
@@ -430,7 +430,7 @@ namespace DOM
     Reference< XNodeList > SAL_CALL CDocument::getElementsByTagNameNS(
             const OUString& namespaceURI, const OUString& localName)
         throw (RuntimeException)
-    {        
+    {
         return Reference< XNodeList >(
             new CElementList(static_cast< CElement* >(
             this->getDocumentElement().get()), namespaceURI, localName));
@@ -463,13 +463,13 @@ namespace DOM
 
     Reference< XNode > SAL_CALL CDocument::importNode(
             const Reference< XNode >& importedNode, sal_Bool deep)
-        throw (DOMException)
+        throw (RuntimeException, DOMException)
     {
         // this node could be from another memory model
         // only use uno interfaces to access is!!!
 
         // allready in doc?
-        if ( importedNode->getOwnerDocument() == 
+        if ( importedNode->getOwnerDocument() ==
             Reference< XDocument>(static_cast< CDocument* >(CNode::get((xmlNodePtr)m_aDocPtr))))
             return importedNode;
 
@@ -510,16 +510,16 @@ namespace DOM
         {
             Reference< XElement > element(importedNode, UNO_QUERY);
             OUString aNsUri = importedNode->getNamespaceURI();
-            OUString aNsPrefix = importedNode->getPrefix();            
+            OUString aNsPrefix = importedNode->getPrefix();
             OUString aQName = element->getTagName();
             Reference< XElement > newElement;
             if (aNsUri.getLength() > 0)
             {
-                
-                if (aNsPrefix.getLength() > 0) 
+
+                if (aNsPrefix.getLength() > 0)
                     aQName = aNsPrefix + OUString::createFromAscii(":") + aQName;
                 newElement = createElementNS(aNsUri, aQName);
-            } 
+            }
             else
                 newElement = createElement(aQName);
 
@@ -534,12 +534,12 @@ namespace DOM
                     OUString aAttrUri = curAttr->getNamespaceURI();
                     OUString aAttrPrefix = curAttr->getPrefix();
                     OUString aAttrName = curAttr->getName();
-                    if (aAttrUri.getLength() > 0) 
+                    if (aAttrUri.getLength() > 0)
                     {
                         if (aAttrPrefix.getLength() > 0)
-                            aAttrName = aAttrPrefix + OUString::createFromAscii(":") + aAttrName;                                        
+                            aAttrName = aAttrPrefix + OUString::createFromAscii(":") + aAttrName;
                         newElement->setAttributeNS(aAttrUri, aAttrName, curAttr->getValue());
-                    } 
+                    }
                     else
                         newElement->setAttribute(aAttrName, curAttr->getValue());
                 }
@@ -582,11 +582,11 @@ namespace DOM
         {
             // get children and import them
             Reference< XNode > child = importedNode->getFirstChild();
-            if (child.is()) 
+            if (child.is())
             {
-                _import_siblings(child, aNode, this);                
+                _import_siblings(child, aNode, this);
             }
-        }        
+        }
 
         /* DOMNodeInsertedIntoDocument
          * Fired when a node is being inserted into a document, 
@@ -601,12 +601,12 @@ namespace DOM
          */
         if (aNode.is())
         {
-            Reference< XDocumentEvent > docevent(getOwnerDocument(), UNO_QUERY); 
+            Reference< XDocumentEvent > docevent(getOwnerDocument(), UNO_QUERY);
             Reference< XMutationEvent > event(docevent->createEvent(
                 OUString::createFromAscii("DOMNodeInsertedIntoDocument")), UNO_QUERY);
             event->initMutationEvent(OUString::createFromAscii("DOMNodeInsertedIntoDocument")
                 , sal_True, sal_False, Reference< XNode >(),
-                OUString(), OUString(), OUString(), (AttrChangeType)0 );            
+                OUString(), OUString(), OUString(), (AttrChangeType)0 );
             dispatchEvent(Reference< XEvent >(event, UNO_QUERY));
         }
 
@@ -621,7 +621,7 @@ namespace DOM
         return OUString();
     }
 
-    Reference< XEvent > SAL_CALL CDocument::createEvent(const OUString& aType) throw (RuntimeException)        
+    Reference< XEvent > SAL_CALL CDocument::createEvent(const OUString& aType) throw (RuntimeException)
     {
         events::CEvent *pEvent = 0;
         if (
@@ -632,9 +632,9 @@ namespace DOM
             aType.compareToAscii("DOMNodeInsertedIntoDocument") == 0||
             aType.compareToAscii("DOMAttrModified")             == 0||
             aType.compareToAscii("DOMCharacterDataModified")    == 0)
-        {                
+        {
             pEvent = new events::CMutationEvent;
-                
+
         } else if (
             aType.compareToAscii("DOMFocusIn")  == 0||
             aType.compareToAscii("DOMFocusOut") == 0||
@@ -656,6 +656,6 @@ namespace DOM
             pEvent = new events::CEvent;
         }
         return Reference< XEvent >(pEvent);
-    } 
+    }
 
 }
