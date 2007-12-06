@@ -4,9 +4,9 @@
  *
  *  $RCSfile: node.hxx,v $
  *
- *  $Revision: 1.9 $
+ *  $Revision: 1.10 $
  *
- *  last change: $Author: ihi $ $Date: 2007-11-19 16:44:41 $
+ *  last change: $Author: vg $ $Date: 2007-12-06 11:00:49 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -64,11 +64,11 @@ using namespace com::sun::star::xml::dom;
 using namespace com::sun::star::xml::dom::events;
 using com::sun::star::lang::XUnoTunnel;
 
-namespace DOM 
+namespace DOM
 {
     class CNode;
     typedef std::map< const xmlNodePtr, CNode* > nodemap_t;
-    
+
 
     class CNode : public cppu::WeakImplHelper3< XNode, XUnoTunnel, XEventTarget >
     {
@@ -79,8 +79,8 @@ namespace DOM
         friend class CElementList;
         friend class CEntitiesMap;
         friend class CNotationsMap;
-    private:        
-        static nodemap_t theNodeMap;        
+    private:
+        static nodemap_t theNodeMap;
 
     protected:
         NodeType m_aNodeType;
@@ -90,21 +90,21 @@ namespace DOM
 
         // for initialization by classes derived through ImplInheritanceHelper
         CNode();
-        void init_node(const xmlNodePtr aNode);     
+        void init_node(const xmlNodePtr aNode);
 
         void dispatchSubtreeModified();
 
     public:
 
         virtual ~CNode();
-        
+
         // get a representaion for a libxml node
         static CNode* get(const xmlNodePtr aNode, sal_Bool bCreate = sal_True);
         // remove a wrapper instance
         static void remove(const xmlNodePtr aNode);
 
         // get the libxml node implementation
-        static xmlNodePtr getNodePtr(const Reference< XNode >& aNode); 
+        static xmlNodePtr getNodePtr(const Reference< XNode >& aNode);
 
         //static Sequence< sal_Int8 >
 
@@ -114,7 +114,7 @@ namespace DOM
         Adds the node newChild to the end of the list of children of this node.
         */
         virtual Reference< XNode > SAL_CALL appendChild(const Reference< XNode >& newChild)
-            throw (DOMException);
+            throw (RuntimeException, DOMException);
 
         /**
         Returns a duplicate of this node, i.e., serves as a generic copy 
@@ -227,7 +227,7 @@ namespace DOM
         */
         virtual Reference< XNode > SAL_CALL insertBefore(
                 const Reference< XNode >& newChild, const Reference< XNode >& refChild)
-            throw (DOMException);
+            throw (RuntimeException, DOMException);
 
         /**
         Tests whether the DOM implementation implements a specific feature and
@@ -251,7 +251,7 @@ namespace DOM
         and returns it.
         */
         virtual Reference< XNode > SAL_CALL removeChild(const Reference< XNode >& oldChild)
-            throw (DOMException);
+            throw (RuntimeException, DOMException);
 
         /**
         Replaces the child node oldChild with newChild in the list of children,
@@ -259,37 +259,37 @@ namespace DOM
         */
         virtual Reference< XNode > SAL_CALL replaceChild(
                 const Reference< XNode >& newChild, const Reference< XNode >& oldChild)
-            throw (DOMException);
+            throw (RuntimeException, DOMException);
 
         /**
         The value of this node, depending on its type; see the table above.
         */
         virtual void SAL_CALL setNodeValue(const OUString& nodeValue)
-            throw (DOMException);
+            throw (RuntimeException, DOMException);
 
         /**
         The namespace prefix of this node, or null if it is unspecified.
         */
         virtual void SAL_CALL setPrefix(const OUString& prefix)
-            throw (DOMException);
+            throw (RuntimeException, DOMException);
 
 
         // --- XUnoTunnel
         virtual sal_Int64 SAL_CALL getSomething(const Sequence< sal_Int8 >& id) throw (RuntimeException);
 
         // --- XEventTarget
-        virtual void SAL_CALL addEventListener(const OUString& eventType, 
-            const Reference< XEventListener >& listener, 
+        virtual void SAL_CALL addEventListener(const OUString& eventType,
+            const Reference< XEventListener >& listener,
             sal_Bool useCapture)
             throw (RuntimeException);
 
-        virtual void SAL_CALL removeEventListener(const OUString& eventType, 
-            const Reference< XEventListener >& listener, 
+        virtual void SAL_CALL removeEventListener(const OUString& eventType,
+            const Reference< XEventListener >& listener,
             sal_Bool useCapture)
             throw (RuntimeException);
 
-        virtual sal_Bool SAL_CALL dispatchEvent(const Reference< XEvent >& evt) 
-            throw(EventException);
+        virtual sal_Bool SAL_CALL dispatchEvent(const Reference< XEvent >& evt)
+            throw(RuntimeException, EventException);
 
     };
 }
