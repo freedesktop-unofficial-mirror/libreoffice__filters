@@ -4,9 +4,9 @@
  *
  *  $RCSfile: processinginstruction.cxx,v $
  *
- *  $Revision: 1.6 $
+ *  $Revision: 1.7 $
  *
- *  last change: $Author: hr $ $Date: 2006-06-20 00:48:10 $
+ *  last change: $Author: vg $ $Date: 2007-12-06 11:01:25 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -35,7 +35,7 @@
 
 #include "processinginstruction.hxx"
 
-namespace DOM 
+namespace DOM
 {
     CProcessingInstruction::CProcessingInstruction(const xmlNodePtr aNodePtr)
     {
@@ -66,7 +66,7 @@ namespace DOM
     /**
     The content of this processing instruction.
     */
-  void SAL_CALL CProcessingInstruction::setData(const OUString& /*data*/) throw (DOMException)
+  void SAL_CALL CProcessingInstruction::setData(const OUString& /*data*/) throw (RuntimeException, DOMException)
     {
         // XXX
     }
@@ -82,7 +82,7 @@ namespace DOM
         }
         return aName;
     }
-    
+
     OUString SAL_CALL CProcessingInstruction::getNodeValue() throw (RuntimeException)
     {
         return getData();
