@@ -4,9 +4,9 @@
  *
  *  $RCSfile: node.cxx,v $
  *
- *  $Revision: 1.12 $
+ *  $Revision: 1.13 $
  *
- *  last change: $Author: ihi $ $Date: 2007-11-19 16:44:29 $
+ *  last change: $Author: vg $ $Date: 2007-12-06 11:18:20 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -66,10 +66,10 @@ namespace DOM
         }
     }
 
-    
+
     CNode* CNode::get(const xmlNodePtr aNode, sal_Bool bCreate)
     {
-        CNode* pNode = 0;        
+        CNode* pNode = 0;
         if (aNode == NULL)
             return 0;
 
@@ -80,7 +80,7 @@ namespace DOM
             pNode = i->second;
         } else
         {
-        
+
             // there is not yet an instance wrapping this node,
             // create it and store it in the map
             if (!bCreate) return NULL;
@@ -178,7 +178,7 @@ namespace DOM
     aNodePtr = reinterpret_cast<xmlNodePtr>(sal::static_int_cast<sal_IntPtr>(rawPtr));
       } catch ( ... ) {
       }
-      return aNodePtr;				      
+      return aNodePtr;
     }
 
     CNode::CNode()
@@ -227,7 +227,7 @@ namespace DOM
     }
 
     static void _nscleanup(const xmlNodePtr aNode, const xmlNodePtr aParent)
-    {   
+    {
         xmlNodePtr cur = aNode;
 
         //handle attributes
@@ -268,7 +268,7 @@ namespace DOM
                             xmlFreeNs(curDef);
                             curDef = *refp;
                         } else {
-                            refp = &(curDef->next);                        
+                            refp = &(curDef->next);
                             curDef = curDef->next;
                         }
                     }
@@ -277,12 +277,12 @@ namespace DOM
             cur = cur->next;
         }
     }
-     
+
     /**    
     Adds the node newChild to the end of the list of children of this node.
     */
     Reference< XNode > CNode::appendChild(const Reference< XNode >& newChild)
-        throw (DOMException)
+        throw (RuntimeException, DOMException)
     {
         Reference< XNode> aNode;
         if (m_aNodePtr != NULL) {
@@ -299,13 +299,13 @@ namespace DOM
             if (cur == m_aNodePtr) {
                 DOMException e;
                 e.Code = DOMExceptionType_HIERARCHY_REQUEST_ERR;
-                throw e;                
+                throw e;
             }
             // already has parant and is not attribute
             if (cur->parent != NULL && cur->type != XML_ATTRIBUTE_NODE) {
                 DOMException e;
                 e.Code = DOMExceptionType_HIERARCHY_REQUEST_ERR;
-                throw e;                
+                throw e;
             }
 
             // check whether this is an attribute node so we remove it's
@@ -320,12 +320,12 @@ namespace DOM
                     {
                         DOMException e;
                         e.Code = DOMExceptionType_HIERARCHY_REQUEST_ERR;
-                        throw e;                
+                        throw e;
                     }
 
                     xmlNsPtr pAttrNs = cur->ns;
                     xmlNsPtr pParentNs = xmlSearchNs(m_aNodePtr->doc, m_aNodePtr, pAttrNs->prefix);
-                    if (pParentNs == NULL || strcmp((char*)pParentNs->href, (char*)pAttrNs->href) != 0)                
+                    if (pParentNs == NULL || strcmp((char*)pParentNs->href, (char*)pAttrNs->href) != 0)
                         pParentNs = xmlNewNs(m_aNodePtr, pAttrNs->href, pAttrNs->prefix);
 
                     if (cur->children != NULL)
@@ -344,7 +344,7 @@ namespace DOM
                         res = (xmlNodePtr)xmlNewProp(m_aNodePtr, cur->name, (xmlChar*) "");
                 }
             }
-            else 
+            else
             {
                 res = xmlAddChild(m_aNodePtr, cur);
             }
@@ -354,12 +354,12 @@ namespace DOM
             // should be updated
             if (cur != res)
                 CNode::remove(cur);
-        
+
         // use custom ns cleanup instaead of
             // xmlReconciliateNs(m_aNodePtr->doc, m_aNodePtr);
         // because that will not remove unneeded ns decls
         _nscleanup(res, m_aNodePtr);
-        
+
             aNode = Reference< XNode>(CNode::get(res));
         }
         //XXX check for errors
@@ -369,7 +369,7 @@ namespace DOM
         // does bubble
         if (aNode.is())
         {
-            Reference< XDocumentEvent > docevent(getOwnerDocument(), UNO_QUERY); 
+            Reference< XDocumentEvent > docevent(getOwnerDocument(), UNO_QUERY);
             Reference< XMutationEvent > event(docevent->createEvent(
                 OUString::createFromAscii("DOMNodeInserted")), UNO_QUERY);
             event->initMutationEvent(OUString::createFromAscii("DOMNodeInserted")
@@ -487,14 +487,14 @@ namespace DOM
         throw (RuntimeException)
     {
         OUString aURI;
-        if (m_aNodePtr != NULL && 
-            (m_aNodePtr->type == XML_ELEMENT_NODE || m_aNodePtr->type == XML_ATTRIBUTE_NODE) && 
+        if (m_aNodePtr != NULL &&
+            (m_aNodePtr->type == XML_ELEMENT_NODE || m_aNodePtr->type == XML_ATTRIBUTE_NODE) &&
             m_aNodePtr->ns != NULL)
         {
-            const xmlChar* xHref = m_aNodePtr->ns->href; 
+            const xmlChar* xHref = m_aNodePtr->ns->href;
             aURI = OUString((sal_Char*)xHref, strlen((char*)xHref), RTL_TEXTENCODING_UTF8);
         }
-        return aURI;            
+        return aURI;
     }
 
     /**
@@ -504,7 +504,7 @@ namespace DOM
         throw (RuntimeException)
     {
         Reference< XNode > aNode;
-        if(m_aNodePtr != NULL) 
+        if(m_aNodePtr != NULL)
         {
             aNode = Reference< XNode >(CNode::get(m_aNodePtr->next));
         }
@@ -545,7 +545,7 @@ namespace DOM
     NodeType SAL_CALL CNode::getNodeType()
         throw (RuntimeException)
     {
-        return m_aNodeType;            
+        return m_aNodeType;
     }
 
     /**
@@ -595,15 +595,15 @@ namespace DOM
         throw (RuntimeException)
     {
         OUString aPrefix;
-        if (m_aNodePtr != NULL && 
-            (m_aNodePtr->type == XML_ELEMENT_NODE || m_aNodePtr->type == XML_ATTRIBUTE_NODE) && 
+        if (m_aNodePtr != NULL &&
+            (m_aNodePtr->type == XML_ELEMENT_NODE || m_aNodePtr->type == XML_ATTRIBUTE_NODE) &&
             m_aNodePtr->ns != NULL)
         {
             const xmlChar* xPrefix = m_aNodePtr->ns->prefix;
             if( xPrefix != NULL )
                 aPrefix = OUString((sal_Char*)xPrefix, strlen((char*)xPrefix), RTL_TEXTENCODING_UTF8);
         }
-        return aPrefix;            
+        return aPrefix;
 
     }
 
@@ -644,9 +644,9 @@ namespace DOM
     */
     Reference< XNode > SAL_CALL CNode::insertBefore(
             const Reference< XNode >& newChild, const Reference< XNode >& refChild)
-        throw (DOMException)
+        throw (RuntimeException, DOMException)
     {
-        
+ 
         if (newChild->getOwnerDocument() != getOwnerDocument()) {
             DOMException e;
             e.Code = DOMExceptionType_WRONG_DOCUMENT_ERR;
@@ -707,7 +707,7 @@ namespace DOM
     and returns it.
     */
     Reference< XNode > SAL_CALL CNode::removeChild(const Reference< XNode >& oldChild)
-        throw (DOMException)
+        throw (RuntimeException, DOMException)
     {
 
         if (oldChild->getParentNode() != Reference< XNode >(this)) {
@@ -722,7 +722,7 @@ namespace DOM
 
         if( old->type == XML_ATTRIBUTE_NODE )
         {
-          xmlAttrPtr pAttr = (xmlAttrPtr) old;
+        xmlAttrPtr pAttr = (xmlAttrPtr) old;
             xmlRemoveProp( pAttr );
             xReturn.clear();
         }
@@ -764,10 +764,10 @@ namespace DOM
          */
         if (oldChild.is())
         {
-            Reference< XDocumentEvent > docevent(getOwnerDocument(), UNO_QUERY); 
+            Reference< XDocumentEvent > docevent(getOwnerDocument(), UNO_QUERY);
             Reference< XMutationEvent > event(docevent->createEvent(
                 OUString::createFromAscii("DOMNodeRemoved")), UNO_QUERY);
-            event->initMutationEvent(OUString::createFromAscii("DOMNodeRemoved"), sal_True, 
+            event->initMutationEvent(OUString::createFromAscii("DOMNodeRemoved"), sal_True,
                 sal_False, Reference< XNode >(CNode::get(m_aNodePtr)),
                 OUString(), OUString(), OUString(), (AttrChangeType)0 );
             dispatchEvent(Reference< XEvent >(event, UNO_QUERY));
@@ -776,7 +776,7 @@ namespace DOM
             dispatchSubtreeModified();
         }
         return xReturn;
-    }    
+    }
 
     /**
     Replaces the child node oldChild with newChild in the list of children,
@@ -784,7 +784,7 @@ namespace DOM
     */
     Reference< XNode > SAL_CALL CNode::replaceChild(
             const Reference< XNode >& newChild, const Reference< XNode >& oldChild)
-        throw (DOMException)
+        throw (RuntimeException, DOMException)
     {
         // XXX check node types
 
@@ -793,14 +793,14 @@ namespace DOM
             e.Code = DOMExceptionType_HIERARCHY_REQUEST_ERR;
             throw e;
         }
-        
+
 /*
         Reference< XNode > aNode = removeChild(oldChild);
         appendChild(newChild);
 */
     xmlNodePtr pOld = CNode::getNodePtr(oldChild);
         xmlNodePtr pNew = CNode::getNodePtr(newChild);
-    
+
         if( pOld->type == XML_ATTRIBUTE_NODE )
         {
             // can only replace attribute with attribute
@@ -853,10 +853,10 @@ namespace DOM
     {
         // dispatch DOMSubtreeModified
         // target is _this_ node
-        Reference< XDocumentEvent > docevent(getOwnerDocument(), UNO_QUERY); 
+        Reference< XDocumentEvent > docevent(getOwnerDocument(), UNO_QUERY);
         Reference< XMutationEvent > event(docevent->createEvent(
             OUString::createFromAscii("DOMSubtreeModified")), UNO_QUERY);
-        event->initMutationEvent(OUString::createFromAscii("DOMSubtreeModified"), sal_True, 
+        event->initMutationEvent(OUString::createFromAscii("DOMSubtreeModified"), sal_True,
             sal_False, Reference< XNode >(),
             OUString(), OUString(), OUString(), (AttrChangeType)0 );
         dispatchEvent(Reference< XEvent >(event, UNO_QUERY));
@@ -866,7 +866,7 @@ namespace DOM
     The value of this node, depending on its type; see the table above.
     */
   void SAL_CALL CNode::setNodeValue(const OUString& /*nodeValue*/)
-        throw (DOMException)
+        throw (RuntimeException, DOMException)
     {
         // use specific node implememntation
         // if we end up down here, something went wrong
@@ -879,7 +879,7 @@ namespace DOM
     The namespace prefix of this node, or null if it is unspecified.
     */
     void SAL_CALL CNode::setPrefix(const OUString& prefix)
-        throw (DOMException)
+        throw (RuntimeException, DOMException)
     {
         OString o1 = OUStringToOString(prefix, RTL_TEXTENCODING_UTF8);
         xmlChar *pBuf = (xmlChar*)o1.getStr();
@@ -889,13 +889,13 @@ namespace DOM
         {
             m_aNodePtr->ns->prefix = pBuf;
         }
-        
+
     }
 
     sal_Int64 SAL_CALL CNode::getSomething(const Sequence< sal_Int8 >& /*id*/) throw (RuntimeException)
     {
         // XXX check ID
-        return sal::static_int_cast<sal_Int64>(reinterpret_cast<sal_IntPtr>(m_aNodePtr)); 
+        return sal::static_int_cast<sal_Int64>(reinterpret_cast<sal_IntPtr>(m_aNodePtr));
         // return (sal_Int64)m_aNodePtr;
     }
 
@@ -917,11 +917,11 @@ namespace DOM
         events::CEventDispatcher::removeListener(m_aNodePtr, eventType, listener, useCapture);
     }
 
-    sal_Bool SAL_CALL CNode::dispatchEvent(const Reference< XEvent >& evt) 
-        throw(EventException)
+    sal_Bool SAL_CALL CNode::dispatchEvent(const Reference< XEvent >& evt)
+        throw(RuntimeException, EventException)
     {
         events::CEventDispatcher::dispatchEvent(m_aNodePtr, evt);
         return sal_True;
     }
 }
-    
+
