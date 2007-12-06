@@ -4,9 +4,9 @@
  *
  *  $RCSfile: saxbuilder.hxx,v $
  *
- *  $Revision: 1.5 $
+ *  $Revision: 1.6 $
  *
- *  last change: $Author: ihi $ $Date: 2007-11-19 16:45:36 $
+ *  last change: $Author: vg $ $Date: 2007-12-06 11:02:03 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -75,7 +75,7 @@ namespace DOM
     typedef std::map< OUString, OUString > NSMap;
     typedef std::map< OUString, OUString > AttrMap;
     typedef std::stack< NSMap > NSStack;
-    
+
     class  CSAXDocumentBuilder
         : public ::cppu::WeakImplHelper3< XDocumentHandler, XSAXDocumentBuilder, XServiceInfo >
     {
@@ -92,8 +92,8 @@ namespace DOM
         Reference< XDocument > m_aDocument;
         Reference< XDocumentFragment > m_aFragment;
         Reference< XLocator > m_aLocator;
-        
-        
+
+
     public:
 
         // call for factory
@@ -107,7 +107,7 @@ namespace DOM
         static Reference< XInterface > _getInstance(const Reference< XMultiServiceFactory >& rSMgr);
 
         CSAXDocumentBuilder(const Reference< XMultiServiceFactory >& mgr);
-        
+
         // XServiceInfo
         virtual OUString SAL_CALL getImplementationName()
             throw (RuntimeException);
@@ -118,29 +118,29 @@ namespace DOM
 
         // XDocumentHandler
         virtual void SAL_CALL startDocument()
-            throw( com::sun::star::xml::sax::SAXException );
+            throw( RuntimeException, com::sun::star::xml::sax::SAXException );
         virtual void SAL_CALL endDocument()
-            throw( com::sun::star::xml::sax::SAXException );
+            throw( RuntimeException, com::sun::star::xml::sax::SAXException );
         virtual void SAL_CALL startElement( const OUString& aName,
              const Reference< XAttributeList >& xAttribs )
-            throw( com::sun::star::xml::sax::SAXException );
+            throw( RuntimeException, com::sun::star::xml::sax::SAXException );
         virtual void SAL_CALL endElement( const OUString& aName )
-            throw( com::sun::star::xml::sax::SAXException );
+            throw( RuntimeException, com::sun::star::xml::sax::SAXException );
         virtual void SAL_CALL characters( const OUString& aChars )
-            throw( com::sun::star::xml::sax::SAXException );
+            throw( RuntimeException, com::sun::star::xml::sax::SAXException );
         virtual void SAL_CALL ignorableWhitespace( const OUString& aWhitespaces )
-            throw( com::sun::star::xml::sax::SAXException );
+            throw( RuntimeException, com::sun::star::xml::sax::SAXException );
         virtual void SAL_CALL processingInstruction( const OUString& aTarget,
              const OUString& aData )
-            throw( com::sun::star::xml::sax::SAXException );
+            throw( RuntimeException, com::sun::star::xml::sax::SAXException );
         virtual void SAL_CALL setDocumentLocator( const Reference< XLocator >& xLocator )
-            throw( com::sun::star::xml::sax::SAXException );
-    
-    
+            throw( RuntimeException, com::sun::star::xml::sax::SAXException );
+
+
         // XSAXDocumentBuilder
-        virtual SAXDocumentBuilderState SAL_CALL getState() 
+        virtual SAXDocumentBuilderState SAL_CALL getState()
             throw (RuntimeException);
-        virtual void SAL_CALL reset() 
+        virtual void SAL_CALL reset()
             throw (RuntimeException);
         virtual Reference< XDocument > SAL_CALL getDocument()
             throw (RuntimeException);
@@ -150,7 +150,7 @@ namespace DOM
             throw (RuntimeException);
         virtual void SAL_CALL endDocumentFragment()
             throw (RuntimeException);
-            
+
 
     };
 }
