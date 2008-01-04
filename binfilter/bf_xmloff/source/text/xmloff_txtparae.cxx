@@ -4,9 +4,9 @@
  *
  *  $RCSfile: xmloff_txtparae.cxx,v $
  *
- *  $Revision: 1.6 $
+ *  $Revision: 1.7 $
  *
- *  last change: $Author: hr $ $Date: 2007-01-02 18:20:49 $
+ *  last change: $Author: obo $ $Date: 2008-01-04 14:56:18 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -79,16 +79,16 @@
 #ifndef _COM_SUN_STAR_TEXT_XTEXTGRAPHICOBJECTSSUPPLIER_HPP_
 #include <com/sun/star/text/XTextGraphicObjectsSupplier.hpp>
 #endif
-#ifndef _COM_SUN_STAR_TEXT_XTEXTEMBEDDEDOBJECTSSUPPLIER_HPP_ 
+#ifndef _COM_SUN_STAR_TEXT_XTEXTEMBEDDEDOBJECTSSUPPLIER_HPP_
 #include <com/sun/star/text/XTextEmbeddedObjectsSupplier.hpp>
 #endif
 #ifndef _COM_SUN_STAR_DRAWING_XDRAWPAGESUPPLIER_HPP_
 #include <com/sun/star/drawing/XDrawPageSupplier.hpp>
 #endif
-#ifndef _COM_SUN_STAR_DOCUMENT_XEMBEDDEDOBJECTSUPPLIER_HPP_ 
+#ifndef _COM_SUN_STAR_DOCUMENT_XEMBEDDEDOBJECTSUPPLIER_HPP_
 #include <com/sun/star/document/XEmbeddedObjectSupplier.hpp>
 #endif
-#ifndef _COM_SUN_STAR_DOCUMENT_XEVENTSSUPPLIER_HPP_ 
+#ifndef _COM_SUN_STAR_DOCUMENT_XEVENTSSUPPLIER_HPP_
 #include <com/sun/star/document/XEventsSupplier.hpp>
 #endif
 
@@ -897,7 +897,7 @@ XMLTextParagraphExport::XMLTextParagraphExport(
     sal_Bool bTmp = sal_True;
     aAny.setValue(&bTmp, ::getBooleanCppuType());
     sal_Int32 nIndex = xTextPropMapper->getPropertySetMapper()->FindEntryIndex(
-                                "", XML_NAMESPACE_STYLE, 
+                                "", XML_NAMESPACE_STYLE,
                                 GetXMLToken(XML_TEXT_COMBINE));
     pFieldExport = new XMLTextFieldExport( rExp, new XMLPropertyState( nIndex, aAny ) );
 }
@@ -1159,7 +1159,7 @@ void XMLTextParagraphExport::exportPageFrames( sal_Bool bAutoStyles,
 
 sal_Bool lcl_txtpara_isFrameAnchor(
         const Reference < XPropertySet > rPropSet,
-        const Reference < XTextFrame >& rParentTxtFrame )						
+        const Reference < XTextFrame >& rParentTxtFrame )
 {
     Any aAny = rPropSet->getPropertyValue( OUString(RTL_CONSTASCII_USTRINGPARAM("AnchorFrame") ) );
     Reference < XTextFrame > xAnchorTxtFrame;
@@ -1422,7 +1422,7 @@ sal_Bool XMLTextParagraphExport::exportTextContentEnumeration(
                 }
                 else
                 {
-                    aNextNumInfo.Set( xTxtCntnt );  
+                    aNextNumInfo.Set( xTxtCntnt );
 
                     exportListAndSectionChange( xCurrentTextSection, aPropSetHelper,
                                                 TEXT_SECTION, xTxtCntnt,
@@ -1448,12 +1448,12 @@ sal_Bool XMLTextParagraphExport::exportTextContentEnumeration(
                     aNextNumInfo.Reset();
                 }
                 // the first non-mute element still needs to be processed
-                bHoldElement = 
+                bHoldElement =
                     ! pSectionExport->IsInSection( xCurrentTextSection,
                                                    xTxtCntnt, sal_False );
             }
             else
-                exportParagraph( xTxtCntnt, bAutoStyles, bProgress,  
+                exportParagraph( xTxtCntnt, bAutoStyles, bProgress,
                                  bExportParagraph, aPropSetHelper );
             bHasContent = sal_True;
         }
@@ -1475,7 +1475,7 @@ sal_Bool XMLTextParagraphExport::exportTextContentEnumeration(
                     pRedlineExport->ExportStartOrEndRedline(xTxtCntnt, sal_True);
 
                 exportTable( xTxtCntnt, bAutoStyles, bProgress  );
-    
+
                 if ((! bAutoStyles) && (NULL != pRedlineExport))
                     pRedlineExport->ExportStartOrEndRedline(xTxtCntnt, sal_False);
             }
@@ -1949,7 +1949,7 @@ sal_Int32 XMLTextParagraphExport::addTextFrameAttributes(
     if( TextContentAnchorType_AT_PAGE == eAnchor )
     {
         aAny = rPropSet->getPropertyValue( sAnchorPageNo );
-        sal_Int16 nPage;
+        sal_Int16 nPage=0;
         aAny >>= nPage;
         GetExport().GetMM100UnitConverter().convertNumber( sValue,
                                                            (sal_Int32)nPage );
@@ -2123,7 +2123,7 @@ void XMLTextParagraphExport::exportAnyTextFrame(
         else
             Add( XML_STYLE_FAMILY_TEXT_FRAME, xPropSet );
 
-        if( pRangePropSet && lcl_txtpara_isBoundAsChar( xPropSet, 
+        if( pRangePropSet && lcl_txtpara_isBoundAsChar( xPropSet,
                                             xPropSet->getPropertySetInfo() ) )
             Add( XML_STYLE_FAMILY_TEXT_TEXT, *pRangePropSet );
 
@@ -2159,11 +2159,11 @@ void XMLTextParagraphExport::exportAnyTextFrame(
             OUString sStyle;
             if( bAddCharStyles )
                    sStyle = FindTextStyle( *pRangePropSet, bIsUICharStyle );
-            else 
+            else
                 bIsUICharStyle = sal_False;
 
             XMLTextCharStyleNamesElementExport aCharStylesExport(
-                GetExport(), bIsUICharStyle && 
+                GetExport(), bIsUICharStyle &&
                              aCharStyleNamesPropInfoCache.hasProperty(
                                             *pRangePropSet ),
                 *pRangePropSet, sCharStyleNames );
@@ -2177,7 +2177,7 @@ void XMLTextParagraphExport::exportAnyTextFrame(
                 {
                     SvXMLElementExport aElem( GetExport(),
                         FT_SHAPE != eType &&
-                        addHyperlinkAttributes( xPropSet, 
+                        addHyperlinkAttributes( xPropSet,
                                                 xPropState,xPropSetInfo ),
                         XML_NAMESPACE_DRAW, XML_A, sal_False, sal_False );
                     switch( eType )
@@ -2194,7 +2194,7 @@ void XMLTextParagraphExport::exportAnyTextFrame(
                     case FT_SHAPE:
                         {
                             Reference < XShape > xShape( rTxtCntnt, UNO_QUERY );
-                            sal_Int32 nFeatures = 
+                            sal_Int32 nFeatures =
                                 addTextFrameAttributes( xPropSet, sal_True );
                             GetExport().GetShapeExport()
                                 ->exportShape( xShape, nFeatures );
