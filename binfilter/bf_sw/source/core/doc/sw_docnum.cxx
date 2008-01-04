@@ -4,9 +4,9 @@
  *
  *  $RCSfile: sw_docnum.cxx,v $
  *
- *  $Revision: 1.9 $
+ *  $Revision: 1.10 $
  *
- *  last change: $Author: kz $ $Date: 2007-09-06 11:59:53 $
+ *  last change: $Author: obo $ $Date: 2008-01-04 14:56:05 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -155,7 +155,7 @@ namespace binfilter {
 /*N*/ 			}
 /*N*/ 		}
 /*N*/ 	}
-/*N*/ 
+/*N*/
     // suche alle Nodes, die neu aufgenommen werden muessen !!
     // (eigentlich koennte das auch per Modify am die Nodes propagiert
     // werden !! )
@@ -175,20 +175,20 @@ namespace binfilter {
 /*N*/ 			{
 /*N*/ 				SvxLRSpaceItem aLR( (SvxLRSpaceItem&)pColl->GetAttr( RES_LR_SPACE ) );
 /*N*/ 				const SwNumFmt& rNFmt = pOutlineRule->Get( nLevel );
-/*N*/ 
+/*N*/
 /*N*/ 				// ohne Nummer immer ohne FirstLineOffset!!!!
 /*N*/ 				short nFOfst;
 /*N*/ 				if( pColl->GetOutlineLevel() & NO_NUMLEVEL )
 /*N*/ 					nFOfst = 0;
 /*N*/ 				else
 /*N*/ 					nFOfst = rNFmt.GetFirstLineOffset();
-/*N*/ 
+/*N*/
 /*N*/ 				if( aLR.GetTxtLeft() != rNFmt.GetAbsLSpace() ||
 /*N*/ 					aLR.GetTxtFirstLineOfst() != nFOfst )
 /*N*/ 				{
 /*N*/ 					aLR.SetTxtFirstLineOfstValue( nFOfst );
 /*N*/ 					aLR.SetTxtLeft( rNFmt.GetAbsLSpace() );
-/*N*/ 
+/*N*/
 /*N*/ 					pColl->SetAttr( aLR );
 /*N*/ 				}
 /*N*/ 			}
@@ -200,7 +200,7 @@ namespace binfilter {
 /*N*/ 					rArr.Insert( pNd );
 /*N*/ 		}
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	for( n = 0; n < rArr.Count(); ++n )
 /*N*/ 	{
 /*N*/ 		SwTxtNode* pNd = rArr[ n ]->GetTxtNode();
@@ -210,13 +210,13 @@ namespace binfilter {
 /*?*/ 			pNd->NumRuleChgd();
 /*N*/ 	}
 /*N*/ 	GetNodes().UpdateOutlineNodes();        // update der Nummern
-/*N*/ 
+/*N*/
 /*N*/ 	// gibt es Fussnoten && gilt Kapitelweises Nummerieren, dann updaten
 /*N*/ 	if( GetFtnIdxs().Count() && FTNNUM_CHAPTER == GetFtnInfo().eNum )
 /*?*/ 		GetFtnIdxs().UpdateAllFtn();
-/*N*/ 
+/*N*/
 /*N*/ 	UpdateExpFlds();
-/*N*/ 
+/*N*/
 /*N*/ 	SetModified();
 /*N*/ }
 
@@ -290,15 +290,15 @@ namespace binfilter {
 /*N*/ {
 /*N*/ 	SwNumRule* pOld = rDoc.FindNumRulePtr( rRule.GetName() );
 /*N*/ 	ASSERT( pOld, "ohne die alte NumRule geht gar nichts" );
-/*N*/ 
+/*N*/
 /*N*/ 	USHORT nChkLevel = 0, nChgFmtLevel = 0, nMask = 1;
-/*N*/ 
+/*N*/
         BYTE n=0;
 /*N*/ 	for( n = 0; n < MAXLEVEL; ++n, nMask <<= 1 )
 /*N*/ 	{
 /*N*/ 		const SwNumFmt& rOldFmt = pOld->Get( n ),
 /*N*/ 					  & rNewFmt = rRule.Get( n );
-/*N*/ 
+/*N*/
 /*N*/ 		if( rOldFmt != rNewFmt )
 /*N*/ 		{
 /*N*/ 			nChgFmtLevel |= nMask;
@@ -310,14 +310,14 @@ namespace binfilter {
 /*N*/ 				0 != (nChgFmtLevel & GetUpperLvlChg( n, rNewFmt.GetIncludeUpperLevels(),nMask )) )
 /*?*/ 			nChgFmtLevel |= nMask;
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	if( !nChgFmtLevel )			// es wurde nichts veraendert?
 /*N*/ 	{
 /*N*/ 		pOld->CheckCharFmts( &rDoc );
 /*N*/ 		pOld->SetContinusNum( rRule.IsContinusNum() );
 /*N*/ 		return ;
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	SwNumRuleInfo* pUpd;
 /*N*/ 	if( !pRuleInfo )
 /*N*/ 	{
@@ -326,7 +326,7 @@ namespace binfilter {
 /*N*/ 	}
 /*N*/ 	else
 /*?*/ 		pUpd = pRuleInfo;
-/*N*/ 
+/*N*/
 /*N*/ 	BYTE nLvl;
 /*N*/ 	for( ULONG nFirst = 0, nLast = pUpd->GetList().Count();
 /*N*/ 		nFirst < nLast; ++nFirst )
@@ -338,12 +338,12 @@ namespace binfilter {
 /*?*/ 			if( nChgFmtLevel & ( 1 << nLvl ))
 /*?*/ 			{
 /*?*/ 				pTxtNd->NumRuleChgd();
-/*?*/ 
+/*?*/
 /*?*/ #ifndef NUM_RELSPACE
 /*?*/ 				if( nChkLevel && (nChkLevel & ( 1 << nLvl )) &&
 /*?*/ 					pOld->IsRuleLSpace( *pTxtNd ) )
 /*?*/ 					pTxtNd->SetNumLSpace( TRUE );
-/*?*/ 
+/*?*/
 /*?*/ 				if( pHist )
 /*?*/ 				{
 /*?*/ 					const SfxPoolItem& rItem =
@@ -354,15 +354,15 @@ namespace binfilter {
 /*?*/ 			}
 /*?*/ 		}
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	for( n = 0; n < MAXLEVEL; ++n )
 /*N*/ 		if( nChgFmtLevel & ( 1 << n ))
 /*N*/ 			pOld->Set( n, rRule.GetNumFmt( n ));
-/*N*/ 
+/*N*/
 /*N*/ 	pOld->CheckCharFmts( &rDoc );
 /*N*/ 	pOld->SetInvalidRule( TRUE );
 /*N*/ 	pOld->SetContinusNum( rRule.IsContinusNum() );
-/*N*/ 
+/*N*/
 /*N*/ 	if( !pRuleInfo )
 /*N*/ 		delete pUpd;
 /*N*/ }
@@ -379,39 +379,39 @@ namespace binfilter {
 /*N*/ 	}
 /*N*/ 	else
 /*N*/ 		pUndo = 0;
-/*N*/ 
+/*N*/
 /*N*/ 	ULONG nPamPos = rPam.Start()->nNode.GetIndex();
 /*N*/ 	BOOL bSetItem = TRUE;
 /*N*/ 	SwNumRule* pNew = FindNumRulePtr( rRule.GetName() );
-/*N*/ 
+/*N*/
 /*N*/ 	if( !pNew )
 /*N*/     {
 /*N*/ 		pNew = (*pNumRuleTbl)[ MakeNumRule( rRule.GetName(), &rRule ) ];
-/*N*/ 
+/*N*/
         /* #109308# If called from a shell propagate an existing
             adjust item at the beginning am rPam into the new
             numbering rule. */
 /*N*/         if (bCalledFromShell)
 /*N*/         {
 /*N*/             SwCntntNode * pCntntNode = rPam.GetCntntNode();
-/*N*/ 
+/*N*/
 /*N*/             if (pCntntNode)
 /*N*/             {
 /*N*/                 SwAttrSet & rAttrSet = pCntntNode->GetSwAttrSet();
 /*N*/                 const SfxPoolItem * pItem = NULL;
-/*N*/ 
+/*N*/
 /*N*/                 if (SFX_ITEM_SET == rAttrSet.GetItemState(RES_PARATR_ADJUST,
 /*N*/                                                           TRUE,
 /*N*/                                                           &pItem))
 /*N*/                     pNew->SetNumAdjust(((SvxAdjustItem *) pItem)->GetAdjust());
 /*N*/             }
 /*N*/         }
-/*N*/ 
+/*N*/
 /*N*/     }
 /*N*/ 	else if( rRule.IsAutoRule() && !(*pNew == rRule) )
-/*N*/ 	{DBG_BF_ASSERT(0, "STRIP"); //STRIP001 
+/*N*/ 	{DBG_BF_ASSERT(0, "STRIP"); //STRIP001
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	if( bSetItem )
 /*N*/ 	{
 /*N*/ #ifndef NUM_RELSPACE
@@ -432,9 +432,9 @@ namespace binfilter {
 /*N*/ 		Insert( rPam, SwNumRuleItem( pNew->GetName() ) );
 /*N*/ 	}
 /*N*/ 	UpdateNumRule( pNew->GetName(), nPamPos );
-/*N*/ 
+/*N*/
 /*N*/ 	EndUndo( UNDO_END );
-/*N*/ 
+/*N*/
 /*N*/ 	SetModified();
 /*N*/ }
 
@@ -490,10 +490,10 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 	SwTxtNode* pTxtNd = rPos.nNode.GetNode().
 /*?*/ 			AppendUndo( pUndo );
 /*N*/ 		}
 /*N*/ 		::binfilter::lcl_ChgNumRule( *this, rRule, pHistory );
-/*N*/ 
+/*N*/
 /*N*/ 		if( pUndo )
 /*?*/ 			{DBG_BF_ASSERT(0, "STRIP"); }//STRIP001 pUndo->SetLRSpaceEndPos();
-/*N*/ 
+/*N*/
 /*N*/ 		SetModified();
 /*N*/ 	}
 /*N*/ }
@@ -504,12 +504,12 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 	SwTxtNode* pTxtNd = rPos.nNode.GetNode().
 /*N*/ 	{
 /*N*/ 		SwNumRuleInfo aUpd( GetNumRuleTbl()[ --n ]->GetName() );
 /*N*/ 		aUpd.MakeList( *this );
-/*N*/ 
+/*N*/
 /*N*/ 		for( ULONG nFirst = 0, nLast = aUpd.GetList().Count();
 /*N*/ 				nFirst < nLast; ++nFirst )
 /*N*/ 		{
 /*N*/ 			SwTxtNode* pTNd = aUpd.GetList().GetObject( nFirst );
-/*N*/ 
+/*N*/
 /*N*/ 			SwClientIter aIter( *pTNd );
 /*N*/ 			for( SwFrm* pFrm = (SwFrm*)aIter.First( TYPE(SwFrm) );
 /*N*/ 					pFrm; pFrm = (SwFrm*)aIter.Next() )
@@ -544,14 +544,14 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 	SwTxtNode* pTxtNd = rPos.nNode.GetNode().
 /*N*/ 	{
 /*?*/ 		ULONG nTmp = nStt; nStt = nEnd; nEnd = nTmp;
 /*N*/ 	}
-/*N*/ 
-/*N*/ 	char nDiff = bDown ? 1 : -1;
+/*N*/
+/*N*/   signed char nDiff = bDown ? 1 : -1;
 /*N*/ 	if( DoesUndo() )
 /*N*/ 	{
 /*N*/ 		ClearRedo();
 /*N*/ 		AppendUndo( new SwUndoNumUpDown( rPam, nDiff ) );
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	BOOL bRet = FALSE;
 /*N*/ 	String sNumRule;
 /*N*/ 	const SfxPoolItem* pItem;
@@ -570,7 +570,7 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 	SwTxtNode* pTxtNd = rPos.nNode.GetNode().
 /*N*/ 				nLevel += nDiff;
 /*N*/ 				SwNodeNum aNum( *pTNd->GetNum() );
 /*N*/ 				aNum.SetLevel( nLevel );
-/*N*/ 
+/*N*/
 /*N*/ 				pTNd->UpdateNum( aNum );
 /*N*/ #ifndef NUM_RELSPACE
 /*N*/ 				pTNd->SetNumLSpace( TRUE );
@@ -585,7 +585,7 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 	SwTxtNode* pTxtNd = rPos.nNode.GetNode().
 /*N*/ 			}
 /*N*/ 		}
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	if( bRet )
 /*N*/ 	{
 /*N*/ 		UpdateNumRule();
@@ -601,7 +601,7 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 	SwTxtNode* pTxtNd = rPos.nNode.GetNode().
 /*N*/ 	SwNumRule* pRet = 0;
 /*N*/ 	const SfxPoolItem* pItem;
 /*N*/ 	SwTxtNode* pTNd = rPos.nNode.GetNode().GetTxtNode();
-/*N*/ 
+/*N*/
 /*N*/ 	if( pTNd && 0 != ( pItem = pTNd->GetNoCondAttr( RES_PARATR_NUMRULE, TRUE ) ) &&
 /*N*/ 		((SwNumRuleItem*)pItem)->GetValue().Len() )
 /*N*/ 		pRet = FindNumRulePtr( ((SwNumRuleItem*)pItem)->GetValue() );
@@ -634,7 +634,7 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 	SwTxtNode* pTxtNd = rPos.nNode.GetNode().
 /*N*/ 	for( USHORT n = pNumRuleTbl->Count(); n; )
 /*N*/ 		if( (*pNumRuleTbl)[ --n ]->GetName() == rName )
 /*N*/ 			return (*pNumRuleTbl)[ n ];
-/*N*/ 
+/*N*/
 /*
 //JP 20.11.97: sollte man im Find neue Rule anlegen??
                  erstmal nicht
@@ -669,7 +669,7 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 	SwTxtNode* pTxtNd = rPos.nNode.GetNode().
 /*N*/ 	pNumRuleTbl->Insert( pNew, nRet );
 /*N*/ 	return nRet;
 /*N*/ }
-/*N*/ 
+/*N*/
 /*N*/ String SwDoc::GetUniqueNumRuleName( const String* pChkStr, BOOL bAutoNum ) const
 /*N*/ {
 /*N*/ 	String aName;
@@ -688,11 +688,11 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 	SwTxtNode* pTxtNd = rPos.nNode.GetNode().
 /*?*/ 		pChkStr = 0;
 /*?*/ 		aName = SW_RESSTR( STR_NUMRULE_DEFNAME );
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	USHORT nNum, nTmp, nFlagSize = ( pNumRuleTbl->Count() / 8 ) +2;
 /*N*/ 	BYTE* pSetFlags = new BYTE[ nFlagSize ];
 /*N*/ 	memset( pSetFlags, 0, nFlagSize );
-/*N*/ 
+/*N*/
 /*N*/ 	xub_StrLen nNmLen = aName.Len();
 /*N*/ 	if( !bAutoNum && pChkStr )
 /*N*/ 	{
