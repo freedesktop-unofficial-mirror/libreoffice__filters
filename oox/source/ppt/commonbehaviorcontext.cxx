@@ -4,9 +4,9 @@
  *
  *  $RCSfile: commonbehaviorcontext.cxx,v $
  *
- *  $Revision: 1.3 $
+ *  $Revision: 1.4 $
  *
- *  last change: $Author: ihi $ $Date: 2008-02-04 13:36:45 $
+ *  last change: $Author: kz $ $Date: 2008-03-05 18:45:18 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -62,37 +62,37 @@ using namespace ::com::sun::star::xml::sax;
 using namespace ::com::sun::star::animations;
 
 namespace oox { namespace ppt {
-    
-    CommonBehaviorContext::CommonBehaviorContext( const FragmentHandlerRef& xHandler, 
-                                                                                                const Reference< XFastAttributeList >& xAttribs, 
-                                                                                                const TimeNodePtr & pNode )
-        : TimeNodeContext( xHandler, NMSP_PPT|XML_cBhvr, xAttribs, pNode )
+
+    CommonBehaviorContext::CommonBehaviorContext( ContextHandler& rParent,
+            const Reference< XFastAttributeList >& xAttribs,
+            const TimeNodePtr & pNode )
+        : TimeNodeContext( rParent, NMSP_PPT|XML_cBhvr, xAttribs, pNode )
             , mbInAttrList( false )
             , mbIsInAttrName( false )
     {
     }
-    
-    
+
+
     CommonBehaviorContext::~CommonBehaviorContext( ) throw( )
     {
     }
-    
-    
 
-    void SAL_CALL CommonBehaviorContext::endFastElement( sal_Int32 aElement ) 
+
+
+    void SAL_CALL CommonBehaviorContext::endFastElement( sal_Int32 aElement )
         throw ( SAXException, RuntimeException)
     {
-        switch( aElement ) 
+        switch( aElement )
         {
         case NMSP_PPT|XML_cBhvr:
         {
-            if( !maAttributes.empty() ) 
+            if( !maAttributes.empty() )
             {
                 OUStringBuffer sAttributes;
                 std::list< Attribute >::const_iterator iter;
                 for(iter = maAttributes.begin(); iter != maAttributes.end(); iter++)
                 {
-                    if( sAttributes.getLength() ) 
+                    if( sAttributes.getLength() )
                     {
                         sAttributes.appendAscii( ";" );
                     }
@@ -110,17 +110,17 @@ namespace oox { namespace ppt {
             if( mbIsInAttrName )
             {
                 const ImplAttributeNameConversion *attrConv = gImplConversionList;
-                while( attrConv->mpMSName != NULL ) 
+                while( attrConv->mpMSName != NULL )
                 {
-                    if(msCurrentAttribute.compareToAscii( attrConv->mpMSName ) == 0 ) 
+                    if(msCurrentAttribute.compareToAscii( attrConv->mpMSName ) == 0 )
                     {
                         Attribute attr;
-                        attr.name = ::rtl::OUString::intern( attrConv->mpAPIName, 
-                                                             strlen(attrConv->mpAPIName), 
+                        attr.name = ::rtl::OUString::intern( attrConv->mpAPIName,
+                                                             strlen(attrConv->mpAPIName),
                                                              RTL_TEXTENCODING_ASCII_US );
                         attr.type = attrConv->meAttribute;
                         maAttributes.push_back( attr );
-                        OSL_TRACE( "OOX: attrName is %s -> %s", 
+                        OSL_TRACE( "OOX: attrName is %s -> %s",
                                    OUSTRING_TO_CSTR( msCurrentAttribute ),
                                    attrConv->mpAPIName );
                         break;
@@ -134,9 +134,9 @@ namespace oox { namespace ppt {
             break;
         }
     }
-    
-    
-    void CommonBehaviorContext::characters( const OUString& aChars ) 
+
+
+    void CommonBehaviorContext::characters( const OUString& aChars )
         throw( SAXException, RuntimeException )
     {
         if( mbIsInAttrName )
@@ -146,19 +146,19 @@ namespace oox { namespace ppt {
     }
 
 
-    Reference< XFastContextHandler > SAL_CALL CommonBehaviorContext::createFastChildContext( ::sal_Int32 aElementToken, 
-                                                                                                                                                                                     const Reference< XFastAttributeList >& xAttribs ) 
+    Reference< XFastContextHandler > SAL_CALL CommonBehaviorContext::createFastChildContext( ::sal_Int32 aElementToken,
+                                                                                                                                                                                     const Reference< XFastAttributeList >& xAttribs )
         throw ( SAXException, RuntimeException )
     {
         Reference< XFastContextHandler > xRet;
-            
+
         switch ( aElementToken )
         {
         case NMSP_PPT|XML_cTn:
-            xRet.set( new CommonTimeNodeContext( getHandler(), aElementToken, xAttribs, mpNode ) );
+            xRet.set( new CommonTimeNodeContext( *this, aElementToken, xAttribs, mpNode ) );
             break;
         case NMSP_PPT|XML_tgtEl:
-            xRet.set( new TimeTargetElementContext( getHandler(), mpNode->getTarget() ) );
+            xRet.set( new TimeTargetElementContext( *this, mpNode->getTarget() ) );
             break;
         case NMSP_PPT|XML_attrNameLst:
             mbInAttrList = true;
@@ -167,10 +167,10 @@ namespace oox { namespace ppt {
         {
             if( mbInAttrList )
             {
-                mbIsInAttrName = true; 
+                mbIsInAttrName = true;
                 msCurrentAttribute = OUString();
             }
-            else 
+            else
             {
                 OSL_TRACE( "OOX: Attribute Name outside an Attribute List" );
             }
