@@ -4,9 +4,9 @@
  *
  *  $RCSfile: textbody.cxx,v $
  *
- *  $Revision: 1.2 $
+ *  $Revision: 1.3 $
  *
- *  last change: $Author: rt $ $Date: 2008-01-17 08:05:52 $
+ *  last change: $Author: kz $ $Date: 2008-03-05 18:27:14 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -56,27 +56,30 @@ namespace oox { namespace drawingml {
     }
 
 
-    
-    void TextBody::insertAt( const ::oox::core::XmlFilterBase& rFilterBase, const Reference < XText > & xText, const Reference < XTextCursor > & xAt,
-        const Reference < XModel > &xModel, const TextListStylePtr& pMasterTextListStylePtr )
+
+    void TextBody::insertAt(
+            const ::oox::core::XmlFilterBase& rFilterBase,
+            const Reference < XText > & xText,
+            const Reference < XTextCursor > & xAt,
+            const TextListStylePtr& pMasterTextListStylePtr )
     {
         TextListStylePtr aCombinedTextStyle( new TextListStyle( *(pMasterTextListStylePtr.get()) ) );
         aCombinedTextStyle->apply( mpTextListStyle );
 
         std::vector< TextParagraphPtr >::iterator begin( maParagraphs.begin() );
         std::vector< TextParagraphPtr >::iterator end( maParagraphs.end() );
-        // apparently if there is no paragraph, it crashes. this is sort of the 
+        // apparently if there is no paragraph, it crashes. this is sort of the
         // expected behavior.
         while( begin != end )
         {
-            (*begin)->insertAt( rFilterBase, xText, xAt, xModel, aCombinedTextStyle, begin == maParagraphs.begin() );
+            (*begin)->insertAt( rFilterBase, xText, xAt, aCombinedTextStyle, begin == maParagraphs.begin() );
             begin++;
 /*
-            std::for_each( begin, end, 
+            std::for_each( begin, end,
                                          boost::bind( &TextParagraph::insertAt, _1,
                                                                     rFilterBase, xText, xAt, xModel, aCombinedTextStyle,
                                                                     // determine whether it is the first paragraph of not
-                                                                    boost::bind( std::equal_to<TextParagraphPtr>(), _1, 
+                                                                    boost::bind( std::equal_to<TextParagraphPtr>(), _1,
                                                                                              *maParagraphs.begin() ) ) );
 */
         }
