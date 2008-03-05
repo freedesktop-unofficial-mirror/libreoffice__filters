@@ -4,9 +4,9 @@
  *
  *  $RCSfile: diagramfragmenthandler.cxx,v $
  *
- *  $Revision: 1.2 $
+ *  $Revision: 1.3 $
  *
- *  last change: $Author: rt $ $Date: 2008-01-17 08:05:58 $
+ *  last change: $Author: kz $ $Date: 2008-03-05 18:38:51 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -48,11 +48,11 @@ using ::rtl::OUString;
 
 namespace oox { namespace drawingml {
 
-DiagramDataFragmentHandler::DiagramDataFragmentHandler( const XmlFilterRef& xFilter, 
-                                                        const OUString& rFragmentPath, 
-                                                        const DiagramDataPtr pDataPtr ) 
+DiagramDataFragmentHandler::DiagramDataFragmentHandler( XmlFilterBase& rFilter,
+                                                        const OUString& rFragmentPath,
+                                                        const DiagramDataPtr pDataPtr )
     throw( )
-    : FragmentHandler( xFilter, rFragmentPath )
+    : FragmentHandler( rFilter, rFragmentPath )
     , mpDataPtr( pDataPtr )
 {
 }
@@ -62,16 +62,16 @@ DiagramDataFragmentHandler::~DiagramDataFragmentHandler( ) throw ()
 
 }
 
-void SAL_CALL DiagramDataFragmentHandler::endDocument() 
+void SAL_CALL DiagramDataFragmentHandler::endDocument()
     throw (SAXException, RuntimeException)
 {
 
 }
 
 
-Reference< XFastContextHandler > SAL_CALL 
-DiagramDataFragmentHandler::createFastChildContext( ::sal_Int32 aElement, 
-                                                    const Reference< XFastAttributeList >& ) 
+Reference< XFastContextHandler > SAL_CALL
+DiagramDataFragmentHandler::createFastChildContext( ::sal_Int32 aElement,
+                                                    const Reference< XFastAttributeList >& )
     throw ( SAXException, RuntimeException)
 {
     Reference< XFastContextHandler > xRet;
@@ -79,25 +79,25 @@ DiagramDataFragmentHandler::createFastChildContext( ::sal_Int32 aElement,
     switch( aElement )
     {
     case NMSP_DIAGRAM|XML_dataModel:
-        xRet.set( new DataModelContext( this, mpDataPtr ) );
+        xRet.set( new DataModelContext( *this, mpDataPtr ) );
         break;
     default:
         break;
     }
-    
+
     if( !xRet.is() )
-        xRet.set( this );
+        xRet = getFastContextHandler();
 
     return xRet;
 }
 
 ///////////////////
 
-DiagramLayoutFragmentHandler::DiagramLayoutFragmentHandler( const XmlFilterRef& xFilter, 
-                                                        const OUString& rFragmentPath, 
-                                                        const DiagramLayoutPtr pDataPtr ) 
+DiagramLayoutFragmentHandler::DiagramLayoutFragmentHandler( XmlFilterBase& rFilter,
+                                                        const OUString& rFragmentPath,
+                                                        const DiagramLayoutPtr pDataPtr )
     throw( )
-    : FragmentHandler( xFilter, rFragmentPath )
+    : FragmentHandler( rFilter, rFragmentPath )
     , mpDataPtr( pDataPtr )
 {
 }
@@ -107,16 +107,16 @@ DiagramLayoutFragmentHandler::~DiagramLayoutFragmentHandler( ) throw ()
 
 }
 
-void SAL_CALL DiagramLayoutFragmentHandler::endDocument() 
+void SAL_CALL DiagramLayoutFragmentHandler::endDocument()
     throw (SAXException, RuntimeException)
 {
 
 }
 
 
-Reference< XFastContextHandler > SAL_CALL 
-DiagramLayoutFragmentHandler::createFastChildContext( ::sal_Int32 aElement, 
-                                                      const Reference< XFastAttributeList >& xAttribs ) 
+Reference< XFastContextHandler > SAL_CALL
+DiagramLayoutFragmentHandler::createFastChildContext( ::sal_Int32 aElement,
+                                                      const Reference< XFastAttributeList >& xAttribs )
     throw ( SAXException, RuntimeException)
 {
     Reference< XFastContextHandler > xRet;
@@ -124,26 +124,25 @@ DiagramLayoutFragmentHandler::createFastChildContext( ::sal_Int32 aElement,
     switch( aElement )
     {
     case NMSP_DIAGRAM|XML_layoutDef:
-        xRet.set( new DiagramDefinitionContext( this, xAttribs, 
-                                                mpDataPtr ) );
+        xRet.set( new DiagramDefinitionContext( *this, xAttribs, mpDataPtr ) );
         break;
     default:
         break;
     }
-    
+
     if( !xRet.is() )
-        xRet.set( this );
+        xRet = getFastContextHandler();
 
     return xRet;
 }
 
 ///////////////////////
 
-DiagramQStylesFragmentHandler::DiagramQStylesFragmentHandler( const XmlFilterRef& xFilter, 
-                                                        const OUString& rFragmentPath, 
-                                                        const DiagramQStylesPtr pDataPtr ) 
+DiagramQStylesFragmentHandler::DiagramQStylesFragmentHandler( XmlFilterBase& rFilter,
+                                                        const OUString& rFragmentPath,
+                                                        const DiagramQStylesPtr pDataPtr )
     throw( )
-    : FragmentHandler( xFilter, rFragmentPath )
+    : FragmentHandler( rFilter, rFragmentPath )
     , mpDataPtr( pDataPtr )
 {
 }
@@ -153,16 +152,16 @@ DiagramQStylesFragmentHandler::~DiagramQStylesFragmentHandler( ) throw ()
 
 }
 
-void SAL_CALL DiagramQStylesFragmentHandler::endDocument() 
+void SAL_CALL DiagramQStylesFragmentHandler::endDocument()
     throw (SAXException, RuntimeException)
 {
 
 }
 
 
-Reference< XFastContextHandler > SAL_CALL 
-DiagramQStylesFragmentHandler::createFastChildContext( ::sal_Int32 aElement, 
-                                                    const Reference< XFastAttributeList >& ) 
+Reference< XFastContextHandler > SAL_CALL
+DiagramQStylesFragmentHandler::createFastChildContext( ::sal_Int32 aElement,
+                                                    const Reference< XFastAttributeList >& )
     throw ( SAXException, RuntimeException)
 {
     Reference< XFastContextHandler > xRet;
@@ -175,20 +174,20 @@ DiagramQStylesFragmentHandler::createFastChildContext( ::sal_Int32 aElement,
     default:
         break;
     }
-    
+
     if( !xRet.is() )
-        xRet.set( this );
+        xRet = getFastContextHandler();
 
     return xRet;
 }
 
 /////////////////////
 
-DiagramColorsFragmentHandler::DiagramColorsFragmentHandler( const XmlFilterRef& xFilter, 
-                                                        const OUString& rFragmentPath, 
-                                                        const DiagramColorsPtr pDataPtr ) 
+DiagramColorsFragmentHandler::DiagramColorsFragmentHandler( XmlFilterBase& rFilter,
+                                                        const OUString& rFragmentPath,
+                                                        const DiagramColorsPtr pDataPtr )
     throw( )
-    : FragmentHandler( xFilter, rFragmentPath )
+    : FragmentHandler( rFilter, rFragmentPath )
     , mpDataPtr( pDataPtr )
 {
 }
@@ -198,16 +197,16 @@ DiagramColorsFragmentHandler::~DiagramColorsFragmentHandler( ) throw ()
 
 }
 
-void SAL_CALL DiagramColorsFragmentHandler::endDocument() 
+void SAL_CALL DiagramColorsFragmentHandler::endDocument()
     throw (SAXException, RuntimeException)
 {
 
 }
 
 
-Reference< XFastContextHandler > SAL_CALL 
-DiagramColorsFragmentHandler::createFastChildContext( ::sal_Int32 aElement, 
-                                                    const Reference< XFastAttributeList >& ) 
+Reference< XFastContextHandler > SAL_CALL
+DiagramColorsFragmentHandler::createFastChildContext( ::sal_Int32 aElement,
+                                                    const Reference< XFastAttributeList >& )
     throw ( SAXException, RuntimeException)
 {
     Reference< XFastContextHandler > xRet;
@@ -220,9 +219,9 @@ DiagramColorsFragmentHandler::createFastChildContext( ::sal_Int32 aElement,
     default:
         break;
     }
-    
+
     if( !xRet.is() )
-        xRet.set( this );
+        xRet = getFastContextHandler();
 
     return xRet;
 }
@@ -230,4 +229,4 @@ DiagramColorsFragmentHandler::createFastChildContext( ::sal_Int32 aElement,
 
 
 
-} } 
+} }

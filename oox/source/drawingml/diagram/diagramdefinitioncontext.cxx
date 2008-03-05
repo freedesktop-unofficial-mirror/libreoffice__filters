@@ -4,9 +4,9 @@
  *
  *  $RCSfile: diagramdefinitioncontext.cxx,v $
  *
- *  $Revision: 1.2 $
+ *  $Revision: 1.3 $
  *
- *  last change: $Author: rt $ $Date: 2008-01-17 08:05:57 $
+ *  last change: $Author: kz $ $Date: 2008-03-05 18:38:13 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -47,19 +47,19 @@ namespace oox { namespace drawingml {
 
 
 // CT_DiagramDefinition
-DiagramDefinitionContext::DiagramDefinitionContext( const FragmentHandlerRef& xHandler, 
-                                                    const Reference< XFastAttributeList >& xAttributes, 
+DiagramDefinitionContext::DiagramDefinitionContext( ContextHandler& rParent,
+                                                    const Reference< XFastAttributeList >& xAttributes,
                                                     const DiagramLayoutPtr &pLayout )
-    : Context( xHandler )
+    : ContextHandler( rParent )
     , mpLayout( pLayout )
 {
     OSL_TRACE( "OOX: DiagramDefinitionContext::DiagramDefinitionContext()" );
     mpLayout->setDefStyle( xAttributes->getOptionalValue( XML_defStyle ) );
     OUString sValue = xAttributes->getOptionalValue( XML_minVer );
-    if( sValue.getLength() == 0 ) 
+    if( sValue.getLength() == 0 )
     {
         sValue = CREATE_OUSTRING( "http://schemas.openxmlformats.org/drawingml/2006/diagram" );
-    }	
+    }
     mpLayout->setMinVer( sValue );
     mpLayout->setUniqueId( xAttributes->getOptionalValue( XML_uniqueId ) );
 }
@@ -70,16 +70,16 @@ DiagramDefinitionContext::~DiagramDefinitionContext()
     mpLayout->getNode()->dump(0);
 }
 
-void SAL_CALL DiagramDefinitionContext::endFastElement( ::sal_Int32 ) 
+void SAL_CALL DiagramDefinitionContext::endFastElement( ::sal_Int32 )
     throw (SAXException, RuntimeException)
 {
 
 }
 
 
-Reference< XFastContextHandler > SAL_CALL 
-DiagramDefinitionContext::createFastChildContext( ::sal_Int32 aElement, 
-                                                  const Reference< XFastAttributeList >& xAttribs ) 
+Reference< XFastContextHandler > SAL_CALL
+DiagramDefinitionContext::createFastChildContext( ::sal_Int32 aElement,
+                                                  const Reference< XFastAttributeList >& xAttribs )
     throw (SAXException, RuntimeException)
 {
     Reference< XFastContextHandler > xRet;
@@ -94,19 +94,19 @@ DiagramDefinitionContext::createFastChildContext( ::sal_Int32 aElement,
         break;
     case NMSP_DIAGRAM|XML_layoutNode:
         mpLayout->getNode().reset( new LayoutNode() );
-        xRet.set( new LayoutNodeContext( getHandler(), xAttribs, mpLayout->getNode() ) );
+        xRet.set( new LayoutNodeContext( *this, xAttribs, mpLayout->getNode() ) );
         break;
      case NMSP_DIAGRAM|XML_clrData:
         // TODO, does not matter for the UI. skip.
-        xRet.set( new SkipContext( getHandler() ) );
+        xRet.set( new SkipContext( *this ) );
         break;
     case NMSP_DIAGRAM|XML_sampData:
         mpLayout->getSampData().reset( new DiagramData );
-        xRet.set( new DataModelContext( getHandler(), mpLayout->getSampData() ) );
+        xRet.set( new DataModelContext( *this, mpLayout->getSampData() ) );
         break;
     case NMSP_DIAGRAM|XML_styleData:
         mpLayout->getStyleData().reset( new DiagramData );
-        xRet.set( new DataModelContext( getHandler(), mpLayout->getStyleData() ) );
+        xRet.set( new DataModelContext( *this, mpLayout->getStyleData() ) );
         break;
     case NMSP_DIAGRAM|XML_cat:
     case NMSP_DIAGRAM|XML_catLst:
