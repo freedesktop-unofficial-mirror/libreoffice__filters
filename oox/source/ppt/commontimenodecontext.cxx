@@ -4,9 +4,9 @@
  *
  *  $RCSfile: commontimenodecontext.cxx,v $
  *
- *  $Revision: 1.2 $
+ *  $Revision: 1.3 $
  *
- *  last change: $Author: rt $ $Date: 2008-01-17 08:06:00 $
+ *  last change: $Author: kz $ $Date: 2008-03-05 18:45:54 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -381,17 +381,18 @@ static OUString getConvertedSubType( sal_Int16 nPresetClass, sal_Int32 nPresetId
 }
 
 // END
-    
-    CommonTimeNodeContext::CommonTimeNodeContext( const FragmentHandlerRef& xHandler, 
-                                                                                                sal_Int32  aElement, 
-                                                                                                const Reference< XFastAttributeList >& xAttribs, 
-                                                                                                const TimeNodePtr & pNode )
-        : TimeNodeContext( xHandler, aElement, xAttribs, pNode )
+
+    CommonTimeNodeContext::CommonTimeNodeContext(
+            ContextHandler& rParent,
+            sal_Int32  aElement,
+            const Reference< XFastAttributeList >& xAttribs,
+            const TimeNodePtr & pNode )
+        : TimeNodeContext( rParent, aElement, xAttribs, pNode )
             , mbIterate( false )
     {
         AttributeList attribs( xAttribs );
         sal_Int32 nInt; // some temporary int value for float conversions
-        
+
         NodePropertyMap & aProps = pNode->getNodeProperties();
         PropertyMap & aUserData = pNode->getUserData();
 
@@ -401,15 +402,15 @@ static OUString getConvertedSubType( sal_Int16 nPresetClass, sal_Int32 nPresetId
             aProps[ NP_ACCELERATION ] <<= dPercent;
         }
 
-        if( attribs.hasAttribute( XML_afterEffect ) ) 
+        if( attribs.hasAttribute( XML_afterEffect ) )
         {
-            aUserData[ CREATE_OUSTRING( "after-effect" ) ] 
+            aUserData[ CREATE_OUSTRING( "after-effect" ) ]
                 = makeAny( attribs.getBool( XML_afterEffect, false ) );
         }
         aProps[ NP_AUTOREVERSE ] = makeAny( attribs.getBool( XML_autoRev, false ) );
-        
+
         // TODO
-        if( attribs.hasAttribute( XML_bldLvl ) ) 
+        if( attribs.hasAttribute( XML_bldLvl ) )
         {
             attribs.getInteger( XML_bldLvl, 0 );
         }
@@ -419,7 +420,7 @@ static OUString getConvertedSubType( sal_Int16 nPresetClass, sal_Int32 nPresetId
             aProps[ NP_DECELERATE ] <<= dPercent;
         }
         // TODO
-        if( attribs.hasAttribute( XML_display ) ) 
+        if( attribs.hasAttribute( XML_display ) )
         {
             aProps[ NP_DISPLAY ] <<= attribs.getBool( XML_display, true );
         }
@@ -465,14 +466,14 @@ static OUString getConvertedSubType( sal_Int16 nPresetClass, sal_Int32 nPresetId
             attribs.getUnsignedInteger( XML_grpId, 0 );
         }
         // ST_TLTimeNodeID
-        if( attribs.hasAttribute( XML_id ) ) 
+        if( attribs.hasAttribute( XML_id ) )
         {
             sal_uInt32 nId = attribs.getUnsignedInteger( XML_id, 0 );
             pNode->setId( nId );
         }
         // ST_TLTimeNodeMasterRelation
         nInt = xAttribs->getOptionalValueToken( XML_masterRel, 0 );
-        if( nInt ) 
+        if( nInt )
         {
             // TODO
             switch(nInt)
@@ -483,7 +484,7 @@ static OUString getConvertedSubType( sal_Int16 nPresetClass, sal_Int32 nPresetId
                 break;
             }
         }
-        
+
         // TODO
         if( attribs.hasAttribute( XML_nodePh ) )
         {
@@ -564,8 +565,8 @@ static OUString getConvertedSubType( sal_Int16 nPresetClass, sal_Int32 nPresetId
                 const preset_maping* p = gPresetMaping;
                 while( p->mpStrPresetId && ((p->mnPresetClass != nEffectPresetClass) || (p->mnPresetId != nPresetId )) )
                     p++;
-                
-                aUserData[ CREATE_OUSTRING( "preset-id" ) ] 
+
+                aUserData[ CREATE_OUSTRING( "preset-id" ) ]
                     = makeAny( OUString::createFromAscii( p->mpStrPresetId ) );
                 nPresetSubType = attribs.getInteger( XML_presetSubtype, 0 );
                 if( nPresetSubType )
@@ -622,8 +623,8 @@ static OUString getConvertedSubType( sal_Int16 nPresetClass, sal_Int32 nPresetId
     CommonTimeNodeContext::~CommonTimeNodeContext( ) throw ( )
     {
     }
-        
-        
+
+
     void SAL_CALL CommonTimeNodeContext::endFastElement( sal_Int32 aElement ) throw ( SAXException, RuntimeException)
     {
         if( aElement == ( NMSP_PPT|XML_iterate ) )
@@ -641,18 +642,18 @@ static OUString getConvertedSubType( sal_Int16 nPresetClass, sal_Int32 nPresetId
         {
         case NMSP_PPT|XML_childTnLst:
         case NMSP_PPT|XML_subTnLst:
-            xRet.set( new TimeNodeListContext( getHandler(), mpNode->getChilds() ) );
+            xRet.set( new TimeNodeListContext( *this, mpNode->getChilds() ) );
             break;
 
         case NMSP_PPT|XML_stCondLst:
-            xRet.set( new CondListContext( getHandler(), aElementToken, xAttribs, mpNode, mpNode->getStartCondition() ) );
+            xRet.set( new CondListContext( *this, aElementToken, xAttribs, mpNode, mpNode->getStartCondition() ) );
             break;
         case NMSP_PPT|XML_endCondLst:
-            xRet.set( new CondListContext( getHandler(), aElementToken, xAttribs, mpNode, mpNode->getEndCondition() ) );
+            xRet.set( new CondListContext( *this, aElementToken, xAttribs, mpNode, mpNode->getEndCondition() ) );
             break;
 
         case NMSP_PPT|XML_endSync:
-            xRet.set( new CondContext( getHandler(), xAttribs, mpNode, mpNode->getEndSyncValue() ) );
+            xRet.set( new CondContext( *this, xAttribs, mpNode, mpNode->getEndSyncValue() ) );
             break;
         case NMSP_PPT|XML_iterate:
         {
@@ -681,7 +682,7 @@ static OUString getConvertedSubType( sal_Int16 nPresetClass, sal_Int32 nPresetId
                 mpNode->getNodeProperties()[ NP_ITERATETYPE ] <<= nEnum;
             }
             // in case of exception we ignore the whole tag.
-            AttributeList attribs( xAttribs );		
+            AttributeList attribs( xAttribs );
             // TODO what to do with this
             /*bool bBackwards =*/ attribs.getBool( XML_backwards, false );
             mbIterate = true;
@@ -690,7 +691,7 @@ static OUString getConvertedSubType( sal_Int16 nPresetClass, sal_Int32 nPresetId
         case NMSP_PPT|XML_tmAbs:
             if( mbIterate )
             {
-                AttributeList attribs( xAttribs );		
+                AttributeList attribs( xAttribs );
                 double fTime = attribs.getUnsignedInteger( XML_val, 0 );
                 // time in ms. property is in % TODO
                 mpNode->getNodeProperties()[ NP_ITERATEINTERVAL ] <<= fTime;
@@ -699,7 +700,7 @@ static OUString getConvertedSubType( sal_Int16 nPresetClass, sal_Int32 nPresetId
         case NMSP_PPT|XML_tmPct:
             if( mbIterate )
             {
-                AttributeList attribs( xAttribs );			
+                AttributeList attribs( xAttribs );
                 double fPercent = (double)attribs.getUnsignedInteger( XML_val, 0 ) / 100000.0;
                 mpNode->getNodeProperties()[ NP_ITERATEINTERVAL ] <<= fPercent;
             }

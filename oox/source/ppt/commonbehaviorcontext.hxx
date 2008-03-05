@@ -4,9 +4,9 @@
  *
  *  $RCSfile: commonbehaviorcontext.hxx,v $
  *
- *  $Revision: 1.2 $
+ *  $Revision: 1.3 $
  *
- *  last change: $Author: rt $ $Date: 2008-01-17 08:06:00 $
+ *  last change: $Author: kz $ $Date: 2008-03-05 18:45:33 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -45,7 +45,7 @@
 
 namespace oox { namespace ppt {
 
-    struct Attribute 
+    struct Attribute
     {
         ::rtl::OUString   name;
         MS_AttributeNames type;
@@ -57,23 +57,23 @@ namespace oox { namespace ppt {
         : public TimeNodeContext
     {
     public:
-        CommonBehaviorContext( const ::oox::core::FragmentHandlerRef& xHandler, 
-                                                     const ::com::sun::star::uno::Reference< ::com::sun::star::xml::sax::XFastAttributeList >& xAttribs, 
-                                                     const TimeNodePtr & pNode );
-        ~CommonBehaviorContext( ) 
+        CommonBehaviorContext( ::oox::core::ContextHandler& rParent,
+             const ::com::sun::star::uno::Reference< ::com::sun::star::xml::sax::XFastAttributeList >& xAttribs,
+             const TimeNodePtr & pNode );
+        ~CommonBehaviorContext( )
             throw( );
 
-        virtual void SAL_CALL endFastElement( sal_Int32 aElement ) 
-            throw ( ::com::sun::star::xml::sax::SAXException, 
+        virtual void SAL_CALL endFastElement( sal_Int32 aElement )
+            throw ( ::com::sun::star::xml::sax::SAXException,
                             ::com::sun::star::uno::RuntimeException );
 
-        virtual void SAL_CALL characters( const ::rtl::OUString& aChars ) 
-            throw ( ::com::sun::star::xml::sax::SAXException, 
+        virtual void SAL_CALL characters( const ::rtl::OUString& aChars )
+            throw ( ::com::sun::star::xml::sax::SAXException,
                             ::com::sun::star::uno::RuntimeException );
 
-        virtual ::com::sun::star::uno::Reference< ::com::sun::star::xml::sax::XFastContextHandler > SAL_CALL createFastChildContext( ::sal_Int32 aElementToken, 
-                                                                                                                                                                                                                                                                 const ::com::sun::star::uno::Reference< ::com::sun::star::xml::sax::XFastAttributeList >& /*xAttribs*/ ) 
-            throw ( ::com::sun::star::xml::sax::SAXException, 
+        virtual ::com::sun::star::uno::Reference< ::com::sun::star::xml::sax::XFastContextHandler > SAL_CALL createFastChildContext( ::sal_Int32 aElementToken,
+                                                                                                                                                                                                                                                                 const ::com::sun::star::uno::Reference< ::com::sun::star::xml::sax::XFastAttributeList >& /*xAttribs*/ )
+            throw ( ::com::sun::star::xml::sax::SAXException,
                             ::com::sun::star::uno::RuntimeException );
 
     private:
