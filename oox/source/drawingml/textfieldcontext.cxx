@@ -4,9 +4,9 @@
  *
  *  $RCSfile: textfieldcontext.cxx,v $
  *
- *  $Revision: 1.2 $
+ *  $Revision: 1.3 $
  *
- *  last change: $Author: rt $ $Date: 2008-01-17 08:05:52 $
+ *  last change: $Author: kz $ $Date: 2008-03-05 18:28:50 $
  *
  *  The Contents of this file are made available subject to
  *  the terms of GNU Lesser General Public License Version 2.1.
@@ -48,10 +48,10 @@ using namespace ::com::sun::star::xml::sax;
 
 namespace oox { namespace drawingml {
 
-    TextFieldContext::TextFieldContext( const ContextRef& xParent,
-                                                                            const Reference< XFastAttributeList >& rXAttributes,
-                                                                            const TextFieldPtr & pTextField)
-        : Context( xParent->getHandler() )
+    TextFieldContext::TextFieldContext( ContextHandler& rParent,
+                const Reference< XFastAttributeList >& rXAttributes,
+                const TextFieldPtr & pTextField)
+        : ContextHandler( rParent )
             ,	mpTextField( pTextField )
             , mbIsInText( false )
     {
@@ -60,11 +60,11 @@ namespace oox { namespace drawingml {
         }
         catch(...)
         {
-            
+
         }
         pTextField->setType( rXAttributes->getOptionalValue( XML_type ) );
     }
-    
+
     void TextFieldContext::endFastElement( sal_Int32 aElementToken ) throw (SAXException, RuntimeException)
     {
         if( aElementToken == (NMSP_DRAWINGML|XML_t) )
@@ -75,24 +75,24 @@ namespace oox { namespace drawingml {
 
     void TextFieldContext::characters( const OUString& aChars ) throw (SAXException, RuntimeException)
     {
-        if( mbIsInText ) 
+        if( mbIsInText )
         {
             mpTextField->text() += aChars;
         }
     }
 
-    Reference< XFastContextHandler > TextFieldContext::createFastChildContext( sal_Int32 aElementToken, 
-                                                                                                                                                         const Reference< XFastAttributeList >& xAttribs ) 
+    Reference< XFastContextHandler > TextFieldContext::createFastChildContext( sal_Int32 aElementToken,
+                                                                                                                                                         const Reference< XFastAttributeList >& xAttribs )
         throw (SAXException, RuntimeException)
     {
         Reference< XFastContextHandler > xRet;
         switch( aElementToken )
         {
         case NMSP_DRAWINGML|XML_rPr:
-            xRet.set( new TextCharacterPropertiesContext( this, xAttribs, *(mpTextField->getTextCharacterProperties().get()) ) );
+            xRet.set( new TextCharacterPropertiesContext( *this, xAttribs, *mpTextField->getTextCharacterProperties() ) );
             break;
         case NMSP_DRAWINGML|XML_pPr:
-            xRet.set( new TextParagraphPropertiesContext( this, xAttribs, *(mpTextField->getTextParagraphProperties().get()) ) );
+            xRet.set( new TextParagraphPropertiesContext( *this, xAttribs, *mpTextField->getTextParagraphProperties() ) );
             break;
         case NMSP_DRAWINGML|XML_t:
             mbIsInText = true;
