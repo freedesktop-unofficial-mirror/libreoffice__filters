@@ -7,7 +7,7 @@
  * OpenOffice.org - a multi-platform office productivity suite
  *
  * $RCSfile: OOXMLPropertySet.hxx,v $
- * $Revision: 1.6 $
+ * $Revision: 1.7 $
  *
  * This file is part of OpenOffice.org.
  *
@@ -68,7 +68,7 @@ public:
     virtual void add(OOXMLPropertySet::Pointer_t pPropertySet) = 0;
     virtual OOXMLPropertySet * clone() const = 0;
     virtual void setType(const string & rsType) = 0;
-
+    
     virtual string toString() = 0;
 };
 
