@@ -7,7 +7,7 @@
  * OpenOffice.org - a multi-platform office productivity suite
  *
  * $RCSfile: ListTable.cxx,v $
- * $Revision: 1.7 $
+ * $Revision: 1.8 $
  *
  * This file is part of OpenOffice.org.
  *
@@ -107,7 +107,7 @@ void Numbering_numHdl::sprm(Sprm & rSprm)
             m_nAbstractNumId = rSprm.getValue()->getInt();
         }
         break;
-        case NS_ooxml::LN_CT_Num_lvlOverride:
+        case NS_ooxml::LN_CT_Num_lvlOverride: 
         {
             //contains a list override
             writerfilter::Reference<Properties>::Pointer_t pProperties = rSprm.getProps();
@@ -121,94 +121,6 @@ void Numbering_numHdl::sprm(Sprm & rSprm)
         default:;
     }
 }
-/*-- 26.06.2006 13:14:29---------------------------------------------------
-
-  -----------------------------------------------------------------------*/
-sal_Int16 lcl_ConvertNumberingType(sal_Int32 nNFC)
-{
-    sal_Int16 nRet;
-    switch(nNFC)
-    {
-        case NS_ooxml::LN_Value_ST_NumberFormat_decimal:
-        case 0: nRet = style::NumberingType::ARABIC;                break;
-        case NS_ooxml::LN_Value_ST_NumberFormat_upperRoman:
-        case 1: nRet = style::NumberingType::ROMAN_UPPER;           break;
-        case NS_ooxml::LN_Value_ST_NumberFormat_lowerRoman:
-        case 2: nRet = style::NumberingType::ROMAN_LOWER;           break;
-        case 3: nRet = style::NumberingType::CHARS_UPPER_LETTER_N;  break;
-        case 4: nRet = style::NumberingType::CHARS_LOWER_LETTER_N;  break;
-        case 5: nRet = style::NumberingType::ARABIC;                break;//ORDINAL
-        case NS_ooxml::LN_Value_ST_NumberFormat_bullet:
-        case 23:
-        case 25:
-            nRet = style::NumberingType::CHAR_SPECIAL;
-        break;
-        case 255: nRet = style::NumberingType::NUMBER_NONE; break;
-        case NS_ooxml::LN_Value_ST_NumberFormat_upperLetter:
-            nRet = style::NumberingType::CHARS_UPPER_LETTER;
-        break;
-        case  NS_ooxml::LN_Value_ST_NumberFormat_lowerLetter:
-            nRet = style::NumberingType::CHARS_LOWER_LETTER;
-        break;
-        default: nRet = style::NumberingType::ARABIC;
-    }
-    return nRet;
-}
-/*  TODO: Lots of additional values are available - some are supported in the I18 framework
-    NS_ooxml::LN_Value_ST_NumberFormat_ordinal = 91682;
-    NS_ooxml::LN_Value_ST_NumberFormat_cardinalText = 91683;
-    NS_ooxml::LN_Value_ST_NumberFormat_ordinalText = 91684;
-    NS_ooxml::LN_Value_ST_NumberFormat_hex = 91685;
-    NS_ooxml::LN_Value_ST_NumberFormat_chicago = 91686;
-    NS_ooxml::LN_Value_ST_NumberFormat_ideographDigital = 91687;
-    NS_ooxml::LN_Value_ST_NumberFormat_japaneseCounting = 91688;
-    NS_ooxml::LN_Value_ST_NumberFormat_aiueo = 91689;
-    NS_ooxml::LN_Value_ST_NumberFormat_iroha = 91690;
-    NS_ooxml::LN_Value_ST_NumberFormat_decimalFullWidth = 91691;
-    NS_ooxml::LN_Value_ST_NumberFormat_decimalHalfWidth = 91692;
-    NS_ooxml::LN_Value_ST_NumberFormat_japaneseLegal = 91693;
-    NS_ooxml::LN_Value_ST_NumberFormat_japaneseDigitalTenThousand = 91694;
-    NS_ooxml::LN_Value_ST_NumberFormat_decimalEnclosedCircle = 91695;
-    NS_ooxml::LN_Value_ST_NumberFormat_decimalFullWidth2 = 91696;
-    NS_ooxml::LN_Value_ST_NumberFormat_aiueoFullWidth = 91697;
-    NS_ooxml::LN_Value_ST_NumberFormat_irohaFullWidth = 91698;
-    NS_ooxml::LN_Value_ST_NumberFormat_decimalZero = 91699;
-    NS_ooxml::LN_Value_ST_NumberFormat_ganada = 91701;
-    NS_ooxml::LN_Value_ST_NumberFormat_chosung = 91702;
-    NS_ooxml::LN_Value_ST_NumberFormat_decimalEnclosedFullstop = 91703;
-    NS_ooxml::LN_Value_ST_NumberFormat_decimalEnclosedParen = 91704;
-    NS_ooxml::LN_Value_ST_NumberFormat_decimalEnclosedCircleChinese = 91705;
-    NS_ooxml::LN_Value_ST_NumberFormat_ideographEnclosedCircle = 91706;
-    NS_ooxml::LN_Value_ST_NumberFormat_ideographTraditional = 91707;
-    NS_ooxml::LN_Value_ST_NumberFormat_ideographZodiac = 91708;
-    NS_ooxml::LN_Value_ST_NumberFormat_ideographZodiacTraditional = 91709;
-    NS_ooxml::LN_Value_ST_NumberFormat_taiwaneseCounting = 91710;
-    NS_ooxml::LN_Value_ST_NumberFormat_ideographLegalTraditional = 91711;
-    NS_ooxml::LN_Value_ST_NumberFormat_taiwaneseCountingThousand = 91712;
-    NS_ooxml::LN_Value_ST_NumberFormat_taiwaneseDigital = 91713;
-    NS_ooxml::LN_Value_ST_NumberFormat_chineseCounting = 91714;
-    NS_ooxml::LN_Value_ST_NumberFormat_chineseLegalSimplified = 91715;
-    NS_ooxml::LN_Value_ST_NumberFormat_chineseCountingThousand = 91716;
-    NS_ooxml::LN_Value_ST_NumberFormat_koreanDigital = 91717;
-    NS_ooxml::LN_Value_ST_NumberFormat_koreanCounting = 91718;
-    NS_ooxml::LN_Value_ST_NumberFormat_koreanLegal = 91719;
-    NS_ooxml::LN_Value_ST_NumberFormat_koreanDigital2 = 91720;
-    NS_ooxml::LN_Value_ST_NumberFormat_vietnameseCounting = 91721;
-    NS_ooxml::LN_Value_ST_NumberFormat_russianLower = 91722;
-    NS_ooxml::LN_Value_ST_NumberFormat_russianUpper = 91723;
-    NS_ooxml::LN_Value_ST_NumberFormat_none = 91724;
-    NS_ooxml::LN_Value_ST_NumberFormat_numberInDash = 91725;
-    NS_ooxml::LN_Value_ST_NumberFormat_hebrew1 = 91726;
-    NS_ooxml::LN_Value_ST_NumberFormat_hebrew2 = 91727;
-    NS_ooxml::LN_Value_ST_NumberFormat_arabicAlpha = 91728;
-    NS_ooxml::LN_Value_ST_NumberFormat_arabicAbjad = 91729;
-    NS_ooxml::LN_Value_ST_NumberFormat_hindiVowels = 91730;
-    NS_ooxml::LN_Value_ST_NumberFormat_hindiConsonants = 91731;
-    NS_ooxml::LN_Value_ST_NumberFormat_hindiNumbers = 91732;
-    NS_ooxml::LN_Value_ST_NumberFormat_hindiCounting = 91733;
-    NS_ooxml::LN_Value_ST_NumberFormat_thaiLetters = 91734;
-    NS_ooxml::LN_Value_ST_NumberFormat_thaiNumbers = 91735;
-    NS_ooxml::LN_Value_ST_NumberFormat_thaiCounting = 91736;*/
 /*-- 26.06.2006 13:14:29---------------------------------------------------
 
   -----------------------------------------------------------------------*/
@@ -241,8 +153,7 @@ public:
         {}
     ~ListPropertyMap(){}
 
-    using PropertyMap::GetPropertyValues;
-    uno::Sequence< beans::PropertyValue >  GetPropertyValues( PropertyValueVector_t& rCharStyleProperties  );
+    uno::Sequence< beans::PropertyValue >  GetPropertyValuesList( PropertyValueVector_t& rCharStyleProperties  );
 };
 /*-- 26.06.2006 13:44:57---------------------------------------------------
 
@@ -250,7 +161,7 @@ public:
 #define MAKE_PROPVAL(NameId, Value) \
     beans::PropertyValue(aPropNameSupplier.GetName(NameId), 0, uno::makeAny(Value), beans::PropertyState_DIRECT_VALUE )
 
-uno::Sequence< beans::PropertyValue >  ListPropertyMap::GetPropertyValues( PropertyValueVector_t& rCharStyleProperties )
+uno::Sequence< beans::PropertyValue >  ListPropertyMap::GetPropertyValuesList( PropertyValueVector_t& rCharStyleProperties )
 {
     const sal_Int16 aWWToUnoAdjust[] =
     {
@@ -265,7 +176,7 @@ uno::Sequence< beans::PropertyValue >  ListPropertyMap::GetPropertyValues( Prope
     if( nIStartAt >= 0)
         aNumberingProperties.push_back( MAKE_PROPVAL(PROP_START_WITH, (sal_Int16)nIStartAt) );
 
-    sal_Int16 nNumberFormat = lcl_ConvertNumberingType(nNFC);
+    sal_Int16 nNumberFormat = ConversionHelper::ConvertNumberingType(nNFC);
     if( nNFC >= 0)
         aNumberingProperties.push_back( MAKE_PROPVAL(PROP_NUMBERING_TYPE, nNumberFormat ));
 
@@ -313,7 +224,7 @@ uno::Sequence< beans::PropertyValue >  ListPropertyMap::GetPropertyValues( Prope
                     aNumberingProperties.push_back(
                         beans::PropertyValue( aPropNameSupplier.GetName( PROP_BULLET_FONT_NAME ), 0, aMapIter->second, beans::PropertyState_DIRECT_VALUE ));
                 break;
-                default:
+                default: 
                 {
                     rCharStyleProperties.push_back(beans::PropertyValue( aPropNameSupplier.GetName( aMapIter->first.eId ), 0, aMapIter->second, beans::PropertyState_DIRECT_VALUE ));
                 }
@@ -429,7 +340,7 @@ void ListTable::attribute(Id nName, Value & rVal)
         break;
         /* WRITERFILTERSTATUS: done: 0, planned: 0, spent: 0 */
         case NS_ooxml::LN_CT_LevelText_val:
-        {
+        {    
             //this strings contains the definition of the level
             //the level number is marked as %n
             //these numbers can be mixed randomly toghether with seperators pre- and suffixes
@@ -898,7 +809,7 @@ void ListTable::attribute(Id nName, Value & rVal)
 //        case NS_rtf::LN_STYLESHEET: break;
         /* WRITERFILTERSTATUS: done: 100, planned: 0, spent: 0 */
         case NS_ooxml::LN_CT_AbstractNum_abstractNumId:
-        {
+        {    
             sal_Int32 nVal = rVal.getString().toInt32();
             m_pImpl->m_pCurrentEntry->nAbstractNumId = nVal;
             m_pImpl->m_pCurrentEntry->nListId = nVal;
@@ -922,6 +833,7 @@ void ListTable::attribute(Id nName, Value & rVal)
         case NS_ooxml::LN_CT_Lvl_ilvl: //overrides previous level - unsupported
         case NS_ooxml::LN_CT_Lvl_tplc: //template code - unsupported
         case NS_ooxml::LN_CT_Lvl_tentative: //marks level as unused in the document - unsupported
+        case NS_ooxml::LN_CT_Ind_firstLine: //todo: first line indent in numbering not yet supported
         break;
         default:
         {
@@ -947,7 +859,7 @@ void ListTable::sprm(Sprm & rSprm)
     //fill the attributes of the style sheet
     sal_uInt32 nSprmId = rSprm.getId();
     if( m_pImpl->m_pCurrentEntry.get() ||
-        nSprmId == NS_ooxml::LN_CT_Numbering_abstractNum ||
+        nSprmId == NS_ooxml::LN_CT_Numbering_abstractNum || 
         nSprmId == NS_ooxml::LN_CT_Numbering_num )
     {
         sal_Int32 nIntValue = rSprm.getValue()->getInt();
@@ -1028,14 +940,14 @@ void ListTable::sprm(Sprm & rSprm)
             break;
             case NS_ooxml::LN_CT_Lvl_lvlText:
             case NS_ooxml::LN_CT_Lvl_rPr : //contains LN_EG_RPrBase_rFonts
-            {
+            {    
                 writerfilter::Reference<Properties>::Pointer_t pProperties = rSprm.getProps();
                 if(pProperties.get())
                     pProperties->resolve(*this);
             }
             break;
             case NS_ooxml::LN_CT_NumLvl_lvl:
-            {
+            {   
                 // overwrite level
                 writerfilter::Reference<Properties>::Pointer_t pProperties = rSprm.getProps();
                 if(pProperties.get())
@@ -1047,12 +959,19 @@ void ListTable::sprm(Sprm & rSprm)
             break;
             case NS_ooxml::LN_CT_Lvl_pPr:
             case NS_ooxml::LN_CT_PPrBase_ind:
-            {
+            {    
                 //todo: how to handle paragraph properties within numbering levels (except LeftIndent and FirstLineIndent)?
                 writerfilter::Reference<Properties>::Pointer_t pProperties = rSprm.getProps();
                 if(pProperties.get())
                     pProperties->resolve(*this);
             }
+            break;
+            case NS_ooxml::LN_CT_PPrBase_tabs:
+                //no paragraph attributes in ListTable char style sheets
+            break;
+            case NS_ooxml::LN_CT_Lvl_suff:
+                //todo: currently unsupported suffix 
+                //can be: "none", "space", "tab"
             break;
             case NS_ooxml::LN_EG_RPrBase_rFonts: //contains font properties
             case NS_ooxml::LN_EG_RPrBase_color:
@@ -1068,7 +987,7 @@ void ListTable::sprm(Sprm & rSprm)
                     m_pImpl->m_rDMapper.sprm( rSprm );
                     m_pImpl->m_rDMapper.PopListProperties();
                 }
-        }
+        }    
     }
 }
 /*-- 12.11.2007 09:36:09---------------------------------------------------
@@ -1115,7 +1034,7 @@ void    ListTable::ApplyLevelValues( sal_Int32 nId, sal_Int32 nIntValue)
   -----------------------------------------------------------------------*/
 void ListTable::entry(int, writerfilter::Reference<Properties>::Pointer_t ref)
 {
-
+    
     if( m_pImpl->m_rDMapper.IsOOXMLImport() )
     {
         ref->resolve(*this);
@@ -1166,7 +1085,7 @@ uno::Reference< container::XIndexReplace > ListTable::GetNumberingRules(sal_Int3
                     while(aIter != aEnd)
                     {
                         PropertyValueVector_t aCharStyleProperties;
-                        uno::Sequence< beans::PropertyValue> aValues = (*aIter)->GetPropertyValues(aCharStyleProperties);
+                        uno::Sequence< beans::PropertyValue> aValues = (*aIter)->GetPropertyValuesList(aCharStyleProperties);
                         if( aCharStyleProperties.size() )
                         {
                             //create (or find) a character style containing the character attributes of the symbol
@@ -1175,7 +1094,7 @@ uno::Reference< container::XIndexReplace > ListTable::GetNumberingRules(sal_Int3
                             aValues.realloc( aValues.getLength() + 1);
                             aValues[aValues.getLength() - 1].Name = aPropNameSupplier.GetName( PROP_CHAR_STYLE_NAME );
                             aValues[aValues.getLength() - 1].Value <<= sStyle;
-                        }
+                        }    
                         //now parse the text to find %n from %1 to %nLevel+1
                         //everything before the first % and the last %x is prefix and suffix
                         ::rtl::OUString sLevelText( (*aIter)->sBulletChar );
