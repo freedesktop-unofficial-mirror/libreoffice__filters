@@ -7,7 +7,7 @@
  * OpenOffice.org - a multi-platform office productivity suite
  *
  * $RCSfile: svt_saveopt.cxx,v $
- * $Revision: 1.3 $
+ * $Revision: 1.4 $
  *
  * This file is part of OpenOffice.org.
  *
@@ -454,8 +454,10 @@ SvtSaveOptions_Impl::SvtSaveOptions_Impl()
                     case TIMEINTERVALL :
                         if ( pValues[nProp] >>= nTemp )
                             nAutoSaveTime = nTemp;
-                        else
+                        else 
+                        {
                             DBG_ERROR( "Wrong Type!" );
+                        }
                         bROAutoSaveTime = pROStates[nProp];
                         break;
 
