@@ -7,7 +7,7 @@
  * OpenOffice.org - a multi-platform office productivity suite
  *
  * $RCSfile: sw_usrfld.cxx,v $
- * $Revision: 1.11 $
+ * $Revision: 1.12 $
  *
  * This file is part of OpenOffice.org.
  *
@@ -74,7 +74,7 @@ using namespace ::rtl;
 /*N*/ 	String sStr;
 /*N*/ 	if(!(nSubType & SUB_INVISIBLE))
 /*N*/ 		sStr = ((SwUserFieldType*)GetTyp())->Expand(GetFormat(), nSubType, GetLanguage());
-/*N*/ 
+/*N*/
 /*N*/ 	return sStr;
 /*N*/ }
 
@@ -214,7 +214,7 @@ void SwUserField::SetPar2(const String& rStr)
 /*N*/ {
 /*N*/ 	bValidValue = bDeleted = sal_False;
 /*N*/ 	aName = aNam;
-/*N*/ 
+/*N*/
 /*N*/ 	if (nType & GSE_STRING)
 /*N*/ 		EnableFormat(sal_False);	// Numberformatter nicht einsetzen
 /*N*/ }
@@ -229,7 +229,7 @@ void SwUserField::SetPar2(const String& rStr)
 /*N*/ 	}
 /*N*/ 	else
 /*N*/ 		EnableFormat(sal_False);	// Numberformatter nicht einsetzen
-/*N*/ 
+/*N*/
 /*N*/ 	return aStr;
 /*N*/ }
 
@@ -241,7 +241,7 @@ void SwUserField::SetPar2(const String& rStr)
 /*N*/ 	pTmp->bValidValue 	= bValidValue;
 /*N*/ 	pTmp->nValue 		= nValue;
 /*N*/ 	pTmp->bDeleted 		= bDeleted;
-/*N*/ 
+/*N*/
 /*N*/ 	return pTmp;
 /*N*/ }
 
@@ -255,7 +255,7 @@ void SwUserField::SetPar2(const String& rStr)
 /*N*/ {
 /*N*/ 	if(bValidValue)
 /*N*/ 		return nValue;
-/*N*/ 
+/*N*/
 /*N*/ 	if(!rCalc.Push( this ))
 /*N*/ 	{
 /*N*/ 		rCalc.SetCalcError( CALC_SYNTAX );
@@ -263,12 +263,12 @@ void SwUserField::SetPar2(const String& rStr)
 /*N*/ 	}
 /*N*/ 	nValue = rCalc.Calculate( aContent ).GetDouble();
 /*N*/ 	rCalc.Pop( this );
-/*N*/ 
+/*N*/
 /*N*/ 	if( !rCalc.IsCalcError() )
 /*N*/ 		bValidValue = sal_True;
 /*N*/ 	else
 /*N*/ 		nValue = 0;
-/*N*/ 
+/*N*/
 /*N*/ 	return nValue;
 /*N*/ }
 
@@ -278,9 +278,9 @@ void SwUserField::SetPar2(const String& rStr)
 /*N*/ 	{
 /*?*/ 		String sFormattedValue;
 /*?*/ 		Color* pCol = 0;
-/*?*/ 
+/*?*/
 /*?*/ 		SvNumberFormatter* pFormatter = GetDoc()->GetNumberFormatter();
-/*?*/ 
+/*?*/
 /*?*/ 		pFormatter->GetOutputString(GetValue(), nFmt, sFormattedValue, &pCol);
 /*?*/ 		return sFormattedValue;
 /*N*/ 	}
@@ -293,13 +293,13 @@ void SwUserField::SetPar2(const String& rStr)
 /*N*/ 	if( aContent != rStr )
 /*N*/ 	{
 /*N*/ 		aContent = rStr;
-/*N*/ 
+/*N*/
 /*N*/ 		if (nFmt && nFmt != SAL_MAX_UINT32)
 /*N*/ 		{
 /*?*/ 			double fValue;
-/*?*/ 
+/*?*/
 /*?*/ 			SvNumberFormatter* pFormatter = GetDoc()->GetNumberFormatter();
-/*?*/ 
+/*?*/
 /*?*/ 			if (pFormatter->IsNumberFormat(rStr, nFmt, fValue))
 /*?*/           {
 /*?*/               SetValue(fValue);
@@ -307,15 +307,13 @@ void SwUserField::SetPar2(const String& rStr)
 /*?*/               DoubleToString(aContent, fValue, nFmt);
 /*?*/ 			}
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		// der SdrPage (und damit den VCControls) sagen, das sich was getan hat
 /*N*/ 		if( GetDoc()->GetDrawModel() && GetDepends() )
 /*?*/ 		{DBG_BF_ASSERT(0, "STRIP"); }//STRIP001 	((SwDPage*)GetDoc()->GetDrawModel()->GetPage( 0 ))->
-/*N*/ 
+/*N*/
 /*N*/ 		sal_Bool bModified = GetDoc()->IsModified();
 /*N*/ 		GetDoc()->SetModified();
-/*N*/ 		if( !bModified )	// Bug 57028
-/*?*/ 			GetDoc()->SetUndoNoResetModified();
 /*N*/ 	}
 /*N*/ }
 
@@ -357,7 +355,7 @@ void SwUserField::SetPar2(const String& rStr)
 /*N*/ 			double fVal;
 /*N*/ 			rAny >>= fVal;
 /*N*/ 			nValue = fVal;
-/*N*/ 
+/*N*/
 /*N*/ 			// Folgende Zeile ist eigentlich falsch, da die Sprache unbekannt ist
 /*N*/ 			// (haengt am Feld) und aContent daher auch eigentlich ans Feld gehoeren
 /*N*/ 			// muesste. Jedes Feld kann eine andere Sprache, aber den gleichen Inhalt
