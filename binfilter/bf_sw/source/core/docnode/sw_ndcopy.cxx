@@ -7,7 +7,7 @@
  * OpenOffice.org - a multi-platform office productivity suite
  *
  * $RCSfile: sw_ndcopy.cxx,v $
- * $Revision: 1.9 $
+ * $Revision: 1.10 $
  *
  * This file is part of OpenOffice.org.
  *
@@ -110,7 +110,7 @@ namespace binfilter {
 /*N*/ 	// is the prev node of the destionation position in dest. document.
 /*N*/ 	SwTxtNode* pCpyTxtNd = (SwTxtNode*)this;
 /*N*/ 	SwTxtNode* pCpyAttrNd = pCpyTxtNd;
-/*N*/ 
+/*N*/
 /*N*/ 	// kopiere die Formate in das andere Dokument:
 /*N*/ 	SwTxtFmtColl* pColl = 0;
 /*N*/ 	if( pDoc->IsInsOnlyTextGlossary() )
@@ -124,14 +124,14 @@ namespace binfilter {
 /*N*/ 	}
 /*N*/ 	if( !pColl )
 /*N*/ 		pColl = pDoc->CopyTxtColl( *GetTxtColl() );
-/*N*/ 
+/*N*/
 /*N*/ 	SwTxtNode* pTxtNd = pDoc->GetNodes().MakeTxtNode( rIdx, pColl );
-/*N*/ 
+/*N*/
 /*N*/ 	// kopiere Attribute/Text
 /*N*/ 	if( !pCpyAttrNd->GetpSwAttrSet() )
 /*N*/ 		// wurde ein AttrSet fuer die Numerierung angelegt, so loesche diesen!
 /*N*/ 		pTxtNd->ResetAllAttr();
-/*N*/ 
+/*N*/
 /*N*/ 	// if Copy-Textnode unequal to Copy-Attrnode, then copy first
 /*N*/ 	// the attributes into the new Node.
 /*N*/ 	if( pCpyAttrNd != pCpyTxtNd )
@@ -145,18 +145,18 @@ namespace binfilter {
 /*?*/ 			aSet.CopyToModify( *pTxtNd );
 /*?*/ 		}
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 		// ??? reicht das ??? was ist mit PostIts/Feldern/FeldTypen ???
 /*N*/ 	pCpyTxtNd->Copy( pTxtNd, SwIndex( pCpyTxtNd ), pCpyTxtNd->GetTxt().Len() );
-/*N*/ 
+/*N*/
 /*N*/ 	if( pCpyAttrNd->GetNum() )
 /*N*/ 		pTxtNd->UpdateNum( *pCpyAttrNd->GetNum() );
-/*N*/ 
+/*N*/
 /*N*/ //FEATURE::CONDCOLL
 /*N*/ 	if( RES_CONDTXTFMTCOLL == pColl->Which() )
 /*N*/ 		pTxtNd->ChkCondColl();
 /*N*/ //FEATURE::CONDCOLL
-/*N*/ 
+/*N*/
 /*N*/ 	return pTxtNd;
 /*N*/ }
 
@@ -179,7 +179,7 @@ namespace binfilter {
 /*N*/ 	SwTableBox* pInsBox;
 /*N*/ 	SwTableNode *pTblNd;
 /*N*/ 	const SwTable *pOldTable;
-/*N*/ 
+/*N*/
 /*N*/ 	_CopyTable( SwDoc* pDc, _MapTblFrmFmts& rArr, ULONG nOldStt,
 /*N*/ 				SwTableNode& rTblNd, const SwTable* pOldTbl )
 /*N*/ 		: pDoc(pDc), pTblNd(&rTblNd), nOldTblSttIdx(nOldStt),
@@ -194,7 +194,7 @@ namespace binfilter {
 /*N*/ BOOL lcl_CopyTblBox( const SwTableBox*& rpBox, void* pPara )
 /*N*/ {
 /*N*/ 	_CopyTable* pCT = (_CopyTable*)pPara;
-/*N*/ 
+/*N*/
 /*N*/ 	SwTableBoxFmt* pBoxFmt = (SwTableBoxFmt*)rpBox->GetFrmFmt();
 /*N*/ 	pCT->rMapArr.ForEach( lcl_SrchNew, &pBoxFmt );
 /*N*/ 	if( pBoxFmt == rpBox->GetFrmFmt() )	// ein neues anlegen ??
@@ -205,10 +205,10 @@ namespace binfilter {
 /*N*/ 		{
 /*?*/ 			((SwTblBoxFormula*)pItem)->PtrToBoxNm( pCT->pOldTable );
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		pBoxFmt = pCT->pDoc->MakeTableBoxFmt();
 /*N*/ 		pBoxFmt->CopyAttrs( *rpBox->GetFrmFmt() );
-/*N*/ 
+/*N*/
 /*N*/ 		if( rpBox->GetSttIdx() )
 /*N*/ 		{
 /*N*/ 			SvNumberFormatter* pN = pCT->pDoc->GetNumberFormatter( FALSE );
@@ -219,14 +219,14 @@ namespace binfilter {
 /*?*/ 				ULONG nNewIdx = pN->GetMergeFmtIndex( nOldIdx );
 /*?*/ 				if( nNewIdx != nOldIdx )
 /*?*/ 					pBoxFmt->SetAttr( SwTblBoxNumFormat( nNewIdx ));
-/*?*/ 
+/*?*/
 /*N*/ 			}
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		pCT->rMapArr.Insert( _MapTblFrmFmt( rpBox->GetFrmFmt(), pBoxFmt ),
 /*N*/ 								pCT->rMapArr.Count() );
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	USHORT nLines = rpBox->GetTabLines().Count();
 /*N*/ 	SwTableBox* pNewBox;
 /*N*/ 	if( nLines )
@@ -238,10 +238,10 @@ namespace binfilter {
 /*N*/ 		ASSERT( aNewIdx.GetNode().IsStartNode(), "Index nicht auf einem StartNode" );
 /*N*/ 		pNewBox = new SwTableBox( pBoxFmt, aNewIdx, pCT->pInsLine );
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	pCT->pInsLine->GetTabBoxes().C40_INSERT( SwTableBox, pNewBox,
 /*N*/ 					pCT->pInsLine->GetTabBoxes().Count() );
-/*N*/ 
+/*N*/
 /*N*/ 	if( nLines )
 /*N*/ 	{
 /*?*/ 		_CopyTable aPara( *pCT );
@@ -288,12 +288,12 @@ namespace binfilter {
 /*N*/ {
 /*N*/ 	// in welchen Array steht ich denn Nodes, UndoNodes ??
 /*N*/ 	SwNodes& rNds = (SwNodes&)GetNodes();
-/*N*/ 
+/*N*/
 /*N*/ 	if( pDoc->IsIdxInTbl( rIdx ) )
 /*N*/ 		// zur Zeit keine Tabelle in Tabelle kopieren unterstuetzen
 /*N*/ 		// (sprich: Text + Tabelle + Text )
 /*?*/ 		return 0;
-/*N*/ 
+/*N*/
 /*N*/ 	{
 /*N*/ 		// nicht in Fussnoten kopieren !!
 /*
@@ -310,7 +310,7 @@ namespace binfilter {
 /*N*/ 			rIdx >= pDoc->GetNodes().GetEndOfInserts().StartOfSectionIndex() )
 /*?*/ 			return 0;
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	// das TableFrmFmt kopieren
 /*N*/ 	String sTblName( GetTable().GetFrmFmt()->GetName() );
 /*N*/ 	if( !pDoc->IsCopyIsMove() )
@@ -323,19 +323,19 @@ namespace binfilter {
 /*N*/ 				break;
 /*N*/ 			}
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	SwFrmFmt* pTblFmt = pDoc->MakeTblFrmFmt( sTblName, pDoc->GetDfltFrmFmt() );
 /*N*/ 	pTblFmt->CopyAttrs( *GetTable().GetFrmFmt() );
 /*N*/ 	SwTableNode* pTblNd = new SwTableNode( rIdx );
 /*N*/ 	SwEndNode* pEndNd = new SwEndNode( rIdx, *pTblNd );
 /*N*/ 	SwNodeIndex aInsPos( *pEndNd );
-/*N*/ 
+/*N*/
 /*N*/ 	SwTable& rTbl = (SwTable&)pTblNd->GetTable();
 /*N*/ 	pTblFmt->Add( &rTbl );		// das Frame-Format setzen
-/*N*/ 
+/*N*/
 /*N*/ 	rTbl.SetHeadlineRepeat( GetTable().IsHeadlineRepeat() );
 /*N*/ 	rTbl.SetTblChgMode( GetTable().GetTblChgMode() );
-/*N*/ 
+/*N*/
 /*N*/ 	SwDDEFieldType* pDDEType = 0;
 /*N*/ 	if( IS_TYPE( SwDDETable, &GetTable() ))
 /*N*/ 	{
@@ -347,7 +347,7 @@ namespace binfilter {
 /*N*/ 	// Boxen/Lines und das anlegen der Frames erfolgt spaeter
 /*N*/ 	SwNodeRange aRg( *this, +1, *EndOfSectionNode() );	// (wo stehe in denn nun ??)
 /*N*/ 	rNds._Copy( aRg, aInsPos, FALSE );
-/*N*/ 
+/*N*/
 /*N*/ 	// Sonderbehandlung fuer eine einzelne Box
 /*N*/ 	if( 1 == GetTable().GetTabSortBoxes().Count() )
 /*N*/ 	{
@@ -355,19 +355,19 @@ namespace binfilter {
 /*?*/ 		aRg.aEnd.Assign( *pTblNd->EndOfSectionNode() );
 /*?*/ 		pDoc->GetNodes().SectionDown( &aRg, SwTableBoxStartNode );
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	// loesche alle Frames vom kopierten Bereich, diese werden beim
 /*N*/ 	// erzeugen des TableFrames angelegt !
 /*N*/ 	pTblNd->DelFrms();
-/*N*/ 
+/*N*/
 /*N*/ 	_MapTblFrmFmts aMapArr;
 /*N*/ 	_CopyTable aPara( pDoc, aMapArr, GetIndex(), *pTblNd, &GetTable() );
-/*N*/ 
+/*N*/
 /*N*/ 	((SwTable&)GetTable()).GetTabLines().ForEach( &lcl_CopyTblLine, &aPara );
-/*N*/ 
+/*N*/
 /*N*/ 	if( pDDEType && pDoc->GetRootFrm() )
 /*?*/ 		pDDEType->IncRefCnt();
-/*N*/ 
+/*N*/
 /*N*/ 	return pTblNd;
 /*N*/ }
 
@@ -389,24 +389,24 @@ namespace binfilter {
 /*N*/ 	// kein Copy abfangen.
 /*N*/ 	if( !rPam.HasMark() || *pStt >= *pEnd )
 /*N*/ 		return FALSE;
-/*N*/ 
+/*N*/
 /*N*/ 	SwDoc* pDoc = rPos.nNode.GetNode().GetDoc();
-/*N*/ 
+/*N*/
 /*N*/ 	// verhinder das Kopieren in Fly's, die im Bereich verankert sind.
 /*N*/ 	if( pDoc == this )
 /*N*/ 	{
 /*?*/ 		DBG_BF_ASSERT(0, "STRIP"); //STRIP001 // Start-/EndNode noch korrigieren
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	SwPaM* pRedlineRange = 0;
 /*N*/ 	if( pDoc->IsRedlineOn() ||
 /*N*/ 		(!pDoc->IsIgnoreRedline() && pDoc->GetRedlineTbl().Count() ) )
 /*N*/ 		pRedlineRange = new SwPaM( rPos );
-/*N*/ 
+/*N*/
 /*N*/ 	SwRedlineMode eOld = pDoc->GetRedlineMode();
-/*N*/ 
+/*N*/
 /*N*/ 	BOOL bRet = FALSE;
-/*N*/ 
+/*N*/
 /*N*/ 	if( pDoc && pDoc != this )
 /*?*/ 	{DBG_BF_ASSERT(0, "STRIP");} //STRIP001 	bRet = _Copy( rPam, rPos, TRUE, pRedlineRange );	// nur normales Kopieren
 /*N*/ 	// Copy in sich selbst (ueber mehrere Nodes wird hier gesondert
@@ -415,18 +415,18 @@ namespace binfilter {
 /*N*/ 			( pStt->nNode != pEnd->nNode ||
 /*N*/ 			  !pStt->nNode.GetNode().IsTxtNode() )) )
 /*?*/ 	{DBG_BF_ASSERT(0, "STRIP");} //STRIP001 	bRet = _Copy( rPam, rPos, TRUE, pRedlineRange );	// nur normales Kopieren
-/*N*/ 
+/*N*/
 /*N*/ 	else
 /*N*/ 	{
 /*?*/ 		DBG_BF_ASSERT(0, "STRIP"); //STRIP001 ASSERT( this == pDoc, " falscher Copy-Zweig!" );
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	pDoc->SetRedlineMode_intern( eOld );
 /*N*/ 	if( pRedlineRange )
 /*N*/ 	{
 /*?*/ 		DBG_BF_ASSERT(0, "STRIP"); //STRIP001 if( pDoc->IsRedlineOn() )
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	return bRet;
 /*N*/ }
 
@@ -442,18 +442,18 @@ namespace binfilter {
 /*N*/ 							BOOL bDelRedlines, BOOL bCopyFlyAtFly ) const
 /*N*/ {
 /*N*/ 	SwDoc* pDest = rInsPos.GetNode().GetDoc();
-/*N*/ 
+/*N*/
 /*N*/ 	_SaveRedlEndPosForRestore aRedlRest( rInsPos );
-/*N*/ 
+/*N*/
 /*N*/ 	SwNodeIndex aSavePos( rInsPos, -1 );
 /*N*/ 	BOOL bEndIsEqualEndPos = rInsPos == rRg.aEnd;
 /*N*/ 	GetNodes()._CopyNodes( rRg, rInsPos, bMakeNewFrms, TRUE );
 /*N*/ 	aSavePos++;
 /*N*/ 	if( bEndIsEqualEndPos )
 /*N*/ 		((SwNodeIndex&)rRg.aEnd) = aSavePos;
-/*N*/ 
+/*N*/
 /*N*/ 	aRedlRest.Restore();
-/*N*/ 
+/*N*/
 /*N*/ #ifndef PRODUCT
 /*N*/ 	{
 /*N*/ 		//JP 17.06.99: Bug 66973 - check count only if the selection is in
@@ -472,24 +472,20 @@ namespace binfilter {
 /*N*/ 		}
 /*N*/ 	}
 /*N*/ #endif
-/*N*/ 
-/*N*/ 	// Undo abschalten
-/*N*/ 	BOOL bUndo = pDest->DoesUndo();
-/*N*/ 	pDest->DoUndo( FALSE );
+/*N*/
 /*N*/ 	_CopyFlyInFly( rRg, aSavePos, bCopyFlyAtFly );
-/*N*/ 	pDest->DoUndo( bUndo );
-/*N*/ 
+/*N*/
 /*N*/ 	SwNodeRange aCpyRange( aSavePos, rInsPos );
-/*N*/ 
+/*N*/
 /*N*/ 	// dann kopiere noch alle Bookmarks
 /*N*/ 	if( GetBookmarks().Count() )
 /*N*/ 	{
 /*?*/ 		DBG_BF_ASSERT(0, "STRIP"); //STRIP001 SwPaM aRgTmp( rRg.aStart, rRg.aEnd );
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	if( bDelRedlines && ( REDLINE_DELETE_REDLINES & pDest->GetRedlineMode() ))
 /*?*/ 	{DBG_BF_ASSERT(0, "STRIP");} //STRIP001 	lcl_DeleteRedlines( rRg, aCpyRange );
-/*N*/ 
+/*N*/
 /*N*/ 	pDest->GetNodes()._DelDummyNodes( aCpyRange );
 /*N*/ }
 
@@ -524,12 +520,12 @@ namespace binfilter {
 /*N*/ 			aArr.Insert( _ZSortFly( pFmt, pAnchor, nArrLen + aArr.Count() ));
 /*N*/ 		}
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	//Alle kopierten (also die neu erzeugten) Rahmen in ein weiteres Array
 /*N*/ 	//stopfen. Dort sizten sie passend zu den Originalen, damit hinterher
 /*N*/ 	//die Chains entsprechend aufgebaut werden koennen.
 /*N*/ 	SvPtrarr aNewArr( 10, 10 );
-/*N*/ 
+/*N*/
 /*N*/ 	for( n = 0; n < aArr.Count(); ++n )
 /*N*/ 	{
 /*N*/ 		// neuen Anker anlegen
@@ -547,7 +543,7 @@ namespace binfilter {
 /*?*/ 										pNewPos->nContent.GetIndex() );
 /*N*/ 		else
 /*N*/ 			pNewPos->nContent.Assign( 0, 0 );
-/*N*/ 
+/*N*/
 /*N*/ 		// ueberpruefe Rekursion: Inhalt in "seinen eigenen" Frame
 /*N*/ 		// kopieren. Dann nicht kopieren
 /*N*/ 		FASTBOOL bMakeCpy = TRUE;
@@ -565,13 +561,13 @@ namespace binfilter {
 /*?*/ 				--n;
 /*N*/ 			}
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		// Format kopieren und den neuen Anker setzen
 /*N*/ 		if( bMakeCpy )
 /*N*/ 			aNewArr.Insert( pDest->CopyLayoutFmt( *rZSortFly.GetFmt(),
 /*N*/ 						aAnchor, FALSE, TRUE/*FALSE*/ ), aNewArr.Count() );
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	//Alle chains, die im Original vorhanden sind, soweit wie moeglich wieder
 /*N*/ 	//aufbauen.
 /*N*/ 	ASSERT( aArr.Count() == aNewArr.Count(), "Missing new Flys" );
