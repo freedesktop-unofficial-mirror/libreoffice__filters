@@ -7,7 +7,7 @@
  * OpenOffice.org - a multi-platform office productivity suite
  *
  * $RCSfile: sw_findattr.cxx,v $
- * $Revision: 1.8 $
+ * $Revision: 1.9 $
  *
  * This file is part of OpenOffice.org.
  *
@@ -57,9 +57,6 @@
 #ifndef _PAMTYP_HXX
 #include <pamtyp.hxx>
 #endif
-#ifndef _SWUNDO_HXX
-#include <swundo.hxx>
-#endif
 namespace binfilter {
 
 using namespace ::com::sun::star;
@@ -72,14 +69,14 @@ using namespace ::com::sun::star::util;
 
 /*N*/ const SwTxtAttr* GetFrwrdTxtHint( const SwpHints& rHtsArr, USHORT& rPos,
 /*N*/ 									xub_StrLen nCntntPos )
-/*N*/ {DBG_BF_ASSERT(0, "STRIP"); //STRIP001 
+/*N*/ {DBG_BF_ASSERT(0, "STRIP"); //STRIP001
 /*N*/ 	return 0;			 		// kein gueltiges TextAttribut
 /*N*/ }
 
 
 /*N*/ const SwTxtAttr* GetBkwrdTxtHint( const SwpHints& rHtsArr, USHORT& rPos,
 /*N*/ 								  xub_StrLen nCntntPos )
-/*N*/ {DBG_BF_ASSERT(0, "STRIP"); //STRIP001 
+/*N*/ {DBG_BF_ASSERT(0, "STRIP"); //STRIP001
 /*N*/ 	return 0; 					// kein gueltiges TextAttribut
 /*N*/ }
 
@@ -176,25 +173,19 @@ DBG_BF_ASSERT(0, "STRIP"); return 0;//STRIP001 	return ( pSearchOpt && pSearchOp
 /*M*/ 	SwDoc* pDoc = GetDoc();
 /*M*/ 	Link aLnk( pDoc->GetOle2Link() );
 /*M*/ 	pDoc->SetOle2Link( Link() );
-/*M*/ 
+/*M*/
 /*M*/ 	BOOL bReplace = ( pSearchOpt && ( pSearchOpt->replaceString.getLength() ||
 /*M*/ 									!rSet.Count() ) ) ||
 /*M*/ 					(pReplSet && pReplSet->Count());
-/*M*/ 	BOOL bSttUndo = pDoc->DoesUndo() && bReplace;
-/*M*/ 	if( bSttUndo )
-/*M*/ 		pDoc->StartUndo( UNDO_REPLACE );
-/*M*/ 
+/*M*/
 /*M*/ 	SwFindParaAttr aSwFindParaAttr( rSet, bNoCollections, pSearchOpt,
 /*M*/ 									pReplSet, *this );
-/*M*/ 
+/*M*/
 /*M*/     ULONG nRet = FindAll(aSwFindParaAttr, nStart, nEnde, eFndRngs, bCancel );
 /*M*/ 	pDoc->SetOle2Link( aLnk );
 /*M*/ 	if( nRet && bReplace )
 /*M*/ 		pDoc->SetModified();
-/*M*/ 
-/*M*/ 	if( bSttUndo )
-/*M*/ 		pDoc->EndUndo( UNDO_REPLACE );
-/*M*/ 
+/*M*/
 /*M*/ 	return nRet;
 /*M*/ }
 
