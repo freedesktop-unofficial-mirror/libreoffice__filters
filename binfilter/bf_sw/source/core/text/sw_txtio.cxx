@@ -1,13 +1,13 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
  *
  * $RCSfile: sw_txtio.cxx,v $
- * $Revision: 1.9 $
+ * $Revision: 1.10 $
  *
  * This file is part of OpenOffice.org.
  *
@@ -255,7 +255,7 @@ namespace binfilter {
 /*N*/ 	SvFileStream aStream( pOutName, (bFirstOpen
 /*N*/ 										? STREAM_WRITE | STREAM_TRUNC
 /*N*/ 										: STREAM_WRITE ));
-/*N*/ 
+/*N*/
 /*N*/ 	if( !aStream.GetError() )
 /*N*/ 	{
 /*N*/ 		if ( bFirstOpen )
@@ -279,7 +279,7 @@ namespace binfilter {//STRIP009
 /*N*/ 	for( MSHORT i = 0; i < rHints.GetSize(); ++i)
 /*N*/ 	{
 /*N*/ 		SwTxtHint *pHint = (SwTxtHint*) rHints[i];
-/*N*/ 
+/*N*/
 /*N*/ 		if(0 != GetCharWidth(pHint))
 /*N*/ 			rOs << "CHARWIDTH" << ' '; // << GetCharWidth(pHint)->frCPI;
 /*N*/ 		else if(0 != GetColor(pHint))
@@ -308,7 +308,7 @@ namespace binfilter {//STRIP009
 /*N*/ 			rOs << "WORDLINEMODE" << ' ' << GetWordLineMode(pHint)->nState;
 /*N*/ 		else
 /*N*/ 			rOs << pHint->Which();
-/*N*/ 
+/*N*/
 /*N*/ 		rOs << ',' << pHint->GetStart()->GetIndex()
 /*N*/ 				<< '-'
 /*N*/ 				<< (pHint->GetEnd() ? pHint->GetEnd()->GetIndex() : STRING_LEN)
@@ -316,7 +316,7 @@ namespace binfilter {//STRIP009
 /*N*/ 	}
 /*N*/ #endif
 /*N*/ 	// JP_NEWCORE
-/*N*/ 
+/*N*/
 /*N*/ 	rOs << '}';
 /*N*/ 	return rOs;
 /*N*/ }
@@ -376,7 +376,6 @@ namespace binfilter {//STRIP009
 /*N*/ IMPL_OUTOP( SwIsoToxPortion )
 /*N*/ IMPL_OUTOP( SwIsoRefPortion )
 /*N*/ IMPL_OUTOP( SwSoftHyphPortion )
-/*N*/ IMPL_OUTOP( SwSoftHyphStrPortion )
 /*N*/ IMPL_OUTOP( SwTabPortion )
 /*N*/ IMPL_OUTOP( SwTabLeftPortion )
 /*N*/ IMPL_OUTOP( SwTabRightPortion )
@@ -452,7 +451,7 @@ namespace binfilter {//STRIP009
 /*N*/ CONSTCHAR( pPOR_SOFTHYPHSTR, "SOFTHYPHSTR" );
 /*N*/ CONSTCHAR( pPOR_TOX, "TOX" );
 /*N*/ CONSTCHAR( pPOR_REF, "REF" );
-/*N*/ 
+/*N*/
 /*N*/ CONSTCHAR( pPOR_ISOTOX, "ISOTOX" );
 /*N*/ CONSTCHAR( pPOR_ISOREF, "ISOREF" );
 /*N*/ CONSTCHAR( pPOR_HIDDEN, "Hidden" );
@@ -533,15 +532,15 @@ namespace binfilter {//STRIP009
 /*N*/ 												const xub_StrLen nStart )
 /*N*/ {
 /*N*/ 	SwLinePortion *pPortion = GetPortion();
-/*N*/ 
+/*N*/
 /*N*/ 	xub_StrLen nPos = 0;
 /*N*/ 	MSHORT nNr = 0;
 /*N*/ 	KSHORT nPrtWidth, nLastPrt;
 /*N*/ 	nPrtWidth = nLastPrt = 0;
-/*N*/ 
+/*N*/
 /*N*/ 	SwLinePortion::operator<<( rOs );
 /*N*/ 	rOs << '\"' << endl;
-/*N*/ 
+/*N*/
 /*N*/ 	while( pPortion )
 /*N*/ 	{
 ///*N*/ 		DBG_LOOP;
@@ -554,7 +553,7 @@ namespace binfilter {//STRIP009
 /*N*/ 			<< " Pos:" << nPos
 /*N*/ 			<< " Org:" << nLastPrt
 /*N*/ 			<< endl;
-/*N*/ 
+/*N*/
 /*N*/ 		rOs << "\t";
 /*N*/ 		pPortion->operator<<( rOs );
 /*N*/ 		rOs << endl;
@@ -611,7 +610,7 @@ namespace binfilter {//STRIP009
 /*N*/ CONSTCHAR( pRES_LNG_URDU, "URDU" );
 /*N*/ CONSTCHAR( pRES_LNG_US_ENGLISH, "US_ENGLISH" );
 /*N*/ CONSTCHAR( pRES_LNG_NOLANGUAGE, "NOLANGUAGE" );
-/*N*/ 
+/*N*/
 /*N*/ const char *GetLangName( const MSHORT nLang )
 /*N*/ {
 /*N*/ 	switch( nLang )
@@ -666,13 +665,13 @@ namespace binfilter {//STRIP009
 /*N*/ 	}
 /*N*/ }
 /*N*/ #else
-/*N*/ 
+/*N*/
 /*N*/ const char *GetLangName( const MSHORT nLang )
 /*N*/ {
 /*N*/ 	return "???";
 /*N*/ }
 /*N*/ #endif
-/*N*/ 
+/*N*/
 /*N*/ SvStream &SwLinePortion::operator<<( SvStream &rOs ) const //$ ostream
 /*N*/ {
 /*N*/ 	rOs << " {";
@@ -683,7 +682,7 @@ namespace binfilter {//STRIP009
 /*N*/ 	rOs << pClose;
 /*N*/ 	return rOs;
 /*N*/ }
-/*N*/ 
+/*N*/
 /*N*/ SvStream &SwTxtPortion::operator<<( SvStream &rOs ) const //$ ostream
 /*N*/ {
 /*N*/ 	CONSTCHAR( pTxt, " {TXT:" );
@@ -692,7 +691,7 @@ namespace binfilter {//STRIP009
 /*N*/ 	rOs << pClose;
 /*N*/ 	return rOs;
 /*N*/ }
-/*N*/ 
+/*N*/
 /*N*/ SvStream &SwBreakPortion::operator<<( SvStream &rOs ) const //$ ostream
 /*N*/ {
 /*N*/ 	CONSTCHAR( pTxt, " {BREAK:" );
@@ -701,7 +700,7 @@ namespace binfilter {//STRIP009
 /*N*/ 	rOs << pClose;
 /*N*/ 	return rOs;
 /*N*/ }
-/*N*/ 
+/*N*/
 /*N*/ SvStream &SwKernPortion::operator<<( SvStream &rOs ) const //$ ostream
 /*N*/ {
 /*N*/ 	CONSTCHAR( pTxt, " {KERN:" );
@@ -710,7 +709,7 @@ namespace binfilter {//STRIP009
 /*N*/ 	rOs << pClose;
 /*N*/ 	return rOs;
 /*N*/ }
-/*N*/ 
+/*N*/
 /*N*/ SvStream &SwArrowPortion::operator<<( SvStream &rOs ) const //$ ostream
 /*N*/ {
 /*N*/ 	CONSTCHAR( pTxt, " {ARROW:" );
@@ -719,7 +718,7 @@ namespace binfilter {//STRIP009
 /*N*/ 	rOs << pClose;
 /*N*/ 	return rOs;
 /*N*/ }
-/*N*/ 
+/*N*/
 /*N*/ SvStream &SwMultiPortion::operator<<( SvStream &rOs ) const //$ ostream
 /*N*/ {
 /*N*/ 	CONSTCHAR( pTxt, " {MULTI:" );
@@ -728,7 +727,7 @@ namespace binfilter {//STRIP009
 /*N*/ 	rOs << pClose;
 /*N*/ 	return rOs;
 /*N*/ }
-/*N*/ 
+/*N*/
 /*N*/ SvStream &SwLineLayout::operator<<( SvStream &rOs ) const //$ ostream
 /*N*/ {
 /*N*/ 	CONSTCHAR( pTxt, " {LINE:" );
@@ -745,7 +744,7 @@ namespace binfilter {//STRIP009
 /*N*/ 	rOs << pClose;
 /*N*/ 	return rOs;
 /*N*/ }
-/*N*/ 
+/*N*/
 /*N*/ SvStream &SwGluePortion::operator<<( SvStream &rOs ) const //$ ostream
 /*N*/ {
 /*N*/ 	CONSTCHAR( pTxt, " {GLUE:" );
@@ -756,7 +755,7 @@ namespace binfilter {//STRIP009
 /*N*/ 	rOs << pClose;
 /*N*/ 	return rOs;
 /*N*/ }
-/*N*/ 
+/*N*/
 /*N*/ SvStream &SwFixPortion::operator<<( SvStream &rOs ) const //$ ostream
 /*N*/ {
 /*N*/ 	CONSTCHAR( pTxt, " {FIX:" );
@@ -766,7 +765,7 @@ namespace binfilter {//STRIP009
 /*N*/ 	rOs << pClose;
 /*N*/ 	return rOs;
 /*N*/ }
-/*N*/ 
+/*N*/
 /*N*/ SvStream &SwFlyPortion::operator<<( SvStream &rOs ) const //$ ostream
 /*N*/ {
 /*N*/ 	CONSTCHAR( pTxt, " {FLY:" );
@@ -775,7 +774,7 @@ namespace binfilter {//STRIP009
 /*N*/ 	rOs << pClose;
 /*N*/ 	return rOs;
 /*N*/ }
-/*N*/ 
+/*N*/
 /*N*/ SvStream &SwMarginPortion::operator<<( SvStream &rOs ) const //$ ostream
 /*N*/ {
 /*N*/ 	CONSTCHAR( pTxt, " {MAR:" );
@@ -784,7 +783,7 @@ namespace binfilter {//STRIP009
 /*N*/ 	rOs << pClose;
 /*N*/ 	return rOs;
 /*N*/ }
-/*N*/ 
+/*N*/
 /*N*/ SvStream &SwFlyCntPortion::operator<<( SvStream &rOs ) const //$ ostream
 /*N*/ {
 /*N*/ 	CONSTCHAR( pTxt, " {FLYCNT:" );
@@ -807,7 +806,7 @@ namespace binfilter {//STRIP009
 /*N*/ 	rOs << pClose;
 /*N*/ 	return rOs;
 /*N*/ }
-/*N*/ 
+/*N*/
 /*N*/ SvStream &SwExpandPortion::operator<<( SvStream &rOs ) const //$ ostream
 /*N*/ {
 /*N*/ 	CONSTCHAR( pTxt, " {EXP:" );
@@ -816,7 +815,7 @@ namespace binfilter {//STRIP009
 /*N*/ 	rOs << pClose;
 /*N*/ 	return rOs;
 /*N*/ }
-/*N*/ 
+/*N*/
 /*N*/ SvStream &SwFtnPortion::operator<<( SvStream &rOs ) const //$ ostream
 /*N*/ {
 /*N*/ 	CONSTCHAR( pTxt, " {FTN:" );
@@ -825,7 +824,7 @@ namespace binfilter {//STRIP009
 /*N*/ 	rOs << pClose;
 /*N*/ 	return rOs;
 /*N*/ }
-/*N*/ 
+/*N*/
 /*N*/ SvStream &SwFtnNumPortion::operator<<( SvStream &rOs ) const //$ ostream
 /*N*/ {
 /*N*/ 	CONSTCHAR( pTxt, " {FTNNUM:" );
@@ -834,7 +833,7 @@ namespace binfilter {//STRIP009
 /*N*/ 	rOs << pClose;
 /*N*/ 	return rOs;
 /*N*/ }
-/*N*/ 
+/*N*/
 /*N*/ SvStream &SwNumberPortion::operator<<( SvStream &rOs ) const //$ ostream
 /*N*/ {
 /*N*/ 	CONSTCHAR( pTxt, " {NUMBER:" );
@@ -844,7 +843,7 @@ namespace binfilter {//STRIP009
 /*N*/ 	rOs << pClose;
 /*N*/ 	return rOs;
 /*N*/ }
-/*N*/ 
+/*N*/
 /*N*/ SvStream &SwBulletPortion::operator<<( SvStream &rOs ) const //$ ostream
 /*N*/ {
 /*N*/ 	CONSTCHAR( pTxt, " {BULLET:" );
@@ -853,7 +852,7 @@ namespace binfilter {//STRIP009
 /*N*/ 	rOs << pClose;
 /*N*/ 	return rOs;
 /*N*/ }
-/*N*/ 
+/*N*/
 /*N*/ SvStream &SwGrfNumPortion::operator<<( SvStream &rOs ) const //$ ostream
 /*N*/ {
 /*N*/ 	CONSTCHAR( pTxt, " {GRFNUM:" );
@@ -862,7 +861,7 @@ namespace binfilter {//STRIP009
 /*N*/ 	rOs << pClose;
 /*N*/ 	return rOs;
 /*N*/ }
-/*N*/ 
+/*N*/
 /*N*/ SvStream &SwHiddenPortion::operator<<( SvStream &rOs ) const //$ ostream
 /*N*/ {
 /*N*/ 	CONSTCHAR( pTxt, " {Hidden:" );
@@ -871,7 +870,7 @@ namespace binfilter {//STRIP009
 /*N*/ 	rOs << pClose;
 /*N*/ 	return rOs;
 /*N*/ }
-/*N*/ 
+/*N*/
 /*N*/ SvStream &SwToxPortion::operator<<( SvStream &rOs ) const //$ ostream
 /*N*/ {
 /*N*/ 	CONSTCHAR( pTxt, " {TOX:" );
@@ -880,7 +879,7 @@ namespace binfilter {//STRIP009
 /*N*/ 	rOs << pClose;
 /*N*/ 	return rOs;
 /*N*/ }
-/*N*/ 
+/*N*/
 /*N*/ SvStream &SwRefPortion::operator<<( SvStream &rOs ) const //$ ostream
 /*N*/ {
 /*N*/ 	CONSTCHAR( pTxt, " {Ref:" );
@@ -889,7 +888,7 @@ namespace binfilter {//STRIP009
 /*N*/ 	rOs << pClose;
 /*N*/ 	return rOs;
 /*N*/ }
-/*N*/ 
+/*N*/
 /*N*/ SvStream &SwIsoToxPortion::operator<<( SvStream &rOs ) const //$ ostream
 /*N*/ {
 /*N*/ 	CONSTCHAR( pTxt, " {ISOTOX:" );
@@ -898,7 +897,7 @@ namespace binfilter {//STRIP009
 /*N*/ 	rOs << pClose;
 /*N*/ 	return rOs;
 /*N*/ }
-/*N*/ 
+/*N*/
 /*N*/ SvStream &SwIsoRefPortion::operator<<( SvStream &rOs ) const //$ ostream
 /*N*/ {
 /*N*/ 	CONSTCHAR( pTxt, " {ISOREF:" );
@@ -907,7 +906,7 @@ namespace binfilter {//STRIP009
 /*N*/ 	rOs << pClose;
 /*N*/ 	return rOs;
 /*N*/ }
-/*N*/ 
+/*N*/
 /*N*/ SvStream &SwHyphPortion::operator<<( SvStream &rOs ) const //$ ostream
 /*N*/ {
 /*N*/ 	CONSTCHAR( pTxt, " {HYPH:" );
@@ -916,7 +915,7 @@ namespace binfilter {//STRIP009
 /*N*/ 	rOs << pClose;
 /*N*/ 	return rOs;
 /*N*/ }
-/*N*/ 
+/*N*/
 /*N*/ SvStream &SwHyphStrPortion::operator<<( SvStream &rOs ) const //$ ostream
 /*N*/ {
 /*N*/ 	CONSTCHAR( pTxt, " {HYPHSTR:" );
@@ -925,7 +924,7 @@ namespace binfilter {//STRIP009
 /*N*/ 	rOs << pClose;
 /*N*/ 	return rOs;
 /*N*/ }
-/*N*/ 
+/*N*/
 /*N*/ SvStream &SwSoftHyphPortion::operator<<( SvStream &rOs ) const //$ ostream
 /*N*/ {
 /*N*/ 	CONSTCHAR( pTxt, " {SOFTHYPH:" );
@@ -935,16 +934,7 @@ namespace binfilter {//STRIP009
 /*N*/ 	rOs << pClose;
 /*N*/ 	return rOs;
 /*N*/ }
-/*N*/ 
-/*N*/ SvStream &SwSoftHyphStrPortion::operator<<( SvStream &rOs ) const //$ ostream
-/*N*/ {
-/*N*/ 	CONSTCHAR( pTxt, " {SOFTHYPHSTR:" );
-/*N*/ 	rOs << pTxt;
-/*N*/ 	SwHyphStrPortion::operator<<( rOs );
-/*N*/ 	rOs << pClose;
-/*N*/ 	return rOs;
-/*N*/ }
-/*N*/ 
+/*N*/
 /*N*/ SvStream &SwBlankPortion::operator<<( SvStream &rOs ) const //$ ostream
 /*N*/ {
 /*N*/ 	CONSTCHAR( pTxt, " {BLANK:" );
@@ -953,7 +943,7 @@ namespace binfilter {//STRIP009
 /*N*/ 	rOs << pClose;
 /*N*/ 	return rOs;
 /*N*/ }
-/*N*/ 
+/*N*/
 /*N*/ SvStream &SwFldPortion::operator<<( SvStream &rOs ) const //$ ostream
 /*N*/ {
 /*N*/ 	CONSTCHAR( pTxt, " {FLD:" );
@@ -964,7 +954,7 @@ namespace binfilter {//STRIP009
 /*N*/ 	rOs << pClose;
 /*N*/ 	return rOs;
 /*N*/ }
-/*N*/ 
+/*N*/
 /*N*/ SvStream &SwPostItsPortion::operator<<( SvStream &rOs ) const //$ ostream
 /*N*/ {
 /*N*/ 	CONSTCHAR( pTxt, " {POSTITS" );
@@ -973,7 +963,7 @@ namespace binfilter {//STRIP009
 /*N*/ 	rOs << pClose;
 /*N*/ 	return rOs;
 /*N*/ }
-/*N*/ 
+/*N*/
 /*N*/ SvStream &SwTabPortion::operator<<( SvStream &rOs ) const //$ ostream
 /*N*/ {
 /*N*/ 	CONSTCHAR( pTxt, " {TAB" );
@@ -985,7 +975,7 @@ namespace binfilter {//STRIP009
 /*N*/ 	rOs << pClose;
 /*N*/ 	return rOs;
 /*N*/ }
-/*N*/ 
+/*N*/
 /*N*/ SvStream &SwTabLeftPortion::operator<<( SvStream &rOs ) const //$ ostream
 /*N*/ {
 /*N*/ 	CONSTCHAR( pTxt, " {TABLEFT" );
@@ -994,7 +984,7 @@ namespace binfilter {//STRIP009
 /*N*/ 	rOs << pClose;
 /*N*/ 	return rOs;
 /*N*/ }
-/*N*/ 
+/*N*/
 /*N*/ SvStream &SwTabRightPortion::operator<<( SvStream &rOs ) const //$ ostream
 /*N*/ {
 /*N*/ 	CONSTCHAR( pTxt, " {TABRIGHT" );
@@ -1003,7 +993,7 @@ namespace binfilter {//STRIP009
 /*N*/ 	rOs << pClose;
 /*N*/ 	return rOs;
 /*N*/ }
-/*N*/ 
+/*N*/
 /*N*/ SvStream &SwTabCenterPortion::operator<<( SvStream &rOs ) const //$ ostream
 /*N*/ {
 /*N*/ 	CONSTCHAR( pTxt, " {TABCENTER" );
@@ -1012,7 +1002,7 @@ namespace binfilter {//STRIP009
 /*N*/ 	rOs << pClose;
 /*N*/ 	return rOs;
 /*N*/ }
-/*N*/ 
+/*N*/
 /*N*/ SvStream &SwTabDecimalPortion::operator<<( SvStream &rOs ) const //$ ostream
 /*N*/ {
 /*N*/ 	CONSTCHAR( pTxt, " {TABDECIMAL" );
@@ -1021,7 +1011,7 @@ namespace binfilter {//STRIP009
 /*N*/ 	rOs << pClose;
 /*N*/ 	return rOs;
 /*N*/ }
-/*N*/ 
+/*N*/
 /*N*/ SvStream &SwParaPortion::operator<<( SvStream &rOs ) const //$ ostream
 /*N*/ {
 /*N*/ 	CONSTCHAR( pTxt, " {PAR" );
@@ -1030,7 +1020,7 @@ namespace binfilter {//STRIP009
 /*N*/ 	rOs << pClose;
 /*N*/ 	return rOs;
 /*N*/ }
-/*N*/ 
+/*N*/
 /*N*/ SvStream &SwHolePortion::operator<<( SvStream &rOs ) const //$ ostream
 /*N*/ {
 /*N*/ 	CONSTCHAR( pTxt, " {HOLE" );
@@ -1039,7 +1029,7 @@ namespace binfilter {//STRIP009
 /*N*/ 	rOs << pClose;
 /*N*/ 	return rOs;
 /*N*/ }
-/*N*/ 
+/*N*/
 /*N*/ SvStream &SwQuoVadisPortion::operator<<( SvStream &rOs ) const //$ ostream
 /*N*/ {
 /*N*/ 	CONSTCHAR( pTxt, " {QUOVADIS" );
@@ -1048,7 +1038,7 @@ namespace binfilter {//STRIP009
 /*N*/ 	rOs << pClose;
 /*N*/ 	return rOs;
 /*N*/ }
-/*N*/ 
+/*N*/
 /*N*/ SvStream &SwErgoSumPortion::operator<<( SvStream &rOs ) const //$ ostream
 /*N*/ {
 /*N*/ 	CONSTCHAR( pTxt, " {ERGOSUM" );
@@ -1057,7 +1047,7 @@ namespace binfilter {//STRIP009
 /*N*/ 	rOs << pClose;
 /*N*/ 	return rOs;
 /*N*/ }
-/*N*/ 
+/*N*/
 /*N*/ SvStream &operator<<( SvStream &rOs, const SwTxtSizeInfo &rInf ) //$ ostream
 /*N*/ {
 /*N*/ 	CONSTCHAR( pTxt, " {SIZEINFO:" );
@@ -1068,7 +1058,7 @@ namespace binfilter {//STRIP009
 /*N*/ 	rOs << pClose;
 /*N*/ 	return rOs;
 /*N*/ }
-/*N*/ 
+/*N*/
 /*N*/ SvStream &SwDropPortion::operator<<( SvStream &rOs ) const //$ ostream
 /*N*/ {
 /*N*/ 	CONSTCHAR( pTxt, " {DROP:" );
