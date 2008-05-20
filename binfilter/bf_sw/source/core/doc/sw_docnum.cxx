@@ -7,7 +7,7 @@
  * OpenOffice.org - a multi-platform office productivity suite
  *
  * $RCSfile: sw_docnum.cxx,v $
- * $Revision: 1.11 $
+ * $Revision: 1.12 $
  *
  * This file is part of OpenOffice.org.
  *
@@ -54,12 +54,6 @@
 #endif
 #ifndef _NDTXT_HXX
 #include <ndtxt.hxx>
-#endif
-#ifndef _UNDOBJ_HXX
-#include <undobj.hxx>
-#endif
-#ifndef _SWUNDO_HXX
-#include <swundo.hxx>
 #endif
 #ifndef _PARATR_HXX
 #include <paratr.hxx>
@@ -365,16 +359,6 @@ namespace binfilter {
 /*N*/ void SwDoc::SetNumRule( const SwPaM& rPam, const SwNumRule& rRule,
 /*N*/ 						sal_Bool bSetAbsLSpace, sal_Bool bCalledFromShell )
 /*N*/ {
-/*N*/ 	SwUndoInsNum* pUndo;
-/*N*/ 	if( DoesUndo() )
-/*N*/ 	{
-/*N*/ 		ClearRedo();
-/*N*/ 		StartUndo( UNDO_START );		// Klammerung fuer die Attribute!
-/*N*/ 		AppendUndo( pUndo = new SwUndoInsNum( rPam, rRule ) );
-/*N*/ 	}
-/*N*/ 	else
-/*N*/ 		pUndo = 0;
-/*N*/
 /*N*/ 	ULONG nPamPos = rPam.Start()->nNode.GetIndex();
 /*N*/ 	BOOL bSetItem = TRUE;
 /*N*/ 	SwNumRule* pNew = FindNumRulePtr( rRule.GetName() );
@@ -409,26 +393,9 @@ namespace binfilter {
 /*N*/
 /*N*/ 	if( bSetItem )
 /*N*/ 	{
-/*N*/ #ifndef NUM_RELSPACE
-/*N*/ 		if( pUndo )
-/*N*/ 		{
-/*N*/ 			SwHistory* pHist = pUndo->GetHistory();
-/*N*/ 			SwCntntNode* pCNd;
-/*N*/ 			for( ULONG n = nPamPos, nEndPos = rPam.End()->nNode.GetIndex();
-/*N*/ 					n <= nEndPos; ++n )
-/*N*/ 				if( 0 != ( pCNd = GetNodes()[ n ]->GetCntntNode() ))
-/*N*/ 				{
-/*N*/ 					const SfxPoolItem& rItem = pCNd->GetAttr( RES_LR_SPACE );
-/*N*/ 					pHist->Add( &rItem, &rItem, n );
-/*N*/ 				}
-/*N*/ 			pUndo->SetLRSpaceEndPos();
-/*N*/ 		}
-/*N*/ #endif
 /*N*/ 		Insert( rPam, SwNumRuleItem( pNew->GetName() ) );
 /*N*/ 	}
 /*N*/ 	UpdateNumRule( pNew->GetName(), nPamPos );
-/*N*/
-/*N*/ 	EndUndo( UNDO_END );
 /*N*/
 /*N*/ 	SetModified();
 /*N*/ }
@@ -445,11 +412,6 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 	SwTxtNode* pTxtNd = rPos.nNode.GetNode().
 /*N*/ 	if( pTxtNd && pTxtNd->GetNum() && 0 != ( pRule = pTxtNd->GetNumRule() )
 /*N*/ 		&& nStt != pTxtNd->GetNum()->GetSetValue() )
 /*N*/ 	{
-/*N*/ 		if( DoesUndo() )
-/*N*/ 		{
-/*N*/ 			ClearRedo();
-/*N*/ 			AppendUndo( new SwUndoNumRuleStart( rPos, nStt ));
-/*N*/ 		}
 /*N*/ 		SwNodeNum aNum( *pTxtNd->GetNum() );
 /*N*/ 		aNum.SetSetValue( nStt );
 /*N*/ 		pTxtNd->UpdateNum( aNum );
@@ -477,17 +439,8 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 	SwTxtNode* pTxtNd = rPos.nNode.GetNode().
 /*N*/ 	SwNumRule* pRule = FindNumRulePtr( rRule.GetName() );
 /*N*/ 	if( pRule )
 /*N*/ 	{
-/*N*/ 		SwUndoInsNum* pUndo = 0;
 /*N*/ 		SwHistory* pHistory = 0;
-/*N*/ 		if( DoesUndo() && pRule->IsAutoRule() )
-/*N*/ 		{
-/*?*/ 		DBG_BF_ASSERT(0, "STRIP"); //STRIP001 	ClearRedo();
-/*?*/ 			AppendUndo( pUndo );
-/*N*/ 		}
 /*N*/ 		::binfilter::lcl_ChgNumRule( *this, rRule, pHistory );
-/*N*/
-/*N*/ 		if( pUndo )
-/*?*/ 			{DBG_BF_ASSERT(0, "STRIP"); }//STRIP001 pUndo->SetLRSpaceEndPos();
 /*N*/
 /*N*/ 		SetModified();
 /*N*/ 	}
@@ -541,11 +494,6 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 	SwTxtNode* pTxtNd = rPos.nNode.GetNode().
 /*N*/ 	}
 /*N*/
 /*N*/   signed char nDiff = bDown ? 1 : -1;
-/*N*/ 	if( DoesUndo() )
-/*N*/ 	{
-/*N*/ 		ClearRedo();
-/*N*/ 		AppendUndo( new SwUndoNumUpDown( rPam, nDiff ) );
-/*N*/ 	}
 /*N*/
 /*N*/ 	BOOL bRet = FALSE;
 /*N*/ 	String sNumRule;
@@ -694,14 +642,14 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 	SwTxtNode* pTxtNd = rPos.nNode.GetNode().
 /*?*/ 		while( nNmLen-- && '0' <= aName.GetChar( nNmLen ) &&
 /*?*/ 						   '9' >= aName.GetChar( nNmLen ) )
 /*?*/ 			; //nop
-/*?*/ 
+/*?*/
 /*?*/ 		if( ++nNmLen < aName.Len() )
 /*?*/ 		{
 /*?*/ 			aName.Erase( nNmLen );
 /*?*/ 			pChkStr = 0;
 /*?*/ 		}
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	const SwNumRule* pNumRule;
         USHORT n=0;
 /*N*/ 	for( n = 0; n < pNumRuleTbl->Count(); ++n )
@@ -718,7 +666,7 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 	SwTxtNode* pTxtNd = rPos.nNode.GetNode().
 /*N*/ 			if( pChkStr && pChkStr->Equals( rNm ) )
 /*N*/ 				pChkStr = 0;
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 	if( !pChkStr )
 /*N*/ 	{
 /*N*/ 		// alle Nummern entsprechend geflag, also bestimme die richtige Nummer
@@ -732,7 +680,7 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 	SwTxtNode* pTxtNd = rPos.nNode.GetNode().
 /*N*/ 					++nNum, nTmp >>= 1;
 /*N*/ 				break;
 /*N*/ 			}
-/*N*/ 
+/*N*/
 /*N*/ 	}
 /*N*/ 	delete [] pSetFlags;
 /*N*/ 	if( pChkStr && pChkStr->Len() )
@@ -746,7 +694,7 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 	SwTxtNode* pTxtNd = rPos.nNode.GetNode().
 /*N*/ 	ULONG nNdIdx = rNd.GetIndex();
 /*N*/ 	if( nNdIdx > rNds.GetEndOfExtras().GetIndex() )
 /*N*/ 		return rNds.GetEndOfContent().FindStartNode();
-/*N*/ 
+/*N*/
 /*N*/ 	const SwNode* pSttNd = rNds[ ULONG(0) ]->FindStartNode();
 /*N*/ 	const SwNode* pNd = rNd.FindStartNode();
 /*N*/ 	while( pSttNd != pNd->FindStartNode()->FindStartNode() )
@@ -762,17 +710,17 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 	SwTxtNode* pTxtNd = rPos.nNode.GetNode().
 /*N*/ 		if( rNmTbl[ n ]->IsInvalidRule() )
 /*N*/ 			UpdateNumRule( rNmTbl[ n ]->GetName(), ULONG_MAX );
 /*N*/ }
-/*N*/ 
+/*N*/
 /*N*/ void SwDoc::UpdateNumRule( const String& rName, ULONG nUpdPos )
 /*N*/ {
 /*N*/ 	SwNumRuleInfo aUpd( rName );
 /*N*/ 	aUpd.MakeList( *this );
-/*N*/ 
+/*N*/
 /*N*/ 	if( ULONG_MAX == nUpdPos )
 /*N*/ 		nUpdPos = 0;
 /*N*/ 	else
 /*N*/ 		aUpd.GetList().SearchKey( nUpdPos, &nUpdPos );
-/*N*/ 
+/*N*/
 /*N*/ 	SwNumRule* pRule = FindNumRulePtr( rName );
 /*N*/ 	if( nUpdPos < aUpd.GetList().Count() )
 /*N*/ 	{
@@ -780,10 +728,10 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 	SwTxtNode* pTxtNd = rPos.nNode.GetNode().
 /*N*/ 										// TRUE: starte mit NumFmt Start
 /*N*/ 		USHORT nNumVal = 0;
 /*N*/ 		SwNodeNum aNum( 0 );
-/*N*/ 
+/*N*/
 /*N*/ 		if( pRule->IsContinusNum() )
 /*?*/ 			nNumVal = pRule->Get( 0 ).GetStart();
-/*N*/ 
+/*N*/
 /*N*/ 		SwTxtNode* pStt = aUpd.GetList().GetObject( nUpdPos );
 /*N*/ 		SwTxtNode* pPrev = nUpdPos ? aUpd.GetList().GetObject( nUpdPos-1 ) : 0;
 /*N*/ 		const SwNode* pBaseNd = lcl_FindBaseNode( *pStt );
@@ -803,7 +751,7 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 	SwTxtNode* pTxtNd = rPos.nNode.GetNode().
 /*N*/ 						pPrev = aUpd.GetList().GetObject( nArrPos );
 /*N*/ 						if( lcl_FindBaseNode( *pPrev ) != pBaseNd )
 /*N*/ 							break;
-/*N*/ 
+/*N*/
 /*N*/ 						if( 0 != ( pPrevNdNum = pPrev->GetNum() ))
 /*N*/ 						{
 /*N*/ 							// uebergeordnete Ebene
@@ -816,12 +764,12 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 	SwTxtNode* pTxtNd = rPos.nNode.GetNode().
 /*N*/ 							if( nSrchLvl == (pPrevNdNum->GetLevel() &~ NO_NUMLEVEL)
 /*N*/ 								&& !( pPrevNdNum->GetLevel() & NO_NUMLEVEL ))
 /*N*/ 								break;
-/*N*/ 
+/*N*/
 /*N*/ 							pPrevNdNum = 0;
 /*N*/ 						}
 /*N*/ 					}
 /*N*/ 				}
-/*N*/ 
+/*N*/
 /*N*/ 				if( pPrevNdNum )
 /*N*/ 				{
 /*N*/ 					aNum = *pPrevNdNum;
@@ -835,12 +783,12 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 	SwTxtNode* pTxtNd = rPos.nNode.GetNode().
 /*N*/                 nInitLevels |= ( 1 << nSubLvl );
 /*N*/ 			nNumVal = aNum.GetLevelVal()[ GetRealLevel( aNum.GetLevel() ) ];
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		const SwNode* pOutlNd = 0;
 /*N*/ 		for( ; nUpdPos < aUpd.GetList().Count(); ++nUpdPos )
 /*N*/ 		{
 /*N*/ 			pStt = aUpd.GetList().GetObject( nUpdPos );
-/*N*/ 
+/*N*/
 /*N*/ 			const SwNode* pTmpBaseNd = lcl_FindBaseNode( *pStt );
 /*N*/ 			if( pTmpBaseNd != pBaseNd )
 /*N*/ 			{
@@ -849,7 +797,7 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 	SwTxtNode* pTxtNd = rPos.nNode.GetNode().
 /*?*/ 						(MAXLEVEL) * sizeof( aNum.GetLevelVal()[0]) );
 /*?*/ 				pBaseNd = pTmpBaseNd;
 /*N*/ 			}
-/*N*/ 
+/*N*/
 /*N*/ 			BYTE nLevel = aNum.GetLevel();
 /*N*/ 			BYTE nNdOldLvl = MAXLEVEL;
 /*N*/ 			if( pStt->GetNum() )
@@ -879,12 +827,12 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 	SwTxtNode* pTxtNd = rPos.nNode.GetNode().
 /*N*/                         nInitLevels |= 1;
 /*N*/ 				}
 /*N*/ 			}
-/*N*/ 
+/*N*/
 /*N*/ 			if( NO_NUMLEVEL & nLevel )		// NoNum mit Ebene
 /*N*/ 			{
 /*N*/ 				BYTE nPrevLvl = GetRealLevel( aNum.GetLevel() ),
 /*N*/ 					nCurrLvl = GetRealLevel( nLevel );
-/*N*/ 
+/*N*/
 /*N*/ 				if( nPrevLvl < nCurrLvl )
 /*N*/ 				{
 /*N*/ 					if( !(nInitLevels & ( 1 << nPrevLvl )) )
@@ -892,7 +840,7 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 	SwTxtNode* pTxtNd = rPos.nNode.GetNode().
 /*N*/ 					for( ; nPrevLvl < nCurrLvl; ++nPrevLvl )
 /*?*/ 						nInitLevels |= ( 1 << nPrevLvl );
 /*N*/ 				}
-/*N*/ 
+/*N*/
 /*N*/ 				aNum.SetLevel( nLevel );
 /*N*/ 				pStt->UpdateNum( aNum );
 /*N*/ 			}
@@ -902,7 +850,7 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 	SwTxtNode* pTxtNd = rPos.nNode.GetNode().
 /*N*/ 				const SwNumFmt* pNumFmt = pRule->GetNumFmt( GetRealLevel( nLevel ));
 /*N*/ 				if( pNumFmt && SVX_NUM_BITMAP == pNumFmt->GetNumberingType() )
 /*?*/ 					pNumFmt->GetGraphic();
-/*N*/ 
+/*N*/
 /*N*/ 				if( pRule->IsContinusNum() )
 /*N*/ 				{
 /*N*/ 					if( !(nInitLevels & 1) &&
@@ -924,7 +872,7 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 	SwTxtNode* pTxtNd = rPos.nNode.GetNode().
 /*N*/ 						// 	aber Stufe 1 -> 2: 1.1 -> 1.1.1 !!, nur 0.1 -> 0.0.1
 /*N*/ 						if( !(nInitLevels & ( 1 << nPrevLvl )) )
 /*N*/ 							++nPrevLvl;
-/*N*/ 
+/*N*/
 /*N*/ 						for( int ii = nPrevLvl; ii < nLevel; ++ii )
 /*N*/ 						{
 /*N*/ 							nInitLevels &= ~( 1 << ii );
@@ -946,7 +894,7 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 	SwTxtNode* pTxtNd = rPos.nNode.GetNode().
 /*N*/ 				}
 /*N*/ 				nInitLevels &= ~( 1 << nLevel );
 /*N*/ 				aNum.SetLevel( nLevel );
-/*N*/ 
+/*N*/
 /*N*/                 // OD 10.12.2002 #106111# - reset numbers of all sublevels and
 /*N*/                 // note in <nInitLevels> that numbering of all sublevels have
 /*N*/                 // to be restarted.
@@ -955,10 +903,10 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 	SwTxtNode* pTxtNd = rPos.nNode.GetNode().
 /*N*/                     aNum.GetLevelVal()[ nSubLvl ] = 0;
 /*N*/                     nInitLevels |= ( 1 << nSubLvl );
 /*N*/                 }
-/*N*/ 
+/*N*/
 /*N*/ 				pStt->UpdateNum( aNum );
 /*N*/ 			}
-/*N*/ 
+/*N*/
 /*N*/ //FEATURE::CONDCOLL
 /*N*/ 			BOOL bCheck = TRUE;
 /*N*/ 			if( RES_CONDTXTFMTCOLL == pStt->GetFmtColl()->Which() )
@@ -981,9 +929,9 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 	SwTxtNode* pTxtNd = rPos.nNode.GetNode().
 /*N*/ 			else if( !pOutlNd && NO_NUMBERING !=
 /*N*/ 					((SwTxtFmtColl*)pStt->GetFmtColl())->GetOutlineLevel() )
 /*N*/ 				pOutlNd = pStt;
-/*N*/ 
+/*N*/
 /*N*/ //FEATURE::CONDCOLL
-/*N*/ 
+/*N*/
 /*N*/ #ifndef NUM_RELSPACE
 /*N*/ 			// hat sich eine Level - Aenderung ergeben, so setze jetzt die
 /*N*/ 			// gueltigen Einzuege
@@ -992,15 +940,15 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 	SwTxtNode* pTxtNd = rPos.nNode.GetNode().
 /*N*/ 			{
 /*N*/ 				SvxLRSpaceItem aLR( ((SvxLRSpaceItem&)pStt->SwCntntNode::GetAttr(
 /*N*/ 									RES_LR_SPACE )) );
-/*N*/ 
+/*N*/
 /*N*/ 				const SwNumFmt& rNFmt = pRule->Get( GetRealLevel( nLevel ));
-/*N*/ 
+/*N*/
 /*N*/ 				// ohne Nummer immer ohne FirstLineOffset!!!!
 /*N*/ 				short nFOfst = rNFmt.GetFirstLineOffset();
 /*N*/ 				if( nLevel & NO_NUMLEVEL ) nFOfst = 0;
 /*N*/ 				aLR.SetTxtFirstLineOfstValue( nFOfst );
 /*N*/ 				aLR.SetTxtLeft( rNFmt.GetAbsLSpace() );
-/*N*/ 
+/*N*/
 /*N*/ 				pStt->SwCntntNode::SetAttr( aLR );
 /*N*/ 			}
 /*N*/ 			// Flag immer loeschen!
@@ -1012,7 +960,7 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 	SwTxtNode* pTxtNd = rPos.nNode.GetNode().
 /*N*/ 		if( pOutlNd )
 /*?*/ 			GetNodes().UpdtOutlineIdx( *pOutlNd );
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	ASSERT( pRule, "die NumRule sollte schon vorhanden sein!" );
 /*N*/ 	if( pRule )
 /*N*/ 		pRule->SetInvalidRule( FALSE );
