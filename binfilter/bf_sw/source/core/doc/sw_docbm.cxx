@@ -7,7 +7,7 @@
  * OpenOffice.org - a multi-platform office productivity suite
  *
  * $RCSfile: sw_docbm.cxx,v $
- * $Revision: 1.12 $
+ * $Revision: 1.13 $
  *
  * This file is part of OpenOffice.org.
  *
@@ -64,9 +64,6 @@
 #endif
 #ifndef _BOOKMRK_HXX
 #include <bookmrk.hxx>
-#endif
-#ifndef _UNDOBJ_HXX
-#include <undobj.hxx>
 #endif
 #ifndef _MVSAVE_HXX
 #include <mvsave.hxx>
@@ -133,16 +130,11 @@ namespace binfilter {
 /*N*/ 		if( rPaM.HasMark() )
 /*N*/ 			pBM->pPos2 = new SwPosition( *rPaM.GetMark() );
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	if( !pBookmarkTbl->Insert( pBM ) )
 /*?*/ 		delete pBM, pBM = 0;
 /*N*/ 	else
 /*N*/ 	{
-/*N*/ 		if( BOOKMARK == eMark && DoesUndo() )
-/*N*/ 		{
-/*N*/ 			ClearRedo();
-/*N*/ 			AppendUndo( new SwUndoInsBookmark( *pBM ));
-/*N*/ 		}
 /*N*/ 		if(UNO_BOOKMARK != eMark)
 /*N*/ 			SetModified();
 /*N*/ 	}
@@ -152,22 +144,18 @@ namespace binfilter {
 /*N*/ void SwDoc::DelBookmark(USHORT nPos)
 /*N*/ {
 /*N*/ 	SwBookmark *pBM = (*pBookmarkTbl)[nPos];
-/*N*/ 	if( DoesUndo() && !pBM->IsUNOMark())
-/*N*/ 	{
-/*?*/ 	DBG_BF_ASSERT(0, "STRIP"); //STRIP001 	ClearRedo();
-/*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/     // #108964# UNO bookmark don't contribute to the document state,
 /*N*/     // and hence changing them shouldn't set the document modified
 /*N*/     if( !pBM->IsUNOMark() )
 /*N*/ 		SetModified();
-/*N*/ 
+/*N*/
 /*N*/ 	pBookmarkTbl->Remove(nPos);
-/*N*/ 
+/*N*/
 /*N*/ 	SwServerObject* pServObj = pBM->GetObject();
 /*N*/ 	if( pServObj )			// dann aus der Liste entfernen
 /*?*/ 	{DBG_BF_ASSERT(0, "STRIP");} //STRIP001 	GetLinkManager().RemoveServer( pServObj );
-/*N*/ 
+/*N*/
 /*N*/ 	delete pBM;
 /*N*/ }
 
@@ -272,7 +260,7 @@ namespace binfilter {
 /*N*/ 	if( rStt.GetIndex() > rEnd.GetIndex() || ( rStt == rEnd &&
 /*N*/ 		(!pSttIdx || pSttIdx->GetIndex() >= pEndIdx->GetIndex())) )
 /*N*/ 		return;
-/*N*/ 
+/*N*/
 /*N*/ 	// kopiere alle Bookmarks, die im Move Bereich stehen in ein
 /*N*/ 	// Array, das alle Angaben auf die Position als Offset speichert.
 /*N*/ 	// Die neue Zuordung erfolgt nach dem Moven.
@@ -294,10 +282,10 @@ namespace binfilter {
 /*N*/ 			GreaterThan( *pBkmk->GetOtherPos(), rStt, pSttIdx ) &&
 /*N*/ 			Lower( *pBkmk->GetOtherPos(), rEnd, pEndIdx ))
 /*N*/ 			eType |= BKMK_POS_OTHER;
-/*N*/ 
+/*N*/
 /*N*/ 		if( BKMK_POS_NONE == eType )		// auf zum naechsten
 /*N*/ 			continue;
-/*N*/ 
+/*N*/
 /*N*/ 		if( pSaveBkmk )
 /*N*/ 		{
 /*N*/ 				// Besonderheit: komplett eingeschlossen? dann mitnehmen
@@ -309,7 +297,7 @@ namespace binfilter {
 /*N*/ 					pBkmk->GetOtherPos()->nNode == rEnd &&
 /*N*/ 					pBkmk->GetOtherPos()->nContent == *pEndIdx ) ) )
 /*N*/ 					eType = BKMK_POS_OTHER | BKMK_POS;
-/*N*/ 
+/*N*/
 /*N*/ 			SaveBookmark * pSBkmk = new SaveBookmark( eType, *pBkmk, rStt, pSttIdx );
 /*N*/ 			pSaveBkmk->C40_INSERT( SaveBookmark, pSBkmk, pSaveBkmk->Count() );
 /*N*/ 			pDoc->DelBookmark( nCnt-- );
@@ -344,7 +332,7 @@ namespace binfilter {
 /*N*/ 				xub_StrLen nTmp = bStt ? 0 : pCNd->Len();
 /*N*/ 				pPos->nContent.Assign( pCNd, nTmp );
 /*N*/ 			}
-/*N*/ 
+/*N*/
 /*N*/ 			// keine ungueltigen Selektionen zulassen!
 /*N*/ 			if( pBkmk->GetOtherPos() &&
 /*N*/ 				pBkmk->GetOtherPos()->nNode.GetNode().FindTableBoxStartNode() !=
@@ -354,13 +342,13 @@ namespace binfilter {
 /*N*/ 								? pBkmk->GetPos() : *pBkmk->GetOtherPos()  );
 /*N*/ 				String sNm( pBkmk->GetName() ), sShortNm( pBkmk->GetShortName() );
 /*N*/ 				KeyCode aKCode( pBkmk->GetKeyCode() );
-/*N*/ 
+/*N*/
 /*N*/ 				pDoc->DelBookmark( nCnt-- );
 /*N*/ 				pDoc->MakeBookmark( aPam, aKCode, sNm, sShortNm, BOOKMARK );
 /*N*/ 			}
 /*N*/ 		}
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	// kopiere alle Redlines, die im Move Bereich stehen in ein
 /*N*/ 	// Array, das alle Angaben auf die Position als Offset speichert.
 /*N*/ 	// Die neue Zuordung erfolgt nach dem Moven.
@@ -370,14 +358,14 @@ namespace binfilter {
 /*N*/ 		// liegt auf der Position ??
 /*N*/ 		int eType = BKMK_POS_NONE;
 /*N*/ 		SwRedline* pRedl = rTbl[ nCnt ];
-/*N*/ 
+/*N*/
 /*N*/ 		SwPosition *pRStt = &pRedl->GetBound(TRUE),
 /*N*/ 				   *pREnd = &pRedl->GetBound(FALSE);
 /*N*/ 		if( *pRStt > *pREnd )
 /*N*/ 		{
 /*N*/ 			SwPosition *pTmp = pRStt; pRStt = pREnd, pREnd = pTmp;
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		if( Greater( *pRStt, rStt, pSttIdx ) && Lower( *pRStt, rEnd, pEndIdx ))
 /*N*/ 		{
 /*N*/ 			pRStt->nNode = rEnd;
@@ -454,7 +442,7 @@ namespace binfilter {
 /*N*/ 		ULONG nTypeCount;
 /*N*/ 		} TYPECOUNT;
 /*N*/ 	xub_StrLen nContent;
-/*N*/ 
+/*N*/
 /*N*/ public:
 /*N*/ 	_SwSaveTypeCountContent() { TYPECOUNT.nTypeCount = 0; nContent = 0; }
 /*N*/ 	_SwSaveTypeCountContent( USHORT nType )
@@ -472,20 +460,20 @@ namespace binfilter {
 /*N*/ 		rArr.Insert( TYPECOUNT.nTypeCount, rArr.Count() );
 /*N*/ 		rArr.Insert( nContent, rArr.Count() );
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	void SetType( USHORT n )		{ TYPECOUNT.TC.nType = n; }
 /*N*/ 	USHORT GetType() const 			{ return TYPECOUNT.TC.nType; }
 /*N*/ 	void IncType() 	 				{ ++TYPECOUNT.TC.nType; }
 /*N*/ 	void DecType() 	 				{ --TYPECOUNT.TC.nType; }
-/*N*/ 
+/*N*/
 /*N*/ 	void SetCount( USHORT n ) 		{ TYPECOUNT.TC.nCount = n; }
 /*N*/ 	USHORT GetCount() const 		{ return TYPECOUNT.TC.nCount; }
 /*N*/ 	USHORT IncCount()  				{ return ++TYPECOUNT.TC.nCount; }
 /*N*/ 	USHORT DecCount()  				{ return --TYPECOUNT.TC.nCount; }
-/*N*/ 
+/*N*/
 /*N*/ 	void SetTypeAndCount( USHORT nT, USHORT nC )
 /*N*/ 		{ TYPECOUNT.TC.nCount = nC; TYPECOUNT.TC.nType = nT; }
-/*N*/ 
+/*N*/
 /*N*/ 	void SetContent( xub_StrLen n )		{ nContent = n; }
 /*N*/ 	xub_StrLen GetContent() const		{ return nContent; }
 /*N*/ };
@@ -500,7 +488,7 @@ namespace binfilter {
 /*N*/ 						( *rPam.GetPoint() < *rPam.GetMark()
 /*N*/ 							? rPam.GetPoint() == &rPam.GetBound()
 /*N*/ 							: rPam.GetMark() == &rPam.GetBound());
-/*N*/ 
+/*N*/
 /*N*/ 	const SwPosition* pPos = &rPam.GetBound( TRUE );
 /*N*/ 	if( pPos->nNode.GetIndex() == nNode &&
 /*N*/ 		( bBound1IsStart ? pPos->nContent.GetIndex() < nCntnt
@@ -509,7 +497,7 @@ namespace binfilter {
 /*N*/ 		rSave.SetContent( pPos->nContent.GetIndex() );
 /*N*/ 		rSave.Add( rSaveArr );
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	pPos = &rPam.GetBound( FALSE );
 /*N*/ 	if( pPos->nNode.GetIndex() == nNode &&
 /*N*/ 		( (bBound1IsStart && bChkSelDirection)
@@ -530,7 +518,7 @@ namespace binfilter {
 /*N*/  	// 1. Bookmarks
 /*N*/ 	_SwSaveTypeCountContent aSave;
 /*N*/ 	aSave.SetTypeAndCount( 0x8000, 0 );
-/*N*/ 
+/*N*/
 /*N*/ 	const SwBookmarks& rBkmks = pDoc->GetBookmarks();
 /*N*/ 	for( ; aSave.GetCount() < rBkmks.Count(); aSave.IncCount() )
 /*N*/ 	{
@@ -541,7 +529,7 @@ namespace binfilter {
 /*N*/ 			aSave.SetContent( pBkmk->GetPos().nContent.GetIndex() );
 /*N*/ 			aSave.Add( rSaveArr );
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		if( pBkmk->GetOtherPos() && pBkmk->GetOtherPos()->nNode.GetIndex() ==
 /*N*/ 			nNode && pBkmk->GetOtherPos()->nContent.GetIndex() < nCntnt )
 /*N*/ 		{
@@ -551,7 +539,7 @@ namespace binfilter {
 /*N*/ 			aSave.DecType();
 /*N*/ 		}
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	// 2. Redlines
 /*N*/ 	aSave.SetTypeAndCount( 0x1000, 0 );
 /*N*/ 	const SwRedlineTbl& rRedlTbl = pDoc->GetRedlineTbl();
@@ -566,7 +554,7 @@ namespace binfilter {
 /*N*/ 			aSave.Add( rSaveArr );
 /*N*/ 			aSave.DecType();
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		if( pRdl->HasMark() &&
 /*N*/ 			pRdl->GetMark()->nNode.GetIndex() == nNode &&
 /*N*/ 			pRdl->GetMark()->nContent.GetIndex() < nCntnt )
@@ -575,14 +563,14 @@ namespace binfilter {
 /*N*/ 			aSave.Add( rSaveArr );
 /*N*/ 		}
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	// 4. Absatzgebundene Objekte
 /*N*/ 	{
 /*N*/ 		SwCntntNode *pNode = pDoc->GetNodes()[nNode]->GetCntntNode();
 /*N*/ 		if( pNode )
 /*N*/ 		{
 /*N*/ 			const SwPosition* pAPos;
-/*N*/ 
+/*N*/
 /*N*/ 			SwFrm* pFrm = pNode->GetFrm();
 /*N*/ #if OSL_DEBUG_LEVEL > 1
 /*N*/ 			static BOOL bViaDoc = FALSE;
@@ -605,7 +593,7 @@ namespace binfilter {
 /*N*/ 						{
 /*N*/ 							aSave.SetType( 0x2000 );
 /*N*/ 							aSave.SetContent( pAPos->nContent.GetIndex() );
-/*N*/ 
+/*N*/
 /*N*/ 							ASSERT( nNode == pAPos->nNode.GetIndex(),
 /*N*/ 									"_SaveCntntIdx: Wrong Node-Index" );
 /*N*/ 							if( FLY_AUTO_CNTNT == rAnchor.GetAnchorId() )
@@ -641,7 +629,7 @@ namespace binfilter {
 /*N*/ 					if ( RES_FLYFRMFMT != pFrmFmt->Which() &&
 /*N*/ 							RES_DRAWFRMFMT != pFrmFmt->Which() )
 /*N*/ 						continue;
-/*N*/ 
+/*N*/
 /*N*/ 					const SwFmtAnchor& rAnchor = pFrmFmt->GetAnchor();
 /*N*/ 					if( ( FLY_AT_CNTNT == rAnchor.GetAnchorId() ||
 /*N*/ 							FLY_AUTO_CNTNT == rAnchor.GetAnchorId() ) &&
@@ -681,13 +669,13 @@ namespace binfilter {
 /*N*/ 					aSave.IncCount();
 /*N*/ 				} while ( (_pStkCrsr != 0 ) &&
 /*N*/ 					((_pStkCrsr=(SwPaM *)_pStkCrsr->GetNext()) != PCURSH->GetStkCrsr()) );
-/*N*/ 
+/*N*/
 /*N*/ 				FOREACHPAM_START( PCURSH->_GetCrsr() )
 /*N*/ 					::binfilter::_ChkPaM( rSaveArr, nNode, nCntnt, *PCURCRSR,
 /*N*/ 								aSave, FALSE );
 /*N*/ 					aSave.IncCount();
 /*N*/ 				FOREACHPAM_END()
-/*N*/ 
+/*N*/
 /*N*/ 			FOREACHSHELL_END( pShell )
 /*N*/ 		}
 /*N*/ 	}
@@ -701,7 +689,7 @@ namespace binfilter {
 /*N*/ 				::binfilter::_ChkPaM( rSaveArr, nNode, nCntnt, *PCURCRSR, aSave, FALSE );
 /*N*/ 				aSave.IncCount();
 /*N*/ 			FOREACHPAM_END()
-/*N*/ 
+/*N*/
 /*N*/ 			SwUnoTableCrsr* pUnoTblCrsr = (SwUnoTableCrsr*)*rTbl[ n ];
 /*N*/ 			if( pUnoTblCrsr )
 /*N*/ 			{
@@ -768,7 +756,7 @@ namespace binfilter {
 /*N*/ 				pFrmFmt->SwModify::Modify( pAnchor, pAnchor );
 /*N*/ 			}
 /*N*/ 			break;
-/*N*/ 
+/*N*/
 /*N*/ 		case 0x0800:
 /*N*/ 		case 0x0801:
 /*N*/ 			{
@@ -789,10 +777,10 @@ namespace binfilter {
 /*N*/ 							++nCnt;
 /*N*/ 						} while ( (_pStkCrsr != 0 ) &&
 /*N*/ 							((_pStkCrsr=(SwPaM *)_pStkCrsr->GetNext()) != PCURSH->GetStkCrsr()) );
-/*N*/ 
+/*N*/
 /*N*/ 						if( pPos )
 /*N*/ 							break;
-/*N*/ 
+/*N*/
 /*N*/ 						FOREACHPAM_START( PCURSH->_GetCrsr() )
 /*N*/ 							if( aSave.GetCount() == nCnt )
 /*N*/ 							{
@@ -804,12 +792,12 @@ namespace binfilter {
 /*N*/ 						FOREACHPAM_END()
 /*N*/ 						if( pPos )
 /*N*/ 							break;
-/*N*/ 
+/*N*/
 /*N*/ 					FOREACHSHELL_END( pShell )
 /*N*/ 				}
 /*N*/ 			}
 /*N*/ 			break;
-/*N*/ 
+/*N*/
 /*N*/ 		case 0x0400:
 /*N*/ 		case 0x0401:
 /*N*/ 			{
@@ -828,7 +816,7 @@ namespace binfilter {
 /*N*/ 					FOREACHPAM_END()
 /*N*/ 					if( pPos )
 /*N*/ 						break;
-/*N*/ 
+/*N*/
 /*N*/ 					SwUnoTableCrsr* pUnoTblCrsr = (SwUnoTableCrsr*)*rTbl[ i ];
 /*N*/ 					if( pUnoTblCrsr )
 /*N*/ 					{
@@ -848,7 +836,7 @@ namespace binfilter {
 /*N*/ 			}
 /*N*/ 			break;
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		if( pPos )
 /*N*/ 		{
 /*N*/ 			pPos->nNode = *pCNd;
