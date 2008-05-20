@@ -7,7 +7,7 @@
  * OpenOffice.org - a multi-platform office productivity suite
  *
  * $RCSfile: sw_docnew.cxx,v $
- * $Revision: 1.12 $
+ * $Revision: 1.13 $
  *
  * This file is part of OpenOffice.org.
  *
@@ -170,7 +170,7 @@
 #endif
 
 #ifndef _LEGACYBINFILTERMGR_HXX
-#include <legacysmgr/legacy_binfilters_smgr.hxx>	//STRIP002 
+#include <legacysmgr/legacy_binfilters_smgr.hxx>	//STRIP002
 #endif
 
 namespace binfilter {
@@ -208,7 +208,6 @@ const sal_Char __FAR_DATA sGrfCollStr[] = "Graphikformatvorlage";
 /*N*/ SwDoc::SwDoc() :
 /*N*/ 	aAttrPool( this ),
 /*N*/ 	aNodes( this ),
-/*N*/ 	aUndoNodes( this ),
 /*N*/ 	pFrmFmtTbl( new SwFrmFmts() ),
 /*N*/ 	pCharFmtTbl( new SwCharFmts() ),
 /*N*/ 	pSpzFrmFmtTbl( new SwSpzFrmFmts() ),
@@ -228,15 +227,10 @@ const sal_Char __FAR_DATA sGrfCollStr[] = "Graphikformatvorlage";
 /*N*/ 	pDefTOXBases( new SwDefTOXBase_Impl() ),
 /*N*/ 	nLinkCt( 0 ),
 /*N*/ 	pGlossaryDoc( 0 ),
-/*N*/ 	nUndoPos( 0 ),
-/*N*/ 	nUndoSavePos( 0 ),
-/*N*/ 	nUndoCnt( 0 ),
-/*N*/ 	nUndoSttEnd( 0 ),
 /*N*/ 	pOutlineRule( 0 ),
 /*N*/ 	pLayout( 0 ),					// Rootframe des spezifischen Layouts.
 /*N*/ 	pPrt( 0 ),
 /*N*/     pPrtData( 0 ),
-/*N*/ 	pUndos( new SwUndos( 0, 20 ) ),
 /*N*/ 	pExtInputRing( 0 ),
 /*N*/ 	pLayouter( 0 ),
 /*N*/     pLayoutCache( 0 ),
@@ -270,17 +264,15 @@ const sal_Char __FAR_DATA sGrfCollStr[] = "Graphikformatvorlage";
 /*N*/ 	bReadlineChecked(sal_False)
 /*N*/ {
 /*N*/ 	RTL_LOGFILE_CONTEXT_AUTHOR( aLog, "SW", "JP93722",  "SwDoc::SwDoc" );
-/*N*/ 
+/*N*/
 /*N*/ 	bGlossDoc =
 /*N*/ 	bModified =
 /*N*/ 	bDtor =
-/*N*/ 	bUndo =
 /*N*/ 	bPageNums =
 /*N*/ 	bLoaded =
 /*N*/ 	bUpdateExpFld =
 /*N*/ 	bNewDoc =
 /*N*/ 	bCopyIsMove =
-/*N*/ 	bNoDrawUndoObj =
 /*N*/ 	bBrowseMode =
 /*N*/ 	bInReading =
 /*N*/ 	bUpdateTOX =
@@ -303,16 +295,15 @@ const sal_Char __FAR_DATA sGrfCollStr[] = "Graphikformatvorlage";
 /*N*/ 	bXMLExport =
 /*N*/ #endif
 /*N*/ 								FALSE;
-/*N*/ 
-/*N*/ 	bGroupUndo =
+/*N*/
 /*N*/ 	bNewFldLst =
 /*N*/ 	bVisibleLinks =
 /*N*/ 	bFrmBeepEnabled =
 /*N*/ 	bPurgeOLE =
 /*N*/ 								TRUE;
-/*N*/ 
+/*N*/
 /*N*/ 	pMacroTable = new SvxMacroTableDtor;
-/*N*/ 
+/*N*/
     /*
      * Builds and sets the virtual device
      */
@@ -331,52 +322,52 @@ const sal_Char __FAR_DATA sGrfCollStr[] = "Graphikformatvorlage";
 /*N*/ 	/* Formate */
 /*N*/ 	pFrmFmtTbl->Insert(pDfltFrmFmt, 0 );
 /*N*/ 	pCharFmtTbl->Insert(pDfltCharFmt, 0 );
-/*N*/ 
+/*N*/
 /*N*/ 	/* FmtColls */
 /*N*/ 	// TXT
 /*N*/ 	pTxtFmtCollTbl->Insert(pDfltTxtFmtColl, 0 );
 /*N*/ 	// aFtnInfo.SetFtnTxtColl(aDfltTxtFmtColl); // jetzt oben in der Liste
 /*N*/ 	// GRF
 /*N*/ 	pGrfFmtCollTbl->Insert(pDfltGrfFmtColl, 0 );
-/*N*/ 
+/*N*/
 /*N*/ 	// PageDesc, EmptyPageFmt und ColumnFmt anlegen
 /*N*/ 	if ( !aPageDescs.Count() )
 /*N*/ 		GetPageDescFromPool( RES_POOLPAGE_STANDARD );
-/*N*/ 
+/*N*/
 /*N*/ 		//Leere Seite Einstellen.
 /*N*/ 	pEmptyPageFmt->SetAttr( SwFmtFrmSize( ATT_FIX_SIZE ) );
 /*N*/ 		//BodyFmt fuer Spalten Einstellen.
 /*N*/ 	pColumnContFmt->SetAttr( SwFmtFillOrder( ATT_LEFT_TO_RIGHT ) );
-/*N*/ 
+/*N*/
 /*N*/ 	_InitFieldTypes();
-/*N*/ 
+/*N*/
 /*N*/ 	// lege (fuer die Filter) eine Default-OullineNumRule an
 /*N*/ 	pOutlineRule = new SwNumRule( String::CreateFromAscii(
 /*N*/ 										SwNumRule::GetOutlineRuleName() ),
 /*N*/ 									OUTLINE_RULE );
-/*N*/ 
-/*N*/ 	new SwTxtNode( SwNodeIndex( aUndoNodes.GetEndOfContent() ), pDfltTxtFmtColl );
+/*N*/
+/*N*/   // new SwTxtNode( SwNodeIndex( aUndoNodes.GetEndOfContent() ), pDfltTxtFmtColl );
 /*N*/ 	new SwTxtNode( SwNodeIndex( aNodes.GetEndOfContent() ),
 /*N*/ 					GetTxtCollFromPool( RES_POOLCOLL_STANDARD ));
-/*N*/ 
+/*N*/
 /*N*/ 	// den eigenen IdleTimer setzen
 /*N*/ 	aIdleTimer.SetTimeout( 600 );
 /*N*/ 	aIdleTimer.SetTimeoutHdl( LINK(this, SwDoc, DoIdleJobs) );
 /*N*/ 	aIdleTimer.Start();
-/*N*/ 
+/*N*/
 /*N*/ 	// den CharTimer setzen
 /*N*/ 	aChartTimer.SetTimeout( 2000 );
 /*N*/ 	aChartTimer.SetTimeoutHdl( LINK( this, SwDoc, DoUpdateAllCharts ));
-/*N*/ 
+/*N*/
 /*N*/ 	aOLEModifiedTimer.SetTimeout( 1000 );
 /*N*/ 	aOLEModifiedTimer.SetTimeoutHdl( LINK( this, SwDoc, DoUpdateModifiedOLE ));
-/*N*/ 
+/*N*/
 /*N*/ 	// DBMgr anlegen
 /*N*/ 	pNewDBMgr = new SwNewDBMgr;
-/*N*/ 
+/*N*/
 /*N*/ 	// create TOXTypes
 /*N*/ 	ShellResource* pShellRes = ViewShell::GetShellRes();
-/*N*/ 
+/*N*/
 /*N*/ 	SwTOXType * pNew = new SwTOXType(TOX_CONTENT, 	pShellRes->aTOXContentName		  );
 /*N*/ 	pTOXTypes->Insert( pNew, pTOXTypes->Count() );
 /*N*/ 	pNew = new SwTOXType(TOX_INDEX, 				pShellRes->aTOXIndexName  );
@@ -391,7 +382,7 @@ const sal_Char __FAR_DATA sGrfCollStr[] = "Graphikformatvorlage";
 /*N*/ 	pTOXTypes->Insert( pNew, pTOXTypes->Count() );
 /*N*/ 	pNew = new SwTOXType(TOX_AUTHORITIES, 			pShellRes->aTOXAuthoritiesName   );
 /*N*/ 	pTOXTypes->Insert( pNew, pTOXTypes->Count() );
-/*N*/ 
+/*N*/
 /*N*/ 	ResetModified();
 /*N*/ }
 
@@ -414,61 +405,56 @@ const sal_Char __FAR_DATA sGrfCollStr[] = "Graphikformatvorlage";
 /*N*/     //!! same for SwFmtCharFmt
 /*N*/     SwFmtCharFmt aCharFmt(NULL);
 /*N*/     SetDefault(aCharFmt);
-/*N*/ 
+/*N*/
 /*N*/ 	aIdleTimer.Stop();	// den Idltimer abschalten
-/*N*/ 
+/*N*/
 /*N*/ 	delete pUnoCallBack, pUnoCallBack = 0;
 /*N*/ 	delete pURLStateChgd;
-/*N*/ 
+/*N*/
 /*N*/ 	delete pLayouter;
-/*N*/ 
+/*N*/
 /*N*/ 	// Undo-Benachrichtigung vom Draw abschalten
 /*N*/ 	if( pDrawModel )
 /*N*/ 	{
-/*N*/ 		DrawNotifyUndoHdl();
 /*N*/ 		ClrContourCache();
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	delete pPgPViewPrtData;
-/*N*/ 
-/*N*/ 	bUndo = FALSE;			// immer das Undo abschalten !!
+/*N*/
 /*N*/ 	// damit die Fussnotenattribute die Fussnotennodes in Frieden lassen.
 /*N*/ 	bDtor = TRUE;
-/*N*/ 
+/*N*/
 /*N*/ 	DELETEZ( pLayout );
 /*N*/ 	DELETEZ( pOutlineRule );
-/*N*/ 
+/*N*/
 /*N*/ 	delete pRedlineTbl;
 /*N*/ 	delete pUnoCrsrTbl;
 /*N*/ 	delete pAutoFmtRedlnComment;
-/*N*/ 
+/*N*/
 /*N*/ 	if( pUpdtFlds )
 /*N*/ 		delete pUpdtFlds;
-/*N*/ 
+/*N*/
 /*N*/ 	// die BaseLinks freigeben.
 /*N*/ 	{
 /*N*/ 		for( USHORT n = pLinkMgr->GetServers().Count(); n; )
 /*N*/ 			pLinkMgr->GetServers()[ --n ]->Closed();
-/*N*/ 
+/*N*/
 /*N*/ 		if( pLinkMgr->GetLinks().Count() )
 /*N*/ 			pLinkMgr->Remove( 0, pLinkMgr->GetLinks().Count() );
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	// die KapitelNummern / Nummern muessen vor den Vorlage geloescht werden
 /*N*/ 	// ansonsten wird noch staendig geupdatet !!!
 /*N*/ 	aNodes.pOutlineNds->Remove( USHORT(0), aNodes.pOutlineNds->Count() );
-/*N*/ 	aUndoNodes.pOutlineNds->Remove( USHORT(0), aUndoNodes.pOutlineNds->Count() );
-/*N*/ 
+/*N*/   // aUndoNodes.pOutlineNds->Remove( USHORT(0), aUndoNodes.pOutlineNds->Count() );
+/*N*/
 /*N*/ 	pFtnIdxs->Remove( USHORT(0), pFtnIdxs->Count() );
-/*N*/ 
-/*N*/ 	pUndos->DeleteAndDestroy( 0, pUndos->Count() );	//Es koennen in den Attributen noch
-/*N*/ 													//noch indizes angemeldet sein.
-/*N*/ 
+/*N*/
 /*N*/ 	// in den BookMarks sind Indizies auf den Content. Diese muessen vorm
 /*N*/ 	// loesche der Nodes geloescht werden.
 /*N*/ 	pBookmarkTbl->DeleteAndDestroy( 0, pBookmarkTbl->Count() );
 /*N*/ 	DELETEZ( pMacroTable );
-/*N*/ 
+/*N*/
 /*N*/ 	if( pExtInputRing )
 /*N*/ 	{
 /*?*/ 		Ring* pTmp = pExtInputRing;
@@ -495,31 +481,31 @@ const sal_Char __FAR_DATA sGrfCollStr[] = "Graphikformatvorlage";
 /*N*/ 	pFrmFmtTbl->ForEach( &lcl_DelFmtIndizes, this );
 /*N*/ 	pSpzFrmFmtTbl->ForEach( &lcl_DelFmtIndizes, this );
 /*N*/ 	((SwFrmFmts&)*pSectionFmtTbl).ForEach( &lcl_DelFmtIndizes, this );
-/*N*/ 
+/*N*/
 /*N*/ 	//Die Formate, die hier hinter stehen sind von den DefaultFormaten
 /*N*/ 	//abhaengig. Erst nach dem Loeschen der FmtIndizes weil der Inhalt von
 /*N*/ 	//Kopf-/Fussbereichen geloescht wird. Wenn dort noch Indizes von Flys
 /*N*/ 	//angemeldet sind gibts was an die Ohren.
 /*N*/ 	aPageDescs.DeleteAndDestroy( 0, aPageDescs.Count() );
-/*N*/ 
+/*N*/
 /*N*/ 	// Inhaltssections loeschen
 /*N*/ 	// nicht erst durch den SwNodes-DTOR, damit Formate
 /*N*/ 	// keine Abhaengigen mehr haben.
 /*N*/ 	aNodes.DelNodes( SwNodeIndex( aNodes ), aNodes.Count() );
-/*N*/ 	aUndoNodes.DelNodes( SwNodeIndex( aUndoNodes ), aUndoNodes.Count() );
-/*N*/ 
+/*N*/   // aUndoNodes.DelNodes( SwNodeIndex( aUndoNodes ), aUndoNodes.Count() );
+/*N*/
 /*N*/ 	// Formate loeschen, spaeter mal permanent machen.
-/*N*/ 
+/*N*/
 /*N*/ 	// Delete fuer Collections
 /*N*/ 	// damit die Abhaengigen wech sind
 /*N*/ 	SwTxtFmtColl *pFtnColl = pFtnInfo->GetFtnTxtColl();
 /*N*/ 	if ( pFtnColl ) pFtnColl->Remove(pFtnInfo);
 /*N*/ 	pFtnColl = pEndNoteInfo->GetFtnTxtColl();
 /*N*/ 	if ( pFtnColl ) pFtnColl->Remove(pEndNoteInfo);
-/*N*/ 
+/*N*/
 /*N*/ 	ASSERT( pDfltTxtFmtColl == (*pTxtFmtCollTbl)[0],
 /*N*/ 			"Default-Text-Collection muss immer am Anfang stehen" );
-/*N*/ 
+/*N*/
 /*N*/ 	// JP 27.01.98: opt.: ausgehend davon, das Standard als 2. im Array
 /*N*/ 	// 				steht, sollte das als letztes geloescht werden, damit
 /*N*/ 	//				die ganze Umhaengerei der Formate vermieden wird!
@@ -527,15 +513,15 @@ const sal_Char __FAR_DATA sGrfCollStr[] = "Graphikformatvorlage";
 /*N*/ 		pTxtFmtCollTbl->DeleteAndDestroy( 2, pTxtFmtCollTbl->Count()-2 );
 /*N*/ 	pTxtFmtCollTbl->DeleteAndDestroy( 1, pTxtFmtCollTbl->Count()-1 );
 /*N*/ 	delete pTxtFmtCollTbl;
-/*N*/ 
+/*N*/
 /*N*/ 	ASSERT( pDfltGrfFmtColl == (*pGrfFmtCollTbl)[0],
 /*N*/ 			"Default-Grf-Collection muss immer am Anfang stehen" );
-/*N*/ 
+/*N*/
 /*N*/ 	pGrfFmtCollTbl->DeleteAndDestroy( 1, pGrfFmtCollTbl->Count()-1 );
 /*N*/ // ergibt sich automatisch - kein _DEL Array!
 /*N*/ //	pGrfFmtCollTbl->Remove( 0, n );
 /*N*/ 	delete pGrfFmtCollTbl;
-/*N*/ 
+/*N*/
     /*
       * Defaultformate und DefaultFormatsammlungen (FmtColl)
      * sind an der Position 0 der jeweiligen Arrays eingetragen.
@@ -544,17 +530,17 @@ const sal_Char __FAR_DATA sGrfCollStr[] = "Graphikformatvorlage";
      */
 /*N*/ 	pFrmFmtTbl->Remove( 0 );
 /*N*/ 	pCharFmtTbl->Remove( 0 );
-/*N*/ 
+/*N*/
 /*N*/ 	// Delete fuer pPrt
 /*N*/ 	DELETEZ( pPrt );
 /*N*/ 	DELETEZ( pSwgInfo );
 /*N*/ 	DELETEZ( pNewDBMgr );
-/*N*/ 
+/*N*/
 /*N*/ 	// Alle Flys muessen vor dem Drawing Model zerstoert werden,
 /*N*/ 	// da Flys noch DrawContacts enthalten koennen, wenn wegen
 /*N*/ 	// eines Lesefehlers kein Layout aufgebaut wurde.
 /*N*/ 	pSpzFrmFmtTbl->DeleteAndDestroy( 0, pSpzFrmFmtTbl->Count() );
-/*N*/ 
+/*N*/
 /*N*/ 	//Erst jetzt das Model zerstoeren, die Zeichenobjekte - die ja auch
 /*N*/ 	//im Undo herumlungern - wollen noch ihre Attribute beim Model entfernen.
 /*N*/ 	//Ausserdem koennen vorher noch DrawContacts existieren.
@@ -562,7 +548,7 @@ const sal_Char __FAR_DATA sGrfCollStr[] = "Graphikformatvorlage";
 /*N*/ 	//JP 28.01.99: DrawModel vorm LinkManager zerstoeren, da am DrawModel
 /*N*/ 	// 			dieser immer gesetzt ist.
 /*N*/ 	DELETEZ( pLinkMgr );
-/*N*/ 
+/*N*/
 /*N*/ 	//Tables vor dem loeschen der Defaults leeren, sonst GPF wegen Def-Abhaengigen.
 /*N*/ 	//Die Arrays sollten (wegen includes) bei Gelegenheit auch zu Pointern werden.
 /*N*/ 	delete pFrmFmtTbl;
@@ -573,7 +559,7 @@ const sal_Char __FAR_DATA sGrfCollStr[] = "Graphikformatvorlage";
 /*N*/ 	delete pDfltTxtFmtColl;
 /*N*/ 	delete pDfltGrfFmtColl;
 /*N*/ 	delete pNumRuleTbl;
-/*N*/ 
+/*N*/
 /*N*/ 	delete pPrtData;
 /*N*/ 	delete pBookmarkTbl;
 /*N*/ 	delete pNumberFormatter;
@@ -583,7 +569,6 @@ const sal_Char __FAR_DATA sGrfCollStr[] = "Graphikformatvorlage";
 /*N*/ 	delete pFtnIdxs;
 /*N*/ 	delete pFldTypes;
 /*N*/ 	delete pTOXTypes;
-/*N*/ 	delete pUndos;
 /*N*/ 	delete pDocStat;
 /*N*/ 	delete pEmptyPageFmt;
 /*N*/ 	delete pColumnContFmt;
@@ -601,7 +586,7 @@ const sal_Char __FAR_DATA sGrfCollStr[] = "Graphikformatvorlage";
 /*N*/ {
 /*N*/ 	BOOL bCheckPageDescs = 0 == pPrt;
 /*N*/ 	BOOL bDataChanged = FALSE;
-/*N*/ 
+/*N*/
 /*N*/ 	if ( pPrt )
 /*N*/ 	{
 /*N*/ 		if ( pPrt->GetName() == rJobSetup.GetPrinterName() )
@@ -615,7 +600,7 @@ const sal_Char __FAR_DATA sGrfCollStr[] = "Graphikformatvorlage";
 /*N*/ 		else
 /*?*/ 			delete pPrt, pPrt = 0;
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	if( !pPrt )
 /*N*/ 	{
 /*N*/ 		//Das ItemSet wird vom Sfx geloescht!
@@ -648,7 +633,7 @@ const sal_Char __FAR_DATA sGrfCollStr[] = "Graphikformatvorlage";
 /*N*/         if ( rPrt.IsValid() )
 /*N*/             return rPrt;
 /*N*/     }
-/*N*/ 
+/*N*/
 /*N*/     return *GetVirDev( sal_True );
 /*N*/ }
 
@@ -670,7 +655,7 @@ const sal_Char __FAR_DATA sGrfCollStr[] = "Graphikformatvorlage";
 /*?*/     MapMode aMapMode( pNewVir->GetMapMode() );
 /*?*/     aMapMode.SetMapUnit( MAP_TWIP );
 /*?*/     pNewVir->SetMapMode( aMapMode );
-/*?*/ 
+/*?*/
 /*?*/     ((SwDoc*)this)->SetVirDev( pNewVir, sal_True );
 /*?*/     return *pVirDev;
 /*N*/ }
@@ -680,7 +665,7 @@ const sal_Char __FAR_DATA sGrfCollStr[] = "Graphikformatvorlage";
 /*N*/ SfxPrinter& SwDoc::_GetPrt() const
 /*N*/ {
 /*N*/     ASSERT( ! pPrt, "Do not call _GetPrt(), call GetPrt() instead" )
-/*N*/ 
+/*N*/
 /*N*/     // wir erzeugen einen default SfxPrinter.
 /*N*/ 	// Das ItemSet wird vom Sfx geloescht!
 /*N*/ 	SfxItemSet *pSet = new SfxItemSet( ((SwDoc*)this)->GetAttrPool(),
@@ -816,7 +801,7 @@ const sal_Char __FAR_DATA sGrfCollStr[] = "Graphikformatvorlage";
 /*N*/ 			if( !bInReading )
 /*N*/ 				pDrawModel->ReformatAllTextObjects();
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		if( pLayout && !bInReading )
 /*N*/ 		{
 /*N*/ 			pLayout->StartAllAction();
