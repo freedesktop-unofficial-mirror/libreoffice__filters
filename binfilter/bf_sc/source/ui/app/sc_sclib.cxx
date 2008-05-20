@@ -7,7 +7,7 @@
  * OpenOffice.org - a multi-platform office productivity suite
  *
  * $RCSfile: sc_sclib.cxx,v $
- * $Revision: 1.11 $
+ * $Revision: 1.12 $
  *
  * This file is part of OpenOffice.org.
  *
@@ -39,7 +39,6 @@
 #endif
 
 #include <bf_svtools/inettype.hxx>
-#include <bf_svtools/parhtml.hxx>
 #include <comphelper/classids.hxx>
 #include <bf_sfx2/fcontnr.hxx>
 #include <bf_sfx2/docfile.hxx>
@@ -96,7 +95,7 @@ static const sal_Char __FAR_DATA pFilterRtf[]		= "Rich Text Format (StarCalc)";
 /*N*/ class ScLibOptions : public ::utl::ConfigItem
 /*N*/ {
 /*N*/ 	BOOL		bWK3Flag;
-/*N*/ 
+/*N*/
 /*N*/ public:
 /*N*/ 				ScLibOptions();
 /*N*/ 	BOOL		GetWK3Flag() const			{ return bWK3Flag; }
@@ -128,15 +127,15 @@ extern "C" { static void SAL_CALL thisModule() {} }
 /*N*/ 	((SfxObjectFactory&)Factory()).
 /*N*/ 			SetDocumentServiceName( ::rtl::OUString::createFromAscii(
 /*N*/ 					"com.sun.star.sheet.SpreadsheetDocument" ) );
-/*N*/ 
+/*N*/
 /*N*/ 	const String	aEmptyStr;
 /*N*/ 									// Clipboard-IDs:
 /*N*/ 	const ULONG		nSc50Format	 = SOT_FORMATSTR_ID_STARCALC_50;
-/*N*/ 
+/*N*/
 /*N*/ 	String aVndCalc = String::CreateFromAscii(RTL_CONSTASCII_STRINGPARAM(CONTENT_TYPE_STR_APP_VND_CALC));
-/*N*/ 
+/*N*/
 /*N*/ 	Factory().GetFilterContainer()->SetDetectFilter( ScDLL::DetectFilter );
-/*N*/ 
+/*N*/
 /*N*/ 	//	5.0 muss mit vnd-Mime-Type registriert werden, aeltere mit dem alten x-starcalc
 /*
     SFX_OWN_FILTER_REGISTRATION( ScDLL::DetectFilter,
@@ -184,54 +183,6 @@ SfxModule* ScModuleDummy::Load()
     return NULL;
 }
 
-SvGlobalName ScModuleDummy::GetID(USHORT nFileFormat)
-{
-    SvGlobalName aName;
-
-    switch (nFileFormat)
-    {
-        //	GlobalNames der ScDocShell:
-
-        case SOFFICE_FILEFORMAT_31:
-            aName = SvGlobalName( BF_SO3_SC_CLASSID_30 );
-            break;
-
-        case SOFFICE_FILEFORMAT_40:
-            aName = SvGlobalName( BF_SO3_SC_CLASSID_40 );
-            break;
-
-        case SOFFICE_FILEFORMAT_50:
-            aName = SvGlobalName( BF_SO3_SC_CLASSID_50 );
-            break;
-
-        case SOFFICE_FILEFORMAT_60:
-            aName = SvGlobalName( BF_SO3_SC_CLASSID_60 );
-            break;
-
-        default:
-            DBG_ERROR("ScModuleDummy::GetID: unbekanntes Fileformat");
-            break;
-    }
-    return aName;
-}
-
-USHORT ScModuleDummy::HasID(const SvGlobalName& rName)
-{
-    if (GetID(SOFFICE_FILEFORMAT_31) == rName)
-        return SOFFICE_FILEFORMAT_31;
-
-    if (GetID(SOFFICE_FILEFORMAT_40) == rName)
-        return SOFFICE_FILEFORMAT_40;
-
-    if (GetID(SOFFICE_FILEFORMAT_50) == rName)
-        return SOFFICE_FILEFORMAT_50;
-
-    if (GetID(SOFFICE_FILEFORMAT_60) == rName)
-        return SOFFICE_FILEFORMAT_60;
-
-    return 0;           // unbekannter Name: kein passendes Fileformat
-}
-
 //------------------------------------------------------------------
 
 /*N*/ ScDLL::ScDLL()
@@ -250,10 +201,10 @@ USHORT ScModuleDummy::HasID(const SvGlobalName& rName)
 /*N*/ {
 /*N*/ 	// this method is called before Application::Execute()
 /*N*/ 	// do whatever you want, but no calls to Sxx-DLL-code!
-/*N*/ 
+/*N*/
 /*N*/ 	// RegisterFactory must now be before ScModuleDummy is created
 /*N*/ 	ScDocShell::RegisterFactory( SDT_SC_DOCFACTPRIO );
-/*N*/ 
+/*N*/
 /*N*/ 	// create a dummy-module for Object-Factory-Pointer
 /*N*/ 	ScModuleDummy* pMod = new ScModuleDummy( NULL, TRUE, &ScDocShell::Factory() );
 /*N*/ 	SC_DLL() = pMod;
@@ -263,24 +214,24 @@ USHORT ScModuleDummy::HasID(const SvGlobalName& rName)
 /*N*/ {
 /*N*/ 	//	PreExit wird aus Exit() gerufen und loescht das Module.
 /*N*/ 	//	Der Module-dtor muss alle Daten loeschen, die z.B. noch die Svx-DLL brauchen.
-/*N*/ 
+/*N*/
 /*N*/ 	ScModuleDummy **ppShlPtr = (ScModuleDummy**) GetAppData(BF_SHL_CALC);
 /*N*/ 	SvFactory *pFact = (SvFactory*)(*ppShlPtr)->pScDocShellFactory;
 /*N*/ 	delete (*ppShlPtr);
 /*N*/ 	(*ppShlPtr) = new ScModuleDummy( NULL, TRUE, NULL);
 /*N*/ 	(*ppShlPtr)->pScDocShellFactory = pFact;
-/*N*/ 
+/*N*/
 /*N*/ 	//	Der ModuleDummy mit der Factory wird z.B. noch bei SvFactory::DeInit() gebraucht.
 /*N*/ }
 
 /*N*/ void ScDLL::LibExit()
 /*N*/ {
 /*N*/ 	//	LibExit wird am Ende von Main() gerufen und gibt die DLL selber frei
-/*N*/ 
+/*N*/
 /*N*/ 	FreeLibSc();	// DLL freigeben (ruft ScDLL::Exit)
-/*N*/ 
+/*N*/
 /*N*/ 	//	das sollte jetzt nur noch ein Dummy sein:
-/*N*/ 
+/*N*/
 /*N*/ 	ScModuleDummy **ppShlPtr = (ScModuleDummy**) GetAppData(BF_SHL_CALC);
 /*N*/ 	delete (*ppShlPtr);
 /*N*/ 	(*ppShlPtr) = NULL;
@@ -291,14 +242,14 @@ USHORT ScModuleDummy::HasID(const SvGlobalName& rName)
 /*N*/ BOOL lcl_MayBeAscii( SvStream& rStream )
 /*N*/ {
 /*N*/ 	//	ASCII is considered possible if there are no null bytes
-/*N*/ 
+/*N*/
 /*N*/ 	rStream.Seek(STREAM_SEEK_TO_BEGIN);
-/*N*/ 
+/*N*/
 /*N*/ 	BOOL bNullFound = FALSE;
 /*N*/ 	BYTE aBuffer[ 4097 ];
 /*N*/ 	const BYTE* p = aBuffer;
 /*N*/ 	ULONG nBytesRead = rStream.Read( aBuffer, 4096 );
-/*N*/ 
+/*N*/
 /*N*/ 	if ( nBytesRead >= 2 &&
 /*N*/ 			( ( aBuffer[0] == 0xff && aBuffer[1] == 0xfe ) ||
 /*N*/ 			  ( aBuffer[0] == 0xfe && aBuffer[1] == 0xff ) ) )
@@ -306,41 +257,41 @@ USHORT ScModuleDummy::HasID(const SvGlobalName& rName)
 /*N*/ 		//	unicode file may contain null bytes
 /*N*/ 		return TRUE;
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	while( nBytesRead-- )
 /*N*/ 		if( !*p++ )
 /*N*/ 		{
 /*N*/ 			bNullFound = TRUE;
 /*N*/ 			break;
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 	return !bNullFound;
 /*N*/ }
 
 /*N*/ BOOL lcl_MayBeDBase( SvStream& rStream )
 /*N*/ {
 /*N*/ 	//	for dBase, look for the 0d character at the end of the header
-/*N*/ 
+/*N*/
 /*N*/ 	rStream.Seek(STREAM_SEEK_TO_END);
 /*N*/ 	ULONG nSize = rStream.Tell();
-/*N*/ 
+/*N*/
 /*N*/ 	// length of header starts at 8
-/*N*/ 
+/*N*/
 /*N*/ 	if ( nSize < 10 )
 /*N*/ 		return FALSE;
 /*N*/ 	rStream.Seek(8);
 /*N*/ 	USHORT nHeaderLen;
 /*N*/ 	rStream >> nHeaderLen;
-/*N*/ 
+/*N*/
 /*N*/ 	if ( nHeaderLen < 32 || nSize < nHeaderLen )
 /*N*/ 		return FALSE;
-/*N*/ 
+/*N*/
 /*N*/ 	// last byte of header must be 0d
-/*N*/ 
+/*N*/
 /*N*/ 	rStream.Seek( nHeaderLen - 1 );
 /*N*/ 	BYTE nEndFlag;
 /*N*/ 	rStream >> nEndFlag;
-/*N*/ 
+/*N*/
 /*N*/ 	return ( nEndFlag == 0x0d );
 /*N*/ }
 
@@ -355,26 +306,26 @@ BOOL lcl_IsAnyXMLFilter( const SfxFilter* pFilter )
 /*N*/ {
 /*N*/ 	//	#59915# laut MBA darf hier nur ERRCODE_NONE, ERRCODE_ABORT und ERRCODE_FORCEQUIET
 /*N*/ 	//	zurueckgegeben werden...
-/*N*/ 
+/*N*/
 /*N*/ 	if ( SVSTREAM_OK != rMedium.GetError() )
 /*N*/ 		return ERRCODE_ABORT;	// ERRCODE_IO_GENERAL
-/*N*/ 
+/*N*/
 /*N*/ 	//	Formate, die sicher erkannt werden:
-/*N*/ 
+/*N*/
 /*N*/ 	SvStorage* pStorage = rMedium.GetStorage();
 /*N*/ 	if ( pStorage )
 /*N*/ 	{
 /*N*/ 		String		aStreamName;
-/*N*/ 
+/*N*/
 /*N*/ 		// Erkennung ueber contained streams
 /*N*/ 		// Excel-5 / StarCalc 3.0
-/*N*/ 
+/*N*/
 /*N*/ 		aStreamName = String::CreateFromAscii(RTL_CONSTASCII_STRINGPARAM("Workbook"));
 /*N*/ 		BOOL bExcel97Stream = ( pStorage->IsContained( aStreamName ) && pStorage->IsStream( aStreamName ) );
-/*N*/ 
+/*N*/
 /*N*/ 		aStreamName = String::CreateFromAscii(RTL_CONSTASCII_STRINGPARAM("Book"));
 /*N*/ 		BOOL bExcel5Stream = ( pStorage->IsContained( aStreamName ) && pStorage->IsStream( aStreamName ) );
-/*N*/ 
+/*N*/
 /*N*/ 		if ( bExcel97Stream )
 /*N*/ 		{
 /*?*/ 			String aOldName;
@@ -420,7 +371,7 @@ BOOL lcl_IsAnyXMLFilter( const SfxFilter* pFilter )
 /*?*/ 			}
 /*?*/ 			return ERRCODE_NONE;
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		aStreamName = String::CreateFromAscii(RTL_CONSTASCII_STRINGPARAM(STRING_SCSTREAM));
 /*N*/ 		if ( pStorage->IsContained( aStreamName ) && pStorage->IsStream( aStreamName ) )
 /*N*/ 		{
@@ -437,7 +388,7 @@ BOOL lcl_IsAnyXMLFilter( const SfxFilter* pFilter )
 /*N*/ 											String::CreateFromAscii(pFilterSc50) );
 /*N*/ 			return ERRCODE_NONE;
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		//	XML package file: Stream "Content.xml" or "content.xml"
 /*?*/ 		aStreamName = String::CreateFromAscii(RTL_CONSTASCII_STRINGPARAM("content.xml"));
 /*?*/ 		String aOldXML = String::CreateFromAscii(RTL_CONSTASCII_STRINGPARAM("Content.xml"));
@@ -462,7 +413,7 @@ BOOL lcl_IsAnyXMLFilter( const SfxFilter* pFilter )
 /*N*/ 		SvStream &rStr = *rMedium.GetInStream();
 /*N*/ 		if ( &rStr == NULL )
 /*N*/ 			return ERRCODE_ABORT;	// ERRCODE_IO_GENERAL
-/*N*/ 
+/*N*/
 /*N*/ 		// Tabelle mit Suchmustern
 /*N*/ 		// Bedeutung der Sequenzen
 /*N*/ 		// 0x00??: genau Byte 0x?? muss an dieser Stelle stehen
@@ -470,32 +421,32 @@ BOOL lcl_IsAnyXMLFilter( const SfxFilter* pFilter )
 /*N*/ 		// 0x02nn: ein Byte aus 0xnn Alternativen folgt
 /*N*/ 		// 0x8000: Erkennung abgeschlossen
 /*N*/ 		//
-/*N*/ 
+/*N*/
 /*N*/ #define M_DC		0x0100
 /*N*/ #define M_ALT(ANZ)	0x0200+ANZ
 /*N*/ #define M_ENDE		0x8000
-/*N*/ 
+/*N*/
 /*N*/ 		const UINT16 pLotus[] = 		// Lotus 1/1A/2
 /*N*/ 			{ 0x0000, 0x0000, 0x0002, 0x0000,
 /*N*/ 			  M_ALT(2), 0x0004, 0x0006,
 /*N*/ 			  0x0004, M_ENDE };
-/*N*/ 
+/*N*/
 /*N*/ 		const UINT16 pExcel1[] =		// Excel Biff/3/4 Tabellen
 /*N*/ 			{ 0x0009,
 /*N*/ 			  M_ALT(2), 0x0002, 0x0004,
 /*N*/ 			  0x0006, 0x0000, M_DC, M_DC, 0x0010, 0x0000,
 /*N*/ 			  M_DC, M_DC, M_ENDE };
-/*N*/ 
+/*N*/
 /*N*/ 		const UINT16 pExcel2[] =		// Excel Biff3/4 Workbooks
 /*N*/ 			{ 0x0009,
 /*N*/ 			  M_ALT(2), 0x0002, 0x0004,
 /*N*/ 			  0x0006, 0x0000, M_DC, M_DC, 0x0000, 0x0001,
 /*N*/ 			  M_DC, M_DC, M_ENDE };
-/*N*/ 
+/*N*/
 /*N*/ 		const UINT16 pExcel3[] =		// Excel Biff2 Tabellen
 /*N*/ 			{ 0x0009, 0x0000, 0x0004, 0x0000,
 /*N*/ 			  M_DC, M_DC, 0x0010, 0x0000, M_ENDE };
-/*N*/ 
+/*N*/
 /*N*/ 		const UINT16 pSc10[] =			// StarCalc 1.0 Dokumente
 /*N*/ 			{ 'B', 'l', 'a', 'i', 's', 'e', '-', 'T', 'a', 'b', 'e', 'l', 'l',
 /*N*/ 			  'e', 0x000A, 0x000D, 0x0000,    // Sc10CopyRight[16]
@@ -504,14 +455,14 @@ BOOL lcl_IsAnyXMLFilter( const SfxFilter* pFilter )
 /*N*/ 			  M_ALT(2), 0x0065, 0x0066,		// Versionsnummer 101 oder 102
 /*N*/ 			  0x0000,
 /*N*/ 			  M_ENDE };
-/*N*/ 
+/*N*/
 /*N*/ 		const UINT16 pLotus2[] =		// Lotus >3
 /*N*/ 			{ 0x0000, 0x0000, 0x001A, 0x0000,	// Rec# + Len (26)
 /*N*/ 			  M_ALT(2), 0x0000, 0x0002,			// File Revision Code
 /*N*/ 			  0x0010,
 /*N*/ 			  0x0004, 0x0000,					// File Revision Subcode
 /*N*/ 			  M_ENDE };
-/*N*/ 
+/*N*/
 /*N*/ 		const UINT16 pDIF1[] =			// DIF mit CR-LF
 /*N*/ 			{
 /*N*/ 			'T', 'A', 'B', 'L', 'E',
@@ -520,7 +471,7 @@ BOOL lcl_IsAnyXMLFilter( const SfxFilter* pFilter )
 /*N*/ 			M_DC, M_DC,
 /*N*/ 			'\"',
 /*N*/ 			M_ENDE };
-/*N*/ 
+/*N*/
 /*N*/ 		const UINT16 pDIF2[] =			// DIF mit CR oder LF
 /*N*/ 			{
 /*N*/ 			'T', 'A', 'B', 'L', 'E',
@@ -529,12 +480,12 @@ BOOL lcl_IsAnyXMLFilter( const SfxFilter* pFilter )
 /*N*/ 			M_DC,
 /*N*/ 			'\"',
 /*N*/ 			M_ENDE };
-/*N*/ 
+/*N*/
 /*N*/ 		const UINT16 pSylk[] =			// Sylk
 /*N*/ 			{
 /*N*/ 			'I', 'D', ';', 'P',
 /*N*/ 			M_ENDE };
-/*N*/ 
+/*N*/
 /*N*/ #ifdef SINIX
 /*N*/ 		const UINT16 nAnzMuster = 9;	// sollte fuer indiz. Zugriff stimmen...
 /*N*/ 		UINT16 *ppMuster[ nAnzMuster ];			// Arrays mit Suchmustern
@@ -562,7 +513,7 @@ BOOL lcl_IsAnyXMLFilter( const SfxFilter* pFilter )
 /*N*/ 			};
 /*N*/ 		const UINT16 nAnzMuster = sizeof(ppMuster) / sizeof(ppMuster[0]);
 /*N*/ #endif
-/*N*/ 
+/*N*/
 /*N*/ 		const sal_Char* pFilterName[ nAnzMuster ] = 	// zugehoerige Filter
 /*N*/ 			{
 /*N*/ 			pFilterLotus,
@@ -575,24 +526,24 @@ BOOL lcl_IsAnyXMLFilter( const SfxFilter* pFilter )
 /*N*/ 			pFilterSylk,
 /*N*/ 			pFilterLotus
 /*N*/ 			};
-/*N*/ 
+/*N*/
 /*N*/ 		const UINT16 nByteMask = 0xFF;
-/*N*/ 
+/*N*/
 /*N*/ 		// suchen Sie jetzt!
 /*N*/ 		// ... realisiert ueber 'Mustererkennung'
-/*N*/ 
+/*N*/
 /*N*/ 		BYTE			nAkt;
 /*N*/ 		BOOL			bSync;			// Datei und Muster stimmen ueberein
 /*N*/ 		USHORT			nFilter;		// Zaehler ueber alle Filter
 /*N*/ 		const UINT16	*pSearch;		// aktuelles Musterwort
 /*N*/ 		UINT16			nFilterLimit = nAnzMuster;
-/*N*/ 
+/*N*/
 /*N*/ 		// nur solange, bis es etwas Globales gibt
 /*N*/ 		// funzt nur, solange Eintraege fuer WK3 letzte Muster-Tabelle ist!
 /*N*/ 		ScLibOptions aLibOpt;
 /*N*/ 		if( !aLibOpt.GetWK3Flag() )
 /*N*/ 			nFilterLimit--;
-/*N*/ 
+/*N*/
 /*N*/ 		for ( nFilter = 0 ; nFilter < nFilterLimit ; nFilter++ )
 /*N*/ 		{
 /*N*/ 			rStr.Seek( 0 ); // am Anfang war alles Uebel...
@@ -602,7 +553,7 @@ BOOL lcl_IsAnyXMLFilter( const SfxFilter* pFilter )
 /*N*/ 			while( !rStr.IsEof() && bSync )
 /*N*/ 			{
 /*N*/ 				register UINT16 nMuster = *pSearch;
-/*N*/ 
+/*N*/
 /*N*/ 				if( nMuster < 0x0100 )
 /*N*/ 				{ // 								direkter Byte-Vergleich
 /*N*/ 					if( ( BYTE ) nMuster != nAkt )
@@ -636,34 +587,34 @@ BOOL lcl_IsAnyXMLFilter( const SfxFilter* pFilter )
 /*?*/ 							ScDocShell::Factory(),
 /*?*/ 							String::CreateFromAscii(pFilterName[ nFilter ]) );
 /*?*/ 					}
-/*?*/ 
+/*?*/
 /*?*/ 					return ERRCODE_NONE;
 /*N*/ 				}
 /*N*/ 				else
 /*N*/ 				{ // 										 Tabellenfehler
 /*N*/ 					DBG_ERROR( "-ScApplication::DetectFilter(): Fehler in Mustertabelle");
 /*N*/ 				}
-/*N*/ 
+/*N*/
 /*N*/ 				pSearch++;
 /*N*/ 				rStr >> nAkt;
 /*N*/ 			}
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/         String aPresetFilterName;
 /*N*/         if ( *ppFilter )
 /*N*/             aPresetFilterName = (*ppFilter)->GetFilterName();
-/*N*/ 
+/*N*/
 /*N*/         // ASCII cannot be recognized.
 /*N*/         // #i3341# But if the Text/CSV filter was set (either by the user or
 /*N*/         // file extension) it takes precedence over HTML and RTF and dBase
 /*N*/         // detection. Otherwise something like, for example, "lala <SUP> gugu"
 /*N*/         // would trigger HTML to be recognized.
-/*N*/ 
+/*N*/
 /*N*/         if ( aPresetFilterName.EqualsAscii(pFilterAscii) && lcl_MayBeAscii( rStr ) )
 /*N*/             return ERRCODE_NONE;
-/*N*/ 
+/*N*/
 /*N*/         // get file header
-/*N*/ 
+/*N*/
 /*N*/ 		rStr.Seek( 0 );
 /*N*/ 		const int nTrySize = 80;
 /*N*/ 		ByteString aHeader;
@@ -677,27 +628,6 @@ BOOL lcl_IsAnyXMLFilter( const SfxFilter* pFilter )
 
         // test for HTML
 
-/*N*/ 		if ( HTMLParser::IsHTMLFormat( aHeader.GetBuffer() ) )
-/*N*/ 		{
-/*?*/ 			if ( aPresetFilterName.EqualsAscii(pFilterHtml) )
-/*?*/ 			{
-/*?*/ 				// old HTML filter is allowed, default is WebQuery filter
-/*?*/ 			}
-/*?*/ 			else
-/*?*/ 				*ppFilter = SFX_APP()->GetFilter( ScDocShell::Factory(),
-/*?*/ 											  	String::CreateFromAscii(pFilterHtmlWeb) );
-/*?*/ 			return ERRCODE_NONE;
-/*N*/ 		}
-
-        // test for RTF
-/*N*/ 
-/*N*/ 		if ( aHeader.CompareTo( "{\\rtf", 5 ) == COMPARE_EQUAL )
-/*N*/ 		{
-/*?*/ 			*ppFilter = SFX_APP()->GetFilter( ScDocShell::Factory(),
-/*?*/ 											  String::CreateFromAscii(pFilterRtf) );
-/*?*/ 			return ERRCODE_NONE;
-/*?*/ 		}
-/*N*/ 
         // #97832#; we don't have a flat xml filter
 /*		if ( aHeader.CompareTo( "<?xml", 5 ) == COMPARE_EQUAL )
         {
@@ -712,7 +642,7 @@ BOOL lcl_IsAnyXMLFilter( const SfxFilter* pFilter )
 /*N*/         if ( aPresetFilterName.EqualsAscii(pFilterDBase) && lcl_MayBeDBase( rStr ) )
 /*N*/             return ERRCODE_NONE;
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	return ERRCODE_ABORT;		// war nix
 /*N*/ }
 
