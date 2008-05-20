@@ -7,7 +7,7 @@
  * OpenOffice.org - a multi-platform office productivity suite
  *
  * $RCSfile: sw_docfly.cxx,v $
- * $Revision: 1.9 $
+ * $Revision: 1.10 $
  *
  * This file is part of OpenOffice.org.
  *
@@ -99,14 +99,8 @@
 #ifndef _PAM_HXX //autogen
 #include <pam.hxx>
 #endif
-#ifndef _SWUNDO_HXX //autogen
-#include <swundo.hxx>
-#endif
 #ifndef _CRSTATE_HXX
 #include <crstate.hxx>
-#endif
-#ifndef _UNDOBJ_HXX //autogen
-#include <undobj.hxx>
 #endif
 namespace binfilter {
 
@@ -130,24 +124,24 @@ extern USHORT GetHtmlMode( const SwDocShell* );
 /*N*/ 			)
 /*N*/ 		{
 /*N*/ 			const SwNode* pNd = GetNodes()[ pIdx->GetIndex() + 1 ];
-/*N*/ 
+/*N*/
 /*N*/ 			switch( eType )
 /*N*/ 			{
 /*N*/ 			case FLYCNTTYPE_FRM:
 /*N*/ 				if(!pNd->IsNoTxtNode())
 /*N*/ 					nCount++;
 /*N*/ 				break;
-/*N*/ 
+/*N*/
 /*N*/ 			case FLYCNTTYPE_GRF:
 /*N*/ 				if( pNd->IsGrfNode() )
 /*N*/ 					nCount++;
 /*N*/ 				break;
-/*N*/ 
+/*N*/
 /*N*/ 			case FLYCNTTYPE_OLE:
 /*N*/ 				if(pNd->IsOLENode())
 /*N*/ 					nCount++;
 /*N*/ 				break;
-/*N*/ 
+/*N*/
 /*N*/ 			default:
 /*N*/ 				nCount++;
 /*N*/ 			}
@@ -221,7 +215,7 @@ extern USHORT GetHtmlMode( const SwDocShell* );
 /*?*/ 				DBG_BF_ASSERT(0, "STRIP"); //STRIP001 const SwFrm* pOld = ((SwFlyFrmFmt*)pFlyFmt)->GetFrm( &aRet, FALSE );
 /*N*/ 			}
 /*N*/ 			break;
-/*N*/ 
+/*N*/
 /*N*/ 		case FLY_AT_CNTNT:
 /*N*/ 		case FLY_AUTO_CNTNT: // LAYER_IMPL
 /*N*/ 			if( rAnch.GetCntntAnchor() )
@@ -233,14 +227,14 @@ extern USHORT GetHtmlMode( const SwDocShell* );
 /*N*/ 					aRet = pOld->Frm().Pos();
 /*N*/ 			}
 /*N*/ 			break;
-/*N*/ 
+/*N*/
 /*N*/ 		case FLY_AT_FLY: // LAYER_IMPL
 /*?*/ 			if( rAnch.GetCntntAnchor() )
 /*?*/ 			{
 /*?*/ 				DBG_BF_ASSERT(0, "STRIP"); //STRIP001 const SwFlyFrmFmt* pFmt = (SwFlyFrmFmt*)rAnch.GetCntntAnchor()->
 /*?*/ 			}
 /*?*/ 			break;
-/*?*/ 
+/*?*/
 /*N*/ 		case FLY_PAGE:
 /*?*/ 			{
 /*?*/ 				USHORT nPgNum = rAnch.GetPageNum();
@@ -269,27 +263,27 @@ extern USHORT GetHtmlMode( const SwDocShell* );
 /*M*/ 	//Kopf-/Fusszeilen stehen nicht Seitengebunden werden.
 /*M*/ 	const SwFmtAnchor &rOldAnch = rFmt.GetAnchor();
 /*M*/ 	const RndStdIds nOld = rOldAnch.GetAnchorId();
-/*M*/ 
+/*M*/
 /*M*/ 	SwFmtAnchor aNewAnch( (SwFmtAnchor&)rSet.Get( RES_ANCHOR ) );
 /*M*/ 	RndStdIds nNew = aNewAnch.GetAnchorId();
-/*M*/ 
+/*M*/
 /*M*/ 	// ist der neue ein gueltiger Anker?
 /*M*/ 	if( !aNewAnch.GetCntntAnchor() && (FLY_AT_FLY == nNew ||
 /*M*/ 		FLY_AT_CNTNT == nNew || FLY_IN_CNTNT == nNew ||
 /*M*/ 		FLY_AUTO_CNTNT == nNew ))
 /*M*/         return IGNOREANCHOR;
-/*M*/ 
+/*M*/
 /*M*/ 	if( nOld == nNew )
 /*M*/         return DONTMAKEFRMS;
-/*M*/ 
-/*M*/ 
+/*M*/
+/*M*/
 /*M*/ 	Point aOldAnchorPos( ::binfilter::lcl_FindAnchorLayPos( *this, rOldAnch, &rFmt ));
 /*M*/ 	Point aNewAnchorPos( ::binfilter::lcl_FindAnchorLayPos( *this, aNewAnch, 0 ));
-/*M*/ 
+/*M*/
 /*M*/ 	//Die alten Frms vernichten. Dabei werden die Views implizit gehidet und
 /*M*/ 	//doppeltes hiden waere so eine art Show!
 /*M*/ 	rFmt.DelFrms();
-/*M*/ 
+/*M*/
 /*M*/ 	if( FLY_IN_CNTNT == nOld )
 /*M*/ 	{
 /*M*/ 		//Bei InCntnt's wird es spannend: Das TxtAttribut muss vernichtet
@@ -308,16 +302,16 @@ extern USHORT GetHtmlMode( const SwDocShell* );
 /*M*/ 					"Wrong TxtFlyCnt-Hint." );
 /*M*/ #endif
 /*M*/ 		((SwFmtFlyCnt&)pHnt->GetFlyCnt()).SetFlyFmt();
-/*M*/ 
+/*M*/
 /*M*/ 		//Die Verbindung ist geloest, jetzt muss noch das Attribut vernichtet
 /*M*/ 		//werden.
 /*M*/ 		pTxtNode->Delete( RES_TXTATR_FLYCNT, nIdx, nIdx );
 /*M*/ 	}
-/*M*/ 
+/*M*/
 /*M*/ 	//Endlich kann das Attribut gesetzt werden. Es muss das erste Attribut
 /*M*/ 	//sein; Undo depends on it!
 /*M*/ 	rFmt.SetAttr( aNewAnch );
-/*M*/ 
+/*M*/
 /*M*/ 	//Positionskorrekturen
 /*M*/ 	const SfxPoolItem* pItem;
 /*M*/ 	switch( nNew )
@@ -330,11 +324,11 @@ extern USHORT GetHtmlMode( const SwDocShell* );
 /*M*/ 			const SwPosition *pPos = aNewAnch.GetCntntAnchor();
 /*M*/ 			SwTxtNode *pNd = pPos->nNode.GetNode().GetTxtNode();
 /*M*/ 			ASSERT( pNd, "Crsr steht nicht auf TxtNode." );
-/*M*/ 
+/*M*/
 /*M*/ 			pNd->Insert( SwFmtFlyCnt( (SwFlyFrmFmt*)&rFmt ),
 /*M*/ 									   pPos->nContent.GetIndex(), 0 );
 /*M*/ 		}
-/*M*/ 
+/*M*/
 /*M*/ 		if( SFX_ITEM_SET != rSet.GetItemState( RES_VERT_ORIENT, FALSE, &pItem ))
 /*M*/ 		{
 /*M*/ 			SwFmtVertOrient aOldV( rFmt.GetVertOrient() );
@@ -352,7 +346,7 @@ extern USHORT GetHtmlMode( const SwDocShell* );
 /*M*/ 				rSet.Put( aOldV );
 /*M*/ 		}
 /*M*/ 		break;
-/*M*/ 
+/*M*/
 /*M*/ 	case FLY_AT_CNTNT:
 /*M*/ 	case FLY_AUTO_CNTNT: // LAYER_IMPL
 /*M*/ 	case FLY_AT_FLY: // LAYER_IMPL
@@ -366,15 +360,15 @@ extern USHORT GetHtmlMode( const SwDocShell* );
 /*M*/ 			//Position ebenfalls korrigiert.
 /*M*/ 			if( SFX_ITEM_SET != rSet.GetItemState( RES_HORI_ORIENT, FALSE, &pItem ))
 /*M*/ 				pItem = 0;
-/*M*/ 
+/*M*/
 /*M*/ 			SwFmtHoriOrient aOldH( rFmt.GetHoriOrient() );
-/*M*/ 
+/*M*/
 /*M*/ 			if( HORI_NONE == aOldH.GetHoriOrient() && ( !pItem ||
 /*M*/ 				aOldH.GetPos() == ((SwFmtHoriOrient*)pItem)->GetPos() ))
 /*M*/ 			{
 /*M*/ 				SwTwips nPos = FLY_IN_CNTNT == nOld ? 0 : aOldH.GetPos();
 /*M*/ 				nPos += aOldAnchorPos.X() - aNewAnchorPos.X();
-/*M*/ 
+/*M*/
 /*M*/ 				if( pItem )
 /*M*/ 				{
 /*M*/ 					SwFmtHoriOrient* pH = (SwFmtHoriOrient*)pItem;
@@ -384,11 +378,11 @@ extern USHORT GetHtmlMode( const SwDocShell* );
 /*M*/ 				aOldH.SetPos( nPos );
 /*M*/ 				rSet.Put( aOldH );
 /*M*/ 			}
-/*M*/ 
+/*M*/
 /*M*/ 			if( SFX_ITEM_SET != rSet.GetItemState( RES_VERT_ORIENT, FALSE, &pItem ))
 /*M*/ 				pItem = 0;
 /*M*/ 			SwFmtVertOrient aOldV( rFmt.GetVertOrient() );
-/*M*/ 
+/*M*/
 /*M*/ 			if( HORI_NONE == aOldV.GetVertOrient() && (!pItem ||
 /*M*/ 				aOldV.GetPos() == ((SwFmtVertOrient*)pItem)->GetPos() ) )
 /*M*/ 			{
@@ -406,10 +400,10 @@ extern USHORT GetHtmlMode( const SwDocShell* );
 /*M*/ 		}
 /*M*/ 		break;
 /*M*/ 	}
-/*M*/ 
+/*M*/
 /*M*/ 	if( bNewFrms )
 /*M*/ 		rFmt.MakeFrms();
-/*M*/ 
+/*M*/
 /*M*/     return MAKEFRMS;
 /*M*/ }
 
@@ -417,20 +411,13 @@ extern USHORT GetHtmlMode( const SwDocShell* );
 /*N*/ {
 /*N*/ 	if( !rSet.Count() )
 /*N*/ 		return FALSE;
-/*N*/ 
-/*N*/ 	_UndoFmtAttr* pSaveUndo = 0;
-/*N*/ 	if( DoesUndo() )
-/*N*/ 	{
-/*N*/ 		ClearRedo();
-/*N*/ 		pSaveUndo = new _UndoFmtAttr( rFlyFmt );
-/*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	//Ist das Ankerattribut dabei? Falls ja ueberlassen wir die Verarbeitung
 /*N*/ 	//desselben einer Spezialmethode. Sie Returnt TRUE wenn der Fly neu
 /*N*/ 	//erzeugt werden muss (z.B. weil ein Wechsel des FlyTyps vorliegt).
 /*N*/     sal_Int8 nMakeFrms = SFX_ITEM_SET == rSet.GetItemState( RES_ANCHOR, FALSE )?
 /*N*/                          SetFlyFrmAnchor( rFlyFmt, rSet, FALSE ) : DONTMAKEFRMS;
-/*N*/ 
+/*N*/
 /*N*/ 	const SfxPoolItem* pItem;
 /*N*/ 	SfxItemIter aIter( rSet );
 /*N*/ 	SfxItemSet aTmpSet( GetAttrPool(), aFrmFmtSetRange );
@@ -451,7 +438,7 @@ extern USHORT GetHtmlMode( const SwDocShell* );
 /*N*/ 		case RES_ANCHOR:
 /*N*/             if( DONTMAKEFRMS != nMakeFrms )
 /*N*/ 				break;
-/*N*/ 
+/*N*/
 /*N*/ 		default:
 /*N*/ 			if( !IsInvalidItem( aIter.GetCurItem() ) && ( SFX_ITEM_SET !=
 /*N*/ 				rFlyFmt.GetAttrSet().GetItemState( nWhich, TRUE, &pItem ) ||
@@ -459,27 +446,21 @@ extern USHORT GetHtmlMode( const SwDocShell* );
 /*N*/ 				aTmpSet.Put( *aIter.GetCurItem() );
 /*N*/ 			break;
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		if( aIter.IsAtEnd() )
 /*N*/ 			break;
-/*N*/ 
+/*N*/
 /*?*/ 	} while( 0 != ( nWhich = aIter.NextItem()->Which() ) );
-/*N*/ 
+/*N*/
 /*N*/ 	if( aTmpSet.Count() )
 /*?*/ 		rFlyFmt.SetAttr( aTmpSet );
-/*N*/ 
+/*N*/
 /*N*/     if( MAKEFRMS == nMakeFrms )
 /*N*/ 		rFlyFmt.MakeFrms();
-/*N*/ 
-/*N*/ 	if( pSaveUndo )
-/*N*/ 	{
-/*N*/ 		if( pSaveUndo->pUndo )
-/*N*/ 			AppendUndo( pSaveUndo->pUndo );
-/*N*/ 		delete pSaveUndo;
-/*N*/ 	}
-/*N*/ 
+/*N*/
+/*N*/
 /*N*/ 	SetModified();
-/*N*/ 
+/*N*/
 /*N*/     return aTmpSet.Count() || MAKEFRMS == nMakeFrms;
 /*N*/ }
 
@@ -495,28 +476,22 @@ extern USHORT GetHtmlMode( const SwDocShell* );
 /*M*/ 							SfxItemSet* pSet, BOOL bKeepOrient )
 /*M*/ {
 /*M*/ 	BOOL bChgAnchor = FALSE, bFrmSz = FALSE;
-/*M*/ 
+/*M*/
 /*M*/ 	const SwFmtFrmSize aFrmSz( rFmt.GetFrmSize() );
 /*M*/ 	const SwFmtVertOrient aVert( rFmt.GetVertOrient() );
 /*M*/ 	const SwFmtHoriOrient aHori( rFmt.GetHoriOrient() );
-/*M*/ 
-/*M*/ 	SwUndoSetFlyFmt* pUndo = 0;
-/*M*/ 	if( DoesUndo() )
-/*M*/ 	{
-/*M*/ 		ClearRedo();
-/*M*/ 		AppendUndo( pUndo = new SwUndoSetFlyFmt( rFmt, rNewFmt ) );
-/*M*/ 	}
-/*M*/ 
+/*M*/
+/*M*/
 /*M*/ 	//Erstmal die Spalten setzen, sonst gibts nix als Aerger mit dem
 /*M*/ 	//Set/Reset/Abgleich usw.
 /*M*/ 	const SfxPoolItem* pItem;
 /*M*/ 	if( SFX_ITEM_SET != rNewFmt.GetAttrSet().GetItemState( RES_COL ))
 /*M*/ 		rFmt.ResetAttr( RES_COL );
-/*M*/ 
+/*M*/
 /*M*/ 	if( rFmt.DerivedFrom() != &rNewFmt )
 /*M*/ 	{
 /*M*/ 		rFmt.SetDerivedFrom( &rNewFmt );
-/*M*/ 
+/*M*/
 /*M*/ 		// 1. wenn nicht automatisch -> ignorieren, sonst -> wech
 /*M*/ 		// 2. wech damit, MB!
 /*M*/ 		if( SFX_ITEM_SET == rNewFmt.GetAttrSet().GetItemState( RES_FRM_SIZE, FALSE ))
@@ -524,16 +499,14 @@ extern USHORT GetHtmlMode( const SwDocShell* );
 /*M*/ 			rFmt.ResetAttr( RES_FRM_SIZE );
 /*M*/ 			bFrmSz = TRUE;
 /*M*/ 		}
-/*M*/ 
+/*M*/
 /*M*/ 		const SfxItemSet* pAsk = pSet;
 /*M*/ 		if( !pAsk ) pAsk = &rNewFmt.GetAttrSet();
 /*M*/ 		if( SFX_ITEM_SET == pAsk->GetItemState( RES_ANCHOR, FALSE, &pItem )
 /*M*/ 			&& ((SwFmtAnchor*)pItem)->GetAnchorId() !=
 /*M*/ 				rFmt.GetAnchor().GetAnchorId() )
 /*M*/ 		{
-/*M*/ 			if( pUndo )
-/*M*/ 				DoUndo( FALSE );
-/*M*/ 
+/*M*/
 /*M*/ 			if( pSet )
 /*M*/                 bChgAnchor = MAKEFRMS == SetFlyFrmAnchor( rFmt, *pSet, FALSE );
 /*M*/ 			else
@@ -545,12 +518,10 @@ extern USHORT GetHtmlMode( const SwDocShell* );
 /*M*/ 				aFlySet.Put( *pItem );
 /*M*/                 bChgAnchor = MAKEFRMS == SetFlyFrmAnchor( rFmt, aFlySet, FALSE);
 /*M*/ 			}
-/*M*/ 
-/*M*/ 			if( pUndo )
-/*M*/ 				DoUndo( TRUE );
+/*M*/
 /*M*/ 		}
 /*M*/ 	}
-/*M*/ 
+/*M*/
 /*M*/ 	//Hori und Vert nur dann resetten, wenn in der Vorlage eine
 /*M*/ 	//automatische Ausrichtung eingestellt ist, anderfalls den alten Wert
 /*M*/ 	//wieder hineinstopfen.
@@ -561,25 +532,23 @@ extern USHORT GetHtmlMode( const SwDocShell* );
 /*M*/ 	{
 /*M*/ 		const SwFmtVertOrient &rVert = rNewFmt.GetVertOrient();
 /*M*/         rFmt.ResetAttr( RES_VERT_ORIENT );
-/*M*/ 
+/*M*/
 /*M*/ 		const SwFmtHoriOrient &rHori = rNewFmt.GetHoriOrient();
 /*M*/         rFmt.ResetAttr( RES_HORI_ORIENT );
 /*M*/ 	}
-/*M*/ 
+/*M*/
 /*M*/ 	rFmt.ResetAttr( RES_PRINT, RES_SURROUND );
 /*M*/ 	rFmt.ResetAttr( RES_LR_SPACE, RES_UL_SPACE );
 /*M*/ 	rFmt.ResetAttr( RES_BACKGROUND, RES_COL );
 /*M*/ 	rFmt.ResetAttr( RES_URL, RES_EDIT_IN_READONLY );
-/*M*/ 
+/*M*/
 /*M*/ 	if( !bFrmSz )
 /*M*/ 		rFmt.SetAttr( aFrmSz );
-/*M*/ 
+/*M*/
 /*M*/ 	if( bChgAnchor )
 /*M*/ 		rFmt.MakeFrms();
-/*M*/ 
-/*M*/ 	if( pUndo )
-/*M*/ 		rFmt.Remove( pUndo );
-/*M*/ 
+/*M*/
+/*M*/
 /*M*/ 	SetModified();
 /*M*/ 	return bChgAnchor;
 /*M*/ }
@@ -606,13 +575,11 @@ extern USHORT GetHtmlMode( const SwDocShell* );
 /*?*/ 						BOOL bSameOnly, BOOL bPosCorr )
 /*?*/ {
 /*?*/ 	ASSERT( GetRootFrm(), "Ohne Layout geht gar nichts" );
-/*?*/ 
+/*?*/
 /*?*/ 	if( !rMrkList.GetMarkCount() ||
 /*?*/ 		rMrkList.GetMark( 0 )->GetObj()->GetUpGroup() )
 /*?*/ 		return FALSE;			// Kein Ankerwechsel innerhalb von Gruppen
-/*?*/ 
-/*?*/ 	StartUndo( UNDO_INSATTR );
-/*?*/ 
+/*?*/
 /*?*/ 	BOOL bUnmark = FALSE;
 /*?*/ 	for ( USHORT i = 0; i < rMrkList.GetMarkCount(); ++i )
 /*?*/ 	{
@@ -620,7 +587,7 @@ extern USHORT GetHtmlMode( const SwDocShell* );
 /*?*/ 		if ( !pObj->IsWriterFlyFrame() )
 /*?*/ 		{
 /*?*/             SwDrawContact* pContact = (SwDrawContact*)GetUserCall(pObj);
-/*?*/ 
+/*?*/
 /*?*/             // OD 27.06.2003 #108784# - consider, that drawing object has
 /*?*/             // no user call. E.g.: a 'virtual' drawing object is disconnected by
 /*?*/             // the anchor type change of the 'master' drawing object.
@@ -635,7 +602,7 @@ extern USHORT GetHtmlMode( const SwDocShell* );
 /*?*/ #endif
 /*?*/                 continue;
 /*?*/             }
-/*?*/ 
+/*?*/
 /*?*/             // OD 17.06.2003 #108784# - determine correct 'old' anchor frame,
 /*?*/             // considering 'virtual' drawing objects.
 /*?*/             const SwFrm* pOldAnch = 0L;
@@ -648,7 +615,7 @@ extern USHORT GetHtmlMode( const SwDocShell* );
 /*?*/                 pOldAnch = pContact->GetAnchor();
 /*?*/             }
 /*?*/ 			const SwFrm *pNewAnch = pOldAnch;
-/*?*/ 
+/*?*/
 /*?*/ 			BOOL bChanges = TRUE;
 /*?*/ 			xub_StrLen nIndx = STRING_NOTFOUND;
 /*?*/ 			SwTxtNode *pTxtNode;
@@ -668,14 +635,14 @@ extern USHORT GetHtmlMode( const SwDocShell* );
 /*?*/ 				pOldAnch->Calc();
 /*?*/                 pObj->ImpSetAnchorPos( pOldAnch->GetFrmAnchorPos( ::binfilter::HasWrap( pObj ) ) );
 /*?*/ 			}
-/*?*/ 
+/*?*/
 /*?*/ 			if ( bSameOnly )
 /*?*/ 				eAnchorId = nOld;
-/*?*/ 
+/*?*/
 /*?*/ 			bChanges = FLY_IN_CNTNT != eAnchorId;
 /*?*/ 			SwFmtAnchor  aNewAnch( (RndStdIds)eAnchorId );
 /*?*/             const Point aPt( pObj->GetAnchorPos() + pObj->GetRelativePos() );
-/*?*/ 
+/*?*/
 /*?*/ 			switch ( eAnchorId )
 /*?*/ 			{
 /*?*/ 			case FLY_AT_CNTNT:
@@ -686,7 +653,7 @@ extern USHORT GetHtmlMode( const SwDocShell* );
 /*?*/                                                pOldAnch->IsRightToLeft() ) ?
 /*?*/                                              pObj->GetBoundRect().TopRight() :
 /*?*/                                              aPt;
-/*?*/ 
+/*?*/
 /*?*/                     // OD 18.06.2003 #108784# - allow drawing objects in header/footer
 /*?*/                     pNewAnch = ::binfilter::FindAnchor( pOldAnch, aNewPoint, false );
 /*?*/                     if( pNewAnch->IsTxtFrm() && ((SwTxtFrm*)pNewAnch)->IsFollow() )
@@ -701,7 +668,7 @@ extern USHORT GetHtmlMode( const SwDocShell* );
 /*?*/                     }
 /*?*/                 }
 /*?*/ 				break;
-/*?*/ 
+/*?*/
 /*?*/ 			case FLY_AT_FLY: // LAYER_IMPL
 /*?*/ 				{
 /*?*/ 					//Ausgehend von der linken oberen Ecke des Fly den
@@ -728,7 +695,7 @@ extern USHORT GetHtmlMode( const SwDocShell* );
 /*?*/ 						aNewAnch.SetAnchor( &aPos );
 /*?*/ 						break;
 /*?*/ 					}
-/*?*/ 
+/*?*/
 /*?*/ 					aNewAnch.SetType( FLY_PAGE );
 /*?*/ 					// no break
 /*?*/ 				}
@@ -739,7 +706,7 @@ extern USHORT GetHtmlMode( const SwDocShell* );
 /*?*/ 						pNewAnch = pNewAnch->GetNext();
 /*?*/ 					if ( !pNewAnch )
 /*?*/ 						continue;
-/*?*/ 
+/*?*/
 /*?*/ 					aNewAnch.SetPageNum( ((SwPageFrm*)pNewAnch)->GetPhyPageNum());
 /*?*/ 				}
 /*?*/ 				break;
@@ -783,7 +750,7 @@ extern USHORT GetHtmlMode( const SwDocShell* );
 /*?*/ 						pNewAnch = 0;
 /*?*/ 						break;
 /*?*/ 					}
-/*?*/ 
+/*?*/
 /*?*/ 					bUnmark = ( 0 != i );
 /*?*/ 					Point aPoint( aPt );
 /*?*/ 					aPoint.X() -= 1;	// nicht im DrawObj landen!!
@@ -809,7 +776,7 @@ extern USHORT GetHtmlMode( const SwDocShell* );
 /*?*/ 					SetAttr( aNewAnch, *pContact->GetFmt() );
 /*?*/ 					SwTxtNode *pNd = aPos.nNode.GetNode().GetTxtNode();
 /*?*/ 					ASSERT( pNd, "Crsr steht nicht auf TxtNode." );
-/*?*/ 
+/*?*/
 /*?*/ 					pNd->Insert( SwFmtFlyCnt( pContact->GetFmt() ),
 /*?*/ 									aPos.nContent.GetIndex(), 0 );
 /*?*/ 				}
@@ -817,7 +784,7 @@ extern USHORT GetHtmlMode( const SwDocShell* );
 /*?*/ 			default:
 /*?*/ 				ASSERT( !this, "unexpected AnchorId." );
 /*?*/ 			}
-/*?*/ 
+/*?*/
 /*?*/ 			if( bChanges && pNewAnch )
 /*?*/ 			{
 /*?*/                 // OD 20.06.2003 #108784# - consider that a 'virtual' drawing
@@ -857,12 +824,12 @@ extern USHORT GetHtmlMode( const SwDocShell* );
 /*?*/                 if( bPosCorr )
 /*?*/                 {
 /*?*/                     const Point aTmpRel( aPt - pObj->GetAnchorPos() );
-/*?*/ 
+/*?*/
 /*?*/                     // #102344# Use SetRelativePos here so that eventually
 /*?*/                     // connectors cobnnected to this object get the necessary refresh.
 /*?*/                     pObj->SetRelativePos( aTmpRel );
 /*?*/                 }
-/*?*/ 
+/*?*/
 /*?*/ #ifndef PRODUCT
 /*?*/ 		{
 /*?*/                 	const Point aIstA( pObj->GetAnchorPos() );
@@ -871,7 +838,7 @@ extern USHORT GetHtmlMode( const SwDocShell* );
 /*?*/ 		}
 /*?*/ #endif
 /*?*/ 			}
-/*?*/ 
+/*?*/
 /*?*/ 			if ( pNewAnch && STRING_NOTFOUND != nIndx )
 /*?*/ 			{
 /*?*/ 				//Bei InCntnt's wird es spannend: Das TxtAttribut muss vernichtet
@@ -880,17 +847,16 @@ extern USHORT GetHtmlMode( const SwDocShell* );
 /*?*/ 				//Verbindung zwischen Attribut und Format.
 /*?*/ 				SwTxtAttr *pHnt = pTxtNode->GetTxtAttr( nIndx, RES_TXTATR_FLYCNT );
 /*?*/ 				((SwFmtFlyCnt&)pHnt->GetFlyCnt()).SetFlyFmt();
-/*?*/ 
+/*?*/
 /*?*/ 				//Die Verbindung ist geloest, jetzt muss noch das Attribut vernichtet
 /*?*/ 				//werden.
 /*?*/ 				pTxtNode->Delete( RES_TXTATR_FLYCNT, nIndx, nIndx );
 /*?*/ 			}
 /*?*/ 		}
 /*?*/ 	}
-/*?*/ 
-/*?*/ 	EndUndo( UNDO_END );
+/*?*/
 /*?*/ 	SetModified();
-/*?*/ 
+/*?*/
 /*?*/ 	return bUnmark;
 /*?*/ }
 
