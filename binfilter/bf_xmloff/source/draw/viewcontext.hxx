@@ -7,7 +7,7 @@
  * OpenOffice.org - a multi-platform office productivity suite
  *
  * $RCSfile: viewcontext.hxx,v $
- * $Revision: 1.3 $
+ * $Revision: 1.4 $
  *
  * This file is part of OpenOffice.org.
  *
@@ -32,7 +32,7 @@
 #define _SD_XMLVIEWSETTINGSCONTEXT_HXX
 
 
-#ifndef _COM_SUN_STAR_AWT_RECTANGLE_HPP_ 
+#ifndef _COM_SUN_STAR_AWT_RECTANGLE_HPP_
 #include <com/sun/star/awt/Rectangle.hpp>
 #endif
 
