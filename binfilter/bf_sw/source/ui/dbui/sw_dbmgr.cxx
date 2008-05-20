@@ -7,7 +7,7 @@
  * OpenOffice.org - a multi-platform office productivity suite
  *
  * $RCSfile: sw_dbmgr.cxx,v $
- * $Revision: 1.14 $
+ * $Revision: 1.15 $
  *
  * This file is part of OpenOffice.org.
  *
@@ -122,9 +122,6 @@
 #ifndef _FLDBAS_HXX
 #include <fldbas.hxx>
 #endif
-#ifndef _SWUNDO_HXX
-#include <swundo.hxx>
-#endif
 #ifndef _FLDDAT_HXX
 #include <flddat.hxx>
 #endif
@@ -233,13 +230,13 @@
 #include <bf_svx/dataaccessdescriptor.hxx>
 #endif
 #ifndef _CPPUHELPER_IMPLBASE1_HXX_
-#include <cppuhelper/implbase1.hxx> 
+#include <cppuhelper/implbase1.hxx>
 #endif
-#ifndef _VOS_MUTEX_HXX_ 
+#ifndef _VOS_MUTEX_HXX_
 #include <vos/mutex.hxx>
 #endif
 #ifndef _LEGACYBINFILTERMGR_HXX
-#include <legacysmgr/legacy_binfilters_smgr.hxx>	//STRIP002 
+#include <legacysmgr/legacy_binfilters_smgr.hxx>	//STRIP002
 #endif
 #include "bf_so3/staticbaseurl.hxx"
 namespace binfilter {
@@ -274,19 +271,19 @@ const sal_Char cSelection[] = "Selection";
 const sal_Char cActiveConnection[] = "ActiveConnection";
 
 /* -----------------09.12.2002 12:35-----------------
- * 
+ *
  * --------------------------------------------------*/
 
 /*N*/ class SwConnectionDisposedListener_Impl : public cppu::WeakImplHelper1
-/*N*/ < ::com::sun::star::lang::XEventListener >        
+/*N*/ < ::com::sun::star::lang::XEventListener >
 /*N*/ {
 /*N*/     SwNewDBMgr&     rDBMgr;
-/*N*/ 
+/*N*/
 /*N*/     virtual void SAL_CALL disposing( const EventObject& Source ) throw (RuntimeException);
-/*N*/ public:    
+/*N*/ public:
 /*N*/     SwConnectionDisposedListener_Impl(SwNewDBMgr& rMgr);
 /*N*/     ~SwConnectionDisposedListener_Impl();
-/*N*/     
+/*N*/
 /*N*/ };
 // -----------------------------------------------------------------------------
 /*N*/ struct SwNewDBMgr_Impl
@@ -294,7 +291,7 @@ const sal_Char cActiveConnection[] = "ActiveConnection";
 /*N*/     SwDSParam*          pMergeData;
 /*N*/     SwMailMergeDlg*     pMergeDialog;
 /*N*/     Reference<XEventListener> xDisposeListener;
-/*N*/     
+/*N*/
 /*N*/     SwNewDBMgr_Impl(SwNewDBMgr& rDBMgr)
 /*N*/        :pMergeData(0)
 /*N*/        ,pMergeDialog(0)
@@ -364,7 +361,7 @@ const sal_Char cActiveConnection[] = "ActiveConnection";
 /*?*/ 				Reference<XCompletedConnection> xComplConnection;
 /*?*/ 				xDBContext->getByName(rDataSource) >>= xComplConnection;
 /*?*/ 				rxSource = Reference<XDataSource>(xComplConnection, UNO_QUERY);
-/*?*/ 
+/*?*/
 /*?*/ 				Reference< XInteractionHandler > xHandler(
 /*?*/ 					xMgr->createInstance( C2U( "com.sun.star.sdb.InteractionHandler" )), UNO_QUERY);
 /*?*/ 				xConnection = xComplConnection->connectWithCompletion( xHandler );
@@ -382,7 +379,7 @@ const sal_Char cActiveConnection[] = "ActiveConnection";
 /*N*/ {
 /*N*/     if(pImpl->pMergeData)
 /*N*/ 	{
-/*N*/         return !bMergeLock && 
+/*N*/         return !bMergeLock &&
 /*N*/                 rDataSource == (String)pImpl->pMergeData->sDataSource &&
 /*N*/                     rTableOrQuery == (String)pImpl->pMergeData->sCommand &&
 /*N*/                     pImpl->pMergeData->xResultSet.is();
@@ -481,7 +478,7 @@ const sal_Char cActiveConnection[] = "ActiveConnection";
 
  ---------------------------------------------------------------------------*/
 /*N*/ sal_Bool SwNewDBMgr::ToRecordId(sal_Int32 nSet)
-/*N*/ {DBG_BF_ASSERT(0, "STRIP"); return FALSE;//STRIP001 
+/*N*/ {DBG_BF_ASSERT(0, "STRIP"); return FALSE;//STRIP001
 /*N*/ }
 /* -----------------------------17.07.00 14:17--------------------------------
 
@@ -492,7 +489,7 @@ const sal_Char cActiveConnection[] = "ActiveConnection";
 /*?*/     aData.sDataSource = rDataSource;
 /*?*/     aData.sCommand = rTableOrQuery;
 /*?*/     aData.nCommandType = nCommandType;
-/*?*/ 
+/*?*/
 /*?*/     SwDSParam* pFound = FindDSData(aData, TRUE);
 /*?*/ 	Reference< XDataSource> xSource;
 /*?*/ 	if(pFound->xResultSet.is())
@@ -502,7 +499,7 @@ const sal_Char cActiveConnection[] = "ActiveConnection";
 /*?*/     if(pParam && pParam->xConnection.is())
 /*?*/         pFound->xConnection = pParam->xConnection;
 /*?*/     else
-/*?*/     {        
+/*?*/     {
 /*?*/         ::rtl::OUString sDataSource(rDataSource);
 /*?*/         pFound->xConnection = RegisterConnection( sDataSource );
 /*?*/     }
@@ -529,7 +526,7 @@ const sal_Char cActiveConnection[] = "ActiveConnection";
 /*?*/             sStatement += rTableOrQuery;
 /*?*/             sStatement += aQuoteChar;
 /*?*/             pFound->xResultSet = pFound->xStatement->executeQuery( sStatement );
-/*?*/ 
+/*?*/
 /*?*/ 			//after executeQuery the cursor must be positioned
 /*?*/             pFound->bEndOfDB = !pFound->xResultSet->next();
 /*?*/             pFound->bAfterSelection = sal_False;
@@ -556,14 +553,14 @@ const sal_Char cActiveConnection[] = "ActiveConnection";
 /*?*/ 	{
 /*?*/         pFound->xConnection = SwNewDBMgr::GetConnection(rDataSource, xSource );
 /*?*/         try
-/*?*/         {        
+/*?*/         {
 /*?*/             Reference<XComponent> xComponent(pFound->xConnection, UNO_QUERY);
 /*?*/             if(xComponent.is())
 /*?*/                 xComponent->addEventListener(pImpl->xDisposeListener);
 /*?*/         }
 /*?*/         catch(Exception&)
 /*?*/         {
-/*?*/         }            
+/*?*/         }
 /*?*/ 	}
 /*?*/     return pFound->xConnection;
 /*?*/ }
@@ -597,7 +594,7 @@ const sal_Char cActiveConnection[] = "ActiveConnection";
 /*N*/                     if(nSelIndex >= pFound->aSelection.getLength())
 /*N*/ 						nSelIndex = pFound->aSelection.getLength() -1;
 /*N*/ 					pFound->aSelection.getConstArray()[nSelIndex] >>= nRet;
-/*N*/ 
+/*N*/
 /*N*/ 				}
 /*N*/ 				else
 /*N*/ 					nRet = pFound->xResultSet->getRow();
@@ -662,14 +659,14 @@ const sal_Char cActiveConnection[] = "ActiveConnection";
 /*N*/             pFound = new SwDSParam(rData);
 /*N*/ 			aDataSourceParams.Insert(pFound, aDataSourceParams.Count());
 /*N*/             try
-/*N*/             {        
+/*N*/             {
 /*N*/                 Reference<XComponent> xComponent(pFound->xConnection, UNO_QUERY);
 /*N*/                 if(xComponent.is())
 /*N*/                     xComponent->addEventListener(pImpl->xDisposeListener);
 /*N*/             }
 /*N*/             catch(Exception&)
 /*N*/             {
-/*N*/             }            
+/*N*/             }
 /*N*/         }
 /*N*/ 	}
 /*N*/ 	return pFound;
@@ -696,14 +693,14 @@ const sal_Char cActiveConnection[] = "ActiveConnection";
 /*?*/         pFound = new SwDSParam(aData);
 /*?*/ 		aDataSourceParams.Insert(pFound, aDataSourceParams.Count());
 /*?*/         try
-/*?*/         {        
+/*?*/         {
 /*?*/             Reference<XComponent> xComponent(pFound->xConnection, UNO_QUERY);
 /*?*/             if(xComponent.is())
 /*?*/                 xComponent->addEventListener(pImpl->xDisposeListener);
 /*?*/         }
 /*?*/         catch(Exception&)
 /*?*/         {
-/*?*/         }            
+/*?*/         }
 /*N*/     }
 /*N*/ 	return pFound;
 /*N*/ }
@@ -722,7 +719,7 @@ const sal_Char cActiveConnection[] = "ActiveConnection";
 /*M*/ 			nSelEnd = nSelStart;
 /*M*/ 			nSelStart = nZw;
 /*M*/ 		}
-/*M*/ 
+/*M*/
 /*M*/         pFound->aSelection.realloc(nSelEnd - nSelStart + 1);
 /*M*/         Any* pSelection = pFound->aSelection.getArray();
 /*M*/         for (long i = nSelStart; i <= nSelEnd; i++, ++pSelection)
@@ -758,20 +755,20 @@ const sal_Char cActiveConnection[] = "ActiveConnection";
 SwDbtoolsClient* SwNewDBMgr::pDbtoolsClient = NULL;
 
 /* -----------------09.12.2002 12:38-----------------
- * 
+ *
  * --------------------------------------------------*/
 /*N*/ SwConnectionDisposedListener_Impl::SwConnectionDisposedListener_Impl(SwNewDBMgr& rMgr) :
 /*N*/     rDBMgr(rMgr)
 /*N*/ {};
 /* -----------------09.12.2002 12:39-----------------
- * 
+ *
  * --------------------------------------------------*/
 /*N*/ SwConnectionDisposedListener_Impl::~SwConnectionDisposedListener_Impl()
 /*N*/ {};
 /* -----------------09.12.2002 12:39-----------------
- * 
+ *
  * --------------------------------------------------*/
-/*N*/ void SwConnectionDisposedListener_Impl::disposing( const EventObject& rSource ) 
+/*N*/ void SwConnectionDisposedListener_Impl::disposing( const EventObject& rSource )
 /*N*/         throw (RuntimeException)
 /*N*/ {
 /*N*/     ::vos::OGuard aGuard(Application::GetSolarMutex());
@@ -779,11 +776,11 @@ SwDbtoolsClient* SwNewDBMgr::pDbtoolsClient = NULL;
 /*N*/     for(USHORT nPos = rDBMgr.aDataSourceParams.Count(); nPos; nPos--)
 /*N*/     {
 /*N*/         SwDSParam* pParam = rDBMgr.aDataSourceParams[nPos - 1];
-/*N*/         if(pParam->xConnection.is() && 
+/*N*/         if(pParam->xConnection.is() &&
 /*N*/                 (xSource == pParam->xConnection))
 /*N*/         {
 /*N*/             rDBMgr.aDataSourceParams.DeleteAndDestroy(nPos - 1);
-/*N*/         }            
+/*N*/         }
 /*N*/     }
 /*N*/ }
 
