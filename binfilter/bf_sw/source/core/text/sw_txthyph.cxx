@@ -7,7 +7,7 @@
  * OpenOffice.org - a multi-platform office productivity suite
  *
  * $RCSfile: sw_txthyph.cxx,v $
- * $Revision: 1.9 $
+ * $Revision: 1.10 $
  *
  * This file is part of OpenOffice.org.
  *
@@ -97,12 +97,12 @@ using namespace ::com::sun::star::i18n;
 /*N*/ 		// Mehrzeilige Felder duerfen nicht interaktiv getrennt werden.
 /*N*/ 		( rInf.IsInterHyph() && InFldGrp() ) )
 /*N*/ 		return sal_False;
-/*N*/ 
+/*N*/
 /*N*/ 	Reference< XHyphenatedWord >  xHyphWord = rGuess.HyphWord();
 /*N*/ 	SwHyphPortion *pHyphPor = NULL;
 /*N*/ 	xub_StrLen nPorEnd = 0;
 /*N*/ 	SwTxtSizeInfo aInf( rInf );
-/*N*/ 
+/*N*/
 /*N*/ 	// first case: hyphenated word has alternative spelling
 /*N*/ 	if ( xHyphWord.is() && xHyphWord->isAlternativeSpelling() ) {
 /*?*/ 	DBG_BF_ASSERT(0, "STRIP"); //STRIP001 	SvxAlternativeSpelling aAltSpell;
@@ -110,7 +110,7 @@ using namespace ::com::sun::star::i18n;
 /*N*/ 		// second case: no alternative spelling
 /*N*/ 		SwHyphPortion aHyphPor;
 /*N*/ 		aHyphPor.SetLen( 1 );
-/*N*/ 
+/*N*/
 /*N*/ 		static const void* pLastMagicNo = 0;
 /*N*/ 		static KSHORT aMiniCacheH = 0, aMiniCacheW = 0;
 /*N*/ 		const void* pTmpMagic;
@@ -125,14 +125,14 @@ using namespace ::com::sun::star::i18n;
 /*N*/ 		}
 /*N*/ 		aHyphPor.SetLen( 0 );
 /*N*/ 		pHyphPor = new SwHyphPortion( aHyphPor );
-/*N*/ 
+/*N*/
 /*N*/ 		pHyphPor->SetWhichPor( POR_HYPH );
-/*N*/ 
+/*N*/
 /*N*/ 		// values required for this
 /*N*/         nPorEnd = xHyphWord->getHyphenPos() + 1 + rGuess.BreakStart()
 /*N*/                 - rGuess.FieldDiff();
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	// portion end must be in front of us
 /*N*/ 	// we do not put hyphens at start of line
 /*N*/ 	if ( nPorEnd > rInf.GetIdx() ||
@@ -142,16 +142,16 @@ using namespace ::com::sun::star::i18n;
 /*N*/ 		pHyphPor->SetAscent( GetAscent() );
 /*N*/ 		SetLen( aInf.GetLen() );
 /*N*/ 		CalcTxtSize( aInf );
-/*N*/ 
+/*N*/
 /*N*/ 		Insert( pHyphPor );
-/*N*/ 
+/*N*/
 /*N*/ 		short nKern = rInf.GetFont()->CheckKerning();
 /*N*/ 		if( nKern )
 /*N*/ 			new SwKernPortion( *this, nKern );
-/*N*/ 
+/*N*/
 /*N*/ 		return sal_True;
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	// last exit for the lost
 /*N*/ 	delete pHyphPor;
 /*N*/ 	BreakCut( rInf, rGuess );
@@ -184,17 +184,17 @@ using namespace ::com::sun::star::i18n;
 /*N*/ 	Height( pLast->Height() );
 /*N*/ 	SetAscent( pLast->GetAscent() );
 /*N*/ 	XubString aTxt;
-/*N*/ 
+/*N*/
 /*N*/ 	if( !GetExpTxt( rInf, aTxt ) )
 /*N*/ 		return sal_False;
-/*N*/ 
+/*N*/
 /*N*/ 	PrtWidth( rInf.GetTxtSize( aTxt ).Width() );
 /*N*/ 	const sal_Bool bFull = rInf.Width() <= rInf.X() + PrtWidth();
 /*N*/ 	if( bFull && !rInf.IsUnderFlow() ) {
 /*?*/ 		Truncate();
 /*?*/ 		rInf.SetUnderFlow( this );
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	return bFull;
 /*N*/ }
 
@@ -255,13 +255,13 @@ using namespace ::com::sun::star::i18n;
 /*N*/ sal_Bool SwSoftHyphPortion::Format( SwTxtFormatInfo &rInf )
 /*N*/ {
 /*N*/ 	sal_Bool bFull = sal_True;
-/*N*/ 
+/*N*/
 /*N*/ 	// special case for old german spelling
 /*N*/ 	if( rInf.IsUnderFlow()	)
 /*N*/ 	{
 /*N*/ 		if( rInf.GetSoftHyphPos() )
 /*N*/ 			return sal_True;
-/*N*/ 
+/*N*/
 /*N*/ 		const sal_Bool bHyph = rInf.ChgHyph( sal_True );
 /*N*/ 		if( rInf.IsHyphenate() )
 /*N*/ 		{
@@ -275,7 +275,7 @@ using namespace ::com::sun::star::i18n;
 /*N*/ 					!aGuess.AlternativeSpelling( rInf, rInf.GetIdx() - 1 );
 /*N*/ 		}
 /*N*/ 		rInf.ChgHyph( bHyph );
-/*N*/ 
+/*N*/
 /*N*/ 		if( bFull && !rInf.IsHyphForbud() )
 /*N*/ 		{
 /*N*/ 			rInf.SetSoftHyphPos(0);
@@ -293,7 +293,7 @@ using namespace ::com::sun::star::i18n;
 /*N*/ 		}
 /*N*/ 		return sal_True;
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	rInf.SetSoftHyphPos(0);
 /*N*/ 	SetExpand( sal_True );
 /*N*/ 	bFull = SwHyphPortion::Format( rInf );
@@ -319,7 +319,7 @@ using namespace ::com::sun::star::i18n;
 /*N*/ 		SetExpand( sal_True );
 /*N*/ 		if( rInf.GetLast() == this )
 /*?*/ 			rInf.SetLast( FindPrevPortion( rInf.GetRoot() ) );
-/*N*/ 
+/*N*/
 /*N*/ 		// 5964: alte Werte muessen wieder zurueckgesetzt werden.
 /*N*/ 		const KSHORT nOldX	 = rInf.X();
 /*N*/ 		const xub_StrLen nOldIdx = rInf.GetIdx();
@@ -327,7 +327,7 @@ using namespace ::com::sun::star::i18n;
 /*N*/ 		rInf.SetIdx( rInf.GetIdx() - GetLen() );
 /*N*/ 		const sal_Bool bFull = SwHyphPortion::Format( rInf );
 /*N*/ 		nHyphWidth = Width();
-/*N*/ 
+/*N*/
 /*N*/ 		// 6976: Eine truebe Sache: Wir werden erlaubterweise breiter,
 /*N*/ 		// aber gleich wird noch ein Fly verarbeitet, der eine korrekte
 /*N*/ 		// X-Position braucht.
@@ -359,27 +359,5 @@ using namespace ::com::sun::star::i18n;
 /*N*/ 	}
 /*N*/ 	return sal_False;
 /*N*/ }
-
-/*************************************************************************
- *              virtual SwSoftHyphPortion::HandlePortion()
- *************************************************************************/
-
-
-/*************************************************************************
- *						SwSoftHyphStrPortion::Paint
- *************************************************************************/
-
-/*N*/ void SwSoftHyphStrPortion::Paint( const SwTxtPaintInfo &rInf ) const
-/*N*/ {
-/*N*/ 			DBG_BF_ASSERT(0, "STRIP"); //STRIP001 //STRIP001 	// Bug oder feature?:
-/*N*/ }
-
-/*N*/ SwSoftHyphStrPortion::SwSoftHyphStrPortion( const XubString &rStr )
-/*N*/ 	: SwHyphStrPortion( rStr )
-/*N*/ {
-/*N*/ 		DBG_BF_ASSERT(0, "STRIP"); //STRIP001 //STRIP001 	SetLen( 1 );
-/*N*/ }
-
-
 
 }
