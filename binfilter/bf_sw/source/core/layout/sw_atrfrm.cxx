@@ -7,7 +7,7 @@
  * OpenOffice.org - a multi-platform office productivity suite
  *
  * $RCSfile: sw_atrfrm.cxx,v $
- * $Revision: 1.13 $
+ * $Revision: 1.14 $
  *
  * This file is part of OpenOffice.org.
  *
@@ -270,7 +270,7 @@ using namespace ::rtl;
 /*N*/ 		delete pFmt;
 /*N*/ 		return;
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	//Nur noch Frms angemeldet?
 /*N*/ 	sal_Bool bDel = sal_True;
 /*N*/ 	{
@@ -283,7 +283,7 @@ using namespace ::rtl;
 /*M*/ 				bDel = pLast->IsA( TYPE(SwFrm) )|| pLast->IsA(TYPE(SwXHeadFootText));
 /*N*/ 			} while( bDel && 0 != ( pLast = aIter++ ));
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	if ( bDel )
 /*N*/ 	{
 /*?*/ 		//Wenn in einem der Nodes noch ein Crsr angemeldet ist, muss das
@@ -317,20 +317,13 @@ using namespace ::rtl;
 /*?*/ 				}
 /*?*/ 			}
 /*?*/ 			rCnt.SetNewCntntIdx( (const SwNodeIndex*)0 );
-/*?*/ 
+/*?*/
 /*?*/ 			// beim Loeschen von Header/Footer-Formaten IMMER das Undo
 /*?*/ 			// abschalten! (Bug 31069)
-/*?*/ 			sal_Bool bDoesUndo = pDoc->DoesUndo();
-/*?*/ 			pDoc->DoUndo( sal_False );
-/*?*/ 
+/*?*/
 /*?*/ 			ASSERT( pNode, "Ein grosses Problem." );
 /*?*/ 			pDoc->DeleteSection( pNode );
-/*?*/ 
-/*?*/ 			if( bDoesUndo )
-/*?*/ 			{
-/*?*/ 				pDoc->DelAllUndoObj();
-/*?*/ 				pDoc->DoUndo( sal_True );
-/*?*/ 			}
+/*?*/
 /*?*/ 		}
 /*?*/ 		delete pFmt;
 /*N*/ 	}
@@ -774,7 +767,7 @@ using namespace ::rtl;
 /*N*/ {
 /*N*/ 	if( !pDefinedIn )
 /*N*/ 		return;
-/*N*/ 
+/*N*/
 /*N*/ 	sal_uInt16 nWhich = pOld ? pOld->Which() : pNew ? pNew->Which() : 0;
 /*N*/ 	switch( nWhich )
 /*N*/ 	{
@@ -801,7 +794,7 @@ using namespace ::rtl;
 /*N*/ 				((SwCntntNode*)pDefinedIn)->ResetAttr( RES_PAGEDESC );
 /*N*/ #endif
 /*N*/ 			break;
-/*N*/ 
+/*N*/
 /*N*/ 		default:
 /*N*/ 			/* do nothing */;
 /*N*/ 	}
@@ -817,7 +810,7 @@ using namespace ::rtl;
 /*N*/ 		case MID_PAGEDESC_PAGENUMOFFSET:
 /*N*/ 			rVal <<= (sal_Int16)GetNumOffset();
 /*N*/ 			break;
-/*N*/ 
+/*N*/
 /*N*/ 		case MID_PAGEDESC_PAGEDESCNAME:
 /*N*/ 			{
 /*N*/ 				const SwPageDesc* pDesc = GetPageDesc();
@@ -854,7 +847,7 @@ using namespace ::rtl;
 /*?*/                 bRet = sal_False;
 /*N*/         }
 /*N*/         break;
-/*N*/ 
+/*N*/
 /*N*/ 		case MID_PAGEDESC_PAGEDESCNAME:
             /* geht nicht, weil das Attribut eigentlich nicht den Namen
              * sondern einen Pointer auf den PageDesc braucht (ist Client davon).
@@ -949,11 +942,11 @@ SwFmtCol& SwFmtCol::operator=( const SwFmtCol& rCpy )
 /*N*/ 		  bOrtho  			 == rCmp.IsOrtho() &&
 /*N*/ 		  aColumns.Count() == rCmp.GetNumCols()) )
 /*N*/ 		return 0;
-/*N*/ 
+/*N*/
 /*N*/ 	for ( sal_uInt16 i = 0; i < aColumns.Count(); ++i )
 /*N*/ 		if ( !(*aColumns[i] == *rCmp.GetColumns()[i]) )
 /*?*/ 			return 0;
-/*N*/ 
+/*N*/
 /*N*/ 	return 1;
 /*N*/ }
 
@@ -1129,7 +1122,7 @@ void SwFmtCol::Calc( sal_uInt16 nGutterWidth, sal_uInt16 nAct )
 /*M*/ 			bRet = sal_True;
 /*M*/ 			nWidth = nWidthSum;
 /*M*/             bOrtho = sal_False;
-/*M*/ 
+/*M*/
 /*M*/             uno::Reference<lang::XUnoTunnel> xNumTunnel(xCols, uno::UNO_QUERY);
 /*M*/ 			SwXTextColumns* pSwColums = 0;
 /*M*/ 			if(xNumTunnel.is())
@@ -1243,7 +1236,7 @@ void SwFmtCol::Calc( sal_uInt16 nGutterWidth, sal_uInt16 nAct )
 /*N*/ 				;
 /*N*/ 		}
 /*N*/ 		break;
-/*N*/ 
+/*N*/
 /*N*/ 		case MID_SURROUND_ANCHORONLY:
 /*N*/ 			SetAnchorOnly( *(sal_Bool*)rVal.getValue() );
 /*N*/ 			break;
@@ -1289,12 +1282,12 @@ void SwFmtCol::Calc( sal_uInt16 nGutterWidth, sal_uInt16 nAct )
 /*N*/ 	const SvxULSpaceItem *pULSpace ) const
 /*N*/ {
 /*N*/ 	SwTwips nNewPos = GetPos();
-/*N*/ 
+/*N*/
 /*N*/ 	if( VERT_NONE==GetVertOrient() && pULSpace )
 /*N*/ 	{
 /*N*/ 		nNewPos -= pULSpace->GetUpper();
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	return nNewPos;
 /*N*/ }
 
@@ -1302,12 +1295,12 @@ void SwFmtCol::Calc( sal_uInt16 nGutterWidth, sal_uInt16 nAct )
 /*N*/ 	const SvxULSpaceItem *pULSpace ) const
 /*N*/ {
 /*N*/ 	SwTwips nNewPos = GetPos();
-/*N*/ 
+/*N*/
 /*N*/ 	if( VERT_NONE==GetVertOrient() && pULSpace )
 /*N*/ 	{
 /*N*/ 		nNewPos += pULSpace->GetUpper();
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	return nNewPos;
 /*N*/ }
 
@@ -1430,12 +1423,12 @@ void SwFmtCol::Calc( sal_uInt16 nGutterWidth, sal_uInt16 nAct )
 /*N*/ 	const SvxLRSpaceItem *pLRSpace ) const
 /*N*/ {
 /*N*/ 	SwTwips nNewPos = GetPos();
-/*N*/ 
+/*N*/
 /*N*/ 	if( HORI_NONE==GetHoriOrient() && pLRSpace )
 /*N*/ 	{
 /*N*/ 		nNewPos -= pLRSpace->GetLeft();
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	return nNewPos;
 /*N*/ }
 
@@ -1443,12 +1436,12 @@ void SwFmtCol::Calc( sal_uInt16 nGutterWidth, sal_uInt16 nAct )
 /*N*/ 	const SvxLRSpaceItem *pLRSpace ) const
 /*N*/ {
 /*N*/ 	SwTwips nNewPos = GetPos();
-/*N*/ 
+/*N*/
 /*N*/ 	if( HORI_NONE==GetHoriOrient() && pLRSpace )
 /*N*/ 	{
 /*N*/ 		nNewPos += pLRSpace->GetLeft();
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	return nNewPos;
 /*N*/ }
 
@@ -1588,7 +1581,7 @@ void SwFmtCol::Calc( sal_uInt16 nGutterWidth, sal_uInt16 nAct )
 /*N*/ {
 /*N*/ 	nAnchorId  = rAnchor.GetAnchorId();
 /*N*/ 	nPageNum   = rAnchor.GetPageNum();
-/*N*/ 
+/*N*/
 /*N*/ 	delete pCntntAnchor;
 /*N*/ 	pCntntAnchor = rAnchor.pCntntAnchor ?
 /*N*/ 									new SwPosition(*(rAnchor.pCntntAnchor)) : 0;
@@ -1624,7 +1617,7 @@ void SwFmtCol::Calc( sal_uInt16 nGutterWidth, sal_uInt16 nAct )
 /*N*/ 	switch ( nMemberId )
 /*N*/ 	{
 /*N*/ 		case MID_ANCHOR_ANCHORTYPE:
-/*N*/ 
+/*N*/
 /*N*/ 			text::TextContentAnchorType eRet;
 /*N*/ 			switch((sal_Int16)GetAnchorId())
 /*N*/ 			{
@@ -2153,7 +2146,7 @@ void SwFmtChain::SetNext( SwFlyFrmFmt *pFmt )
 /*N*/ int SwFmtLineNumber::operator==( const SfxPoolItem &rAttr ) const
 /*N*/ {
 /*N*/ 	ASSERT( SfxPoolItem::operator==( rAttr ), "keine gleichen Attribute" );
-/*N*/ 
+/*N*/
 /*N*/ 	return nStartValue	== ((SwFmtLineNumber&)rAttr).GetStartValue() &&
 /*N*/ 		   bCountLines	== ((SwFmtLineNumber&)rAttr).IsCount();
 /*N*/ }
@@ -2413,9 +2406,9 @@ BOOL SwTextGridItem::PutValue( const ::com::sun::star::uno::Any& rVal,
 /*N*/ {
 /*N*/ 	SwFmtHeader *pH = 0;
 /*N*/ 	SwFmtFooter *pF = 0;
-/*N*/ 
+/*N*/
 /*N*/ 	sal_uInt16 nWhich = pNew ? pNew->Which() : 0;
-/*N*/ 
+/*N*/
 /*N*/ 	if( RES_ATTRSET_CHG == nWhich )
 /*N*/ 	{
 /*N*/ 		((SwAttrSetChg*)pNew)->GetChgSet()->GetItemState(
@@ -2427,19 +2420,19 @@ BOOL SwTextGridItem::PutValue( const ::com::sun::star::uno::Any& rVal,
 /*?*/ 		pH = (SwFmtHeader*)pNew;
 /*N*/ 	else if( RES_FOOTER == nWhich )
 /*?*/ 		pF = (SwFmtFooter*)pNew;
-/*N*/ 
+/*N*/
 /*N*/ 	if( pH && pH->IsActive() && !pH->GetHeaderFmt() )
 /*N*/ 	{	//Hat er keinen, mach ich ihm einen
 /*N*/ 		SwFrmFmt *pFmt = GetDoc()->MakeLayoutFmt( RND_STD_HEADER );
 /*N*/ 		pFmt->Add( pH );
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	if( pF && pF->IsActive() && !pF->GetFooterFmt() )
 /*N*/ 	{	//Hat er keinen, mach ich ihm einen
 /*N*/ 		SwFrmFmt *pFmt = GetDoc()->MakeLayoutFmt( RND_STD_FOOTER );
 /*N*/ 		pFmt->Add( pF );
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	// MIB 24.3.98: Modify der Basisklasse muss immer gerufen werden, z.B.
 /*N*/ 	// wegen RESET_FMTWRITTEN.
 /*N*/ //	if ( GetDepends() )
@@ -2482,7 +2475,7 @@ void SwFrmFmt::MakeFrms()
 /*?*/ 		{
 /*?*/ 			SwNode2Layout aTmp( *pSectNd, pSectNd->GetIndex() - 1 );
 /*?*/ 			pFrm = aTmp.NextFrm();
-/*?*/ 
+/*?*/
 /*?*/ 			if( pFrm && pFrm->GetRegisteredIn() != this )
 /*?*/ 			{
 /*?*/ 				// die Section hat keinen eigenen ::com::sun::star::frame::Frame, also falls
@@ -2508,7 +2501,7 @@ void SwFrmFmt::MakeFrms()
 /*N*/ 		pFrm = ::binfilter::GetFrmOfModify( *(SwModify*)this, nFrmType, pPoint,
 /*N*/ 									0, bCalcFrm );
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	if( pFrm )
 /*N*/ 	{
 /*N*/ 		if( bPrtArea )
@@ -2557,15 +2550,15 @@ void SwFrmFmt::MakeFrms()
 /*N*/ 		do {
 /*N*/ 			if ( pLast->ISA( SwFlyFrm ) )
 /*?*/ 				delete pLast;
-/*N*/ 
+/*N*/
 /*N*/ 		} while( 0 != ( pLast = aIter++ ));
-/*N*/ 
+/*N*/
 /*N*/ 	pLast = aIter.GoStart();
 /*N*/ 	if( pLast )
 /*N*/ 		do {
 /*N*/ 			if ( pLast->ISA( SwFlyDrawContact ) )
 /*N*/ 				delete pLast;
-/*N*/ 
+/*N*/
 /*N*/ 		} while( 0 != ( pLast = aIter++ ));
 /*N*/ }
 
@@ -2734,7 +2727,7 @@ void SwFlyFrmFmt::MakeFrms()
 /*?*/ 				SwClientIter( *(SwFlyFrmFmt*)this ).First( TYPE(SwFrm) );
 /*?*/ 		}
 /*?*/ 		return sal_False;
-/*N*/ 
+/*N*/
 /*N*/ 	default:
 /*N*/ 		return SwFrmFmt::GetInfo( rInfo );
 /*N*/ 	}
@@ -2755,7 +2748,7 @@ void SwFlyFrmFmt::MakeFrms()
 /*M*/ const sal_Bool SwFlyFrmFmt::IsBackgroundTransparent() const
 /*M*/ {
 /*M*/     sal_Bool bReturn = sal_False;
-/*M*/ 
+/*M*/
 /*N*/     /// NOTE: If background color is "no fill"/"auto fill" (COL_TRANSPARENT)
 /*N*/     ///     and there is no background graphic, it "inherites" the background
 /*N*/     ///     from its anchor.
@@ -2776,7 +2769,7 @@ void SwFlyFrmFmt::MakeFrms()
 /*M*/             bReturn = sal_True;
 /*M*/         }
 /*M*/     }
-/*M*/ 
+/*M*/
 /*M*/     return bReturn;
 /*M*/ }
 
