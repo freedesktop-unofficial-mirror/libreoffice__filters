@@ -7,7 +7,7 @@
  * OpenOffice.org - a multi-platform office productivity suite
  *
  * $RCSfile: sc_rfindlst.cxx,v $
- * $Revision: 1.7 $
+ * $Revision: 1.8 $
  *
  * This file is part of OpenOffice.org.
  *
@@ -48,12 +48,6 @@ namespace binfilter {
 
 //==================================================================
 
-ScRangeFindList::ScRangeFindList(const String& rName) :
-    aDocName( rName ),
-    bHidden( FALSE )
-{
-}
- 
 ScRangeFindList::~ScRangeFindList()
 {
     void* pEntry = aEntries.First();
