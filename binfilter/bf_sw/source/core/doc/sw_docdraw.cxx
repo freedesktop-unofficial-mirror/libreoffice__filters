@@ -7,7 +7,7 @@
  * OpenOffice.org - a multi-platform office productivity suite
  *
  * $RCSfile: sw_docdraw.cxx,v $
- * $Revision: 1.10 $
+ * $Revision: 1.11 $
  *
  * This file is part of OpenOffice.org.
  *
@@ -179,7 +179,7 @@ DBG_BF_ASSERT(0, "STRIP"); return NULL;    //STRIP001 SwDrawView::ReplaceMarkedD
 /*N*/ 	// This also needs to work when no layout exists. Thus, for
 /*N*/ 	// FlyFrames an alternative method is used now in that case.
 /*N*/ 	SwClientIter aIter( (SwFmt&)*pFmt );
-/*N*/ 
+/*N*/
 /*N*/ 	if( RES_FLYFRMFMT == pFmt->Which() )
 /*N*/ 	{
 /*N*/ 		if( pFmt->GetDoc()->GetRootFrm() )
@@ -219,12 +219,12 @@ namespace binfilter {//STRIP009
 /*N*/ void SwDoc::InitDrawModel()
 /*N*/ {
 /*N*/ 	RTL_LOGFILE_CONTEXT_AUTHOR( aLog, "SW", "JP93722",  "SwDoc::InitDrawModel" );
-/*N*/ 
+/*N*/
 /*N*/ 	//!!Achtung im sw3-Reader (sw3imp.cxx) gibt es aehnlichen Code, der
 /*N*/ 	//mitgepfelgt werden muss.
 /*N*/ 	if ( pDrawModel )
 /*?*/ 		ReleaseDrawModel();
-/*N*/ 
+/*N*/
 /*N*/ 	//DrawPool und EditEnginePool anlegen, diese gehoeren uns und werden
 /*N*/ 	//dem Drawing nur mitgegeben. Im ReleaseDrawModel werden die Pools wieder
 /*N*/ 	//zerstoert.
@@ -248,81 +248,61 @@ namespace binfilter {//STRIP009
 /*N*/ 		aAttrPool.FreezeIdRanges();
 /*N*/ 	else
 /*?*/ 		pSdrPool->FreezeIdRanges();
-/*N*/ 
+/*N*/
 /*N*/     // SJ: #95129# set FontHeight pool defaults without changing static SdrEngineDefaults
 /*N*/  	aAttrPool.SetPoolDefaultItem(SvxFontHeightItem( 240, 100, EE_CHAR_FONTHEIGHT ));
-/*N*/ 
+/*N*/
 /*N*/ 	RTL_LOGFILE_CONTEXT_TRACE( aLog, "before create DrawDocument" );
 /*N*/ 	//Das SdrModel gehoert dem Dokument, wir haben immer zwei Layer und eine
 /*N*/ 	//Seite.
 /*N*/ 	pDrawModel = new SwDrawDocument( this );
-/*N*/ 
+/*N*/
 /*N*/ 	String sLayerNm;
 /*N*/ 	sLayerNm.AssignAscii(RTL_CONSTASCII_STRINGPARAM("Hell" ));
 /*N*/ 	nHell	= pDrawModel->GetLayerAdmin().NewLayer( sLayerNm )->GetID();
-/*N*/ 
+/*N*/
 /*N*/ 	sLayerNm.AssignAscii(RTL_CONSTASCII_STRINGPARAM("Heaven" ));
 /*N*/ 	nHeaven	= pDrawModel->GetLayerAdmin().NewLayer( sLayerNm )->GetID();
-/*N*/ 
+/*N*/
 /*N*/ 	sLayerNm.AssignAscii(RTL_CONSTASCII_STRINGPARAM("Controls" ));
 /*N*/ 	nControls = pDrawModel->GetLayerAdmin().NewLayer( sLayerNm )->GetID();
-/*N*/ 
+/*N*/
 /*N*/     // OD 25.06.2003 #108784# - add invisible layers corresponding to the
 /*N*/     // visible ones.
 /*N*/     {
 /*N*/         sLayerNm.AssignAscii(RTL_CONSTASCII_STRINGPARAM("InvisibleHell" ));
 /*N*/         nInvisibleHell   = pDrawModel->GetLayerAdmin().NewLayer( sLayerNm )->GetID();
-/*N*/ 
+/*N*/
 /*N*/         sLayerNm.AssignAscii(RTL_CONSTASCII_STRINGPARAM("InvisibleHeaven" ));
 /*N*/         nInvisibleHeaven = pDrawModel->GetLayerAdmin().NewLayer( sLayerNm )->GetID();
-/*N*/ 
+/*N*/
 /*N*/         sLayerNm.AssignAscii(RTL_CONSTASCII_STRINGPARAM("InvisibleControls" ));
 /*N*/         nInvisibleControls = pDrawModel->GetLayerAdmin().NewLayer( sLayerNm )->GetID();
 /*N*/     }
-/*N*/ 
+/*N*/
 /*N*/ 	pDrawModel->InsertPage( pDrawModel->AllocPage( FALSE ) );
 /*N*/ 	RTL_LOGFILE_CONTEXT_TRACE( aLog, "after create DrawDocument" );
-/*N*/ 
+/*N*/
 /*N*/ 	SdrOutliner& rOutliner = pDrawModel->GetDrawOutliner();
 /*N*/ 	RTL_LOGFILE_CONTEXT_TRACE( aLog, "after create Spellchecker/Hyphenator" );
-/*N*/ 
+/*N*/
 /*N*/ 	SetCalcFieldValueHdl(&rOutliner);
 /*N*/ 	SetCalcFieldValueHdl(&pDrawModel->GetHitTestOutliner());
-/*N*/ 
+/*N*/
 /*N*/ 	//JP 16.07.98: Bug 50193 - Linkmanager am Model setzen, damit
 /*N*/ 	//			dort ggfs. verlinkte Grafiken eingefuegt werden koennen
 /*N*/ 	//JP 28.01.99: der WinWord Import benoetigt ihn auch
 /*N*/ 	pDrawModel->SetLinkManager( &GetLinkManager() );
-/*N*/ 
+/*N*/
 /*N*/ 	    OutputDevice* pRefDev = _GetRefDev();
 /*N*/     if ( pRefDev )
 /*N*/         pDrawModel->SetRefDevice( pRefDev );
-/*N*/ 	pDrawModel->SetNotifyUndoActionHdl( LINK( this, SwDoc, AddDrawUndo ));
 /*N*/ 	if ( pLayout )
 /*N*/ 	{
 /*N*/ 		pLayout->SetDrawPage( pDrawModel->GetPage( 0 ) );
 /*N*/ 		pLayout->GetDrawPage()->SetSize( pLayout->Frm().SSize() );
 /*N*/ 	}
 /*N*/ }
-
-/** method to notify drawing page view about the invisible layers
-
-    OD 26.06.2003 #108784#
-
-    @author OD
-*/
-void SwDoc::NotifyInvisibleLayers( SdrPageView& _rSdrPageView )
-{
-    String sLayerNm;
-    sLayerNm.AssignAscii(RTL_CONSTASCII_STRINGPARAM("InvisibleHell" ));
-    _rSdrPageView.SetLayerVisible( sLayerNm, FALSE );
-
-    sLayerNm.AssignAscii(RTL_CONSTASCII_STRINGPARAM("InvisibleHeaven" ));
-    _rSdrPageView.SetLayerVisible( sLayerNm, FALSE );
-
-    sLayerNm.AssignAscii(RTL_CONSTASCII_STRINGPARAM("InvisibleControls" ));
-    _rSdrPageView.SetLayerVisible( sLayerNm, FALSE );
-}
 
 /** method to determine, if a layer ID belongs to the visible ones.
 
@@ -444,10 +424,10 @@ SdrLayerID SwDoc::GetInvisibleLayerIdByVisibleOne( const SdrLayerID& _nVisibleLa
 /*N*/ 	if ( pDrawModel )
 /*N*/ 	{
 /*N*/ 		//!!Den code im sw3io fuer Einfuegen Dokument mitpflegen!!
-/*N*/ 
+/*N*/
 /*N*/ 		delete pDrawModel; pDrawModel = 0;
 /*N*/ 		SfxItemPool *pSdrPool = aAttrPool.GetSecondaryPool();
-/*N*/ 
+/*N*/
 /*N*/ 		ASSERT( pSdrPool, "missing Pool" );
 /*N*/ 		SfxItemPool *pEEgPool = pSdrPool->GetSecondaryPool();
 /*N*/ 		ASSERT( !pEEgPool->GetSecondaryPool(), "i don't accept additional pools");
@@ -475,7 +455,7 @@ SdrLayerID SwDoc::GetInvisibleLayerIdByVisibleOne( const SdrLayerID& _nVisibleLa
 /*N*/ 			pTmp->MakeDrawView();
 /*N*/ 			pTmp = (ViewShell*) pTmp->GetNext();
 /*N*/ 		} while ( pTmp != pLayout->GetCurrShell() );
-/*N*/ 
+/*N*/
 /*N*/ 		//Broadcast, damit die FormShell mit der DrawView verbunden werden kann
 /*N*/ 		if( GetDocShell() )
 /*N*/ 		{
@@ -486,12 +466,6 @@ SdrLayerID SwDoc::GetInvisibleLayerIdByVisibleOne( const SdrLayerID& _nVisibleLa
 /*N*/ 	return pDrawModel;
 /*N*/ }
 
-/*************************************************************************/
-
-/*N*/ void SwDoc::DrawNotifyUndoHdl()
-/*N*/ {
-/*N*/ 	pDrawModel->SetNotifyUndoActionHdl( Link() );
-/*N*/ }
 
 /*************************************************************************/
 /*
@@ -511,7 +485,7 @@ SdrLayerID SwDoc::GetInvisibleLayerIdByVisibleOne( const SdrLayerID& _nVisibleLa
 \************************************************************************/
 
 /*N*/ IMPL_LINK(SwDoc, CalcFieldValueHdl, EditFieldInfo*, pInfo)
-/*N*/ {DBG_BF_ASSERT(0, "STRIP"); //STRIP001 
+/*N*/ {DBG_BF_ASSERT(0, "STRIP"); //STRIP001
 /*N*/  return(0);
 /*N*/ }
 }
