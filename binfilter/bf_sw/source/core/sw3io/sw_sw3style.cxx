@@ -7,7 +7,7 @@
  * OpenOffice.org - a multi-platform office productivity suite
  *
  * $RCSfile: sw_sw3style.cxx,v $
- * $Revision: 1.13 $
+ * $Revision: 1.14 $
  *
  * This file is part of OpenOffice.org.
  *
@@ -204,7 +204,7 @@ public:
 /*N*/ 		return rDoc.FindFrmFmtByName( rName );
 /*N*/ 	else if( nFamily & SFX_STYLE_FAMILY_CHAR )
 /*N*/ 		return rDoc.FindCharFmtByName( rName );
-/*N*/ 
+/*N*/
 /*N*/ 	DBG_ASSERT( nFamily || !nFamily, "Unbekannte Style-Familie" );
 /*N*/ 	return NULL;
 /*N*/ }
@@ -250,13 +250,13 @@ public:
 /*N*/ void __EXPORT SwStyleSheet::Load( SvStream& r, USHORT nVer )
 /*N*/ {
 /*N*/ 	nVersion = nVer;	// Version wird noch gebraucht
-/*N*/ 
+/*N*/
 /*N*/ 	r >> nId >> nLevel;
-/*N*/ 
+/*N*/
 /*N*/ 	// Numerierungs-Ebende weglassen, wenn sie nicht unterstuetzt wird
 /*N*/ 	if( nLevel != NO_NUMBERING && GetRealLevel(nLevel) >= MAXLEVEL )
 /*N*/ 		nLevel = NO_NUMBERING;
-/*N*/ 
+/*N*/
 /*N*/ //FEATURE::CONDCOLL
 /*N*/ 	if( SWG_CONDSTYLES_BUG <= nVer )
 /*N*/ 	{
@@ -267,7 +267,7 @@ public:
 /*N*/ 		{
 /*N*/ 			nId = RES_POOLCOLL_TEXT;
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		// ConditionStyleSheets ??
 /*N*/ 		UINT16 nTmp;
 /*N*/ 		r >> nTmp;
@@ -280,7 +280,7 @@ public:
 /*?*/ 				SwStyleCondColl* pNew = new SwStyleCondColl;
 /*?*/ 				r.ReadByteString( pNew->sColl, r.GetStreamCharSet() );
 /*?*/ 				r >> pNew->nCondition;
-/*?*/ 
+/*?*/
 /*?*/ 				if( USRFLD_EXPRESSION & pNew->nCondition )
 /*?*/ 				{
 /*?*/ 					ASSERT( !this, "noch nicht implementiert" );
@@ -294,7 +294,7 @@ public:
 /*N*/ 		}
 /*N*/ 	}
 /*N*/ //FEATURE::CONDCOLL
-/*N*/ 
+/*N*/
 /*N*/ 	// Zusaetzliches Flag-Byte laden
 /*N*/ 	if( SWG_AUTOUPDATE_FLAG <= nVer )
 /*N*/ 	{
@@ -325,7 +325,7 @@ public:
 /*N*/ 		}
 /*N*/ 	}
 /*N*/ #endif
-/*N*/ 
+/*N*/
 /*N*/ 	// JP 11.12.96: die Zeichenvorlagen wurden um die HTML-Vorlagen erweitert,
 /*N*/ 	// aber ohne ein wenig Platz zu lassen. Das wurde spaeter nachgepflegt.
 /*N*/ 	if( SWG_CONDSTYLES == nVer && SFX_STYLE_FAMILY_CHAR == nFamily &&
@@ -344,7 +344,7 @@ public:
 /*N*/ {
 /*N*/ 	ASSERT( nVersion == r.GetVersion(),
 /*N*/ 			"SwStyleSheet::Store: FF-Version != Stream-FF-Version" );
-/*N*/ 
+/*N*/
 /*N*/ 	r << nId;
 /*N*/ 	if( r.GetVersion() <= SOFFICE_FILEFORMAT_40 &&
 /*N*/ 		nLevel != NO_NUMBERING && nLevel >= OLD_MAXLEVEL )
@@ -352,7 +352,7 @@ public:
 /*N*/ 		nLevel = NO_NUMBERING;
 /*N*/ 	}
 /*N*/ 	r << nLevel;
-/*N*/ 
+/*N*/
 /*N*/ 	if( nVersion > SOFFICE_FILEFORMAT_31 )
 /*N*/ 	{
 /*N*/ //FEATURE::CONDCOLL
@@ -370,7 +370,7 @@ public:
 /*?*/ 				r.WriteByteString( rCColl.GetTxtFmtColl()->GetName(),
 /*?*/ 								   r.GetStreamCharSet() );
 /*?*/ 				r << (UINT32) rCColl.GetCondition();
-/*?*/ 
+/*?*/
 /*?*/ 				if( USRFLD_EXPRESSION & rCColl.GetCondition() )
 /*?*/ 				{
 /*?*/ 					String s( *rCColl.GetFldExpression() );
@@ -381,10 +381,10 @@ public:
 /*N*/ 			}
 /*N*/ 		}
 /*N*/ //FEATURE::CONDCOLL
-/*N*/ 
+/*N*/
 /*N*/ 		// zusaetzliches Flag-Byte speichern
 /*N*/ 		r << cFlags;
-/*N*/ 
+/*N*/
 /*N*/ #ifdef NUM_RELSPACE
 /*N*/ 		if( nVersion > SOFFICE_FILEFORMAT_40 && (cFlags & 0x02) != 0 )
 /*N*/ 		{
@@ -397,7 +397,7 @@ public:
 /*?*/ 					ULONG nPos = r.Tell();
 /*?*/ 					r << (UINT16)nIVer;
 /*?*/ 					pNumLRSpace->Store( r, nIVer );
-/*?*/ 
+/*?*/
 /*?*/ 					ULONG nNewPos = r.Tell();
 /*?*/ 					r.Seek( nPos-4UL );
 /*?*/ 					r << (UINT32)(nNewPos - nPos);
@@ -525,18 +525,18 @@ const int RES_POOLCOLL_HTML_XMP_40_USER = 0x3003 | USER_FMT;
 /*N*/ {
 /*N*/ 	ASSERT( nExpFFVersion == s.GetVersion(),
 /*N*/ 			"SwStyleSheetPool::Store: FF-Version != Stream-FF-Version" );
-/*N*/ 
+/*N*/
 /*N*/ 	CopyFromDoc( bUsed );
 /*N*/ 	SetSearchMask( SFX_STYLE_FAMILY_ALL );
-/*N*/ 
+/*N*/
 /*N*/ 	rPool.SetFileFormatVersion( (USHORT)nExpFFVersion );
-/*N*/ 
+/*N*/
 /*N*/ 	//JP 11.06.97: laut ChangesMail muss das vorm Speichern gesetzt werden.
 /*N*/ 	if( SOFFICE_FILEFORMAT_31 == nExpFFVersion )
 /*N*/ 		rPool.SetStoringRange( 1, 60 );
-/*N*/ 
+/*N*/
 /*N*/ 	rPool.Store( s );
-/*N*/ 
+/*N*/
 /*N*/ 	return SfxStyleSheetBasePool::Store( s, bUsed );
 /*N*/ }
 
@@ -599,17 +599,17 @@ const int RES_POOLCOLL_HTML_XMP_40_USER = 0x3003 | USER_FMT;
 /*N*/ void SwStyleSheetPool::Add( const SwFmt& rFmt, SfxStyleFamily eFam )
 /*N*/ {
 /*N*/ 	SwStyleSheet& r = (SwStyleSheet&) Make( rFmt.GetName(), eFam, DUMMYBITS );
-/*N*/ 
+/*N*/
 /*N*/ 	// SW31-Export oder nicht
 /*N*/ 	r.nVersion = nExpFFVersion;
-/*N*/ 
+/*N*/
 /*N*/ 	// ItemSet
 /*N*/ 	r.GetItemSet().Put( rFmt.GetAttrSet() );
-/*N*/ 
+/*N*/
 /*N*/ 	// es muss natuerlich der Pointer vom kopierten geschrieben werden !!!
 /*N*/ 	r.pSet = &r.GetItemSet();
 /*N*/ 	r.bMySet = FALSE;
-/*N*/ 
+/*N*/
 /*N*/ 	// Members setzen
 /*N*/ 	ASSERT( nExpFFVersion, "SwStylePool::Add: FF-Version ist nicht gesetzt" );
 /*N*/ 	if( nExpFFVersion <= SOFFICE_FILEFORMAT_40 )
@@ -627,7 +627,7 @@ const int RES_POOLCOLL_HTML_XMP_40_USER = 0x3003 | USER_FMT;
 /*N*/ 	r.nHelpId = rFmt.GetPoolHelpId();
 /*N*/ 	if( rFmt.IsAutoUpdateFmt() )
 /*N*/ 		r.cFlags |= 0x01;
-/*N*/ 
+/*N*/
 /*N*/ 	// Parent und Follow
 /*N*/ 	SwFmt* pFmt = rFmt.DerivedFrom();
 /*N*/ 	// Parent-Namen nur uebernehmen, wenn kein Default
@@ -683,7 +683,7 @@ const int RES_POOLCOLL_HTML_XMP_40_USER = 0x3003 | USER_FMT;
 /*N*/ 					if( bNonProp )
 /*N*/ 						aLRSpace.SetTxtLeft( nLSpace );
 /*N*/ 					r.GetItemSet().Put( aLRSpace );
-/*N*/ 
+/*N*/
 /*N*/ 					if( nExpFFVersion <= SOFFICE_FILEFORMAT_40 &&
 /*N*/ 						nLSpace != nOldLSpace )
 /*N*/ 					{
@@ -701,18 +701,23 @@ const int RES_POOLCOLL_HTML_XMP_40_USER = 0x3003 | USER_FMT;
 /*N*/ 			}
 /*N*/ 		}
 /*N*/ #endif
-/*N*/ 
+/*N*/
 /*N*/ 		const SwTxtFmtColl& rFollow = r.GetColl()->GetNextTxtFmtColl();
 /*N*/ 		if( !rFollow.IsDefault() )
 /*N*/ 			r.aFollow = rFollow.GetName();
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ }
 
 // Kopieren aller StyleSheets in das Doc
 // Ggf. werden die StyleSheets neu erzeugt
 
 sal_Bool lcl_sw3io_isStarSymbolFontItem( const SvxFontItem& rFontItem );
+extern sal_Char const SW_CONSTASCII_DECL( sHTML_xmp, "XMP" );
+extern sal_Char const SW_CONSTASCII_DECL( sHTML_listing, "LISTING" );
+
+sal_Char const SW_CONSTASCII_DEF( sHTML_xmp, "XMP" );
+sal_Char const SW_CONSTASCII_DEF( sHTML_listing, "LISTING" );
 
 /*N*/ void SwStyleSheetPool::CopyToDoc( BOOL bOverwrite, USHORT eMask )
 /*N*/ {
@@ -724,7 +729,7 @@ sal_Bool lcl_sw3io_isStarSymbolFontItem( const SvxFontItem& rFontItem );
 /*N*/ 		if( !p->pFmt &&	(eMask & p->nFamily) )
 /*N*/ 		{
 /*N*/ 			BOOL bNewFmt = FALSE;
-/*N*/ 
+/*N*/
 /*N*/ 			if( p->nVersion < SWG_TEN_HEADLINES &&
 /*N*/ 				p->nFamily & SFX_STYLE_FAMILY_PARA &&
 /*N*/ 				(RES_POOLCOLL_HTML_LISTING_40_USER == p->nId ||
@@ -737,26 +742,26 @@ sal_Bool lcl_sw3io_isStarSymbolFontItem( const SvxFontItem& rFontItem );
 /*?*/ 							? sHTML_xmp
 /*?*/ 							: sHTML_listing ) );
 /*?*/ 				BOOL bPresent = Find( aNewName, p->nFamily ) != 0;
-/*?*/ 
+/*?*/
 /*?*/ 				// Umbennnen. Das muss auch sein, wenn eine Vorlage
 /*?*/ 				// mit dem neuen Namen existiert, damit die abgeleiteten
 /*?*/ 				// und Folgevorlagen umgehaengt wenrden.
 /*?*/ 				Rename( p->GetName(), aNewName, p->nFamily );
 /*?*/ 				aStyles.First();
-/*?*/ 
+/*?*/
 /*?*/ 				if( bPresent )
 /*?*/ 				{
 /*?*/ 					// Vorlage von nun an ignorieren
 /*?*/ 					p->nFamily = (SfxStyleFamily)0;
 /*?*/ 					continue;
 /*?*/ 				}
-/*?*/ 
+/*?*/
 /*?*/ 				// Benutzter-Vorlage ohne ID daraus machen.
 /*?*/ 				p->nId |= (USHRT_MAX &
 /*?*/ 								~(COLL_GET_RANGE_BITS + POOLGRP_NOCOLLID));
 /*?*/ 				p->nMask |= SFXSTYLEBIT_USERDEF;
 /*N*/ 			}
-/*N*/ 
+/*N*/
 /*N*/ 			pFmt = lcl_sw3io__FindFmt( rDoc, p->GetName(), p->nFamily );
 /*N*/ 			if( !pFmt )
 /*N*/ 			{
@@ -792,7 +797,7 @@ sal_Bool lcl_sw3io_isStarSymbolFontItem( const SvxFontItem& rFontItem );
 /*N*/ 										nId < RES_POOLCOLL_DOC_END) ||
 /*N*/ 								(RES_POOLCOLL_HTML_BEGIN <= nId &&
 /*N*/ 										nId < RES_POOLCOLL_HTML_END));
-/*N*/ 
+/*N*/
 /*N*/ 					// es war eine Poolvorlage die wir aber noch nicht kennen
 /*N*/ 					if( bIsUserDefined )
 /*N*/ 					{
@@ -833,9 +838,9 @@ sal_Bool lcl_sw3io_isStarSymbolFontItem( const SvxFontItem& rFontItem );
 /*N*/ 							p->nId = nPoolId;
 /*N*/ 						}
 /*N*/ 					}
-/*N*/ 
+/*N*/
 /*N*/ 				}
-/*N*/ 
+/*N*/
 /*N*/ 				if( bIsUserDefined )
 /*N*/ 				{
 /*N*/ 					// Benutzerdefinierte Formate werden am Doc neu eingerichtet.
@@ -860,7 +865,7 @@ sal_Bool lcl_sw3io_isStarSymbolFontItem( const SvxFontItem& rFontItem );
 /*N*/ 						SwTxtFmtColl* pDer = (*rDoc.GetTxtFmtColls())[ 0 ];
 /*N*/ 						pFmt = rDoc.MakeTxtFmtColl( p->GetName(), pDer );
 /*N*/ 					}
-/*N*/ 
+/*N*/
 /*N*/ 					// Bei benutzerdefinierten Vorlagen werden die Help-Ids
 /*N*/ 					// im Doc gesetzt.
 /*N*/ 					pFmt->SetPoolFmtId( p->nId );
@@ -894,7 +899,7 @@ sal_Bool lcl_sw3io_isStarSymbolFontItem( const SvxFontItem& rFontItem );
 /*N*/ 					if( pFmt->GetPoolHlpFileId() != UCHAR_MAX )
 /*?*/ 						p->aHelpFile = *rDoc.GetDocPattern( pFmt->GetPoolHlpFileId() );
 /*N*/ 					p->nHelpId = pFmt->GetPoolHelpId();
-/*N*/ 
+/*N*/
 /*N*/ 					// MIB 27.11.96: "kleine" Optimierung: Nichts umbenennen,
 /*N*/ 					// wo nichts umzubenennen ist.
 /*N*/ 					if( p->GetName() != pFmt->GetName() )
@@ -934,11 +939,11 @@ sal_Bool lcl_sw3io_isStarSymbolFontItem( const SvxFontItem& rFontItem );
 /*N*/ 				if( pColl )
 /*N*/ 				{
 /*N*/ 					((SwAttrSet&) pColl->GetAttrSet()).SetModifyAtAttr( pColl );
-/*N*/ 
+/*N*/
 /*N*/ 					// Bei Einfuegen von Vorlagen muss ggf. der Outline-Level
 /*N*/ 					// geloescht werden, wenn bereits eine Vorlage mit diesem
 /*N*/ 					// Level existiert.
-/*N*/ 
+/*N*/
 /*N*/ 					BYTE nLevel = p->GetNumLevel();
 /*N*/ 					if( !bOverwrite && nLevel != NO_NUMBERING )
 /*N*/ 					{
@@ -963,14 +968,14 @@ sal_Bool lcl_sw3io_isStarSymbolFontItem( const SvxFontItem& rFontItem );
 /*N*/ 				pFmt->SetAutoUpdateFmt( (p->cFlags & 0x01) != 0 );
 /*N*/ 			}
 /*N*/ 			const SfxPoolItem *pItem;
-/*N*/ 			if( SFX_ITEM_SET == p->GetItemSet().GetItemState( 
+/*N*/ 			if( SFX_ITEM_SET == p->GetItemSet().GetItemState(
 /*N*/ 						RES_CHRATR_FONT, sal_False, &pItem ) &&
 /*N*/ 				RTL_TEXTENCODING_SYMBOL ==
 /*N*/ 						((const SvxFontItem *)pItem)->GetCharSet() )
 /*N*/ 			{
 /*N*/ 				BOOL bBats = ((const SvxFontItem *)pItem)->GetFamilyName().EqualsIgnoreCaseAscii( "StarBats", 0, sizeof("StarBats")-1 );
 /*N*/ 				BOOL bMath = ((const SvxFontItem *)pItem)->GetFamilyName().EqualsIgnoreCaseAscii( "StarMath", 0, sizeof("StarMath")-1 );
-/*N*/ 
+/*N*/
 /*N*/ 				if( bBats || bMath )
 /*N*/ 				{
 /*N*/ 					if( p->bNew )
@@ -978,7 +983,7 @@ sal_Bool lcl_sw3io_isStarSymbolFontItem( const SvxFontItem& rFontItem );
 /*N*/ 						// Allways convert font to StarSymbol
 /*N*/ 						pConvToSymbolFmts ->Insert( pFmt, SW3IO_CONV_TO_SYMBOL );
 /*N*/ 					}
-/*?*/ 					else if( SFX_ITEM_SET == pFmt->GetAttrSet().GetItemState( 
+/*?*/ 					else if( SFX_ITEM_SET == pFmt->GetAttrSet().GetItemState(
 /*?*/ 							 RES_CHRATR_FONT, sal_True, &pItem ) &&
 /*?*/ 							 lcl_sw3io_isStarSymbolFontItem( *(const SvxFontItem *)pItem ) )
 /*?*/ 					{
@@ -1001,7 +1006,7 @@ sal_Bool lcl_sw3io_isStarSymbolFontItem( const SvxFontItem& rFontItem );
 /*N*/ 			p->pFmt->Modify( &aHint, &aHint );
 /*N*/ 		}
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ //FEATURE::CONDCOLL
 /*N*/ 	// dann koennen auch alle bedingten Vorlagen verbunden werden
 /*N*/ 	for( p = (SwStyleSheet*) aStyles.First(); p;
@@ -1053,7 +1058,7 @@ sal_Bool lcl_sw3io_isStarSymbolFontItem( const SvxFontItem& rFontItem );
 /*N*/ 				p->SetNewParent( rNew );
 /*N*/ 			if( p->GetFollow() == aOld )
 /*N*/ 				p->SetNewFollow( rNew );
-/*N*/ 
+/*N*/
 /*N*/ //FEATURE::CONDCOLL
 /*N*/ 			if( p->pCondColls )
 /*N*/ 			{
@@ -1080,7 +1085,7 @@ sal_Bool lcl_sw3io_isStarSymbolFontItem( const SvxFontItem& rFontItem );
 /*?*/ 			break;
 /*N*/ 		}
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	return pS;
 /*N*/ }
 
@@ -1096,12 +1101,12 @@ sal_Bool lcl_sw3io_isStarSymbolFontItem( const SvxFontItem& rFontItem );
 /*N*/ 	// kann es hier noch gar keine RecSizes geben. Besser ist aber besser ...
 /*N*/ 	if( HasRecSizes() )
             {DBG_BF_ASSERT(0, "STRIP");} //STRIP001 /*?*/ 		FlushRecSizes();
-/*N*/ 
+/*N*/
 /*N*/ 	SfxItemPool *pTmp = pDoc->GetAttrPool().GetSecondaryPool();
 /*N*/ 	pDoc->GetAttrPool().SetSecondaryPool( 0 );
 /*N*/ 	SfxItemPool* pPool = pDoc->GetAttrPool().Clone();
 /*N*/ 	pDoc->GetAttrPool().SetSecondaryPool( pTmp );
-/*N*/ 
+/*N*/
 /*N*/ 	ASSERT( !pConvToSymbolFmts, "ConvToSymbol array exists" );
 /*N*/ 	pConvToSymbolFmts = new Sw3Fmts;
 /*N*/ 	SwStyleSheetPool* p = new SwStyleSheetPool( *pDoc, *pPool, 0, pConvToSymbolFmts );
@@ -1117,10 +1122,10 @@ sal_Bool lcl_sw3io_isStarSymbolFontItem( const SvxFontItem& rFontItem );
 /*?*/ 		if( bCharFmts )
 /*?*/ 			eMask |= SFX_STYLE_FAMILY_CHAR;
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	nRes = p->Load( *pStyles, bNew, eMask ) ? 0 : ERR_SWG_READ_ERROR;
 /*N*/ 	pStyles->SetBufferSize( 0 );
-/*N*/ 
+/*N*/
 /*N*/ 	// JP 09.06.95: die Pool-Defaults muessen beim normalen Einlesen
 /*N*/ 	//				aus temp Pool mitgenommen werden !!
 /*N*/ 	if( !nRes && !bInsert )
@@ -1130,14 +1135,14 @@ sal_Bool lcl_sw3io_isStarSymbolFontItem( const SvxFontItem& rFontItem );
 /*N*/ 			if( 0 != ( pCpyItem = pPool->GetPoolDefaultItem( nWh ) ) )
 /*N*/ 				pDoc->GetAttrPool().SetPoolDefaultItem( *pCpyItem );
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	// alle Attribute, die auf irgendwelche Vorlagen verweisen hier verbinden
 /*N*/ 	// (Attribute: DropCaps)
 /*N*/ 	{
 /*N*/ 		BOOL bReadStrPool = FALSE;
 /*N*/ 		const SfxPoolItem* pItem;
 /*N*/ 		USHORT nMaxItems = pDoc->GetAttrPool().GetItemCount( RES_PARATR_DROP );
-/*N*/ 
+/*N*/
 /*N*/ 		for( USHORT n = 0; n < nMaxItems; ++n )
 /*N*/ 			if( 0 != (pItem = pDoc->GetAttrPool().GetItem( RES_PARATR_DROP, n ) )
 /*N*/ 				&& USHRT_MAX != ((SwFmtDrop*)pItem)->GetReadFmt() )
@@ -1166,7 +1171,7 @@ sal_Bool lcl_sw3io_isStarSymbolFontItem( const SvxFontItem& rFontItem );
 /*?*/ 				((SwFmtDrop*)pItem)->SetCharFmt( (SwCharFmt*) FindFmt(
 /*?*/ 						((SwFmtDrop*)pItem)->GetReadFmt(), SWG_CHARFMT ) );
 /*N*/ 			}
-/*N*/ 
+/*N*/
 /*N*/ 		// fix #41308#: Wenn nur Vorlagen geladen werden, muessen die
 /*N*/ 		// Font-Items noch den richten Charset verpasst bekommen. Es sei
 /*N*/ 		// denn, es werden auch Seitenvorlagen geladen. Dann passiert das
@@ -1190,16 +1195,16 @@ sal_Bool lcl_sw3io_isStarSymbolFontItem( const SvxFontItem& rFontItem );
 /*?*/ 				CheckIoError( pPageStyles );
 /*?*/ 				pPageStyles->SetBufferSize( 0 );
 /*?*/ 			}
-/*?*/ 
+/*?*/
 /*?*/ 			if( bSrcSetValid )
 /*?*/ 				ChangeFontItemCharSet();
 /*?*/ 			ConvertFmtsToStarSymbol();
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		if( bReadStrPool )
 /*?*/ 			aStringPool.Clear();
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ #ifndef NUM_RELSPACE
 /*?*/ 	// JP 14.09.98: Bug 55957 - die Vorlagen muessen dann aber
 /*?*/ 	// 				auch die OutlineRule aktualisieren
