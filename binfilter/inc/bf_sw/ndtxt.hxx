@@ -7,7 +7,7 @@
  * OpenOffice.org - a multi-platform office productivity suite
  *
  * $RCSfile: ndtxt.hxx,v $
- * $Revision: 1.5 $
+ * $Revision: 1.6 $
  *
  * This file is part of OpenOffice.org.
  *
@@ -45,7 +45,7 @@
 namespace com { namespace sun { namespace star { namespace uno {
     template < class > class Sequence;
 }}}}
-class OutputDevice; 
+class OutputDevice;
 namespace utl {
     class TransliterationWrapper;
 }//STRIP008 ;
@@ -58,7 +58,6 @@ class SwTxtFmtColl;
 class SwCntntFrm;
 class SwTxtFld; 		 // Fuer GetTxtFld()
 class SwAttrSet;
-class SwUndoTransliterate;
 
 
 struct SwSpellArgs;             // for Spell(), splargs.hxx
