@@ -7,7 +7,7 @@
  * OpenOffice.org - a multi-platform office productivity suite
  *
  * $RCSfile: sw_doctxm.cxx,v $
- * $Revision: 1.11 $
+ * $Revision: 1.12 $
  *
  * This file is part of OpenOffice.org.
  *
@@ -75,9 +75,6 @@
 #ifndef _ROOTFRM_HXX
 #include <rootfrm.hxx>
 #endif
-#ifndef _SWUNDO_HXX
-#include <swundo.hxx>
-#endif
 #ifndef _DOCARY_HXX
 #include <docary.hxx>
 #endif
@@ -133,8 +130,7 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 	// hole den TextNode und
 /*N*/ 												const SfxItemSet* pSet,
 /*N*/ 												BOOL bExpand )
 /*N*/ {
-/*N*/ 	StartUndo( UNDO_INSTOX );
-/*N*/ 
+/*N*/
 /*N*/ 	SwTOXBaseSection* pNew = new SwTOXBaseSection( rTOX );
 /*N*/ 	String sSectNm( rTOX.GetTOXName() );
 /*N*/ 	sSectNm = GetUniqueTOXBaseName( *rTOX.GetTOXType(), &sSectNm );
@@ -148,25 +144,25 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 	// hole den TextNode und
 /*N*/ 		SwSection* pCl = pNew;
 /*N*/ 		pSect->GetFmt()->Add( pCl );
 /*N*/ 		pSectNd->SetNewSection( pNew );
-/*N*/ 
+/*N*/
 /*N*/ 		if( bExpand )
-/*N*/         {DBG_BF_ASSERT(0, "STRIP"); //STRIP001 
+/*N*/         {DBG_BF_ASSERT(0, "STRIP"); //STRIP001
 /*N*/         }
 /*N*/ 		else if( 1 == rTOX.GetTitle().Len() && IsInReading() )
 /*N*/ 		// insert title of TOX
 /*N*/ 		{
 /*?*/ 			// then insert the headline section
 /*?*/ 			SwNodeIndex aIdx( *pSectNd, +1 );
-/*?*/ 
+/*?*/
 /*?*/ 			SwTxtNode* pHeadNd = GetNodes().MakeTxtNode( aIdx,
 /*?*/ 							GetTxtCollFromPool( RES_POOLCOLL_STANDARD ) );
-/*?*/ 
+/*?*/
 /*?*/ 			String sNm( pNew->GetTOXName() );
 /*?*/ // ??Resource
 /*?*/ sNm.AppendAscii( RTL_CONSTASCII_STRINGPARAM( "_Head" ));
-/*?*/ 
+/*?*/
 /*?*/ 			SwSection aSect( TOX_HEADER_SECTION, sNm );
-/*?*/ 
+/*?*/
 /*?*/ 			SwNodeIndex aStt( *pHeadNd ); aIdx--;
 /*?*/ 			SwSectionFmt* pSectFmt = MakeSectionFmt( 0 );
 /*?*/ 			GetNodes().InsertSection( aStt, *pSectFmt, aSect, &aIdx,
@@ -176,8 +172,7 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 	// hole den TextNode und
 /*N*/ 	else
 /*?*/ 		delete pNew, pNew = 0;
 
-/*N*/ 	EndUndo( UNDO_INSTOX );
-/*N*/ 
+/*N*/
 /*N*/ 	return pNew;
 /*N*/ }
 
@@ -197,22 +192,22 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 	// hole den TextNode und
 /*?*/ 			return 0;
 /*?*/ 		pSectNd = pSectNd->FindStartNode()->FindSectionNode();
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	// create SectionNode around the Nodes
 /*N*/ 	SwTOXBaseSection* pNew = new SwTOXBaseSection( rTOX );
-/*N*/ 
+/*N*/
 /*N*/ 	String sSectNm( rTOX.GetTOXName() );
 /*N*/ 	sSectNm = GetUniqueTOXBaseName(*rTOX.GetTOXType(), &sSectNm);
 /*N*/ 	pNew->SetTOXName(sSectNm);
 /*N*/ 	pNew->SwSection::SetName(sSectNm);
-/*N*/ 
+/*N*/
 /*N*/ 	SwNodeIndex aStt( GetNodes(), nSttNd ), aEnd( GetNodes(), nEndNd );
 /*N*/ 	SwSectionFmt* pFmt = MakeSectionFmt( 0 );
 /*N*/ 	if(pSet)
 /*?*/ 		pFmt->SetAttr(*pSet);
-/*N*/ 
+/*N*/
 /*N*/ //	--aEnd;		// im InsertSection ist Ende inclusive
-/*N*/ 
+/*N*/
 /*N*/ 	pSectNd = GetNodes().InsertSection( aStt, *pFmt, *pNew, &aEnd );
 /*N*/ 	if( pSectNd )
 /*N*/ 	{
@@ -225,7 +220,7 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 	// hole den TextNode und
 /*?*/ 		delete pNew, pNew = 0;
 /*?*/ 		DelSectionFmt( pFmt );
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	return pNew;
 /*N*/ }
 
@@ -331,11 +326,11 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 	// hole den TextNode und
 /*N*/ 		pChkStr = 0;
 /*N*/ 	String aName( rType.GetTypeName() );
 /*N*/ 	xub_StrLen nNmLen = aName.Len();
-/*N*/ 
+/*N*/
 /*N*/ 	USHORT nNum, nTmp, nFlagSize = ( pSectionFmtTbl->Count() / 8 ) +2;
 /*N*/ 	BYTE* pSetFlags = new BYTE[ nFlagSize ];
 /*N*/ 	memset( pSetFlags, 0, nFlagSize );
-/*N*/ 
+/*N*/
 /*N*/ 	const SwSectionNode* pSectNd;
 /*N*/ 	const SwSection* pSect;
         USHORT n=0;
@@ -354,7 +349,7 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 	// hole den TextNode und
 /*N*/ 			if( pChkStr && pChkStr->Equals( rNm ) )
 /*N*/ 				pChkStr = 0;
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 	if( !pChkStr )
 /*N*/ 	{
 /*N*/ 		// alle Nummern entsprechend geflag, also bestimme die richtige Nummer
@@ -383,7 +378,7 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 	// hole den TextNode und
 /*N*/ 	ASSERT( rTOXBase.ISA( SwTOXBaseSection ),
 /*N*/ 					"keine TOXBaseSection!" );
 /*N*/ 	SwTOXBaseSection* pTOX = (SwTOXBaseSection*)&rTOXBase;
-/*N*/ 
+/*N*/
 /*N*/ 	String sTmp = GetUniqueTOXBaseName(*rTOXBase.GetTOXType(), &rName);
 /*N*/ 	BOOL bRet = sTmp == rName;
 /*N*/ 	if(bRet)
@@ -427,7 +422,7 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 	// hole den TextNode und
 
 /*N*/ void SwTOXBaseSection::Update(const SfxItemSet* pAttr,
 /*N*/                               const bool        _bNewTOX )
-/*N*/ {DBG_BF_ASSERT(0, "STRIP"); //STRIP001 
+/*N*/ {DBG_BF_ASSERT(0, "STRIP"); //STRIP001
 /*N*/ }
 
 /*--------------------------------------------------------------------
@@ -527,12 +522,12 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 	// hole den TextNode und
 /*?*/ 	SwPageFrm*	pAktPage	= 0;
 /*?*/ 	USHORT		nPage		= 0;
 /*?*/ 	SwDoc* pDoc = (SwDoc*)GetFmt()->GetDoc();
-/*?*/ 
+/*?*/
 /*?*/     SwTOXInternational aIntl( GetLanguage(),
 /*?*/                               TOX_INDEX == GetTOXType()->GetType() ?
 /*?*/                               GetOptions() : 0,
 /*?*/                               GetSortAlgorithm() );
-/*?*/ 
+/*?*/
 /*?*/ 	for( USHORT nCnt = 0; nCnt < aSortArr.Count(); ++nCnt )
 /*?*/ 	{
 /*?*/ 	}
