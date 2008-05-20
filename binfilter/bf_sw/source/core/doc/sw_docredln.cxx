@@ -7,7 +7,7 @@
  * OpenOffice.org - a multi-platform office productivity suite
  *
  * $RCSfile: sw_docredln.cxx,v $
- * $Revision: 1.14 $
+ * $Revision: 1.15 $
  *
  * This file is part of OpenOffice.org.
  *
@@ -87,11 +87,11 @@ namespace binfilter {
 /*N*/ 	void lcl_CheckRedline( const SwDoc* pDoc )
 /*N*/ 	{
 /*N*/ 		const SwRedlineTbl& rTbl = pDoc->GetRedlineTbl();
-/*N*/ 
+/*N*/
 /*N*/         // verify valid redline positions
 /*N*/ 		for( USHORT i = 0; i < rTbl.Count(); ++i )
 /*?*/             {DBG_BF_ASSERT(0, "STRIP");} //STRIP001 lcl_CheckPam( rTbl[ i ] );
-/*N*/ 
+/*N*/
 /*N*/         for( USHORT j = 0; j < rTbl.Count(); ++j )
 /*N*/         {
 /*N*/             // check for empty redlines
@@ -99,25 +99,25 @@ namespace binfilter {
 /*N*/                     ( rTbl[j]->GetContentIdx() != NULL ),
 /*N*/                     "redline table corrupted: empty redline" );
 /*N*/  		}
-/*N*/ 
-/*N*/         // verify proper redline sorting 
+/*N*/
+/*N*/         // verify proper redline sorting
 /*N*/ 		for( USHORT n = 1; n < rTbl.Count(); ++n )
 /*N*/ 		{
 /*?*/ 			const SwRedline* pPrev = rTbl[ n-1 ];
 /*?*/             const SwRedline* pCurrent = rTbl[ n ];
-/*?*/             
+/*?*/
 /*?*/             // check redline sorting
-/*?*/             ASSERT( *pPrev->Start() <= *pCurrent->Start(), 
+/*?*/             ASSERT( *pPrev->Start() <= *pCurrent->Start(),
 /*?*/                     "redline table corrupted: not sorted correctly" );
-/*?*/ 
+/*?*/
 /*?*/             // check for overlapping redlines
 /*?*/             ASSERT( *pPrev->End() <= *pCurrent->Start(),
 /*?*/                     "redline table corrupted: overlapping redlines" );
 /*N*/ 		}
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	#define _CHECK_REDLINE( pDoc ) lcl_CheckRedline( pDoc );
-/*N*/ 
+/*N*/
 /*N*/ #endif
 
 /*N*/ SV_IMPL_OP_PTRARR_SORT( _SwRedlineTbl, SwRedlinePtr )
@@ -131,7 +131,7 @@ namespace binfilter {
 /*N*/ 		{
 /*N*/ 			// und dann alles verstecken, anzeigen
 /*N*/ 			void (SwRedline::*pFnc)( USHORT ) = 0;
-/*N*/ 
+/*N*/
 /*N*/ 			switch( REDLINE_SHOW_MASK & eMode )
 /*N*/ 			{
 /*N*/ 			case REDLINE_SHOW_INSERT | REDLINE_SHOW_DELETE:
@@ -143,15 +143,15 @@ namespace binfilter {
 /*N*/ 			case REDLINE_SHOW_DELETE:
 /*?*/ 				DBG_BF_ASSERT(0, "STRIP"); //STRIP001 pFnc = &SwRedline::ShowOriginal;
 /*?*/ 				break;
-/*N*/ 
+/*N*/
 /*N*/ 			default:
 /*N*/ 				pFnc = &SwRedline::Hide;
 /*N*/ 				eMode |= REDLINE_SHOW_INSERT;
 /*N*/ 				break;
 /*N*/ 			}
-/*N*/ 
+/*N*/
 /*N*/ 			_CHECK_REDLINE( this )
-/*N*/ 
+/*N*/
 /*N*/ 			if( pFnc )
 /*N*/ 				for( USHORT nLoop = 1; nLoop <= 2; ++nLoop )
 /*N*/ 					for( USHORT i = 0; i < pRedlineTbl->Count(); ++i )
@@ -204,14 +204,9 @@ DBG_BF_ASSERT(0, "STRIP"); return FALSE;//STRIP001 //STRIP001 	_CHECK_REDLINE( t
 /*N*/ 	if( REDLINE_IGNOREDELETE_REDLINES & eRedlineMode ||
 /*N*/ 		!rRange.HasMark() || *rRange.GetMark() == *rRange.GetPoint() )
 /*N*/ 		return FALSE;
-/*N*/ 
+/*N*/
 /*N*/ 	BOOL bChg = FALSE;
-/*N*/ 
-/*N*/ 	if( bSaveInUndo && DoesUndo() )
-/*N*/ 	{
-/*?*/ 		DBG_BF_ASSERT(0, "STRIP"); //STRIP001 SwUndoRedline* pUndo = new SwUndoRedline( UNDO_REDLINE, rRange );
-/*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	const SwPosition* pStt = rRange.Start(),
 /*N*/ 					* pEnd = pStt == rRange.GetPoint() ? rRange.GetMark()
 /*N*/ 													   : rRange.GetPoint();
@@ -221,10 +216,10 @@ DBG_BF_ASSERT(0, "STRIP"); return FALSE;//STRIP001 //STRIP001 	_CHECK_REDLINE( t
 /*N*/ 	{
 /*?*/ 	DBG_BF_ASSERT(0, "STRIP"); //STRIP001 	SwRedline* pRedl = (*pRedlineTbl)[ n ];
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	if( bChg )
 /*N*/ 		SetModified();
-/*N*/ 
+/*N*/
 /*N*/ 	return bChg;
 /*N*/ }
 
@@ -332,7 +327,7 @@ typedef BOOL (*Fn_AcceptReject)( SwRedlineTbl& rArr, USHORT& rPos,
 /*N*/ 	SwPosition aNewStt( *pStt );
 /*N*/ 	SwNodes& rNds = aNewStt.nNode.GetNodes();
 /*N*/ 	SwCntntNode* pC;
-/*N*/ 
+/*N*/
 /*N*/ 	if( !aNewStt.nNode.GetNode().IsCntntNode() )
 /*N*/ 	{
 /*N*/ 		pC = rNds.GoNext( &aNewStt.nNode );
@@ -341,10 +336,10 @@ typedef BOOL (*Fn_AcceptReject)( SwRedlineTbl& rArr, USHORT& rPos,
 /*N*/ 		else
 /*N*/ 			aNewStt.nNode = rNds.GetEndOfContent();
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	SwRedline* pNew = 0;
 /*N*/ 	USHORT nInsPos;
-/*N*/ 
+/*N*/
 /*N*/ 	if( aNewStt < *pEnd )
 /*N*/ 		do {
 /*N*/ 			if( !pNew )
@@ -354,7 +349,7 @@ typedef BOOL (*Fn_AcceptReject)( SwRedlineTbl& rArr, USHORT& rPos,
 /*N*/ 				pNew->DeleteMark();
 /*N*/ 				*pNew->GetPoint() = aNewStt;
 /*N*/ 			}
-/*N*/ 
+/*N*/
 /*N*/ 			pNew->SetMark();
 /*N*/ 			GoEndSection( pNew->GetPoint() );
 /*N*/ 			if( *pNew->GetPoint() > *pEnd )
@@ -375,7 +370,7 @@ typedef BOOL (*Fn_AcceptReject)( SwRedlineTbl& rArr, USHORT& rPos,
 /*N*/ 							pC = rCurNd.GetCntntNode();
 /*N*/ 						aNewStt.nNode++;
 /*N*/ 					} while( aNewStt.nNode.GetIndex() < pEnd->nNode.GetIndex() );
-/*N*/ 
+/*N*/
 /*N*/ 				if( aNewStt.nNode == pEnd->nNode )
 /*N*/ 					aNewStt.nContent = pEnd->nContent;
 /*N*/ 				else if( pC )
@@ -383,13 +378,13 @@ typedef BOOL (*Fn_AcceptReject)( SwRedlineTbl& rArr, USHORT& rPos,
 /*N*/ 					aNewStt.nNode = *pC;
 /*N*/ 					aNewStt.nContent.Assign( pC, pC->Len() );
 /*N*/ 				}
-/*N*/ 
+/*N*/
 /*N*/ 				if( aNewStt <= *pEnd )
 /*N*/ 					*pNew->GetPoint() = aNewStt;
 /*N*/ 			}
 /*N*/ 			else
 /*N*/ 				aNewStt = *pNew->GetPoint();
-/*N*/ 
+/*N*/
 /*N*/ 			if( *pNew->GetPoint() != *pNew->GetMark() &&
 /*N*/ 				_SwRedlineTbl::Insert( pNew, nInsPos ) )
 /*N*/ 			{
@@ -398,15 +393,15 @@ typedef BOOL (*Fn_AcceptReject)( SwRedlineTbl& rArr, USHORT& rPos,
 /*N*/ 				if( pInsPos && *pInsPos < nInsPos )
 /*N*/ 					*pInsPos = nInsPos;
 /*N*/ 			}
-/*N*/ 
+/*N*/
 /*N*/ 			if( aNewStt >= *pEnd ||
 /*N*/ 				0 == (pC = rNds.GoNext( &aNewStt.nNode )) )
 /*N*/ 				break;
-/*N*/ 
+/*N*/
 /*N*/ 			aNewStt.nContent.Assign( pC, 0 );
-/*N*/ 
+/*N*/
 /*N*/ 		} while( aNewStt < *pEnd );
-/*N*/ 
+/*N*/
 /*N*/ 	delete pNew;
 /*N*/ 	delete p, p = 0;
 /*N*/ 	return bAnyIns;
@@ -417,9 +412,9 @@ typedef BOOL (*Fn_AcceptReject)( SwRedlineTbl& rArr, USHORT& rPos,
 /*N*/ 	SwDoc* pDoc = 0;
 /*N*/ 	if( !nP && nL && nL == _SwRedlineTbl::Count() )
 /*N*/ 		pDoc = _SwRedlineTbl::GetObject( 0 )->GetDoc();
-/*N*/ 
+/*N*/
 /*N*/ 	_SwRedlineTbl::Remove( nP, nL );
-/*N*/ 
+/*N*/
 /*N*/ 	ViewShell* pSh;
 /*N*/ 	if( pDoc && !pDoc->IsInDtor() && pDoc->GetRootFrm() &&
 /*N*/ 		0 != ( pSh = pDoc->GetRootFrm()->GetCurrShell()) )
@@ -514,9 +509,9 @@ typedef BOOL (*Fn_AcceptReject)( SwRedlineTbl& rArr, USHORT& rPos,
 /*N*/ 	if( pPtNd->FindStartNode() == pMkNd->FindStartNode() &&
 /*N*/ 		!pPtNd->FindStartNode()->IsTableNode() &&
 /*N*/ 		// JP 18.5.2001: Bug 87222 - invalid if points on the end of content
-/*N*/         // DVO 25.03.2002: #96530# end-of-content only invalid if no content 
+/*N*/         // DVO 25.03.2002: #96530# end-of-content only invalid if no content
 /*N*/         //                 index exists
-/*N*/ 		( pPtNd != pMkNd || GetContentIdx() != NULL || 
+/*N*/ 		( pPtNd != pMkNd || GetContentIdx() != NULL ||
 /*N*/           pPtNd != &pPtNd->GetNodes().GetEndOfContent() )
 /*N*/ 		)
 /*N*/ 		return TRUE;
@@ -525,11 +520,11 @@ typedef BOOL (*Fn_AcceptReject)( SwRedlineTbl& rArr, USHORT& rPos,
 
 
 /*N*/ void SwRedline::Show( USHORT nLoop )
-/*N*/ {DBG_BF_ASSERT(0, "STRIP"); //STRIP001 
+/*N*/ {DBG_BF_ASSERT(0, "STRIP"); //STRIP001
 /*N*/ }
 
 /*N*/ void SwRedline::Hide( USHORT nLoop )
-/*N*/ {DBG_BF_ASSERT(0, "STRIP"); //STRIP001 
+/*N*/ {DBG_BF_ASSERT(0, "STRIP"); //STRIP001
 /*N*/ }
 
 
@@ -606,13 +601,13 @@ const String& SwRedline::GetComment( USHORT nPos ) const
 /*N*/ int SwRedline::operator<( const SwRedline& rCmp ) const
 /*N*/ {
 /*N*/ 	    BOOL nResult = FALSE;
-/*N*/ 
+/*N*/
 /*N*/     if (*Start() < *rCmp.Start())
 /*N*/         nResult = TRUE;
 /*N*/     else if (*Start() == *rCmp.Start())
 /*N*/         if (*End() < *rCmp.End())
 /*N*/             nResult = TRUE;
-/*N*/ 
+/*N*/
 /*N*/     return nResult;
 /*N*/ }
 }
