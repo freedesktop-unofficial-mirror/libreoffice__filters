@@ -7,7 +7,7 @@
  * OpenOffice.org - a multi-platform office productivity suite
  *
  * $RCSfile: sw_section.cxx,v $
- * $Revision: 1.10 $
+ * $Revision: 1.11 $
  *
  * This file is part of OpenOffice.org.
  *
@@ -141,10 +141,10 @@ namespace binfilter {
 /*N*/ 		: SwBaseLink( nUpdateType, nFmt ),
 /*N*/ 		rSectFmt( rFmt )
 /*N*/ 	{}
-/*N*/ 
+/*N*/
 /*N*/ 	virtual void DataChanged( const String& rMimeType,
 /*N*/ 								const ::com::sun::star::uno::Any & rValue );
-/*N*/ 
+/*N*/
 /*N*/ 	virtual BOOL IsInRange( ULONG nSttNd, ULONG nEndNd, xub_StrLen nStt = 0,
 /*N*/ 							xub_StrLen nEnd = STRING_NOTFOUND ) const;
 /*N*/ };
@@ -169,17 +169,17 @@ namespace binfilter {
 /*N*/ 	bProtectFlag = FALSE;
 /*N*/ 	bCondHiddenFlag = TRUE;
 /*N*/ 	bConnectFlag = TRUE;
-/*N*/ 
+/*N*/
 /*N*/ 	SwSectionPtr pParentSect = GetParent();
 /*N*/ 	if( pParentSect )
 /*N*/ 	{
 /*N*/ 		FASTBOOL bPHFlag = pParentSect->IsHiddenFlag();
 /*N*/ 		if( pParentSect->IsHiddenFlag() )
 /*?*/ 			SetHidden( TRUE );
-/*N*/ 
+/*N*/
 /*N*/ 		_SetProtectFlag( pParentSect->IsProtectFlag() );
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	if( pFmt && !bProtectFlag )
 /*N*/ 		_SetProtectFlag( pFmt->GetProtect().IsCntntProtected() );
 /*N*/ }
@@ -190,7 +190,7 @@ namespace binfilter {
 /*N*/ 	SwSectionFmt* pFmt = GetFmt();
 /*N*/ 	if( !pFmt )
 /*N*/ 		return;
-/*N*/ 
+/*N*/
 /*N*/ 	SwDoc* pDoc = pFmt->GetDoc();
 /*N*/ 	if( pDoc->IsInDtor() )
 /*N*/ 	{
@@ -202,13 +202,13 @@ namespace binfilter {
 /*N*/ 	else
 /*N*/ 	{
 /*N*/ 		pFmt->Remove( this );				// austragen,
-/*N*/ 
+/*N*/
 /*N*/ 		if( CONTENT_SECTION != eType )		// den Link austragen
 /*N*/ 			pDoc->GetLinkManager().Remove( refLink );
-/*N*/ 
+/*N*/
 /*N*/ 		if( refObj.Is() )					// als Server austragen
 /*?*/ 			pDoc->GetLinkManager().RemoveServer( &refObj );
-/*N*/ 
+/*N*/
 /*N*/ 		// ist die Section der letzte Client im Format, kann dieses
 /*N*/ 		// geloescht werden
 /*N*/ 		SwPtrMsgPoolItem aMsgHint( RES_REMOVE_UNO_OBJECT, pFmt );
@@ -217,10 +217,7 @@ namespace binfilter {
 /*N*/ 		{
 /*?*/ 			// Bug: 28191 - nicht ins Undo aufnehmen, sollte schon vorher
 /*?*/ 			//			geschehen sein!!
-/*?*/ 			BOOL bUndo = pDoc->DoesUndo();
-/*?*/ 			pDoc->DoUndo( FALSE );
 /*?*/ 			pDoc->DelSectionFmt( pFmt );	// und loeschen
-/*?*/ 			pDoc->DoUndo( bUndo );
 /*N*/ 		}
 /*N*/ 	}
 /*N*/ 	if( refObj.Is() )
@@ -236,19 +233,19 @@ namespace binfilter {
 /*N*/ 	SetLinkFilePassWd( rCpy.GetLinkFilePassWd() );
 /*N*/ 	SetConnectFlag( rCpy.IsConnectFlag() );
 /*N*/ 	SetPasswd( rCpy.GetPasswd() );
-/*N*/ 
+/*N*/
 /*N*/ 	eType = rCpy.eType;
-/*N*/ 
+/*N*/
 /*N*/ 	if( !GetFmt() )
 /*N*/ 		SetProtect( rCpy.IsProtect() );
 /*N*/ 	else if( rCpy.GetFmt() )
 /*?*/ 		_SetProtectFlag( rCpy.bProtectFlag );
 /*N*/ 	else
 /*N*/ 		SetProtect( rCpy.bProtectFlag );
-/*N*/ 
+/*N*/
 /*N*/ 	bCondHiddenFlag = TRUE;		// sollte immer defaultet werden
 /*N*/ 	SetHidden( rCpy.bHidden );
-/*N*/ 
+/*N*/
 /*N*/ 	return *this;
 /*N*/ }
 
@@ -315,7 +312,7 @@ void SwSection::_SetHiddenFlag( int bHidden, int bCondition )
 /*N*/ 		if( pSect->IsHidden() && pSect->IsCondHidden() )
 /*?*/ 			return TRUE;
 /*N*/ 	} while( 0 != ( pSect = pSect->GetParent()) );
-/*N*/ 
+/*N*/
 /*N*/ 	return FALSE;
 /*N*/ }
 
@@ -329,7 +326,7 @@ void SwSection::_SetHiddenFlag( int bHidden, int bCondition )
 /*N*/ {
 /*N*/ 	if( bHidden == bFlag )
 /*N*/ 		return;
-/*N*/ 
+/*N*/
 /*?*/   bHidden = bFlag;
 /*?*/   _SetHiddenFlag( bHidden, bCondHiddenFlag );
 /*N*/ }
@@ -358,7 +355,7 @@ void SwSection::_SetHiddenFlag( int bHidden, int bCondition )
 /*N*/ 			SfxItemSet* pNewSet = ((SwAttrSetChg*)pNew)->GetChgSet();
 /*N*/ 			SfxItemSet* pOldSet = ((SwAttrSetChg*)pOld)->GetChgSet();
 /*N*/ 			const SfxPoolItem* pItem;
-/*N*/ 
+/*N*/
 /*N*/ 			if( SFX_ITEM_SET == pNewSet->GetItemState(
 /*N*/ 						RES_PROTECT, FALSE, &pItem ) )
 /*N*/ 			{
@@ -366,18 +363,18 @@ void SwSection::_SetHiddenFlag( int bHidden, int bCondition )
 /*?*/ 				pNewSet->ClearItem( RES_PROTECT );
 /*?*/ 				pOldSet->ClearItem( RES_PROTECT );
 /*N*/ 			}
-/*N*/ 
+/*N*/
 /*N*/ 			if( SFX_ITEM_SET == pNewSet->GetItemState(
 /*N*/ 						RES_FTN_AT_TXTEND, FALSE, &pItem ) ||
 /*N*/ 				SFX_ITEM_SET == pNewSet->GetItemState(
 /*N*/ 						RES_END_AT_TXTEND, FALSE, &pItem ))
 /*?*/ 					bUpdateFtn = TRUE;
-/*N*/ 
+/*N*/
 /*N*/ 			if( !pNewSet->Count() )
 /*?*/ 				return;
 /*N*/ 		}
 /*N*/ 		break;
-/*N*/ 
+/*N*/
 /*N*/ 	case RES_PROTECT:
 /*N*/ 		if( pNew )
 /*N*/ 		{
@@ -395,40 +392,40 @@ void SwSection::_SetHiddenFlag( int bHidden, int bCondition )
 /*N*/ 					}
 /*N*/ 				} while( 0 != ( pSect = pSect->GetParent()) );
 /*N*/ 			}
-/*N*/ 
+/*N*/
 /*N*/ 			_SetProtectFlag( bNewFlag );
 /*N*/ 		}
 /*N*/ 		return;
-/*N*/ 
+/*N*/
 /*?*/ 	case RES_SECTION_HIDDEN:
 /*?*/ 		bHiddenFlag = TRUE;
 /*?*/ 		return;
-/*?*/ 
+/*?*/
 /*?*/ 	case RES_SECTION_NOT_HIDDEN:
 /*?*/ 	case RES_SECTION_RESETHIDDENFLAG:
 /*?*/ 		bHiddenFlag = bHidden && bCondHiddenFlag;
 /*?*/ 		return;
-/*?*/ 
+/*?*/
 /*?*/ 	case RES_COL:
 /*?*/ 		/* wird ggf. vom Layout erledigt */
 /*?*/ 		break;
-/*?*/ 
+/*?*/
 /*?*/ 	case RES_FTN_AT_TXTEND:
 /*?*/ 		if( pNew && pOld )
 /*?*/ 			bUpdateFtn = TRUE;
 /*?*/ 		break;
-/*?*/ 
+/*?*/
 /*?*/ 	case RES_END_AT_TXTEND:
 /*?*/ 		if( pNew && pOld )
 /*?*/ 			bUpdateFtn = TRUE;
 /*?*/ 		break;
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	if( bRemake )
 /*N*/ 	{
 /*?*/ 		DBG_BF_ASSERT(0, "STRIP"); //STRIP001 GetFmt()->DelFrms();
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	if( bUpdateFtn )
 /*N*/ 	{
 /*?*/ 		SwSectionNode* pSectNd = GetFmt()->GetSectionNode( FALSE );
@@ -465,7 +462,7 @@ void SwSection::SetCondHidden( int bFlag )
 /*N*/ 		case DDE_LINK_SECTION:
 /*?*/ 			sTmp = refLink->GetLinkSourceName();
 /*?*/ 			break;
-/*N*/ 
+/*N*/
 /*N*/ 		case FILE_LINK_SECTION:
 /*N*/ 			{
 /*N*/ 				String sRange, sFilter;
@@ -539,7 +536,7 @@ void SwSection::SetCondHidden( int bFlag )
 /*N*/ 		SwClientIter aIter( *(SwSectionFmt*)this );
 /*N*/ 		return (SwSectionPtr)aIter.First( TYPE(SwSection) );
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*?*/ 	ASSERT( FALSE, "keine Section als Client." )
 /*?*/ 	return 0;
 /*N*/ }
@@ -657,7 +654,7 @@ void SwSectionFmt::MakeFrms()
 /*N*/ 				return;
 /*N*/ 		}
 /*N*/ 		break;
-/*N*/ 
+/*N*/
 /*?*/ 	case RES_SECTION_RESETHIDDENFLAG:
 /*?*/ 	case RES_FTN_AT_TXTEND:
 /*?*/ 	case RES_END_AT_TXTEND : bClients = TRUE;
@@ -678,8 +675,8 @@ void SwSectionFmt::MakeFrms()
 /*?*/ 			}
 /*?*/ 		}
 /*?*/ 		return ;
-/*?*/ 
-/*?*/ 
+/*?*/
+/*?*/
 /*?*/ 	case RES_PROTECT:
 /*?*/ 		// diese Messages bis zum Ende des Baums durchreichen !
 /*?*/ 		if( GetDepends() )
@@ -692,7 +689,7 @@ void SwSectionFmt::MakeFrms()
 /*?*/ 				} while( 0 != ( pLast = aIter++ ));
 /*?*/ 		}
 /*?*/ 		return; 	// das wars
-/*?*/ 
+/*?*/
 /*?*/ 	case RES_OBJECTDYING:
 /*?*/ 		if( !GetDoc()->IsInDtor() &&
 /*?*/ 			((SwPtrMsgPoolItem *)pOld)->pObject == (void*)GetRegisteredIn() )
@@ -702,7 +699,7 @@ void SwSectionFmt::MakeFrms()
 /*?*/ 			DBG_BF_ASSERT(0, "STRIP"); //STRIP001 SwFrmFmt::Modify( pOld, pNew ); 	//	erst umhaengen !!!
 /*?*/ 		}
 /*?*/ 		break;
-/*N*/ 
+/*N*/
 /*N*/ 	case RES_FMT_CHG:
 /*N*/ 		if( !GetDoc()->IsInDtor() &&
 /*N*/ 			((SwFmtChg*)pNew)->pChangedFmt == (void*)GetRegisteredIn() &&
@@ -725,7 +722,7 @@ void SwSectionFmt::MakeFrms()
 /*N*/ 										int bAllSections ) const
 /*N*/ {
 /*N*/ 	rArr.Remove( 0, rArr.Count() );
-/*N*/ 
+/*N*/
 /*N*/ 	if( GetDepends() )
 /*N*/ 	{
 /*N*/ 		SwClientIter aIter( *(SwSectionFmt*)this );
@@ -741,7 +738,7 @@ void SwSectionFmt::MakeFrms()
 /*N*/ 					Dummy,
 /*N*/ 					rArr.Count() );
 /*N*/ 			}
-/*N*/ 
+/*N*/
 /*N*/ 		// noch eine Sortierung erwuenscht ?
 /*N*/ 		if( 1 < rArr.Count() )
 /*N*/ 		{DBG_BF_ASSERT(0, "STRIP");} //STRIP001 	switch( eSort )
@@ -788,13 +785,13 @@ void SwSectionFmt::MakeFrms()
 /*N*/ 	SwDocShell* pDShell = pDoc->GetDocShell();
 /*N*/ 	if( !pDShell || !pDShell->GetMedium() )
 /*?*/ 		return ;
-/*N*/ 
+/*N*/
 /*N*/ 	String sName( pDShell->GetMedium()->GetName() );
 /*N*/ 	SwBaseLink* pBLink;
 /*N*/ 	String sMimeType( SotExchange::GetFormatMimeType( FORMAT_FILE ));
 /*N*/ 	::com::sun::star::uno::Any aValue;
 /*N*/ 	aValue <<= ::rtl::OUString( sName );						// beliebiger Name
-/*N*/ 
+/*N*/
 /*N*/ 	const ::binfilter::SvBaseLinks& rLnks = pDoc->GetLinkManager().GetLinks();
 /*N*/ 	for( USHORT n = rLnks.Count(); n; )
 /*N*/ 	{
@@ -828,23 +825,23 @@ void SwSectionFmt::MakeFrms()
 /*N*/ {
 /*N*/ 	if( !rFileName.Len() )
 /*?*/ 		return 0;
-/*N*/ 
+/*N*/
 /*N*/ 	// 1. existiert die Datei schon in der Liste aller Dokumente?
 /*N*/ 	INetURLObject aTmpObj( rFileName );
 /*N*/ 	aTmpObj.SetMark( aEmptyStr );
-/*N*/ 
+/*N*/
 /*N*/ 	// erstmal nur ueber die DocumentShells laufen und die mit dem
 /*N*/ 	// Namen heraussuchen:
 /*N*/ 	TypeId aType( TYPE(SwDocShell) );
-/*N*/ 
+/*N*/
 /*N*/ 	SfxObjectShell* pShell = pDestSh;
 /*N*/ 	BOOL bFirst = 0 != pShell;
-/*N*/ 
+/*N*/
 /*N*/ 	if( !bFirst )
 /*N*/ 		// keine DocShell uebergeben, also beginne mit der ersten aus der
 /*N*/ 		// DocShell Liste
 /*?*/ 		pShell = SfxObjectShell::GetFirst( &aType );
-/*N*/ 
+/*N*/
 /*N*/ 	while( pShell )
 /*N*/ 	{
 /*N*/ 		// die wollen wir haben
@@ -862,7 +859,7 @@ void SwSectionFmt::MakeFrms()
 /*?*/ 				return 1;
 /*?*/ 			}
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		if( bFirst )
 /*N*/ 		{
 /*N*/ 			bFirst = FALSE;
@@ -871,13 +868,13 @@ void SwSectionFmt::MakeFrms()
 /*N*/ 		else
 /*?*/ 			pShell = SfxObjectShell::GetNext( *pShell, &aType );
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	// 2. selbst die Date oeffnen
 /*N*/ 	SfxMedium* pMed = new SfxMedium( aTmpObj.GetMainURL(
 /*N*/ 							 INetURLObject::NO_DECODE ), STREAM_READ, TRUE );
 /*N*/ 	if( INET_PROT_FILE == aTmpObj.GetProtocol() )
 /*N*/ 		pMed->DownLoad(); 	  // nur mal das Medium anfassen (DownLoaden)
-/*N*/ 
+/*N*/
 /*N*/ 	const SfxFilter* pSfxFlt = 0;
 /*N*/ 	if( !pMed->GetError() )
 /*N*/ 	{
@@ -889,30 +886,30 @@ void SwSectionFmt::MakeFrms()
 /*N*/ 			if( pSfxFlt && !SwIoSystem::IsFileFilter( *pMed, pSfxFlt->GetUserData() ) && (pSfxFlt->GetFilterFlags() & SFX_FILTER_STARONEFILTER) == 0 )
 /*N*/ 				pSfxFlt = 0;		// dann neu detecten lassen
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		if( !pSfxFlt )
 /*N*/ 			pSfxFlt = SwIoSystem::GetFileFilter( pMed->GetPhysicalName(), aEmptyStr );
-/*N*/ 
+/*N*/
 /*N*/ 		if( pSfxFlt )
 /*N*/ 		{
 /*N*/ 			// ohne Filter geht gar nichts
 /*N*/ 			pMed->SetFilter( pSfxFlt );
-/*N*/ 
+/*N*/
 /*N*/ 			if( nVersion )
 /*?*/ 				pMed->GetItemSet()->Put( SfxInt16Item( SID_VERSION, nVersion ));
-/*N*/ 
+/*N*/
 /*N*/ 			if( rPasswd.Len() )
 /*?*/ 				pMed->GetItemSet()->Put( SfxStringItem( SID_PASSWORD, rPasswd ));
-/*N*/ 
+/*N*/
 /*N*/ 			xDocSh = new SwDocShell( SFX_CREATE_MODE_INTERNAL );
 /*N*/ 			if( xDocSh->DoLoad( pMed ) )
 /*N*/ 				return 2;
 /*N*/ 		}
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*?*/ 	if( !xDocSh.Is() )		// Medium muss noch geloescht werden
 /*?*/ 		delete pMed;
-/*?*/ 
+/*?*/
 /*?*/ 	return 0;	// das war wohl nichts
 /*N*/ }
 
@@ -922,22 +919,20 @@ void SwSectionFmt::MakeFrms()
 /*N*/ {
 /*N*/ 	SwSectionNode* pSectNd = rSectFmt.GetSectionNode( FALSE );
 /*N*/ 	SwDoc* pDoc = rSectFmt.GetDoc();
-/*N*/ 
+/*N*/
 /*N*/ 	ULONG nDataFormat = SotExchange::GetFormatIdFromMimeType( rMimeType );
-/*N*/ 
+/*N*/
 /*N*/ 	if( !pSectNd || !pDoc || pDoc->IsInDtor() || ChkNoDataFlag() ||
 /*N*/ 		SvxLinkManager::RegisterStatusInfoId() == nDataFormat )
 /*N*/ 	{
 /*N*/ 		// sollten wir schon wieder im Undo stehen?
 /*?*/ 		return ;
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	// Undo immer abschalten
-/*N*/ 	BOOL bWasUndo = pDoc->DoesUndo();
-/*N*/ 	pDoc->DoUndo( FALSE );
 /*N*/ 	BOOL bWasVisibleLinks = pDoc->IsVisibleLinks();
 /*N*/ 	pDoc->SetVisibleLinks( FALSE );
-/*N*/ 
+/*N*/
 /*N*/ 	SwPaM* pPam;
 /*N*/ 	ViewShell* pVSh = 0;
 /*N*/ 	SwEditShell* pESh = pDoc->GetEditShell( &pVSh );
@@ -948,30 +943,30 @@ void SwSectionFmt::MakeFrms()
 /*N*/ 		SwNodeIndex aEndIdx( *pSectNd->EndOfSectionNode() );
 /*N*/ 		SwTxtNode* pNewNd = pDoc->GetNodes().MakeTxtNode( aIdx,
 /*N*/ 						pDoc->GetTxtCollFromPool( RES_POOLCOLL_TEXT ) );
-/*N*/ 
+/*N*/
 /*N*/ 		if( pESh )
 /*N*/ 			pESh->StartAllAction();
 /*N*/ 		else if( pVSh )
 /*?*/ 			pVSh->StartAction();
-/*N*/ 
+/*N*/
 /*N*/ 		SwPosition aPos( aIdx, SwIndex( pNewNd, 0 ));
 /*N*/ 		aPos.nNode--;
 /*N*/ 		pDoc->CorrAbs( aIdx, aEndIdx, aPos, TRUE );
-/*N*/ 
+/*N*/
 /*N*/ 		pPam = new SwPaM( aPos );
-/*N*/ 
+/*N*/
 /*N*/ 		//und alles dahinter liegende loeschen
 /*N*/ 		aIdx--;
 /*N*/ 		DelFlyInRange( aIdx, aEndIdx );
 /*N*/ 		_DelBookmarks( aIdx, aEndIdx );
 /*N*/ 		aIdx++;
-/*N*/ 
+/*N*/
 /*N*/ 		pDoc->GetNodes().Delete( aIdx, aEndIdx.GetIndex() - aIdx.GetIndex() );
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	SwSection& rSection = pSectNd->GetSection();
 /*N*/ 	rSection.SetConnectFlag( FALSE );
-/*N*/ 
+/*N*/
 /*N*/ 	::rtl::OUString sNewFileName;
 /*N*/ 	Reader* pRead = 0;
 /*N*/ 	switch( nDataFormat )
@@ -979,18 +974,18 @@ void SwSectionFmt::MakeFrms()
 /*N*/ 	case FORMAT_STRING:
 /*?*/ 		pRead = ReadAscii;
 /*?*/ 		break;
-/*?*/ 
+/*?*/
 /*?*/ 	case FORMAT_RTF:
 /*?*/ 		pRead = ReadRtf;
 /*?*/ 		break;
-/*N*/ 
+/*N*/
 /*N*/ 	case FORMAT_FILE:
 /*N*/ 		if( rValue.hasValue() && ( rValue >>= sNewFileName ) )
 /*N*/ 		{
 /*N*/ 			String sFilter, sRange, sFileName( sNewFileName );
 /*N*/ 			pDoc->GetLinkManager().GetDisplayNames( this, 0, &sFileName,
 /*N*/ 													&sRange, &sFilter );
-/*N*/ 
+/*N*/
 /*N*/ 			SwRedlineMode eOldRedlineMode = REDLINE_NONE;
 /*N*/ 			SfxObjectShellRef xDocSh;
 /*N*/ 			int nRet;
@@ -1011,14 +1006,14 @@ void SwSectionFmt::MakeFrms()
 /*N*/ 					pSrcDoc->SetRedlineMode( REDLINE_SHOW_INSERT );
 /*N*/ 				}
 /*N*/ 			}
-/*N*/ 
+/*N*/
 /*N*/ 			if( nRet )
 /*N*/ 			{
 /*N*/ 				rSection.SetConnectFlag( TRUE );
-/*N*/ 
+/*N*/
 /*N*/ 				SwNodeIndex aSave( pPam->GetPoint()->nNode, -1 );
 /*N*/ 				SwNodeRange* pCpyRg = 0;
-/*N*/ 
+/*N*/
 /*N*/ 				if( xDocSh->GetMedium() &&
 /*N*/ 					!rSection.GetLinkFilePassWd().Len() )
 /*N*/ 				{
@@ -1028,9 +1023,9 @@ void SwSectionFmt::MakeFrms()
 /*?*/ 						rSection.SetLinkFilePassWd(
 /*?*/ 								((SfxStringItem*)pItem)->GetValue() );
 /*N*/ 				}
-/*N*/ 
+/*N*/
 /*N*/ 				SwDoc* pSrcDoc = ((SwDocShell*)&xDocSh)->GetDoc();
-/*N*/ 
+/*N*/
 /*N*/ 				if( sRange.Len() )
 /*N*/ 				{
 /*N*/ 					// Rekursionen abfangen
@@ -1045,9 +1040,9 @@ void SwSectionFmt::MakeFrms()
 /*N*/ 										ChkNoDataFlag();
 /*N*/ 						}
 /*N*/ 					}
-/*N*/ 
+/*N*/
 /*N*/ 					SwNodeIndex& rInsPos = pPam->GetPoint()->nNode;
-/*N*/ 
+/*N*/
 /*N*/ 					SwPaM* pCpyPam = 0;
 /*N*/ 					if( !bRecursion &&
 /*N*/ 						pSrcDoc->SelectServerObj( sRange, pCpyPam, pCpyRg )
@@ -1066,22 +1061,22 @@ void SwSectionFmt::MakeFrms()
 /*N*/ 				else if( pSrcDoc != pDoc )
 /*N*/ 					pCpyRg = new SwNodeRange( pSrcDoc->GetNodes().GetEndOfExtras(), 2,
 /*N*/ 										  pSrcDoc->GetNodes().GetEndOfContent() );
-/*N*/ 
+/*N*/
 /*N*/ 				if( pCpyRg )
 /*N*/ 				{
 /*N*/ 					SwNodeIndex& rInsPos = pPam->GetPoint()->nNode;
 /*N*/ 					BOOL bCreateFrm = rInsPos.GetIndex() <=
 /*N*/ 								pDoc->GetNodes().GetEndOfExtras().GetIndex() ||
 /*N*/ 								rInsPos.GetNode().FindTableNode();
-/*N*/ 
+/*N*/
 /*N*/ 					SwTblNumFmtMerge aTNFM( *pSrcDoc, *pDoc );
-/*N*/ 
+/*N*/
 /*N*/ 					pSrcDoc->CopyWithFlyInFly( *pCpyRg, rInsPos, bCreateFrm );
 /*N*/ 					aSave++;
-/*N*/ 
+/*N*/
 /*N*/ 					if( !bCreateFrm )
 /*N*/ 						::binfilter::MakeFrms( pDoc, aSave, rInsPos );
-/*N*/ 
+/*N*/
 /*N*/ 					// den letzten Node noch loeschen, aber nur wenn
 /*N*/ 					// erfolgreich kopiert werden konnte, also der Bereich
 /*N*/ 					// mehr als 1 Node enthaelt
@@ -1090,13 +1085,13 @@ void SwSectionFmt::MakeFrms()
 /*N*/ 						aSave = rInsPos;
 /*N*/ 						pPam->Move( fnMoveBackward, fnGoNode );
 /*N*/ 						pPam->SetMark();	// beide SwPositions ummelden!
-/*N*/ 
+/*N*/
 /*N*/ 						pDoc->CorrAbs( aSave, *pPam->GetPoint(), 0, TRUE );
 /*N*/ 						pDoc->GetNodes().Delete( aSave, 1 );
 /*N*/ 					}
 /*N*/ 					delete pCpyRg;
 /*N*/ 				}
-/*N*/ 
+/*N*/
 /*N*/ 				// update alle Links in diesem Bereich
 /*N*/ 				lcl_UpdateLinksInSect( *this, *pSectNd );
 /*N*/ 			}
@@ -1111,24 +1106,22 @@ void SwSectionFmt::MakeFrms()
 /*N*/ 		}
 /*N*/ 		break;
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	// !!!! DDE nur updaten wenn Shell vorhanden ist??
 /*N*/ 	::com::sun::star::uno::Sequence< sal_Int8 > aSeq;
 /*N*/ 	if( pRead && rValue.hasValue() && ( rValue >>= aSeq ) )
 /*N*/ 	{
 /*?*/ 		DBG_BF_ASSERT(0, "STRIP"); //STRIP001 if( pESh )
 /*N*/ 	}
-/*N*/ 
-/*N*/ 
+/*N*/
+/*N*/
 /*N*/ 	// Alle UndoActions entfernen und Undo wieder einschalten
-/*N*/ 	pDoc->DelAllUndoObj();
-/*N*/ 	pDoc->DoUndo( bWasUndo );
 /*N*/ 	pDoc->SetVisibleLinks( bWasVisibleLinks );
-/*N*/ 
+/*N*/
 /*N*/ 	pDoc->UnlockExpFlds();
 /*N*/ 	if( !pDoc->IsExpFldsLocked() )
 /*N*/ 		pDoc->UpdateExpFlds();
-/*N*/ 
+/*N*/
 /*N*/ 	if( pESh )
 /*N*/ 		pESh->EndAllAction();
 /*N*/ 	else if( pVSh )
@@ -1144,26 +1137,26 @@ void SwSectionFmt::MakeFrms()
 /*N*/ 	SwSectionFmt* pFmt = GetFmt();
 /*N*/ 	if( !pFmt || CONTENT_SECTION == eType )
 /*?*/ 		return ;
-/*N*/ 
+/*N*/
 /*N*/     USHORT nUpdateType = ::binfilter::LINKUPDATE_ALWAYS;
-/*N*/ 
+/*N*/
 /*N*/ 	if( !refLink.Is() )
 /*N*/ 		// dann mal den BaseLink aufbauen
 /*N*/ 		refLink = new SwIntrnlSectRefLink( *pFmt, nUpdateType, FORMAT_RTF );
 /*N*/ 	else
 /*N*/ 		// sonst aus dem Linkmanager entfernen
 /*?*/ 		pFmt->GetDoc()->GetLinkManager().Remove( refLink );
-/*N*/ 
+/*N*/
 /*N*/ 	SwIntrnlSectRefLink* pLnk = (SwIntrnlSectRefLink*)&refLink;
-/*N*/ 
+/*N*/
 /*N*/ 	String sCmd( sLinkFileName );
 /*N*/ 	xub_StrLen nPos;
 /*N*/ 	while( STRING_NOTFOUND != (nPos = sCmd.SearchAscii( "  " )) )
 /*?*/ 		sCmd.Erase( nPos, 1 );
-/*N*/ 
+/*N*/
 /*N*/ 	pLnk->SetUpdateMode( nUpdateType );
 /*N*/ 	pLnk->SetVisible( pFmt->GetDoc()->IsVisibleLinks() );
-/*N*/ 
+/*N*/
 /*N*/ 	switch( eType )
 /*N*/ 	{
 /*N*/ 	case DDE_LINK_SECTION:
@@ -1184,13 +1177,13 @@ void SwSectionFmt::MakeFrms()
 /*N*/ 	default:
 /*?*/ 		ASSERT( !this, "Was ist das fuer ein Link?" )
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	switch( eCreateType )
 /*N*/ 	{
 /*N*/ 	case CREATE_CONNECT:			// Link gleich connecten
 /*N*/ 		pLnk->Connect();
 /*N*/ 		break;
-/*N*/ 
+/*N*/
 /*N*/ 	case CREATE_UPDATE: 		// Link connecten und updaten
 /*N*/ 		pLnk->Update();
 /*N*/ 		break;
