@@ -7,7 +7,7 @@
  * OpenOffice.org - a multi-platform office productivity suite
  *
  * $RCSfile: sw_doclay.cxx,v $
- * $Revision: 1.13 $
+ * $Revision: 1.14 $
  *
  * This file is part of OpenOffice.org.
  *
@@ -116,9 +116,6 @@
 #ifndef _DCONTACT_HXX
 #include <dcontact.hxx>
 #endif
-#ifndef _UNDOBJ_HXX
-#include <undobj.hxx>
-#endif
 #ifndef _POOLFMT_HXX
 #include <poolfmt.hxx>		// PoolVorlagen-Id's
 #endif
@@ -181,7 +178,7 @@ static bool lcl_IsItemSet(const SwCntntNode & rNode, USHORT which)
 /*N*/ 	SwFrmFmt *pFmt = 0;
 /*N*/ 	const sal_Bool bMod = IsModified();
 /*N*/ 	sal_Bool bHeader = sal_False;
-/*N*/ 
+/*N*/
 /*N*/ 	switch ( eRequest )
 /*N*/ 	{
 /*N*/ 	case RND_STD_HEADER:
@@ -195,15 +192,12 @@ static bool lcl_IsItemSet(const SwCntntNode & rNode, USHORT which)
 /*N*/ 	case RND_STD_FOOTERL:
 /*N*/ 	case RND_STD_FOOTERR:
 /*N*/ 		{
-/*N*/ 
-/*N*/ //JP erstmal ein Hack, solange keine Flys/Headers/Footers Undofaehig sind
-/*N*/ if( DoesUndo() )
-/*N*/ 	DelAllUndoObj();
-/*N*/ 
+/*N*/
+/*N*/
 /*N*/ 			pFmt = new SwFrmFmt( GetAttrPool(),
 /*N*/ 								(bHeader ? "Header" : "Footer"),
 /*N*/ 								GetDfltFrmFmt() );
-/*N*/ 
+/*N*/
 /*N*/ 			SwNodeIndex aTmpIdx( GetNodes().GetEndOfAutotext() );
 /*N*/ 			SwStartNode* pSttNd = GetNodes().MakeTextSection( aTmpIdx,
 /*N*/ 								bHeader ? SwHeaderStartNode : SwFooterStartNode,
@@ -221,23 +215,23 @@ static bool lcl_IsItemSet(const SwCntntNode & rNode, USHORT which)
 /*N*/ 											: RES_POOLCOLL_FOOTER )
 /*N*/ 									) );
 /*N*/ 			pFmt->SetAttr( SwFmtCntnt( pSttNd ));
-/*N*/ 
+/*N*/
 /*N*/ 			if( pSet )		// noch ein paar Attribute setzen ?
 /*N*/ 				pFmt->SetAttr( *pSet );
-/*N*/ 
+/*N*/
 /*N*/ // JP: warum zuruecksetzen ???	Doc. ist doch veraendert ???
 /*N*/ // bei den Fly auf jedenfall verkehrt !!
 /*N*/ 			if ( !bMod )
 /*?*/ 				ResetModified();
 /*N*/ 		}
 /*N*/ 		break;
-/*N*/ 
+/*N*/
 /*N*/ 	case RND_DRAW_OBJECT:
 /*N*/ 		{
 /*?*/ 			DBG_BF_ASSERT(0, "STRIP"); //STRIP001 pFmt = MakeDrawFrmFmt( aEmptyStr, GetDfltFrmFmt() );
 /*?*/ 		}
 /*?*/ 		break;
-/*?*/ 
+/*?*/
 /*?*/ #ifndef PRODUCT
 /*?*/ 	case FLY_PAGE:
 /*?*/ 	case FLY_AUTO_CNTNT:
@@ -248,11 +242,11 @@ static bool lcl_IsItemSet(const SwCntntNode & rNode, USHORT which)
 /*?*/ 				"neue Schnittstelle benutzen: SwDoc::MakeFlySection!" );
 /*?*/ 		break;
 /*?*/ #endif
-/*?*/ 
+/*?*/
 /*?*/ 	default:
 /*?*/ 		ASSERT( !this,
 /*?*/ 				"Layoutformat mit ungueltigem Request angefordert." );
-/*?*/ 
+/*?*/
 /*N*/ 	}
 /*N*/ 	return pFmt;
 /*N*/ }
@@ -283,7 +277,7 @@ static bool lcl_IsItemSet(const SwCntntNode & rNode, USHORT which)
 /*N*/ 	}
 
 /*N*/ 	const SwNodeIndex* pCntIdx = pFmt->GetCntnt().GetCntntIdx();
-/*N*/ 	if( pCntIdx && !DoesUndo() )
+/*N*/   if( pCntIdx )
 /*N*/ 	{
 /*N*/ 		//Verbindung abbauen, falls es sich um ein OLE-Objekt handelt.
 /*N*/ 		SwOLENode* pOLENd = GetNodes()[ pCntIdx->GetIndex()+1 ]->GetOLENode();
@@ -300,36 +294,27 @@ static bool lcl_IsItemSet(const SwCntntNode & rNode, USHORT which)
 /*N*/ 						aRef->SetObj(0);
 /*N*/ 				}
 /*N*/ 			}
-/*N*/ 
+/*N*/
 /*N*/ 			pOLENd->GetOLEObj().GetOleRef()->DoClose();
 /*N*/ 			pOLENd->GetOLEObj().GetOleRef().Clear();
 /*N*/ 		}
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	//Frms vernichten.
 /*N*/ 	pFmt->DelFrms();
 
-    // erstmal sind nur Fly's Undofaehig
 /*N*/ 	const sal_uInt16 nWh = pFmt->Which();
-/*N*/ 	if( DoesUndo() && (RES_FLYFRMFMT == nWh || RES_DRAWFRMFMT == nWh) )
-/*N*/ 	{
-/*?*/ 		DBG_BF_ASSERT(0, "STRIP"); //STRIP001 // erstmal werden alle Undo - Objecte geloescht.
-/*N*/ 	}
-/*N*/ 	else
 /*N*/ 	{
 /*N*/ 		//Inhalt Loeschen.
 /*N*/ 		if( pCntIdx )
 /*N*/ 		{
-/*N*/ 
-/*N*/ //JP erstmal ein Hack, solange keine Headers/Footers Undofaehig sind
-/*N*/ if( DoesUndo() )
-/*?*/ 	DelAllUndoObj();
-/*N*/ 
+/*N*/
+/*N*/
 /*N*/ 			SwNode *pNode = &pCntIdx->GetNode();
 /*N*/ 			((SwFmtCntnt&)pFmt->GetAttr( RES_CNTNT )).SetNewCntntIdx( 0 );
 /*N*/ 			DeleteSection( pNode );
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		// ggfs. bei Zeichengebundenen Flys das Zeichen loeschen
 /*N*/ 		const SwFmtAnchor& rAnchor = pFmt->GetAnchor();
 /*N*/ 		if( FLY_IN_CNTNT == rAnchor.GetAnchorId() && rAnchor.GetCntntAnchor())
@@ -337,7 +322,7 @@ static bool lcl_IsItemSet(const SwCntntNode & rNode, USHORT which)
 /*N*/ 			const SwPosition* pPos = rAnchor.GetCntntAnchor();
 /*N*/ 			SwTxtNode *pTxtNd = pPos->nNode.GetNode().GetTxtNode();
 /*N*/ 			SwTxtFlyCnt* pAttr;
-/*N*/ 
+/*N*/
 /*N*/ 			// Attribut steht noch im TextNode, loeschen
 /*N*/ 			if( pTxtNd && 0 != ( pAttr = ((SwTxtFlyCnt*)pTxtNd->GetTxtAttr(
 /*N*/ 											pPos->nContent.GetIndex() ))) &&
@@ -349,7 +334,7 @@ static bool lcl_IsItemSet(const SwCntntNode & rNode, USHORT which)
 /*?*/ 				pTxtNd->Erase( aIdx, 1 );
 /*N*/ 			}
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		DelFrmFmt( pFmt );
 /*N*/ 	}
 /*N*/ 	SetModified();
@@ -379,9 +364,9 @@ static bool lcl_IsItemSet(const SwCntntNode & rNode, USHORT which)
 /*N*/     const bool bFly = RES_FLYFRMFMT == rSource.Which();
 /*N*/     const bool bDraw = RES_DRAWFRMFMT == rSource.Which();
 /*N*/     ASSERT( bFly || bDraw, "this method only works for fly or draw" );
-/*N*/ 
+/*N*/
 /*N*/ 	SwDoc* pSrcDoc = (SwDoc*)rSource.GetDoc();
-/*N*/ 
+/*N*/
 /*N*/     // #108784# may we copy this object?
 /*N*/     // We may, unless it's 1) it's a control (and therfore a draw)
 /*N*/     //                     2) anchored in a header/footer
@@ -391,7 +376,7 @@ static bool lcl_IsItemSet(const SwCntntNode & rNode, USHORT which)
 /*N*/     {
 /*N*/         const SwDrawContact* pDrawContact =
 /*N*/             static_cast<const SwDrawContact*>( rSource.FindContactObj() );
-/*N*/ 
+/*N*/
 /*N*/         bMayNotCopy =
 /*N*/             ( FLY_AT_CNTNT == rNewAnchor.GetAnchorId() ||
 /*N*/               FLY_AT_FLY == rNewAnchor.GetAnchorId() ||
@@ -402,11 +387,11 @@ static bool lcl_IsItemSet(const SwCntntNode & rNode, USHORT which)
 /*N*/             pDrawContact->GetMaster() != NULL  &&
 /*N*/             CheckControlLayer( pDrawContact->GetMaster() );
 /*N*/     }
-/*N*/ 
+/*N*/
 /*N*/     // just return if we can't copy this
 /*N*/     if( bMayNotCopy )
 /*N*/         return NULL;
-/*N*/ 
+/*N*/
 /*N*/ 	SwFrmFmt* pDest = GetDfltFrmFmt();
 /*N*/ 	if( rSource.GetRegisteredIn() != pSrcDoc->GetDfltFrmFmt() )
 /*N*/ 		pDest = CopyFrmFmt( *(SwFrmFmt*)rSource.GetRegisteredIn() );
@@ -420,27 +405,27 @@ static bool lcl_IsItemSet(const SwCntntNode & rNode, USHORT which)
 /*N*/ 		// before cloning ZOrder transfer works correctly then.
 /*N*/ 		SwFlyFrmFmt *pFormat = MakeFlyFrmFmt( rSource.GetName(), pDest );
 /*N*/ 		pDest = pFormat;
-/*N*/ 
+/*N*/
 /*N*/ 		SwXFrame::GetOrCreateSdrObject(pFormat);
 /*N*/ 	}
 /*N*/ 	else
 /*N*/ 		pDest = MakeDrawFrmFmt( aEmptyStr, pDest );
-/*N*/ 
+/*N*/
 /*N*/ 	// alle anderen/neue Attribute kopieren.
 /*N*/ 	pDest->CopyAttrs( rSource );
-/*N*/ 
+/*N*/
 /*N*/ 	//Chains werden nicht kopiert.
 /*N*/ 	pDest->ResetAttr( RES_CHAIN );
-/*N*/ 
+/*N*/
 /*N*/ 	if( bFly )
 /*N*/ 	{
 /*N*/ 		//Der Inhalt wird dupliziert.
 /*N*/ 		const SwNode& rCSttNd = rSource.GetCntnt().GetCntntIdx()->GetNode();
 /*N*/ 		SwNodeRange aRg( rCSttNd, 1, *rCSttNd.EndOfSectionNode() );
-/*N*/ 
+/*N*/
 /*N*/ 		SwNodeIndex aIdx( GetNodes().GetEndOfAutotext() );
 /*N*/ 		SwStartNode* pSttNd = GetNodes().MakeEmptySection( aIdx, SwFlyStartNode );
-/*N*/ 
+/*N*/
 /*N*/ 		// erst den chaos::Anchor/CntntIndex setzen, innerhalb des Kopierens
 /*N*/ 		// auf die Werte zugegriffen werden kann (DrawFmt in Kopf-/Fusszeilen)
 /*N*/ 		aIdx = *pSttNd;
@@ -448,7 +433,7 @@ static bool lcl_IsItemSet(const SwCntntNode & rNode, USHORT which)
 /*N*/ 		aAttr.SetNewCntntIdx( &aIdx );
 /*N*/ 		pDest->SetAttr( aAttr );
 /*N*/ 		pDest->SetAttr( rNewAnchor );
-/*N*/ 
+/*N*/
 /*N*/ 		if( !bCopyIsMove || this != pSrcDoc )
 /*N*/ 		{
 /*N*/ 			if( bInReading )
@@ -458,7 +443,7 @@ static bool lcl_IsItemSet(const SwCntntNode & rNode, USHORT which)
 /*N*/ 				// Teste erstmal ob der Name schon vergeben ist.
 /*N*/ 				// Wenn ja -> neuen generieren
 /*N*/ 				sal_Int8 nNdTyp = aRg.aStart.GetNode().GetNodeType();
-/*N*/ 
+/*N*/
 /*N*/ 				String sOld( pDest->GetName() );
 /*N*/ 				pDest->SetName( aEmptyStr );
 /*N*/ 				if( FindFlyByName( sOld, nNdTyp ) )		// einen gefunden
@@ -468,15 +453,12 @@ static bool lcl_IsItemSet(const SwCntntNode & rNode, USHORT which)
 /*N*/ 					case ND_OLENODE:	sOld = GetUniqueOLEName();		break;
 /*N*/ 					default:			sOld = GetUniqueFrameName();	break;
 /*N*/ 					}
-/*N*/ 
+/*N*/
 /*N*/ 				pDest->SetName( sOld );
 /*N*/ 			}
 /*N*/ 		}
-/*N*/ 
-/*N*/ 		if( DoesUndo() )
-/*N*/ 		{DBG_BF_ASSERT(0, "STRIP"); //STRIP001 
-/*N*/ 		}
-/*N*/ 
+/*N*/
+/*N*/
 /*N*/ 		// sorge dafuer das auch Fly's in Fly's kopiert werden
 /*N*/ 		aIdx = *pSttNd->EndOfSectionNode();
 /*N*/ 		pSrcDoc->CopyWithFlyInFly( aRg, aIdx, sal_False, sal_True, sal_True );
@@ -485,11 +467,11 @@ static bool lcl_IsItemSet(const SwCntntNode & rNode, USHORT which)
 /*N*/ 	{
 /*N*/ 		ASSERT( RES_DRAWFRMFMT == rSource.Which(), "Weder Fly noch Draw." );
 /*N*/ 		SwDrawContact *pContact = (SwDrawContact *)rSource.FindContactObj();
-/*N*/ 
+/*N*/
 /*N*/ 		pContact = new SwDrawContact( (SwDrawFrmFmt*)pDest,
 /*N*/ 								CloneSdrObj( *pContact->GetMaster(),
 /*N*/ 										bCopyIsMove && this == pSrcDoc ) );
-/*N*/ 
+/*N*/
 /*N*/ 		if( pDest->GetAnchor() == rNewAnchor )
 /*N*/         {
 /*N*/             // OD 03.07.2003 #108784# - do *not* connect to layout, if
@@ -501,22 +483,19 @@ static bool lcl_IsItemSet(const SwCntntNode & rNode, USHORT which)
 /*N*/         }
 /*N*/ 		else
 /*N*/ 			pDest->SetAttr( rNewAnchor );
-/*N*/ 
-/*N*/ 		if( DoesUndo() )
-/*N*/ 		{DBG_BF_ASSERT(0, "STRIP"); //STRIP001 
-/*N*/ 		}
+/*N*/
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	if( bSetTxtFlyAtt && FLY_IN_CNTNT == rNewAnchor.GetAnchorId() )
 /*N*/ 	{
 /*N*/ 		SwPosition* pPos = (SwPosition*)rNewAnchor.GetCntntAnchor();
 /*N*/ 		pPos->nNode.GetNode().GetTxtNode()->Insert(SwFmtFlyCnt( pDest ),
 /*N*/ 											pPos->nContent.GetIndex(), 0 );
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	if( bMakeFrms )
 /*N*/ 		pDest->MakeFrms();
-/*N*/ 
+/*N*/
 /*N*/ 	return pDest;
 /*N*/ }
 
@@ -529,7 +508,7 @@ static bool lcl_IsItemSet(const SwCntntNode & rNode, USHORT which)
 /*?*/ 		pPg = GetDrawModel()->AllocPage( sal_False );
 /*?*/ 		GetDrawModel()->InsertPage( pPg );
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	SdrObject *pObj = rObj.Clone();
 /*N*/ 	if( bMoveWithinDoc && FmFormInventor == pObj->GetObjInventor() )
 /*N*/ 	{
@@ -548,7 +527,7 @@ static bool lcl_IsItemSet(const SwCntntNode & rNode, USHORT which)
 /*N*/ 	}
 /*N*/ 	else if( bInsInPage )
 /*N*/ 		pPg->InsertObject( pObj );
-/*N*/ 
+/*N*/
 /*N*/     // OD 02.07.2003 #108784# - for drawing objects: set layer of cloned object
 /*N*/     // to invisible layer
 /*N*/     SdrLayerID nLayerIdForClone = rObj.GetLayer();
@@ -562,8 +541,8 @@ static bool lcl_IsItemSet(const SwCntntNode & rNode, USHORT which)
 /*N*/         }
 /*N*/     }
 /*N*/     pObj->SetLayer( nLayerIdForClone );
-/*N*/ 
-/*N*/ 
+/*N*/
+/*N*/
 /*N*/ 	return pObj;
 /*N*/ }
 
@@ -575,7 +554,7 @@ static bool lcl_IsItemSet(const SwCntntNode & rNode, USHORT which)
 /*N*/ {
 /*N*/ 	if( !pFrmFmt )
 /*?*/ 		pFrmFmt = GetFrmFmtFromPool( RES_POOLFRM_FRAME );
-/*N*/ 
+/*N*/
 /*N*/ 	String sName;
 /*N*/ 	if( !bInReading )
 /*N*/ 		switch( rNode.GetNodeType() )
@@ -585,16 +564,16 @@ static bool lcl_IsItemSet(const SwCntntNode & rNode, USHORT which)
 /*N*/ 		default:				sName = GetUniqueFrameName();		break;
 /*N*/ 		}
 /*N*/ 	SwFlyFrmFmt* pFmt = MakeFlyFrmFmt( sName, pFrmFmt );
-/*N*/ 
+/*N*/
 /*N*/ 	//Inhalt erzeugen und mit dem Format verbinden.
 /*N*/ 	//CntntNode erzeugen und in die Autotextsection stellen
 /*N*/ 	SwNodeRange aRange( GetNodes().GetEndOfAutotext(), -1,
 /*N*/ 						GetNodes().GetEndOfAutotext() );
 /*N*/ 	GetNodes().SectionDown( &aRange, SwFlyStartNode );
-/*N*/ 
+/*N*/
 /*N*/ 	pFmt->SetAttr( SwFmtCntnt( rNode.StartOfSectionNode() ));
-/*N*/ 
-/*N*/ 
+/*N*/
+/*N*/
 /*N*/ 	const SwFmtAnchor* pAnchor = 0;
 /*N*/ 	if( pFlySet )
 /*N*/ 	{
@@ -635,7 +614,7 @@ static bool lcl_IsItemSet(const SwCntntNode & rNode, USHORT which)
 /*N*/ 			if( eRequestId != aAnch.GetAnchorId() &&
 /*N*/ 				SFX_ITEM_SET != pFmt->GetItemState( RES_ANCHOR, sal_True ) )
 /*?*/ 				aAnch.SetType( eRequestId );
-/*N*/ 
+/*N*/
 /*N*/ 			eAnchorId = aAnch.GetAnchorId();
 /*N*/ 			if ( FLY_PAGE != eAnchorId )
 /*N*/ 			//Nur Page und nicht:
@@ -647,14 +626,14 @@ static bool lcl_IsItemSet(const SwCntntNode & rNode, USHORT which)
 /*N*/ 	}
 /*N*/ 	else
 /*N*/ 		eAnchorId = pFmt->GetAnchor().GetAnchorId();
-/*N*/ 
+/*N*/
 /*N*/ 	if( FLY_IN_CNTNT == eAnchorId )
 /*N*/ 	{
 /*N*/ 		xub_StrLen nStt = rAnchPos.nContent.GetIndex();
 /*N*/ 		rAnchPos.nNode.GetNode().GetTxtNode()->Insert(
 /*N*/ 										SwFmtFlyCnt( pFmt ), nStt, nStt );
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	if( SFX_ITEM_SET != pFmt->GetAttrSet().GetItemState( RES_FRM_SIZE ))
 /*N*/ 	{
 /*?*/ 		SwFmtFrmSize aFmtSize( ATT_VAR_SIZE, 0, DEF_FLY_WIDTH );
@@ -678,13 +657,7 @@ static bool lcl_IsItemSet(const SwCntntNode & rNode, USHORT which)
     // Frames anlegen
 /*N*/ 	if( GetRootFrm() )
 /*N*/ 		pFmt->MakeFrms();			// ???
-/*N*/ 
-/*N*/ 	if( DoesUndo() )
-/*N*/ 	{
-/*N*/ 		ClearRedo();
-/*N*/ 		AppendUndo( new SwUndoInsLayFmt( pFmt ));
-/*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	SetModified();
 /*N*/ 	return pFmt;
 /*N*/ }
@@ -714,9 +687,9 @@ static bool lcl_IsItemSet(const SwCntntNode & rNode, USHORT which)
 /*N*/ 	{
 /*N*/ 		if( !pFrmFmt )
 /*?*/ 			pFrmFmt = GetFrmFmtFromPool( RES_POOLFRM_FRAME );
-/*N*/ 
+/*N*/
 /*N*/ 		sal_uInt16 nCollId = IsHTMLMode() ? RES_POOLCOLL_TEXT : RES_POOLCOLL_FRAME;
-/*N*/ 
+/*N*/
         /* #109161# If there exists no adjust item in the paragraph
             style for the content node of the new fly section
             propagate an existing adjust item at the anchor to the new
@@ -725,14 +698,14 @@ static bool lcl_IsItemSet(const SwCntntNode & rNode, USHORT which)
 /*N*/             (SwNodeIndex( GetNodes().GetEndOfAutotext()),
 /*N*/              GetTxtCollFromPool( nCollId ));
 /*N*/         SwCntntNode * pAnchorNode = pAnchorPos->nNode.GetNode().GetCntntNode();
-/*N*/ 
+/*N*/
 /*N*/         const SfxPoolItem * pItem = NULL;
-/*N*/ 
+/*N*/
 /*N*/         if (bCalledFromShell && !lcl_IsItemSet(*pNewTxtNd, RES_PARATR_ADJUST) &&
 /*N*/             SFX_ITEM_SET == pAnchorNode->GetSwAttrSet().
 /*N*/             GetItemState(RES_PARATR_ADJUST, TRUE, &pItem))
 /*N*/             static_cast<SwCntntNode *>(pNewTxtNd)->SetAttr(*pItem);
-/*N*/ 
+/*N*/
 /*N*/  		pFmt = _MakeFlySection( *pAnchorPos, *pNewTxtNd,
 /*N*/ 								eAnchorType, pFlySet, pFrmFmt );
 /*N*/ 	}
@@ -750,7 +723,7 @@ static bool lcl_IsItemSet(const SwCntntNode & rNode, USHORT which)
 /*N*/ {
 /*N*/ 	SwDrawFrmFmt *pFmt = MakeDrawFrmFmt( aEmptyStr,
 /*N*/ 										pDefFmt ? pDefFmt : GetDfltFrmFmt() );
-/*N*/ 
+/*N*/
 /*N*/ 	const SwFmtAnchor* pAnchor = 0;
 /*N*/ 	if( pFlyAttrSet )
 /*N*/ 	{
@@ -758,16 +731,16 @@ static bool lcl_IsItemSet(const SwCntntNode & rNode, USHORT which)
 /*N*/ 									(const SfxPoolItem**)&pAnchor );
 /*N*/ 		pFmt->SetAttr( *pFlyAttrSet );
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	RndStdIds eAnchorId = pAnchor ? pAnchor->GetAnchorId()
 /*N*/ 								  : pFmt->GetAnchor().GetAnchorId();
-/*N*/ 
+/*N*/
 /*N*/ 	// Anker noch nicht gesetzt ?
 /*N*/ 	// DrawObjecte duerfen niemals in Kopf-/Fusszeilen landen.
 /*N*/ 	sal_Bool bIsAtCntnt = FLY_PAGE != eAnchorId;
 /*N*/ //					  FLY_AT_CNTNT == eAnchorId || FLY_IN_CNTNT == eAnchorId ||
 /*N*/ //		  	 		  FLY_AT_FLY == eAnchorId || FLY_AUTO_CNTNT == eAnchorId;
-/*N*/ 
+/*N*/
 /*N*/ 	const SwNodeIndex* pChkIdx = 0;
 /*N*/ 	if( !pAnchor )
 /*N*/     {
@@ -779,7 +752,7 @@ static bool lcl_IsItemSet(const SwCntntNode & rNode, USHORT which)
 /*N*/ 					? &pAnchor->GetCntntAnchor()->nNode
 /*N*/ 					: &rRg.GetPoint()->nNode;
 /*N*/     }
-/*N*/ 
+/*N*/
 /*N*/     // OD 24.06.2003 #108784# - allow drawing objects in header/footer, but
 /*N*/     // control objects aren't allowed in header/footer.
 /*N*/     if( pChkIdx &&
@@ -810,7 +783,7 @@ static bool lcl_IsItemSet(const SwCntntNode & rNode, USHORT which)
 /*N*/ 		}
 /*N*/ 		pFmt->SetAttr( aAnch );
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	// bei als Zeichen gebundenen Draws das Attribut im Absatz setzen
 /*N*/ 	if( FLY_IN_CNTNT == eAnchorId )
 /*N*/ 	{
@@ -818,19 +791,13 @@ static bool lcl_IsItemSet(const SwCntntNode & rNode, USHORT which)
 /*N*/ 		rRg.GetPoint()->nNode.GetNode().GetTxtNode()->Insert(
 /*N*/ 										SwFmtFlyCnt( pFmt ), nStt, nStt );
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	new SwDrawContact( pFmt, &rDrawObj );
-/*N*/ 
+/*N*/
 /*N*/ 	// ggfs. Frames anlegen
 /*N*/ 	if( GetRootFrm() )
 /*N*/ 		pFmt->MakeFrms();
-/*N*/ 
-/*N*/ 	if( DoesUndo() )
-/*N*/ 	{
-/*N*/ 		ClearRedo();
-/*N*/ 		AppendUndo( new SwUndoInsLayFmt( pFmt ));
-/*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	SetModified();
 /*N*/ 	return pFmt;
 /*N*/ }
@@ -882,7 +849,7 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 	SwPosFlyFrm *pFPos = 0;
 
    If the old item set contains the item to set (no inheritance) copy the item
    into the new set.
-   
+
    If the old item set contains the item by inheritance and the new set
    contains the item, too:
       If the two items differ copy the item from the old set to the new set.
@@ -919,7 +886,7 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 	SwPosFlyFrm *pFPos = 0;
 /*N*/ 	if( !pModLogFile )
 /*N*/ 		pModLogFile = new ::rtl::Logfile( "First DoIdleJobs" );
 /*N*/ #endif
-/*N*/ 
+/*N*/
 /*N*/ 	if( !SfxProgress::GetActiveProgress( pDocShell ) &&
 /*N*/ 		GetRootFrm() && GetRootFrm()->GetCurrShell() )
 /*N*/ 	{
@@ -930,7 +897,7 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 	SwPosFlyFrm *pFPos = 0;
 /*N*/ 				return 0;
 /*N*/ 			pSh = (ViewShell*)pSh->GetNext();
 /*N*/ 		} while( pSh != pStartSh );
-/*N*/ 
+/*N*/
 /*N*/ 		sal_uInt16 nFldUpdFlag;
 /*N*/ 		if( GetRootFrm()->IsIdleFormat() )
 /*N*/ 			GetRootFrm()->GetCurrShell()->LayoutIdle();
@@ -945,19 +912,19 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 	SwPosFlyFrm *pFPos = 0;
 /*N*/ 		{
 /*N*/ 			// chaos::Action-Klammerung!
 /*N*/ 			GetUpdtFlds().SetInUpdateFlds( sal_True );
-/*N*/ 
+/*N*/
 /*N*/ 			GetRootFrm()->StartAllAction();
-/*N*/ 
+/*N*/
 /*N*/ 			GetSysFldType( RES_CHAPTERFLD )->Modify( 0, 0 );	// KapitelFld
 /*N*/ 			UpdateExpFlds( 0, sal_False );		// Expression-Felder Updaten
 /*N*/ 			UpdateTblFlds();				// Tabellen
 /*N*/ 			UpdateRefFlds();				// Referenzen
-/*N*/ 
+/*N*/
 /*N*/ 			if( AUTOUPD_FIELD_AND_CHARTS == nFldUpdFlag )
 /*N*/ 				aChartTimer.Start();
-/*N*/ 
+/*N*/
 /*N*/ 			GetRootFrm()->EndAllAction();
-/*N*/ 
+/*N*/
 /*N*/ 			GetUpdtFlds().SetInUpdateFlds( sal_False );
 /*N*/ 			GetUpdtFlds().SetFieldsDirty( sal_False );
 /*N*/ 		}
@@ -975,13 +942,13 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 	SwPosFlyFrm *pFPos = 0;
 /*N*/ 	ResId aId( nDefStrId, *pSwResMgr );
 /*N*/ 	String aName( aId );
 /*N*/ 	xub_StrLen nNmLen = aName.Len();
-/*N*/ 
+/*N*/
 /*N*/ 	const SwSpzFrmFmts& rFmts = *pDoc->GetSpzFrmFmts();
-/*N*/ 
+/*N*/
 /*N*/ 	sal_uInt16 nNum, nTmp, nFlagSize = ( rFmts.Count() / 8 ) +2;
 /*N*/ 	sal_uInt8* pSetFlags = new sal_uInt8[ nFlagSize ];
 /*N*/ 	memset( pSetFlags, 0, nFlagSize );
-/*N*/ 
+/*N*/
         sal_uInt16 n=0;
 /*N*/ 	for( n = 0; n < rFmts.Count(); ++n )
 /*N*/ 	{
@@ -995,7 +962,7 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 	SwPosFlyFrm *pFPos = 0;
 /*N*/ 				pSetFlags[ nNum / 8 ] |= (0x01 << ( nNum & 0x07 ));
 /*N*/ 		}
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	// alle Nummern entsprechend geflag, also bestimme die richtige Nummer
 /*N*/ 	nNum = rFmts.Count();
 /*N*/ 	for( n = 0; n < nFlagSize; ++n )
@@ -1007,7 +974,7 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 	SwPosFlyFrm *pFPos = 0;
 /*N*/ 				++nNum, nTmp >>= 1;
 /*N*/ 			break;
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 	delete [] pSetFlags;
 /*N*/ 	return aName += String::CreateFromInt32( ++nNum );
 /*N*/ }
@@ -1075,20 +1042,20 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 	SwPosFlyFrm *pFPos = 0;
 /*N*/ void SwDoc::SetAllUniqueFlyNames()
 /*N*/ {
 /*N*/ 	sal_uInt16 n, nFlyNum = 0, nGrfNum = 0, nOLENum = 0;
-/*N*/ 
+/*N*/
 /*N*/ 	ResId nFrmId( STR_FRAME_DEFNAME, *pSwResMgr ),
 /*N*/ 		  nGrfId( STR_GRAPHIC_DEFNAME, *pSwResMgr ),
 /*N*/ 		  nOLEId( STR_OBJECT_DEFNAME, *pSwResMgr );
 /*N*/ 	String sFlyNm( nFrmId );
 /*N*/ 	String sGrfNm( nGrfId );
 /*N*/ 	String sOLENm( nOLEId );
-/*N*/ 
+/*N*/
 /*N*/ 	if( 255 < ( n = GetSpzFrmFmts()->Count() ))
 /*N*/ 		n = 255;
 /*N*/ 	SwSpzFrmFmts aArr( (sal_Int8)n, 10 );
 /*N*/ 	SwFrmFmtPtr pFlyFmt;
 /*N*/ 	sal_Bool bLoadedFlag = sal_True;			// noch etwas fuers Layout
-/*N*/ 
+/*N*/
 /*N*/ 	for( n = GetSpzFrmFmts()->Count(); n; )
 /*N*/ 	{
 /*N*/ 		if( RES_FLYFRMFMT == (pFlyFmt = (*GetSpzFrmFmts())[ --n ])->Which() )
@@ -1104,14 +1071,14 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 	SwPosFlyFrm *pFPos = 0;
 /*N*/ 					pNum = &nFlyNum;
 /*N*/ 				else if( rNm.Match( sOLENm ) == ( nLen = sOLENm.Len() ))
 /*?*/ 					pNum = &nOLENum;
-/*N*/ 
+/*N*/
 /*N*/ 				if( pNum && *pNum < ( nLen = rNm.Copy( nLen ).ToInt32() ))
 /*N*/ 					*pNum = nLen;
 /*N*/ 			}
 /*N*/ 			else
 /*N*/ 				// das wollen wir nachher setzen
 /*?*/ 				aArr.Insert( pFlyFmt, aArr.Count() );
-/*N*/ 
+/*N*/
 /*N*/ 		}
 /*N*/ 		if( bLoadedFlag )
 /*N*/ 		{
@@ -1127,9 +1094,9 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 	SwPosFlyFrm *pFPos = 0;
 /*N*/ 				bLoadedFlag = sal_False;
 /*N*/ 		}
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	const SwNodeIndex* pIdx;
-/*N*/ 
+/*N*/
 /*N*/ 	for( n = aArr.Count(); n; )
 /*?*/ 		if( 0 != ( pIdx = ( pFlyFmt = aArr[ --n ])->GetCntnt().GetCntntIdx() )
 /*?*/ 			&& pIdx->GetNode().GetNodes().IsDocNodes() )
@@ -1154,14 +1121,14 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 	SwPosFlyFrm *pFPos = 0;
 /*?*/ 			pFlyFmt->SetName( sNm += String::CreateFromInt32( nNum ));
 /*?*/ 		}
 /*N*/ 	aArr.Remove( 0, aArr.Count() );
-/*N*/ 
+/*N*/
 /*N*/ 	if( GetFtnIdxs().Count() )
 /*N*/ 	{
 /*N*/ 		SwTxtFtn::SetUniqueSeqRefNo( *this );
 /*N*/ 		SwNodeIndex aTmp( GetNodes() );
 /*N*/ 		GetFtnIdxs().UpdateFtn( aTmp );
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	// neues Document und keine seitengebundenen Rahmen/DrawObjecte gefunden,
 /*N*/ 	// die an einem Node verankert sind.
 /*N*/ 	if( bLoadedFlag )
@@ -1191,12 +1158,12 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 	SwPosFlyFrm *pFPos = 0;
 /*N*/ 			}
 /*N*/ 			if ( pUp )
 /*N*/ 				return sal_True;
-/*N*/ 
+/*N*/
 /*N*/ 			return sal_False;
 /*N*/ 		}
 /*N*/ 	}
-/*N*/ 
-/*N*/ 
+/*N*/
+/*N*/
 /*N*/ 	const SwNode* pFlyNd = pNd->FindFlyStartNode();
 /*N*/ 	while( pFlyNd )
 /*N*/ 	{
@@ -1212,7 +1179,7 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 	SwPosFlyFrm *pFPos = 0;
 /*N*/ 				if( FLY_PAGE == rAnchor.GetAnchorId() ||
 /*N*/ 					!rAnchor.GetCntntAnchor() )
 /*N*/ 					return sal_False;
-/*N*/ 
+/*N*/
 /*N*/ 				pNd = &rAnchor.GetCntntAnchor()->nNode.GetNode();
 /*N*/ 				pFlyNd = pNd->FindFlyStartNode();
 /*N*/ 				break;
@@ -1224,7 +1191,7 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 	SwPosFlyFrm *pFPos = 0;
 /*N*/ 			return sal_False;
 /*N*/ 		}
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	return 0 != pNd->FindHeaderStartNode() ||
 /*N*/ 			0 != pNd->FindFooterStartNode();
 /*N*/ }
