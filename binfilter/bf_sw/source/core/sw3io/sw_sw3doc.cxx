@@ -7,7 +7,7 @@
  * OpenOffice.org - a multi-platform office productivity suite
  *
  * $RCSfile: sw_sw3doc.cxx,v $
- * $Revision: 1.12 $
+ * $Revision: 1.13 $
  *
  * This file is part of OpenOffice.org.
  *
@@ -137,7 +137,7 @@ void lcl_sw3doc_ChgChartName( SwDoc* pDoc )
 /*?*/ 		else if( pTxtNode->GetTxt().Len() )
 /*?*/ 			nInsFirstPara = 1;
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	// aktuelles Passwort retten
 /*N*/ 	sal_Char cOldPass[ 16 ];
 /*N*/ 	memcpy( cOldPass, cPasswd, 16 );
@@ -147,12 +147,7 @@ void lcl_sw3doc_ChgChartName( SwDoc* pDoc )
 /*?*/ 		Error( ERR_SWG_READ_ERROR );
 /*?*/ 		return;
 /*N*/ 	}
-/*N*/ 
-/*N*/ 	BOOL bUndo = pDoc->DoesUndo();
-/*N*/ 	// Kein Undo bei neuem Dokument!
-/*N*/ 	if( !bInsert )
-/*N*/ 		pDoc->DoUndo( FALSE );
-/*N*/ 
+/*N*/
 /*N*/ 	// Auf gehts:
 /*N*/ 	BOOL bNode1 = TRUE;
 /*N*/ 	BOOL bDone = BOOL( !Good() );
@@ -162,9 +157,9 @@ void lcl_sw3doc_ChgChartName( SwDoc* pDoc )
 /*?*/ 		aPos = pPaM->GetPoint()->nNode.GetIndex() + nDiff,
 /*?*/ 		nOffset = pPaM->GetPoint()->nContent.GetIndex();
 /*N*/ 	pCurPaM = pPaM;
-/*N*/ 
+/*N*/
 /*N*/ 	SwDBData aOldData(pDoc->_GetDBDesc());
-/*N*/ 
+/*N*/
 /*N*/ 	// Normales Lesen?
 /*N*/ 	while( !bDone )
 /*N*/ 	{
@@ -186,7 +181,7 @@ void lcl_sw3doc_ChgChartName( SwDoc* pDoc )
 /*?*/ 					// der DB-Name gelesen. Warum nicht auch das
 /*?*/ 					// SQL-Statemement?
 /*?*/ 					OpenRec( SWG_DBNAME );
-/*?*/ 
+/*?*/
 /*?*/ 					// TODO: unicode: what about 0xff?
 /*?*/ 					String sStr;
 /*?*/ 					InString( *pStrm, sStr );
@@ -194,7 +189,7 @@ void lcl_sw3doc_ChgChartName( SwDoc* pDoc )
 /*?*/ 					aData.sDataSource = sStr.GetToken(0, DB_DELIM);
 /*?*/ 					aData.sCommand = sStr.GetToken(1, DB_DELIM);
 /*?*/ 					pDoc->ChgDBData( aData );
-/*?*/ 
+/*?*/
 /*?*/ 					ULONG nSaveWarn = nWarn;
 /*?*/ 					CloseRec( SWG_DBNAME );
 /*?*/ 					nWarn = nSaveWarn;
@@ -219,7 +214,7 @@ void lcl_sw3doc_ChgChartName( SwDoc* pDoc )
 /*?*/ 				else
 /*?*/ 					SkipRec();
 /*?*/ 				break;
-/*N*/ 
+/*N*/
 /*N*/ //			case SWG_NUMRULE:
 /*N*/ 				// Der 4.0-SW kommt hier auch schon mit NumRules
 /*N*/ 				// zurecht, ignoriert sie aber. Es weiss zwar keiner
@@ -243,7 +238,7 @@ void lcl_sw3doc_ChgChartName( SwDoc* pDoc )
 /*N*/ 							SwTxtFmtColl* pCol = pDoc->GetTxtCollFromPool(
 /*N*/ 												RES_POOLCOLL_HEADLINE_BASE );
 /*N*/ 							pCol->ResetAttr( RES_LR_SPACE );
-/*N*/ 
+/*N*/
 /*N*/ 							for( short i = 0; i < MAXLEVEL; i++ )
 /*N*/ 							{
 /*N*/ 								if( !pRule->GetNumFmt( i ) )
@@ -315,7 +310,7 @@ void lcl_sw3doc_ChgChartName( SwDoc* pDoc )
 /*N*/ 				InBookmarks();
 /*N*/ 				break;
 /*N*/ 			case SWG_REDLINES:
-                    InRedlines(); //SW50.SDW 
+                    InRedlines(); //SW50.SDW
 /*?*/ 				break;
 /*N*/ 			case SWG_CONTENTS:
 /*N*/ 				if( bNormal )
@@ -343,7 +338,7 @@ void lcl_sw3doc_ChgChartName( SwDoc* pDoc )
 /*N*/ 			case SWG_LAYOUTINFO:
 /*N*/ 				SkipRec();
 /*N*/ 				break;
-/*N*/ 
+/*N*/
 /*N*/ #ifdef TEST_HUGE_DOCS
 /*N*/ 			case SWG_TESTHUGEDOCS:
 /*N*/ 				InHugeRecord();
@@ -352,20 +347,19 @@ void lcl_sw3doc_ChgChartName( SwDoc* pDoc )
 /*N*/ 				SkipRec();
 /*N*/ 		}
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	// Insert TOXs if not done this already.
 /*N*/ 	ConnectPageDescAttrs();
 /*N*/ 	ConnectTOXs();
-/*N*/ 
+/*N*/
 /*N*/ 	Cleanup( FALSE );
-/*N*/ 
+/*N*/
 /*N*/ 	if( !IsVersion(SWG_LONGIDX) && pCurNumRange )
 /*?*/ 		CloseNumRange40( aPos );
-/*N*/ 
+/*N*/
 /*N*/ 	if( bInsert && !IsVersion( SWG_MULTIDB, SWG_EXPORT31, SWG_DESKTOP40 ) )
 /*?*/ 		pDoc->ChgDBData( aOldData );
-/*N*/ 
-/*N*/ 	pDoc->DoUndo( bUndo );
+/*N*/
 /*N*/ 	if( !nRes )
 /*N*/ 	{
 /*N*/ 		if( bNormal )
@@ -382,7 +376,7 @@ void lcl_sw3doc_ChgChartName( SwDoc* pDoc )
 /*N*/ 				if( nVersion < SWG_OLENAME && pDoc->GetTblFrmFmts()->Count() &&
 /*N*/ 					pDoc->GetSpzFrmFmts()->Count() )
                         lcl_sw3doc_ChgChartName( pDoc );
-/*N*/ 
+/*N*/
 /*N*/ 				pDoc->SetLoaded( TRUE );
 /*N*/ 			}
 /*N*/ 		}
@@ -448,7 +442,7 @@ void lcl_sw3doc_ChgChartName( SwDoc* pDoc )
 /*N*/ 	}
 /*N*/ 	// der DatenbankName
 /*N*/ 	OutDBName();
-/*N*/ 
+/*N*/
 /*N*/ 	// Der String-Pool
 /*N*/ 	OutStringPool( SWG_STRINGPOOL, aStringPool );
 /*N*/ 	if( !bBlock )
@@ -460,11 +454,11 @@ void lcl_sw3doc_ChgChartName( SwDoc* pDoc )
 /*N*/ 			OutDocStat( TRUE );
 /*N*/ 			aDefWordDelim = SW_MOD()->GetDocStatWordDelim();
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		// Outline-Numerierung, falls vorhanden
 /*N*/ 		if( pDoc->GetOutlineNumRule() && IsSw31Or40Export() )
 /*N*/ 			OutNumRule( SWG_OUTLINE, *pDoc->GetOutlineNumRule() );
-/*N*/ 
+/*N*/
 /*N*/ 		// globale Fussnoten-Info
 /*N*/ 		if( !nRes )
 /*N*/ 			OutFtnInfo();
@@ -473,13 +467,13 @@ void lcl_sw3doc_ChgChartName( SwDoc* pDoc )
 /*N*/ 		if( !nRes && !IsSw31Or40Export() )
 /*N*/ 			OutLineNumberInfo();
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	// Woerterbuecher des Onlinespellings
 /*N*/ 	if( !nRes && !IsSw31Export() ) OutDictionary();
 /*N*/ 	// Numberformatter schreiben bei Textbausteinen. Bei normalen
 /*N*/ 	// Dokumenten erfolgt es schon bei den PageDescs
 /*N*/ 	if( !nRes && !IsSw31Export() && bBlock ) OutNumberFormatter();
-/*N*/ 
+/*N*/
 /*N*/ 	// Makro-Tabellen
 /*N*/ 	if( !nRes ) OutMacroTbl();
 /*N*/ 	// Nicht-Systemfeldtypen
@@ -491,28 +485,28 @@ void lcl_sw3doc_ChgChartName( SwDoc* pDoc )
 /*N*/ 		if( !nRes && !IsSw31Or40Export() )
 /*N*/ 			OutTOXs();
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	// Bookmarks (nicht, wenn ein SW2-TextBlockDoc konvertiert wird)
 /*N*/ // JP 16.10.95: werden jetzt im OutPageDesc geschrieben
 /*N*/ // MIB 11.12.96: es werden jetzt die Bookmarks der Seiten-Vorlagen und
 /*N*/ //               im Dok jeweils getrennt in die Streams geschrieben
 /*N*/ 	if( !nRes && !( nGblFlags & SW3F_CONVBLOCK ) && !IsSw31Export() )
 /*N*/ 		OutBookmarks( FALSE );
-/*N*/ 
+/*N*/
 /*N*/ 	// Solange Textbausteine ueber Zwischen-Dokumente geladen und
 /*N*/ 	// gespeichert werden, kann es dort keine Redlines geben. Also
 /*N*/ 	// muss man dies nirgendwo abfangen (nicht nur hier nicht).
 /*N*/ 	if( !nRes && !IsSw31Or40Export() )
 /*N*/ 		OutRedlines( FALSE );
-/*N*/ 
+/*N*/
 /*N*/ 	// Einstellungen der PagePreView speichern
 /*N*/ 	if( !nRes && !bBlock && !IsSw31Or40Export() )
 /*N*/ 		OutPagePreViewPrintData();
-/*N*/ 
+/*N*/
 /*N*/ 	// Eine handvoll persistenten Dummy-Member
 /*N*/ 	if( !nRes && !IsSw31Or40Export() )
 /*N*/ 		OutDocDummies();
-/*N*/ 
+/*N*/
 /*N*/ 	// Der Inhalt
 /*N*/ 	SwPaM* pPaM = &rPaM;
 /*N*/ 	while( !nRes )
@@ -531,17 +525,17 @@ void lcl_sw3doc_ChgChartName( SwDoc* pDoc )
 /*N*/ 	// gleich geeignet invalidiert werden kann.
 /*N*/ 	if( !bBlock && !nRes )
 /*N*/ 		OutJobSetup();
-/*N*/ 
+/*N*/
 /*N*/ #ifdef TEST_HUGE_DOCS
 /*N*/ 	BOOL b = FALSE;
 /*N*/ 	if( b )
 /*N*/ 		OutHugeRecord( 1024, 32*1024 );
 /*N*/ #endif
-/*N*/ 
+/*N*/
 /*N*/ 	ULONG nRecSzPos = 0;
 /*N*/ 	if( !nRes && HasRecSizes() && !IsSw31Or40Export() )
                 nRecSzPos = OutRecSizes();
-/*N*/ 
+/*N*/
 /*N*/ 	OpenRec( SWG_EOF );
 /*N*/ 	CloseRec( SWG_EOF );
 /*N*/ 	// Ggf. Fehlerflag schreiben
@@ -610,17 +604,17 @@ void lcl_sw3doc_ChgChartName( SwDoc* pDoc )
 /*N*/ 	}
 /*N*/ 	else
 /*N*/ 		return;
-/*N*/ 
+/*N*/
 /*N*/ 	*pStrm >> cLen;
 /*N*/ 	ULONG nOld = pStrm->Tell();
-/*N*/ 
+/*N*/
 /*N*/ 	UINT32 nRecSzPos;
 /*N*/ 	INT32 nDocFlags,
 /*N*/ 		  nDummy;
 /*N*/ 	BYTE cRedlineMode;
 /*N*/ 	INT8 nCompatVer,
 /*N*/ 		 nDummy8;
-/*N*/ 
+/*N*/
 /*N*/ 	*pStrm >> nVersion >> nFileFlags >> nDocFlags >> nRecSzPos >> nDummy
 /*N*/ 		   >> nDummy8 >> nDummy8 >> cRedlineMode >> nCompatVer;
 /*N*/ 	// Ist die daeti von einem zu neuen SW und laesst sich nicht mehr lesen?
@@ -646,7 +640,7 @@ void lcl_sw3doc_ChgChartName( SwDoc* pDoc )
 /*N*/ 	nOld += cLen;
 /*N*/ 	if( nOld != nNew )
 /*?*/ 		pStrm->Seek( nOld );
-/*N*/ 
+/*N*/
 /*N*/ #ifdef MAC
 /*N*/ 	if( pStrm != &pPageStyles && pStrm != &pNumRules )
 /*N*/ #else
@@ -662,7 +656,7 @@ void lcl_sw3doc_ChgChartName( SwDoc* pDoc )
 /*N*/ 			if( IsVersion(SWG_OLEVIS2PAGE) )
 /*N*/ 				pDoc->SetBrowseMode ( 0 != (nDocFlags & 0x0001) ||
 /*N*/ 									  0 != (nDocFlags & 0x0002) );
-/*N*/ 
+/*N*/
 /*N*/ 			pDoc->SetHTMLMode( 0 != (nDocFlags & 0x0004) );
 /*N*/ 			pDoc->SetHeadInBrowse( 0 != (nDocFlags & 0x0008) );
 /*N*/ 			pDoc->SetFootInBrowse( 0 != (nDocFlags & 0x0010) );
@@ -675,7 +669,7 @@ void lcl_sw3doc_ChgChartName( SwDoc* pDoc )
 /*N*/ 		pDoc->SetRedlineMode_intern( (SwRedlineMode)cRedlineMode );
 /*N*/ 	if( !CheckPasswd() )
 /*?*/ 		Error( ERRCODE_SFX_WRONGPASSWORD );
-/*N*/ 
+/*N*/
 /*N*/ 	// MIB: Das <= fuer das 40-FF ist korrekt, denn es gab eine Weile
 /*N*/ 	// 4.0-Storages mit 5.0-Streams.
 /*N*/ #ifndef PRODUCT
@@ -690,7 +684,7 @@ void lcl_sw3doc_ChgChartName( SwDoc* pDoc )
 /*N*/ 				  nVersion >= SWG_MAJORVERSION_50 ),
 /*N*/ 				"Beim Lesen stimmt die FF-Version am Storage nicht!" );
 /*N*/ #endif
-/*N*/ 
+/*N*/
 /*N*/ 	if( nRecSzPos!= 0 && bReadRecSizes && !nRes && IsVersion(SWG_RECSIZES) )
                     InRecSizes( nRecSzPos );
 /*N*/ }
@@ -702,7 +696,7 @@ void lcl_sw3doc_ChgChartName( SwDoc* pDoc )
 /*N*/ 	nFileFlags |= SWGF_NO_FRAMES;
 /*N*/ 	if( aBlkName.Len() )
 /*N*/ 		nFileFlags |= SWGF_BLOCKNAME;
-/*N*/ 
+/*N*/
 /*N*/ 	INT32 nDocFlags = 0;
 /*N*/ 	if ( pDoc->IsBrowseMode() )
 /*N*/ 		nDocFlags |= 0x0002;
@@ -718,14 +712,14 @@ void lcl_sw3doc_ChgChartName( SwDoc* pDoc )
 /*N*/ 		nDocFlags |= 0x0040;
 /*N*/ 	if( !bBlock && !IsSw31Or40Export() && pDoc->IsLabelDoc() )
 /*N*/ 		nDocFlags |= 0x0080;
-/*N*/ 
+/*N*/
 /*N*/ 	BYTE cRedlineMode = 0;
 /*N*/ 	if( !bBlock && !IsSw31Or40Export() )
 /*N*/ 		cRedlineMode = (BYTE)pDoc->GetRedlineMode();
-/*N*/ 
+/*N*/
 /*N*/ 	UINT16 nVers = SWG_VERSION;
 /*N*/ 	const sal_Char *sHeader = SW5HEADER;
-/*N*/ 
+/*N*/
 /*N*/ 	switch( pStrm->GetVersion() )
 /*N*/ 	{
 /*N*/ 	case SOFFICE_FILEFORMAT_40:
@@ -737,15 +731,15 @@ void lcl_sw3doc_ChgChartName( SwDoc* pDoc )
 /*N*/ 		sHeader = SW3HEADER;
 /*N*/ 		break;
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	ASSERT( !nRecSzPos || !IsSw31Or40Export(),
 /*N*/ 			"Lange Records gibt's erst ab der 5.0" );
-/*N*/ 	ASSERT( GetSOStoreTextEncoding( gsl_getSystemTextEncoding(), 
+/*N*/ 	ASSERT( GetSOStoreTextEncoding( gsl_getSystemTextEncoding(),
 /*N*/ 									pStrm->GetVersion() ) == eSrcSet,
 /*N*/ 			"wrong encoding while writing" );
 /*N*/ 	ASSERT( pStrm->GetStreamCharSet() == eSrcSet,
 /*N*/ 			"wrong encoding at stream while writing" );
-/*N*/ 
+/*N*/
 /*N*/ 	OutputMode( TRUE );
 /*N*/ 	pStrm->Seek( 0L );
 /*N*/ 	*pStrm << sHeader
