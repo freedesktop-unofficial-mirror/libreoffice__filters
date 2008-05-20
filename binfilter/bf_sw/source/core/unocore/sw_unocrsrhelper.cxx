@@ -7,7 +7,7 @@
  * OpenOffice.org - a multi-platform office productivity suite
  *
  * $RCSfile: sw_unocrsrhelper.cxx,v $
- * $Revision: 1.10 $
+ * $Revision: 1.11 $
  *
  * This file is part of OpenOffice.org.
  *
@@ -113,9 +113,6 @@
 #endif
 #ifndef _EDIMP_HXX //autogen
 #include <edimp.hxx>
-#endif
-#ifndef _SWUNDO_HXX //autogen
-#include <swundo.hxx>
 #endif
 #ifndef _CNTFRM_HXX //autogen
 #include <cntfrm.hxx>
@@ -482,9 +479,9 @@ sal_Bool getCrsrPropertyValue(const SfxItemPropertyMap* pMap
         break;
         case FN_UNO_CHARFMT_SEQUENCE:
         {
-            
+
             SwTxtNode* pTxtNode;
-            if((pTxtNode = (SwTxtNode*)rPam.GetNode( TRUE )) == rPam.GetNode(FALSE) && 
+            if((pTxtNode = (SwTxtNode*)rPam.GetNode( TRUE )) == rPam.GetNode(FALSE) &&
                     pTxtNode->GetpSwpHints())
             {
                 USHORT nPaMStart = rPam.GetPoint()->nContent.GetIndex();
@@ -494,7 +491,7 @@ sal_Bool getCrsrPropertyValue(const SfxItemPropertyMap* pMap
                     USHORT nTmp = nPaMStart;
                     nPaMStart = nPaMEnd;
                     nPaMEnd = nTmp;
-                }        
+                }
                 Sequence< ::rtl::OUString> aCharStyles;
                 USHORT nCharStylesFound = 0;
                 SwpHints* pHints = pTxtNode->GetpSwpHints();
@@ -511,8 +508,8 @@ sal_Bool getCrsrPropertyValue(const SfxItemPropertyMap* pMap
                         //check for overlapping
                         if(nAttrStart > nPaMStart ||
                                     nAttrEnd < nPaMEnd)
-                        {        
-                            aCharStyles.realloc(0);                                
+                        {
+                            aCharStyles.realloc(0);
                             eNewState = PropertyState_AMBIGUOUS_VALUE;
                             break;
                         }
@@ -525,13 +522,13 @@ sal_Bool getCrsrPropertyValue(const SfxItemPropertyMap* pMap
                             //now the name of the style has to be added to the sequence
                             aCharStyles.realloc(aCharStyles.getLength() + 1);
                             DBG_ASSERT(pAttr->GetCharFmt().GetCharFmt(), "no character format set");
-                            aCharStyles.getArray()[aCharStyles.getLength() - 1] = 
+                            aCharStyles.getArray()[aCharStyles.getLength() - 1] =
                                         SwStyleNameMapper::GetProgName(
                                             pAttr->GetCharFmt().GetCharFmt()->GetName(), GET_POOLID_CHRFMT);
                         }
                     }
-                        
-                }        
+
+                }
                 if(aCharStyles.getLength())
                     eNewState = PropertyState_DIRECT_VALUE;
                 if(pAny)
@@ -651,12 +648,10 @@ void setNumberingProperty(const Any& rValue, SwPaM& rPam)
 
                 if( rPam.GetNext() != &rPam )           // Mehrfachselektion ?
                 {
-                    pDoc->StartUndo( UNDO_START );
                     SwPamRanges aRangeArr( rPam );
                     SwPaM aPam( *rPam.GetPoint() );
                     for( sal_uInt16 n = 0; n < aRangeArr.Count(); ++n )
                         pDoc->SetNumRule( aRangeArr.SetPam( n, aPam ), aRule );
-                    pDoc->EndUndo( UNDO_END );
                 }
                 else
                     pDoc->SetNumRule( rPam, aRule );
@@ -725,12 +720,10 @@ void resetCrsrPropertyValue(const SfxItemPropertyMap* pMap, SwPaM& rPam)
 
             if( rPam.GetNext() != &rPam )			// Mehrfachselektion ?
             {
-                pDoc->StartUndo( UNDO_START );
                 SwPamRanges aRangeArr( rPam );
                 SwPaM aPam( *rPam.GetPoint() );
                 for( sal_uInt16 n = 0; n < aRangeArr.Count(); ++n )
                     pDoc->SetNodeNumStart( *aRangeArr.SetPam( n, aPam ).GetPoint(), 1 );
-                pDoc->EndUndo( UNDO_END );
             }
             else
                 pDoc->SetNodeNumStart( *rPam.GetPoint(), 0 );
@@ -743,7 +736,7 @@ void resetCrsrPropertyValue(const SfxItemPropertyMap* pMap, SwPaM& rPam)
 //    		lcl_setNumberingProperty(aValue, pUnoCrsr);
         break;
         case FN_UNO_CHARFMT_SEQUENCE:
-        {    
+        {
             SvUShortsSort aWhichIds;
             aWhichIds.Insert(RES_TXTATR_CHARFMT);
             pDoc->ResetAttr(rPam, sal_True, &aWhichIds);
