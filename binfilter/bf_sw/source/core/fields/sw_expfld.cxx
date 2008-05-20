@@ -7,7 +7,7 @@
  * OpenOffice.org - a multi-platform office productivity suite
  *
  * $RCSfile: sw_expfld.cxx,v $
- * $Revision: 1.11 $
+ * $Revision: 1.12 $
  *
  * This file is part of OpenOffice.org.
  *
@@ -125,11 +125,34 @@
 #endif
 namespace binfilter {
 extern String& GetString( const ::com::sun::star::uno::Any& rAny, String& rStr ); //STRIP008
-extern void InsertSort( SvUShorts& rArr, USHORT nIdx, USHORT* pInsPos = 0 ); //STRIP008
 using namespace ::com::sun::star;
 using namespace ::com::sun::star::text;
 using namespace ::rtl;
 
+/*N*/ void InsertSort( SvUShorts& rArr, USHORT nIdx )
+/*N*/ {
+/*N*/ 	register USHORT nO	= rArr.Count(), nM, nU = 0;
+/*N*/ 	if( nO > 0 )
+/*N*/ 	{
+/*N*/ 		nO--;
+/*N*/ 		while( nU <= nO )
+/*N*/ 		{
+/*N*/ 			nM = nU + ( nO - nU ) / 2;
+/*N*/ 			if( *(rArr.GetData() + nM) == nIdx )
+/*N*/ 			{
+/*N*/ 				ASSERT( FALSE, "Index ist schon vorhanden, darf nie sein!" );
+/*N*/ 				return;
+/*N*/ 			}
+/*N*/ 			if( *(rArr.GetData() + nM) < nIdx )
+/*N*/ 				nU = nM + 1;
+/*N*/ 			else if( nM == 0 )
+/*N*/ 				break;
+/*N*/ 			else
+/*N*/ 				nO = nM - 1;
+/*N*/ 		}
+/*N*/ 	}
+/*N*/ 	rArr.Insert( nIdx, nU );
+/*N*/ }
 
 //-----------------------------------------------------------------------------
 /*N*/ sal_Int16 lcl_SubTypeToAPI(USHORT nSubType)
@@ -168,10 +191,10 @@ using namespace ::rtl;
 /*N*/ {
 /*N*/     // replace first and last (if bWithCommandType: last two) dot Ersten und letzten Punkt ersetzen, da in Tabellennamen Punkte erlaubt sind
 /*N*/     // since table names may contain dots
-/*N*/ 
+/*N*/
 /*N*/ 	xub_StrLen nLen = rTmpName.Len();
 /*N*/ 	sal_Unicode *pStr = rTmpName.GetBufferAccess(), *pBackStr = pStr + nLen;
-/*N*/ 
+/*N*/
 /*N*/     long nBackCount = bWithCommandType ? 2 : 1;
             xub_StrLen i;
 /*N*/     for( i = nLen; i; --i, pBackStr-- )
@@ -222,7 +245,7 @@ using namespace ::rtl;
 /*N*/ {
 /*N*/ 	const SwLayoutFrm* pLayout = (SwLayoutFrm*)rFrm.GetUpper();
 /*N*/ 	const SwTxtNode* pTxtNode = 0;
-/*N*/ 
+/*N*/
 /*N*/ 	while( pLayout )
 /*N*/ 	{
 /*N*/ 		if( pLayout->IsFlyFrm() )
@@ -230,9 +253,9 @@ using namespace ::rtl;
 /*N*/ 			// hole das FlyFormat
 /*N*/ 			SwFrmFmt* pFlyFmt = ((SwFlyFrm*)pLayout)->GetFmt();
 /*N*/ 			ASSERT( pFlyFmt, "kein FlyFormat gefunden, wo steht das Feld" );
-/*N*/ 
+/*N*/
 /*N*/ 			const SwFmtAnchor &rAnchor = pFlyFmt->GetAnchor();
-/*N*/ 
+/*N*/
 /*N*/ 			if( FLY_AT_FLY == rAnchor.GetAnchorId() )
 /*N*/ 			{
 /*N*/ 				// und der Fly muss irgendwo angehaengt sein, also
@@ -251,7 +274,7 @@ using namespace ::rtl;
 /*?*/               ((SwTxtNode*)pTxtNode)->MakeStartIndex( &rPos.nContent );
 /*N*/ // oder doch besser das Ende vom (Anker-)TextNode nehmen ??
 /*N*/ //					((SwTxtNode*)pTxtNode)->MakeEndIndex( &rPos.nContent );
-/*N*/ 
+/*N*/
 /*N*/ 				// noch nicht abbrechen, kann ja auch noch im
 /*N*/ 				// Header/Footer/Footnote/Fly stehen !!
 /*N*/ 				pLayout = ((SwFlyFrm*)pLayout)->GetAnchor()
@@ -293,7 +316,7 @@ using namespace ::rtl;
 /*N*/ 			}
 /*N*/ 			else
 /*?*/ 				pCntFrm = pPgFrm->FindLastBodyCntnt();
-/*N*/ 
+/*N*/
 /*N*/ 			if( pCntFrm )
 /*N*/ 			{
 /*N*/ 				pTxtNode = pCntFrm->GetNode()->GetTxtNode();
@@ -383,7 +406,7 @@ using namespace ::rtl;
 /*N*/ 	pTmp->sExpand 		= sExpand;
 /*N*/ 	pTmp->bIsInBodyTxt 	= bIsInBodyTxt;
 /*N*/     pTmp->SetAutomaticLanguage(IsAutomaticLanguage());
-/*N*/ 
+/*N*/
 /*N*/ 	return pTmp;
 /*N*/ }
 
@@ -522,7 +545,7 @@ BOOL SwGetExpField::PutValue( const uno::Any& rAny, BYTE nMId )
 /*N*/ 	pNew->bDeleted = bDeleted;
 /*N*/ 	pNew->cDelim = cDelim;
 /*N*/ 	pNew->nLevel = nLevel;
-/*N*/ 
+/*N*/
 /*N*/ 	return pNew;
 /*N*/ }
 
@@ -542,12 +565,11 @@ void SwSetExpFieldType::Modify( SfxPoolItem*, SfxPoolItem* )
 /*N*/ {
 /*N*/ 	if( !GetDepends() || !(GSE_SEQ & nType) )
 /*?*/ 		return USHRT_MAX;
-/*N*/ 
-/*N*/ extern void InsertSort( SvUShorts& rArr, USHORT nIdx, USHORT* pInsPos = 0 );
+/*N*/
 /*N*/ 	SvUShorts aArr( 64 );
-/*N*/ 
+/*N*/
 /*N*/ 	USHORT n;
-/*N*/ 
+/*N*/
 /*N*/ 	// dann testmal, ob die Nummer schon vergeben ist oder ob eine neue
 /*N*/ 	// bestimmt werden muss.
 /*N*/ 	SwClientIter aIter( *this );
@@ -558,8 +580,8 @@ void SwSetExpFieldType::Modify( SfxPoolItem*, SfxPoolItem* )
 /*N*/ 			0 != ( pNd = pF->GetTxtFld()->GetpTxtNode() ) &&
 /*N*/ 			pNd->GetNodes().IsDocNodes() )
 /*N*/ 			::binfilter::InsertSort( aArr, ((SwSetExpField*)pF->GetFld())->GetSeqNumber() );
-/*N*/ 
-/*N*/ 
+/*N*/
+/*N*/
 /*N*/ 	// teste erstmal ob die Nummer schon vorhanden ist:
 /*N*/ 	USHORT nNum = rFld.GetSeqNumber();
 /*N*/ 	if( USHRT_MAX != nNum )
@@ -569,16 +591,16 @@ void SwSetExpFieldType::Modify( SfxPoolItem*, SfxPoolItem* )
 /*?*/ 				return nNum;			// nicht vorhanden -> also benutzen
 /*N*/ 			else if( aArr[ n ] == nNum )
 /*N*/ 				break;					// schon vorhanden -> neue erzeugen
-/*N*/ 
+/*N*/
 /*N*/ 		if( n == aArr.Count() )
 /*N*/ 			return nNum;			// nicht vorhanden -> also benutzen
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	// alle Nummern entsprechend geflag, also bestimme die richtige Nummer
 /*N*/ 	for( n = 0; n < aArr.Count(); ++n )
 /*N*/ 		if( n != aArr[ n ] )
 /*?*/ 			break;
-/*N*/ 
+/*N*/
 /*N*/ 	rFld.SetSeqNumber( n );
 /*N*/ 	return n;
 /*N*/ }
@@ -705,18 +727,18 @@ void SwSetExpFieldType::Modify( SfxPoolItem*, SfxPoolItem* )
 /*N*/ 	if( bName )
 /*N*/ 	{
 /*?*/ 		USHORT nStrType;
-/*?*/ 
+/*?*/
 /*?*/ 		if( IsSequenceFld() )
 /*?*/ 			nStrType = TYP_SEQFLD;
 /*?*/ 		else if( bInput )
 /*?*/ 			nStrType = TYP_SETINPFLD;
 /*?*/ 		else
 /*?*/ 			nStrType = TYP_SETFLD;
-/*?*/ 
+/*?*/
 /*?*/ 		String aStr( SwFieldType::GetTypeStr( nStrType ) );
 /*?*/ 		aStr += ' ';
 /*?*/ 		aStr += GetTyp()->GetName();
-/*?*/ 
+/*?*/
 /*?*/ 		if( TYP_SEQFLD != nStrType )
 /*?*/ 		{
 /*?*/ 			// Sequence nicht die Formel ausgeben
@@ -740,7 +762,7 @@ void SwSetExpFieldType::Modify( SfxPoolItem*, SfxPoolItem* )
 /*N*/ 	pTmp->bInput		= bInput;
 /*N*/ 	pTmp->nSeqNo		= nSeqNo;
 /*N*/ 	pTmp->SetSubType(GetSubType());
-/*N*/ 
+/*N*/
 /*N*/ 	return pTmp;
 /*N*/ }
 
@@ -748,7 +770,7 @@ void SwSetExpFieldType::Modify( SfxPoolItem*, SfxPoolItem* )
 /*N*/ {
 /*N*/ 	((SwSetExpFieldType*)GetTyp())->SetType(nSub & 0xff);
 /*N*/ 	nSubType = nSub & 0xff00;
-/*N*/ 
+/*N*/
 /*N*/ 	DBG_ASSERT( (nSub & 0xff) != 3, "SubType ist illegal!" );
 /*N*/ }
 
@@ -760,7 +782,7 @@ void SwSetExpFieldType::Modify( SfxPoolItem*, SfxPoolItem* )
 /*N*/ void SwSetExpField::SetValue( const double& rAny )
 /*N*/ {
 /*N*/ 	SwValueField::SetValue(rAny);
-/*N*/ 
+/*N*/
 /*N*/ 	if( IsSequenceFld() )
 /*N*/ 		sExpand = FormatNumber( (USHORT)GetValue(), GetFormat() );
 /*N*/ 	else
@@ -791,7 +813,7 @@ void SwSetExpFieldType::Modify( SfxPoolItem*, SfxPoolItem* )
 /*N*/ 	{
 /*N*/ 		//now check if sNodeText starts with a non-alphanumeric character plus a blank
 /*N*/ 		USHORT nSrcpt = pBreakIt->GetRealScriptOfText( sNodeText, 0 );
-/*N*/ 
+/*N*/
 /*N*/ 		static USHORT nIds[] =
 /*N*/ 		{
 /*N*/ 			RES_CHRATR_LANGUAGE, RES_CHRATR_LANGUAGE,
@@ -804,7 +826,7 @@ void SwSetExpFieldType::Modify( SfxPoolItem*, SfxPoolItem* )
 /*N*/ 		};
 /*N*/ 		SwAttrSet aSet(rDoc.GetAttrPool(), nIds);
 /*N*/ 		rTxtNode.GetAttr(aSet, nRet, nRet+1);
-/*N*/ 
+/*N*/
 /*N*/ 		if( RTL_TEXTENCODING_SYMBOL != ((SvxFontItem&)aSet.Get(
 /*N*/ 				GetWhichOfScript( RES_CHRATR_FONT, nSrcpt )) ).GetCharSet() )
 /*N*/ 		{
@@ -913,7 +935,7 @@ void SwSetExpField::SetPar2(const String& rStr)
 /*N*/ 	String sRet;
 /*N*/ 	if((nSubType & 0x00ff) == INP_TXT)
 /*N*/ 		sRet = aContent;
-/*N*/ 
+/*N*/
 /*N*/ 	else if( (nSubType & 0x00ff) == INP_USR )
 /*N*/ 	{
 /*?*/ 		SwUserFieldType* pUserTyp = (SwUserFieldType*)
