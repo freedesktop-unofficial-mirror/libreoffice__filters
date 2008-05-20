@@ -7,7 +7,7 @@
  * OpenOffice.org - a multi-platform office productivity suite
  *
  * $RCSfile: sw_unoframe.cxx,v $
- * $Revision: 1.11 $
+ * $Revision: 1.12 $
  *
  * This file is part of OpenOffice.org.
  *
@@ -136,9 +136,6 @@
 #ifndef _TL_POLY_HXX
 #include <tools/poly.hxx>
 #endif
-#ifndef _SWUNDO_HXX //autogen
-#include <swundo.hxx>
-#endif
 #ifndef SW_UNOMID_HXX
 #include <unomid.h>
 #endif
@@ -214,7 +211,7 @@
 #ifndef _SV_SVAPP_HXX //autogen
 #include <vcl/svapp.hxx>
 #endif
-#ifndef _SFX_PRINTER_HXX 
+#ifndef _SFX_PRINTER_HXX
 #include <bf_sfx2/printer.hxx>
 #endif
 #ifndef _SVDOBJ_HXX //autogen
@@ -673,8 +670,8 @@ sal_Bool BaseFrameProperties_Impl::FillBaseProperties(SfxItemSet& rToSet, const 
 class SwFrameProperties_Impl : public BaseFrameProperties_Impl
 {
 protected:
-    SwFrameProperties_Impl(const SfxItemPropertyMap* pMap) : 
-        BaseFrameProperties_Impl(pMap){}        
+    SwFrameProperties_Impl(const SfxItemPropertyMap* pMap) :
+        BaseFrameProperties_Impl(pMap){}
 public:
     SwFrameProperties_Impl();
     ~SwFrameProperties_Impl(){}
@@ -854,7 +851,7 @@ sal_Bool 	SwGraphicProperties_Impl::AnyToItemSet(
 class SwOLEProperties_Impl : public SwFrameProperties_Impl
 {
 public:
-    SwOLEProperties_Impl() : 
+    SwOLEProperties_Impl() :
         SwFrameProperties_Impl(aSwMapProvider.GetPropertyMap(PROPERTY_MAP_EMBEDDED_OBJECT) ){}
     ~SwOLEProperties_Impl(){}
 
@@ -864,7 +861,7 @@ public:
 
  --------------------------------------------------*/
 
-sal_Bool  SwOLEProperties_Impl::AnyToItemSet( 
+sal_Bool  SwOLEProperties_Impl::AnyToItemSet(
         SwDoc* pDoc, SfxItemSet& rFrmSet, SfxItemSet& rSet, sal_Bool& rSizeFound)
 {
     uno::Any* pCLSID;
@@ -1629,21 +1626,21 @@ uno::Any SwXFrame::getPropertyValue(const OUString& rPropertyName)
                 SvGlobalName aClassName = xOut.Is() ? xOut->GetObjectCLSID() : xIP->GetClassName();
                 aHexCLSID = aClassName.GetHexName();
                 if(FN_UNO_CLSID != pCur->nWID)
-                {        
+                {
                     SfxInPlaceObjectRef xIPO( xIP );
                     SfxObjectShell* pShell = xIPO.Is() ? xIPO->GetObjectShell() : 0;
                     //in both cases the XModel is returned for internal components
-                    //external components provide their XComponent for 
+                    //external components provide their XComponent for
                     //the "Component" property, only
                     if( pShell )
                         aAny <<= pShell->GetModel();
                     else if(xOut.Is() && FN_UNO_COMPONENT == pCur->nWID)
                          aAny <<= xOut->GetUnoComponent();
-                }            
+                }
             }
             if(FN_UNO_CLSID == pCur->nWID)
                 aAny <<= aHexCLSID;
-        }        
+        }
         else
         {
             const SwAttrSet& rSet = pFmt->GetAttrSet();
@@ -1922,7 +1919,7 @@ void SwXFrame::dispose(void) throw( RuntimeException )
     {
         SdrObject* pObj = pFmt->FindSdrObject();
         if( pObj && pObj->IsInserted() )
-        {        
+        {
             if( pFmt->GetAnchor().GetAnchorId() == FLY_IN_CNTNT )
                 {
                     const SwPosition &rPos = *(pFmt->GetAnchor().GetCntntAnchor());
@@ -2147,10 +2144,10 @@ void SwXFrame::attachToRange(const uno::Reference< XTextRange > & xTextRange)
             SvGlobalName aClassName;
             SvInPlaceObjectRef xIPObj;
             if( (*pCLSID) >>= aCLSID )
-            {        
+            {
                 sal_Bool bInternal = sal_True;
                 if( !aClassName.MakeId( aCLSID ) )
-                {        
+                {
                     IllegalArgumentException aExcept;
                     aExcept.Message = OUString::createFromAscii("CLSID invalid");
                     throw aExcept;
@@ -2168,21 +2165,20 @@ void SwXFrame::attachToRange(const uno::Reference< XTextRange > & xTextRange)
                     BOOL bOk;
                     xIPObj = SvOutPlaceObject::InsertObject( NULL, &aStor, bOk, aClassName, aFileName );
                 }
-            }    
+            }
             if ( xIPObj.Is() )
             {
                 if( SVOBJ_MISCSTATUS_RESIZEONPRINTERCHANGE & xIPObj->GetMiscStatus() && pDoc->GetPrt() )
                     xIPObj->OnDocumentPrinterChanged( pDoc->GetPrt() );
 
                 UnoActionContext aAction(pDoc);
-                pDoc->StartUndo(UNDO_INSERT);
                 ULONG lDummy;
                 String aDummy;
                 // determine source CLSID
                 xIPObj->SvPseudoObject::FillClass( &aClassName, &lDummy, &aDummy, &aDummy, &aDummy);
 
                 if(!bSizeFound)
-                {        
+                {
                     //The Size should be suggested by the OLE server if not manually set
                     MapMode aRefMap( xIPObj->GetMapUnit() );
                     Size aSz( xIPObj->GetVisArea().GetSize() );
@@ -2199,11 +2195,10 @@ void SwXFrame::attachToRange(const uno::Reference< XTextRange > & xTextRange)
                     aFrmSet.Put(aFrmSz);
                 }
                 SwFlyFrmFmt* pFmt = 0;
-        
+
                 pFmt = pDoc->Insert(aPam, &xIPObj, &aFrmSet );
                 ASSERT( pFmt, "Doc->Insert(notxt) failed." );
 
-                pDoc->EndUndo(UNDO_INSERT);
                 pFmt->Add(this);
                 if(sName.Len())
                     pDoc->SetFlyName((SwFlyFrmFmt&)*pFmt, sName);
