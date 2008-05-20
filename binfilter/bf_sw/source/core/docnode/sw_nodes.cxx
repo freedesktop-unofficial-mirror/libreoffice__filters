@@ -7,7 +7,7 @@
  * OpenOffice.org - a multi-platform office productivity suite
  *
  * $RCSfile: sw_nodes.cxx,v $
- * $Revision: 1.9 $
+ * $Revision: 1.10 $
  *
  * This file is part of OpenOffice.org.
  *
@@ -103,28 +103,28 @@ namespace binfilter {
 /*N*/ 	: pMyDoc( pDocument ), pRoot( 0 )
 /*N*/ {
 /*N*/ 	bInNodesDel = bInDelUpdOutl = bInDelUpdNum = FALSE;
-/*N*/ 
+/*N*/
 /*N*/ 	ASSERT( pMyDoc, "in welchem Doc stehe ich denn?" );
-/*N*/ 
+/*N*/
 /*N*/ 	ULONG nPos = 0;
 /*N*/ 	SwStartNode* pSttNd = new SwStartNode( *this, nPos++ );
 /*N*/ 	pEndOfPostIts = new SwEndNode( *this, nPos++, *pSttNd );
-/*N*/ 
+/*N*/
 /*N*/ 	SwStartNode* pTmp = new SwStartNode( *this, nPos++ );
 /*N*/ 	pEndOfInserts = new SwEndNode( *this, nPos++, *pTmp );
-/*N*/ 
+/*N*/
 /*N*/ 	pTmp = new SwStartNode( *this, nPos++ );
 /*N*/ 	pTmp->pStartOfSection = pSttNd;
 /*N*/ 	pEndOfAutotext = new SwEndNode( *this, nPos++, *pTmp );
-/*N*/ 
+/*N*/
 /*N*/ 	pTmp = new SwStartNode( *this, nPos++ );
 /*N*/ 	pTmp->pStartOfSection = pSttNd;
 /*N*/ 	pEndOfRedlines = new SwEndNode( *this, nPos++, *pTmp );
-/*N*/ 
+/*N*/
 /*N*/ 	pTmp = new SwStartNode( *this, nPos++ );
 /*N*/ 	pTmp->pStartOfSection = pSttNd;
 /*N*/ 	pEndOfContent = new SwEndNode( *this, nPos++, *pTmp );
-/*N*/ 
+/*N*/
 /*N*/ 	pOutlineNds = new SwOutlineNodes;
 /*N*/ }
 
@@ -149,7 +149,7 @@ namespace binfilter {
 /*N*/ SwNodes::~SwNodes()
 /*N*/ {
 /*N*/ 	delete pOutlineNds;
-/*N*/ 
+/*N*/
 /*N*/ 	{
 /*N*/ 		SwNode *pNode;
 /*N*/ 		SwNodeIndex aNdIdx( *this );
@@ -158,12 +158,12 @@ namespace binfilter {
 /*N*/ 			pNode = &aNdIdx.GetNode();
 /*N*/ 			if( pNode == pEndOfContent )
 /*N*/ 				break;
-/*N*/ 
+/*N*/
 /*N*/ 			aNdIdx++;
 /*N*/ 			delete pNode;
 /*N*/ 		}
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	// jetzt muessen alle SwNodeIndizies abgemeldet sein!!!
 /*N*/ 	delete pEndOfContent;
 /*N*/ }
@@ -178,29 +178,28 @@ namespace binfilter {
 /*N*/ void SwNodes::ChgNode( SwNodeIndex& rDelPos, ULONG nSize,
 /*N*/ 						SwNodeIndex& rInsPos, BOOL bNewFrms )
 /*N*/ {
-/*N*/ 	// im UndoBereich brauchen wir keine Frames
 /*N*/ 	SwNodes& rNds = rInsPos.GetNodes();
 /*N*/ 	const SwNode* pPrevInsNd = rNds[ rInsPos.GetIndex() -1 ];
-/*N*/ 
+/*N*/
 /*N*/ 	//JP 03.02.99: alle Felder als invalide erklaeren, aktu. erfolgt im
 /*N*/ 	//				Idle-Handler des Docs
 /*N*/ 	if( GetDoc()->SetFieldsDirty( TRUE, &rDelPos.GetNode(), nSize ) &&
 /*N*/ 		rNds.GetDoc() != GetDoc() )
 /*?*/ 		rNds.GetDoc()->SetFieldsDirty( TRUE );
-/*N*/ 
+/*N*/
 /*N*/ 	//JP 12.03.99: 63293 - Nodes vom RedlineBereich NIE aufnehmen
 /*N*/ 	ULONG nNd = rInsPos.GetIndex();
 /*N*/ 	BOOL bInsOutlineIdx = !(
 /*N*/ 			rNds.GetEndOfRedlines().FindStartNode()->GetIndex() < nNd &&
 /*N*/ 			nNd < rNds.GetEndOfRedlines().GetIndex() );
-/*N*/ 
+/*N*/
 /*N*/ 	if( &rNds == this ) 		// im gleichen Nodes-Array -> moven !!
 /*N*/ 	{
 /*?*/ 		// wird von vorne nach hinten gemovt, so wird nach vorne immer
 /*?*/ 		// nachgeschoben, d.H. die Loeschposition ist immer gleich
 /*?*/ 		USHORT nDiff = rDelPos.GetIndex() < rInsPos.GetIndex() ? 0 : 1;
 /*?*/ 		int bOutlineNds = FALSE;
-/*?*/ 
+/*?*/
 /*?*/ 		for( ULONG n = rDelPos.GetIndex(); nSize; n += nDiff, --nSize )
 /*?*/ 		{
 /*?*/ 			DBG_BF_ASSERT(0, "STRIP"); //STRIP001 SwNodeIndex aDelIdx( *this, n );
@@ -208,18 +207,18 @@ namespace binfilter {
 /*N*/ 	}
 /*N*/ 	else
 /*N*/ 	{
-/*N*/ 		int bSavePersData = GetDoc()->GetUndoNds() == &rNds;
-/*N*/ 		int bRestPersData = GetDoc()->GetUndoNds() == this;
+/*N*/       int bSavePersData = 0; // GetDoc()->GetUndoNds() == &rNds;
+/*N*/       int bRestPersData = 0; // GetDoc()->GetUndoNds() == this;
 /*N*/ 		SwDoc* pDestDoc = rNds.GetDoc() != GetDoc() ? rNds.GetDoc() : 0;
 /*N*/ 		if( !bRestPersData && !bSavePersData && pDestDoc )
 /*?*/ 			bSavePersData = bRestPersData = TRUE;
-/*N*/ 
+/*N*/
 /*N*/ 		String sNumRule;
 /*N*/ 		SwNodeIndex aInsPos( rInsPos );
 /*N*/ 		for( ULONG n = 0; n < nSize; n++ )
 /*N*/ 		{
 /*N*/ 			SwNode* pNd = &rDelPos.GetNode();
-/*N*/ 
+/*N*/
 /*N*/ 			// NoTextNode muessen ihre Persitenten Daten mitnehmen
 /*N*/ 			if( pNd->IsNoTxtNode() )
 /*N*/ 			{
@@ -232,7 +231,7 @@ namespace binfilter {
 /*N*/ 				// loesche die Gliederungs-Indizies aus dem alten Nodes-Array
 /*N*/ 				if( NO_NUMBERING != pTxtNd->GetTxtColl()->GetOutlineLevel() )
 /*?*/ 					pOutlineNds->Remove( pNd );
-/*N*/ 
+/*N*/
 /*N*/ 				// muss die Rule kopiere werden?
 /*N*/ 				if( pDestDoc )
 /*N*/ 				{
@@ -252,11 +251,11 @@ namespace binfilter {
 /*N*/ 					// Numerierungen auch aktualisiert werden.
 /*N*/ 					pTxtNd->InvalidateNumRule();
 /*N*/ 			}
-/*N*/ 
+/*N*/
 /*N*/ 			RemoveNode( rDelPos.GetIndex(), 1, FALSE );		// Indizies verschieben !!
 /*N*/ 			SwCntntNode * pCNd = pNd->GetCntntNode();
 /*N*/ 			rNds.Insert( pNd, aInsPos );
-/*N*/ 
+/*N*/
 /*N*/ 			if( pCNd )
 /*N*/ 			{
 /*N*/ 				SwTxtNode* pTxtNd = pCNd->GetTxtNode();
@@ -267,11 +266,11 @@ namespace binfilter {
 /*N*/ 					if( bInsOutlineIdx && NO_NUMBERING !=
 /*N*/ 						pTxtNd->GetTxtColl()->GetOutlineLevel() )
 /*?*/ 						rNds.pOutlineNds->Insert( pTxtNd );
-/*N*/ 
+/*N*/
 /*N*/                     // OD 21.01.2003 #106403# - invalidate numbering rule of
 /*N*/                     // text node in the destination environment.
 /*N*/                     pTxtNd->InvalidateNumRule();
-/*N*/ 
+/*N*/
 /*N*/ 					// Sonderbehandlung fuer die Felder!
 /*N*/ 					if( pHts && pHts->Count() )
 /*N*/ 					{
@@ -302,11 +301,11 @@ namespace binfilter {
 /*?*/ 							case RES_TXTATR_FTN:
 /*?*/ 								nDelMsg = RES_FOOTNOTE_DELETED;
 /*?*/ 								break;
-/*?*/ 
+/*?*/
 /*?*/ 							case RES_TXTATR_TOXMARK:
 /*?*/ 								nDelMsg = RES_TOXMARK_DELETED;
 /*?*/ 								break;
-/*?*/ 
+/*?*/
 /*?*/ 							case RES_TXTATR_REFMARK:
 /*?*/ 								nDelMsg = RES_REFMARK_DELETED;
 /*?*/ 								break;
@@ -335,14 +334,14 @@ namespace binfilter {
 /*N*/ 			}
 /*N*/ 		}
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	//JP 03.02.99: alle Felder als invalide erklaeren, aktu. erfolgt im
 /*N*/ 	//				Idle-Handler des Docs
 /*N*/ 	GetDoc()->SetFieldsDirty( TRUE );
 /*N*/ 	if( rNds.GetDoc() != GetDoc() )
 /*?*/ 		rNds.GetDoc()->SetFieldsDirty( TRUE );
-/*N*/ 
-/*N*/ 
+/*N*/
+/*N*/
 /*N*/ 	if( bNewFrms )
 /*N*/ 		bNewFrms = &GetDoc()->GetNodes() == (const SwNodes*)&rNds &&
 /*N*/ 					GetDoc()->GetRootFrm();
@@ -353,7 +352,7 @@ namespace binfilter {
 /*?*/ 		SwNodeIndex aFrmNdIdx( aIdx );
 /*?*/ 		SwNode* pFrmNd = rNds.FindPrvNxtFrmNode( aFrmNdIdx,
 /*?*/ 										rNds[ rInsPos.GetIndex() - 1 ] );
-/*?*/ 
+/*?*/
 /*?*/ 		if( !pFrmNd && aFrmNdIdx > rNds.GetEndOfExtras().GetIndex() )
 /*?*/ 		{
 /*?*/ 			ASSERT( !this, "ob das so richtig ist ??" );
@@ -361,7 +360,7 @@ namespace binfilter {
 /*?*/ 			pFrmNd = rNds.GoPrevSection( &aFrmNdIdx, TRUE, FALSE );
 /*?*/ 			if( pFrmNd && !((SwCntntNode*)pFrmNd)->GetDepends() )
 /*?*/ 				pFrmNd = 0;
-/*?*/ 
+/*?*/
 /*?*/ #ifndef PRODUCT
 /*?*/ 			if( !pFrmNd )
 /*?*/ 				ASSERT( !this, "ChgNode() - kein FrameNode gefunden" );
@@ -404,16 +403,16 @@ namespace binfilter {
 /*N*/ 		( (pAktNode = &aIndex.GetNode())->GetStartNode() &&
 /*N*/ 		  !pAktNode->StartOfSectionIndex() ))
 /*?*/ 		return FALSE;
-/*N*/ 
+/*N*/
 /*N*/ 	SwNodeRange aRg( aRange );
-/*N*/ 
+/*N*/
 /*N*/ 	// "einfache" StartNodes oder EndNodes ueberspringen
 /*N*/ 	while( ND_STARTNODE == (pAktNode = &aRg.aStart.GetNode())->GetNodeType()
 /*N*/ 			|| ( pAktNode->IsEndNode() &&
 /*N*/ 				!pAktNode->pStartOfSection->IsSectionNode() ) )
 /*?*/ 		aRg.aStart++;
 /*N*/ 	aRg.aStart--;
-/*N*/ 
+/*N*/
 /*N*/ 	// falls aEnd-1 auf keinem ContentNode steht, dann suche den vorherigen
 /*N*/ 	aRg.aEnd--;
 /*N*/ 	while( (( pAktNode = &aRg.aEnd.GetNode())->GetStartNode() &&
@@ -421,12 +420,12 @@ namespace binfilter {
 /*N*/ 			( pAktNode->IsEndNode() &&
 /*N*/ 			ND_STARTNODE == pAktNode->pStartOfSection->GetNodeType()) )
 /*?*/ 		aRg.aEnd--;
-/*N*/ 
-/*N*/ 
+/*N*/
+/*N*/
 /*N*/ 	// wird im selben Array's verschoben, dann ueberpruefe die Einfuegepos.
 /*N*/ 	if( aRg.aStart >= aRg.aEnd )
 /*?*/ 		return FALSE;
-/*N*/ 
+/*N*/
 /*N*/ 	if( this == &rNodes )
 /*N*/ 	{
 /*?*/ 		if( ( aIndex.GetIndex()-1 >= aRg.aStart.GetIndex() &&
@@ -434,29 +433,29 @@ namespace binfilter {
 /*?*/ 			( aIndex.GetIndex()-1 == aRg.aEnd.GetIndex() ) )
 /*?*/ 			return FALSE;
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	USHORT nLevel = 0;					// Level-Counter
 /*N*/ 	ULONG nInsPos = 0; 					// Cnt fuer das TmpArray
-/*N*/ 
+/*N*/
 /*N*/ 	// das Array bildet einen Stack, es werden alle StartOfSelction's gesichert
 /*N*/ 	SwSttNdPtrs aSttNdStack( 1, 5 );
-/*N*/ 
+/*N*/
 /*N*/ 	// setze den Start-Index
 /*N*/ 	SwNodeIndex  aIdx( aIndex );
 /*
     --- JP 17.11.94: sollte ueberholt sein, wird im ChgNode schon erledigt!
     BOOL bCorrNum = pSect && pSect->aStart.GetIndex() == aIdx.GetIndex();
 */
-/*N*/ 
+/*N*/
 /*N*/ 	SwStartNode* pStartNode = aIdx.GetNode().pStartOfSection;
 /*N*/ 	aSttNdStack.C40_INSERT( SwStartNode, pStartNode, 0 );
 /*N*/ //	aSttNdStack.Insert( rNodes[ aIdx ]->pStartOfSection, 0 );
 /*N*/ 	SwNodeRange aOrigInsPos( aIdx, -1, aIdx );		// Originale Insert Pos
-/*N*/ 
+/*N*/
 /*N*/ 	//JP 16.01.98: SectionNodes: DelFrms/MakeFrms beim obersten SectionNode!
 /*N*/ 	USHORT nSectNdCnt = 0;
 /*N*/ 	BOOL bSaveNewFrms = bNewFrms;
-/*N*/ 
+/*N*/
 /*N*/ 	// bis alles verschoben ist
 /*N*/ 	while( aRg.aStart < aRg.aEnd )
 /*N*/ 		switch( (pAktNode = &aRg.aEnd.GetNode())->GetNodeType() )
@@ -472,23 +471,23 @@ namespace binfilter {
 /*?*/ 					aIdx -= nInsPos;
 /*?*/ 					nInsPos = 0;
 /*N*/ 				}
-/*N*/ 
+/*N*/
 /*N*/ 				SwStartNode* pSttNd = pAktNode->pStartOfSection;
 /*N*/ 				if( pSttNd->IsTableNode() )
 /*N*/ 				{
 /*?*/ 					SwTableNode* pTblNd = (SwTableNode*)pSttNd;
-/*?*/ 
+/*?*/
 /*?*/ 					// dann bewege die gesamte Tabelle/den Bereich !!
 /*?*/ 					nInsPos = (aRg.aEnd.GetIndex() -
 /*?*/ 									pSttNd->GetIndex() )+1;
 /*?*/ 					aRg.aEnd -= nInsPos;
-/*?*/ 
+/*?*/
 /*?*/ 					//JP 12.03.99: 63293 - Nodes vom RedlineBereich NIE aufnehmen
 /*?*/ 					ULONG nNd = aIdx.GetIndex();
 /*?*/ 					BOOL bInsOutlineIdx = !( rNodes.GetEndOfRedlines().
 /*?*/ 							FindStartNode()->GetIndex() < nNd &&
 /*?*/ 							nNd < rNodes.GetEndOfRedlines().GetIndex() );
-/*?*/ 
+/*?*/
 /*?*/ 					if( bNewFrms )
 /*?*/ 						// loesche erstmal die Frames
 /*?*/ 						pTblNd->DelFrms();
@@ -508,7 +507,7 @@ namespace binfilter {
 /*?*/ 						SwStartNode* pSttNode = aIdx.GetNode().GetStartNode();
 /*?*/ 						if( !pSttNode )
 /*?*/ 							pSttNode = aIdx.GetNode().pStartOfSection;
-/*?*/ 
+/*?*/
 /*?*/ 						// Hole alle Boxen mit Inhalt. Deren Indizies auf die
 /*?*/ 						// StartNodes muessen umgemeldet werden !!
 /*?*/ 						// (Array kopieren und alle gefunden wieder loeschen;
@@ -531,11 +530,11 @@ namespace binfilter {
 /*?*/ 							// dem alten Nodes-Array
 /*?*/ 							if( bOutlNd )
 /*?*/ 								pOutlineNds->Remove( pNd );
-/*?*/ 
+/*?*/
 /*?*/ 							RemoveNode( aMvIdx.GetIndex(), 1, FALSE );
 /*?*/ 							pNd->pStartOfSection = pSttNode;
 /*?*/ 							rNodes.Insert( pNd, aIdx );
-/*?*/ 
+/*?*/
 /*?*/ 							// setze bei Start/EndNodes die richtigen Indizies
 /*?*/ 							if( bInsOutlineIdx && bOutlNd )
 /*?*/ 								// und setze sie im neuen Nodes-Array
@@ -550,19 +549,19 @@ namespace binfilter {
 /*?*/ 								pSttNode = pSttNode->pStartOfSection;
 /*?*/ 							}
 /*?*/ 						}
-/*?*/ 
+/*?*/
 /*?*/ 						if( pTblNd->GetTable().IsA( TYPE( SwDDETable ) ))
 /*?*/ 						{
 /*?*/ 							DBG_BF_ASSERT(0, "STRIP"); //STRIP001 SwDDEFieldType* pTyp = ((SwDDETable&)pTblNd->
 /*?*/ 						}
-/*?*/ 
-/*?*/ 						if( GetDoc()->GetUndoNds() == &rNodes )
-/*?*/ 						{
-/*?*/ 							SwFrmFmt* pTblFmt = pTblNd->GetTable().GetFrmFmt();
-/*?*/ 							SwPtrMsgPoolItem aMsgHint( RES_REMOVE_UNO_OBJECT,
-/*?*/ 														pTblFmt );
-/*?*/ 							pTblFmt->Modify( &aMsgHint, &aMsgHint );
-/*?*/ 						}
+/*?*/
+                            /*if( GetDoc()->GetUndoNds() == &rNodes )
+                            {
+                                SwFrmFmt* pTblFmt = pTblNd->GetTable().GetFrmFmt();
+                                SwPtrMsgPoolItem aMsgHint( RES_REMOVE_UNO_OBJECT,
+                                                            pTblFmt );
+                                pTblFmt->Modify( &aMsgHint, &aMsgHint );
+                            } */
 /*?*/ 					}
 /*?*/ 					if( bNewFrms )
 /*?*/ 					{
@@ -586,28 +585,27 @@ namespace binfilter {
 /*?*/ 													ND_STARTNODE,
 /*?*/ /*?? welcher NodeTyp ??*/
 /*?*/ 													SwNormalStartNode );
-/*?*/ 
+/*?*/
 /*?*/ 							nLevel++;			// den Index auf StartNode auf den Stack
 /*?*/ 							aSttNdStack.C40_INSERT( SwStartNode, pTmp, nLevel );
-/*?*/ 
+/*?*/
 /*?*/ 							// noch den EndNode erzeugen
 /*?*/ 							new SwEndNode( aIdx, *pTmp );
 /*N*/ 						}
-/*N*/ 						else if( (const SwNodes*)&rNodes ==
-/*N*/ 								GetDoc()->GetUndoNds() )
-/*N*/ 						{
-/*N*/ 							// im UndoNodes-Array spendieren wir einen
-/*N*/ 							// Platzhalter
-/*N*/ 							new SwNode( aIdx, ND_SECTIONDUMMY );
-/*N*/ 						}
+                            /* else if( (const SwNodes*)&rNodes == GetDoc()->GetUndoNds() )
+                            {
+                                // im UndoNodes-Array spendieren wir einen
+                                // Platzhalter
+                                new SwNode( aIdx, ND_SECTIONDUMMY );
+                            } */
 /*N*/ 						else
 /*N*/ 						{
 /*?*/ 							// JP 18.5.2001: neue Section anlegen?? Bug 70454
 /*?*/ 							aRg.aEnd--;
 /*?*/ 							break;
-/*N*/ 
+/*N*/
 /*N*/ 						}
-/*N*/ 
+/*N*/
 /*N*/ 						aRg.aEnd--;
 /*N*/ 						aIdx--;
 /*N*/ 					} while( FALSE );
@@ -620,31 +618,31 @@ namespace binfilter {
 /*?*/ //				der Node auf jedenfall noch besucht werden!
 /*?*/ 					if( &aRg.aStart.GetNode() == pSttNd )
 /*?*/ 						--aRg.aStart;
-/*?*/ 
+/*?*/
 /*?*/ 					SwSectionNode* pSctNd = pSttNd->GetSectionNode();
 /*?*/ 					if( bNewFrms && pSctNd )
 /*?*/ 						pSctNd->DelFrms();
-/*?*/ 
+/*?*/
 /*?*/ 					RemoveNode( aRg.aEnd.GetIndex(), 1, FALSE ); // EndNode loeschen
 /*?*/ 					ULONG nSttPos = pSttNd->GetIndex();
-/*?*/ 
+/*?*/
 /*?*/ 					// dieser StartNode wird spaeter wieder entfernt!
 /*?*/ 					SwStartNode* pTmpSttNd = new SwStartNode( *this, nSttPos+1 );
 /*?*/ 					pTmpSttNd->pStartOfSection = pSttNd->pStartOfSection;
-/*?*/ 
+/*?*/
 /*?*/ 					RemoveNode( nSttPos, 1, FALSE ); // SttNode loeschen
-/*?*/ 
+/*?*/
 /*?*/ 					pSttNd->pStartOfSection = aIdx.GetNode().pStartOfSection;
 /*?*/ 					rNodes.Insert( pSttNd, aIdx  );
 /*?*/ 					rNodes.Insert( pAktNode, aIdx );
 /*?*/ 					aIdx--;
 /*?*/ 					pSttNd->pEndOfSection = (SwEndNode*)pAktNode;
-/*?*/ 
+/*?*/
 /*?*/ 					aRg.aEnd--;
-/*?*/ 
+/*?*/
 /*?*/ 					nLevel++;			// den Index auf StartNode auf den Stack
 /*?*/ 					aSttNdStack.C40_INSERT( SwStartNode, pSttNd, nLevel );
-/*?*/ 
+/*?*/
 /*?*/ 					// SectionNode muss noch ein paar Indizies ummelden
 /*?*/ 					if( pSctNd )
 /*?*/ 					{
@@ -653,29 +651,29 @@ namespace binfilter {
 /*N*/ 				}
 /*N*/ 			}
 /*N*/ 			break;
-/*N*/ 
-/*N*/ 
-/*N*/ 
+/*N*/
+/*N*/
+/*N*/
 /*N*/ 		case ND_SECTIONNODE:
-/*?*/ 			if( !nLevel &&
-/*?*/ 				( (const SwNodes*)&rNodes == GetDoc()->GetUndoNds() ) )
-/*?*/ 			{
-/*?*/ 				// dann muss an der akt. InsPos ein SectionDummyNode
-/*?*/ 				// eingefuegt werden
-/*?*/ 				if( nInsPos )		// verschieb schon mal alle bis hier her
-/*?*/ 				{
-/*?*/ 					// loeschen und kopieren. ACHTUNG: die Indizies ab
-/*?*/ 					// "aRg.aEnd+1" werden mit verschoben !!
-/*?*/ 					SwNodeIndex aSwIndex( aRg.aEnd, 1 );
-/*?*/ 					ChgNode( aSwIndex, nInsPos, aIdx, bNewFrms );
-/*?*/ 					aIdx -= nInsPos;
-/*?*/ 					nInsPos = 0;
-/*?*/ 				}
-/*?*/ 				new SwNode( aIdx, ND_SECTIONDUMMY );
-/*?*/ 				aRg.aEnd--;
-/*?*/ 				aIdx--;
-/*?*/ 				break;
-/*?*/ 			}
+               /* if( !nLevel &&
+               ( (const SwNodes*)&rNodes == GetDoc()->GetUndoNds() ) )
+                {
+                    // dann muss an der akt. InsPos ein SectionDummyNode
+                    // eingefuegt werden
+                    if( nInsPos )       // verschieb schon mal alle bis hier her
+                    {
+                        // loeschen und kopieren. ACHTUNG: die Indizies ab
+                        // "aRg.aEnd+1" werden mit verschoben !!
+                        SwNodeIndex aSwIndex( aRg.aEnd, 1 );
+                        ChgNode( aSwIndex, nInsPos, aIdx, bNewFrms );
+                        aIdx -= nInsPos;
+                        nInsPos = 0;
+                    }
+                    new SwNode( aIdx, ND_SECTIONDUMMY );
+                    aRg.aEnd--;
+                    aIdx--;
+                    break;
+                } */
 /*?*/ 			// kein break !!
 /*?*/ 		case ND_TABLENODE:
 /*?*/ 		case ND_STARTNODE:
@@ -687,7 +685,7 @@ namespace binfilter {
 /*?*/ 					aRg.aEnd--;
 /*?*/ 					break;
 /*?*/ 				}
-/*?*/ 
+/*?*/
 /*?*/ 				if( !nLevel )		// es wird eine Stufe runter gestuft
 /*?*/ 				{
 /*?*/ 					// erzeuge die Runterstufung
@@ -695,14 +693,14 @@ namespace binfilter {
 /*?*/ 					SwStartNode* pTmpStt = new SwStartNode( aTmpSIdx,
 /*?*/ 								ND_STARTNODE,
 /*?*/ 								((SwStartNode*)pAktNode)->GetStartNodeType() );
-/*?*/ 
+/*?*/
 /*?*/ 					aTmpSIdx--;
-/*?*/ 
+/*?*/
 /*?*/ 					SwNodeIndex aTmpEIdx( aOrigInsPos.aEnd );
 /*?*/ 					new SwEndNode( aTmpEIdx, *pTmpStt );
 /*?*/ 					aTmpEIdx--;
 /*?*/ 					aTmpSIdx++;
-/*?*/ 
+/*?*/
 /*?*/ 					// setze die StartOfSection richtig
 /*?*/ 					aRg.aEnd++;
 /*?*/ 					{
@@ -710,7 +708,7 @@ namespace binfilter {
 /*?*/ 						for( register ULONG n = 0; n < nInsPos; n++, aCntIdx++)
 /*?*/ 							aCntIdx.GetNode().pStartOfSection = pTmpStt;
 /*?*/ 					}
-/*?*/ 
+/*?*/
 /*?*/ 					// Setze auch bei allen runtergestuften den richtigen StartNode
 /*?*/ 					while( aTmpSIdx < aTmpEIdx )
 /*?*/ 						if( 0 != (( pAktNode = &aTmpEIdx.GetNode())->GetEndNode()) )
@@ -720,7 +718,7 @@ namespace binfilter {
 /*?*/ 							pAktNode->pStartOfSection = pTmpStt;
 /*?*/ 							aTmpEIdx--;
 /*?*/ 						}
-/*?*/ 
+/*?*/
 /*?*/ 					aIdx--; 				// hinter den eingefuegten StartNode
 /*?*/ 					aRg.aEnd--; 			// vor den StartNode
 /*?*/ 					// kopiere jetzt das Array. ACHTUNG: die Indizies ab
@@ -736,17 +734,17 @@ namespace binfilter {
 /*?*/ 							( pAktNode->IsStartNode() &&
 /*?*/ 								aSttNdStack[nLevel]->IsSectionNode()),
 /*?*/ 							 "falscher StartNode" );
-/*?*/ 
+/*?*/
 /*?*/ 					SwNodeIndex aSwIndex( aRg.aEnd, 1 );
 /*?*/ 					ChgNode( aSwIndex, nInsPos, aIdx, bNewFrms );
 /*?*/ 					aIdx -= nInsPos+1;		// vor den eingefuegten StartNode
 /*?*/ 					nInsPos = 0;
-/*?*/ 
+/*?*/
 /*?*/ 					// loesche nur noch den Pointer aus dem Nodes-Array.
 /*?*/ //					RemoveNode( aRg.aEnd.GetIndex(), 1, FALSE );
 /*?*/ 					RemoveNode( aRg.aEnd.GetIndex(), 1, TRUE );
 /*?*/ 					aRg.aEnd--;
-/*?*/ 
+/*?*/
 /*?*/ 					SwSectionNode* pSectNd = aSttNdStack[ nLevel ]->GetSectionNode();
 /*?*/ 					if( pSectNd && !--nSectNdCnt )
 /*?*/ 					{
@@ -757,7 +755,7 @@ namespace binfilter {
 /*?*/ 					aSttNdStack.Remove( nLevel ); 	// vom Stack loeschen
 /*?*/ 					nLevel--;
 /*?*/ 				}
-/*?*/ 
+/*?*/
 /*?*/ 				// loesche alle entstehenden leeren Start-/End-Node-Paare
 /*?*/ 				SwNode* pTmpNode = (*this)[ aRg.aEnd.GetIndex()+1 ]->GetEndNode();
 /*?*/ 				if( pTmpNode && ND_STARTNODE == (pAktNode = &aRg.aEnd.GetNode())
@@ -770,59 +768,59 @@ namespace binfilter {
 /*?*/ //				aRg.aEnd--;
 /*?*/ 			}
 /*?*/ 			break;
-/*N*/ 
+/*N*/
 /*N*/ 		case ND_TEXTNODE:
 /*N*/ 		case ND_GRFNODE:
 /*N*/ 		case ND_OLENODE:
 /*N*/ 			{
 /*N*/ 				if( bNewFrms && pAktNode->GetCntntNode() )
 /*N*/ 					((SwCntntNode*)pAktNode)->DelFrms();
-/*N*/ 
+/*N*/
 /*N*/ 				pAktNode->pStartOfSection = aSttNdStack[ nLevel ];
 /*N*/ 				nInsPos++;
 /*N*/ 				aRg.aEnd--;
 /*N*/ 			}
 /*N*/ 			break;
-/*N*/ 
+/*N*/
 /*N*/ 		case ND_SECTIONDUMMY:
-/*?*/ 			if( (const SwNodes*)this == GetDoc()->GetUndoNds() )
-/*?*/ 			{
-/*?*/ 				if( &rNodes == this )		// innerhalb vom UndoNodesArray
-/*?*/ 				{
-/*?*/ 					// mit verschieben
-/*?*/ 					pAktNode->pStartOfSection = aSttNdStack[ nLevel ];
-/*?*/ 					nInsPos++;
-/*?*/ 				}
-/*?*/ 				else	// in ein "normales" Nodes-Array verschieben
-/*?*/ 				{
-/*?*/ 					// dann muss an der akt. InsPos auch ein SectionNode
-/*?*/ 					// (Start/Ende) stehen; dann diesen ueberspringen.
-/*?*/ 					// Andernfalls nicht weiter beachten.
-/*?*/ 					if( nInsPos )		// verschieb schon mal alle bis hier her
-/*?*/ 					{
-/*?*/ 						// loeschen und kopieren. ACHTUNG: die Indizies ab
-/*?*/ 						// "aRg.aEnd+1" werden mit verschoben !!
-/*?*/ 						SwNodeIndex aSwIndex( aRg.aEnd, 1 );
-/*?*/ 						ChgNode( aSwIndex, nInsPos, aIdx, bNewFrms );
-/*?*/ 						aIdx -= nInsPos;
-/*?*/ 						nInsPos = 0;
-/*?*/ 					}
-/*?*/ 					SwNode* pTmpNd = &aIdx.GetNode();
-/*?*/ 					if( pTmpNd->IsSectionNode() ||
-/*?*/ 						pTmpNd->FindStartNode()->IsSectionNode() )
-/*?*/ 						aIdx--;	// ueberspringen
-/*?*/ 				}
-/*?*/ 			}
-/*?*/ 			else
-/*?*/ 				ASSERT( FALSE, "wie kommt diser Node ins Nodes-Array??" );
-/*?*/ 			aRg.aEnd--;
-/*?*/ 			break;
-/*?*/ 
+            /*if( (const SwNodes*)this == GetDoc()->GetUndoNds() )
+            {
+                if( &rNodes == this )       // innerhalb vom UndoNodesArray
+                {
+                    // mit verschieben
+                    pAktNode->pStartOfSection = aSttNdStack[ nLevel ];
+                    nInsPos++;
+                }
+                else    // in ein "normales" Nodes-Array verschieben
+                {
+                    // dann muss an der akt. InsPos auch ein SectionNode
+                    // (Start/Ende) stehen; dann diesen ueberspringen.
+                    // Andernfalls nicht weiter beachten.
+                    if( nInsPos )       // verschieb schon mal alle bis hier her
+                    {
+                        // loeschen und kopieren. ACHTUNG: die Indizies ab
+                        // "aRg.aEnd+1" werden mit verschoben !!
+                        SwNodeIndex aSwIndex( aRg.aEnd, 1 );
+                        ChgNode( aSwIndex, nInsPos, aIdx, bNewFrms );
+                        aIdx -= nInsPos;
+                        nInsPos = 0;
+                    }
+                    SwNode* pTmpNd = &aIdx.GetNode();
+                    if( pTmpNd->IsSectionNode() ||
+                        pTmpNd->FindStartNode()->IsSectionNode() )
+                        aIdx--; // ueberspringen
+                }
+            }
+            else */
+                ASSERT( FALSE, "wie kommt diser Node ins Nodes-Array??" );
+            aRg.aEnd--;
+            break;
+/*?*/
 /*?*/ 		default:
 /*?*/ 			ASSERT( FALSE, "was ist das fuer ein Node??" );
 /*?*/ 			break;
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 	if( nInsPos )							// kopiere den Rest
 /*N*/ 	{
 /*N*/ 		// der Rest muesste so stimmen
@@ -830,13 +828,13 @@ namespace binfilter {
 /*N*/ 		ChgNode( aSwIndex, nInsPos, aIdx, bNewFrms );
 /*N*/ 	}
 /*N*/ 	aRg.aEnd++;						// wieder exklusive Ende
-/*N*/ 
+/*N*/
 /*N*/ 	// loesche alle leeren Start-/End-Node-Paare
 /*N*/ 	if( ( pAktNode = &aRg.aStart.GetNode())->GetStartNode() &&
 /*N*/ 		pAktNode->StartOfSectionIndex() &&
 /*N*/ 		aRg.aEnd.GetNode().GetEndNode() )
 /*?*/ 			DelNodes( aRg.aStart, 2 );
-/*N*/ 
+/*N*/
 /*N*/ 	// rufe jetzt noch das Update fuer die Gliederung/Nummerierung auf
 /*N*/ 	aOrigInsPos.aStart++;
 /*N*/ 	// im gleichen Nodes-Array verschoben ??,
@@ -852,13 +850,13 @@ namespace binfilter {
 /*N*/ 		UpdtOutlineIdx( aRg.aEnd.GetNode() );
 /*N*/ 		rNodes.UpdtOutlineIdx( aOrigInsPos.aStart.GetNode() );
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ #ifdef JP_DEBUG
 /*N*/ 	{
 /*N*/ 			DBG_BF_ASSERT(0, "STRIP"); //STRIP001 //STRIP001 /*?*/ extern Writer* GetDebugWriter(const String&);
 /*N*/ 	}
 /*N*/ #endif
-/*N*/ 
+/*N*/
 /*N*/ 	return TRUE;
 /*N*/ }
 
@@ -914,13 +912,13 @@ namespace binfilter {
 /*N*/ 		pRange->aEnd >= Count() ||
 /*N*/ 		!CheckNodesRange( pRange->aStart, pRange->aEnd ))
 /*?*/ 		return;
-/*N*/ 
+/*N*/
 /*N*/ 	// Ist der Anfang vom Bereich vor oder auf einem EndNode, so loesche
 /*N*/ 	// diesen, denn sonst wuerden leere S/E-Nodes oder E/S-Nodes enstehen.
 /*N*/ 	// Bei anderen Nodes wird eine neuer StartNode eingefuegt
 /*N*/ 	SwNode * pAktNode = &pRange->aStart.GetNode();
 /*N*/ 	SwNodeIndex aTmpIdx( *pAktNode->StartOfSectionNode() );
-/*N*/ 
+/*N*/
 /*N*/ 	if( pAktNode->GetEndNode() )
 /*?*/ 		DelNodes( pRange->aStart, 1 );		// verhinder leere Section
 /*N*/ 	else
@@ -930,7 +928,7 @@ namespace binfilter {
 /*N*/ 		pRange->aStart = *pSttNd;
 /*N*/ 		aTmpIdx = pRange->aStart;
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	// Ist das Ende vom Bereich vor oder auf einem StartNode, so loesche
 /*N*/ 	// diesen, denn sonst wuerden leere S/E-Nodes oder E/S-Nodes enstehen
 /*N*/ 	// Bei anderen Nodes wird eine neuer EndNode eingefuegt
@@ -944,7 +942,7 @@ namespace binfilter {
 /*N*/ 		new SwEndNode( pRange->aEnd, *pRange->aStart.GetNode().GetStartNode() );
 /*N*/ 	}
 /*N*/ 	pRange->aEnd--;
-/*N*/ 
+/*N*/
 /*N*/ 	SectionUpDown( aTmpIdx, pRange->aEnd );
 /*N*/ }
 
@@ -1012,14 +1010,14 @@ namespace binfilter {
 /*N*/ 	SwSttNdPtrs aSttNdStack( 1, 5 );
 /*N*/ 	SwStartNode* pTmp = aStart.GetNode().GetStartNode();
 /*N*/ 	aSttNdStack.C40_INSERT( SwStartNode, pTmp, 0 );
-/*N*/ 
+/*N*/
 /*N*/ 	// durchlaufe bis der erste zu aendernde Start-Node gefunden wurde
 /*N*/ 	// ( Es wird vom eingefuegten EndNode bis nach vorne die Indexe gesetzt )
 /*N*/ 	for( ;; aTmpIdx++ )
 /*N*/ 	{
 /*N*/ 		pAktNode = &aTmpIdx.GetNode();
 /*N*/ 		pAktNode->pStartOfSection = aSttNdStack[ aSttNdStack.Count()-1 ];
-/*N*/ 
+/*N*/
 /*N*/ 		if( pAktNode->GetStartNode() )
 /*N*/ 		{
 /*?*/ 			pTmp = (SwStartNode*)pAktNode;
@@ -1032,7 +1030,7 @@ namespace binfilter {
 /*N*/ 			aSttNdStack.Remove( aSttNdStack.Count() - 1 );
 /*N*/ 			if( aSttNdStack.Count() )
 /*?*/ 				continue;		// noch genuegend EndNodes auf dem Stack
-/*N*/ 
+/*N*/
 /*N*/ 			else if( aTmpIdx < aEnd ) 	// Uebergewicht an StartNodes
 /*N*/ 				// ist das Ende noch nicht erreicht, so hole den Start von
 /*N*/ 				// der uebergeordneten Section
@@ -1082,42 +1080,42 @@ namespace binfilter {
 /*N*/ {
 /*N*/ 	USHORT nLevel = 0;						// Level-Counter
 /*N*/ 	SwNode * pAktNode;
-/*N*/ 
+/*N*/
 /*N*/ 	ULONG nCnt = Count() - rIndex.GetIndex() - 1;
 /*N*/ 	if( nCnt > nNodes ) nCnt = nNodes;
-/*N*/ 
+/*N*/
 /*N*/ 	if( nCnt == 0 ) 		// keine Anzahl -> return
 /*?*/ 		return;
-/*N*/ 
+/*N*/
 /*N*/ 	SwNodeRange aRg( rIndex, 0, rIndex, nCnt-1 );
 /*N*/ 	// ueberprufe ob rIndex..rIndex + nCnt ueber einen Bereich hinausragt !!
 /*N*/ 	if( ( !aRg.aStart.GetNode().StartOfSectionIndex() &&
 /*N*/ 			!aRg.aStart.GetIndex() ) ||
 /*N*/ 			! CheckNodesRange( aRg.aStart, aRg.aEnd ) )
 /*?*/ 		return;
-/*N*/ 
-/*N*/ 
+/*N*/
+/*N*/
 /*N*/ 	// falls aEnd auf keinem ContentNode steht, dann suche den vorherigen
 /*N*/ 	while( ( pAktNode = &aRg.aEnd.GetNode())->GetStartNode() ||
 /*N*/ 			 ( pAktNode->GetEndNode() &&
 /*N*/ 				!pAktNode->pStartOfSection->IsTableNode() ))
 /*?*/ 		aRg.aEnd--;
-/*N*/ 
+/*N*/
 /*N*/ 	nCnt = 0;
 /*N*/ 	// Start erhoehen, damit auf < abgefragt wird. ( bei <= kann es zu
 /*N*/ 	// Problemen fuehren; ist aEnd == aStart und wird aEnd geloscht,
 /*N*/ 	// so ist aEnd <= aStart
 /*N*/ 	aRg.aStart--;
-/*N*/ 
+/*N*/
 /*N*/ 	BOOL bSaveInNodesDel = bInNodesDel;
 /*N*/ 	bInNodesDel = TRUE;
 /*N*/ 	BOOL bUpdateOutline = FALSE;
-/*N*/ 
+/*N*/
 /*N*/ 	// bis alles geloescht ist
 /*N*/ 	while( aRg.aStart < aRg.aEnd )
 /*N*/ 	{
 /*N*/ 		pAktNode = &aRg.aEnd.GetNode();
-/*N*/ 
+/*N*/
 /*N*/ 		if( pAktNode->GetEndNode() )
 /*N*/ 		{
 /*N*/ 			// die gesamte Section loeschen ?
@@ -1126,12 +1124,12 @@ namespace binfilter {
 /*N*/ 				SwTableNode* pTblNd = pAktNode->pStartOfSection->GetTableNode();
 /*N*/ 				if( pTblNd )
 /*N*/ 					pTblNd->DelFrms();
-/*N*/ 
+/*N*/
 /*N*/ 				SwNode *pNd, *pChkNd = pAktNode->pStartOfSection;
 /*N*/ 				USHORT nIdxPos;
 /*N*/ 				do {
 /*N*/ 					pNd = &aRg.aEnd.GetNode();
-/*N*/ 
+/*N*/
 /*N*/ 					if( pNd->IsTxtNode() )
 /*N*/ 					{
 /*N*/ 						if( NO_NUMBERING !=
@@ -1146,10 +1144,10 @@ namespace binfilter {
 /*N*/ 					else if( pNd->IsEndNode() &&
 /*N*/ 							pNd->pStartOfSection->IsTableNode() )
 /*N*/ 						((SwTableNode*)pNd->pStartOfSection)->DelFrms();
-/*N*/ 
+/*N*/
 /*N*/ 					aRg.aEnd--;
 /*N*/ 					nCnt++;
-/*N*/ 
+/*N*/
 /*N*/ 				} while( pNd != pChkNd );
 /*N*/ 			}
 /*N*/ 			else
@@ -1178,7 +1176,7 @@ namespace binfilter {
 /*?*/ 				nCnt = 0;
 /*?*/ 				nLevel--;
 /*?*/ 			}
-/*?*/ 
+/*?*/
 /*?*/ 			// nach dem loeschen kann aEnd auf einem EndNode stehen
 /*?*/ 			// loesche alle leeren Start-/End-Node-Paare
 /*?*/ 			SwNode* pTmpNode = aRg.aEnd.GetNode().GetEndNode();
@@ -1207,16 +1205,16 @@ namespace binfilter {
 /*N*/ 			}
 /*N*/ 			else if( pAktNode->IsCntntNode() )
 /*?*/ 				((SwCntntNode*)pAktNode)->InvalidateNumRule();
-/*N*/ 
+/*N*/
 /*N*/ 			aRg.aEnd--;
 /*N*/ 			nCnt++;
 /*N*/ 		}
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	aRg.aEnd++;
 /*N*/ 	if( nCnt != 0 )
 /*N*/ 		RemoveNode( aRg.aEnd.GetIndex(), nCnt, TRUE );				// loesche den Rest
-/*N*/ 
+/*N*/
 /*N*/ 	// loesche alle leeren Start-/End-Node-Paare
 /*N*/ 	while( aRg.aEnd.GetNode().GetEndNode() &&
 /*N*/ 			( pAktNode = &aRg.aStart.GetNode())->GetStartNode() &&
@@ -1226,9 +1224,9 @@ namespace binfilter {
 /*?*/ 		DelNodes( aRg.aStart, 2 );	// loesche den Start- und EndNode
 /*?*/ 		aRg.aStart--;
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	bInNodesDel = bSaveInNodesDel;
-/*N*/ 
+/*N*/
 /*N*/ 	if( !bInNodesDel )
 /*N*/ 	{
 /*N*/ 		// rufe jetzt noch das Update fuer die Gliederung/Nummerierung auf
@@ -1237,7 +1235,7 @@ namespace binfilter {
 /*N*/ 			UpdtOutlineIdx( aRg.aEnd.GetNode() );
 /*N*/ 			bInDelUpdOutl = FALSE;
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 	}
 /*N*/ 	else
 /*N*/ 	{
@@ -1282,7 +1280,7 @@ namespace binfilter {
 *******************************************************************/
 
 /*N*/ void SwNodes::GoStartOfSection(SwNodeIndex *pIdx) const
-/*N*/ {DBG_BF_ASSERT(0, "STRIP"); //STRIP001 
+/*N*/ {DBG_BF_ASSERT(0, "STRIP"); //STRIP001
 /*N*/ }
 
 /*N*/ void SwNodes::GoEndOfSection(SwNodeIndex *pIdx) const
@@ -1296,12 +1294,12 @@ namespace binfilter {
 /*N*/ {
 /*N*/ 	if( pIdx->GetIndex() >= Count() - 1 )
 /*?*/ 		return 0;
-/*N*/ 
+/*N*/
 /*N*/ 	SwNodeIndex aTmp(*pIdx, +1);
 /*N*/ 	SwNode* pNd;
 /*N*/ 	while( aTmp < Count()-1 && 0 == ( pNd = &aTmp.GetNode())->IsCntntNode() )
 /*N*/ 		aTmp++;
-/*N*/ 
+/*N*/
 /*N*/ 	if( aTmp == Count()-1 )
 /*N*/ 		pNd = 0;
 /*N*/ 	else
@@ -1313,12 +1311,12 @@ namespace binfilter {
 /*N*/ {
 /*N*/ 	if( !pIdx->GetIndex() )
 /*?*/ 		return 0;
-/*N*/ 
+/*N*/
 /*N*/ 	SwNodeIndex aTmp( *pIdx, -1 );
 /*N*/ 	SwNode* pNd;
 /*N*/ 	while( aTmp.GetIndex() && 0 == ( pNd = &aTmp.GetNode())->IsCntntNode() )
 /*N*/ 		aTmp--;
-/*N*/ 
+/*N*/
 /*N*/ 	if( !aTmp.GetIndex() )
 /*?*/ 		pNd = 0;
 /*N*/ 	else
@@ -1330,7 +1328,7 @@ namespace binfilter {
 /*N*/ {
 /*N*/ 	if( pIdx->GetIndex() >= Count() - 1 )
 /*?*/ 		return 0;
-/*N*/ 
+/*N*/
 /*N*/ 	SwNodeIndex aTmp(*pIdx, +1);
 /*N*/ 	SwNode* pNd;
 /*N*/ 	while( aTmp < Count()-1 )
@@ -1408,7 +1406,7 @@ namespace binfilter {
 /*?*/ 				pEndOfInserts->GetIndex() )) return TRUE;
 /*?*/ 	if( TstIdx( nStt, nEnd, pEndOfRedlines->StartOfSectionIndex(),
 /*?*/ 				pEndOfRedlines->GetIndex() )) return TRUE;
-/*?*/ 
+/*?*/
 /*?*/ 	return FALSE;		// liegt irgendwo dazwischen, FEHLER
 /*N*/ }
 
@@ -1431,7 +1429,7 @@ namespace binfilter {
 /*N*/ {
 /*N*/ 	int bUpdateNum = 0;
 /*N*/ 	ULONG nSttIdx = rStart.GetIndex();
-/*N*/ 
+/*N*/
 /*N*/ 	if( !nSttIdx && nCnt == GetEndOfContent().GetIndex()+1 )
 /*N*/ 	{
 /*N*/ 		// es wird das gesamte Nodes-Array zerstoert, man ist im Doc DTOR!
@@ -1442,16 +1440,16 @@ namespace binfilter {
 /*N*/ 								pEndOfAutotext, pEndOfRedlines,
 /*N*/ 								0
 /*N*/ 							  };
-/*N*/ 
+/*N*/
 /*N*/ 		SwNode** ppEndNdArr = aEndNdArr;
 /*N*/ 		while( *ppEndNdArr )
 /*N*/ 		{
 /*N*/ 			nSttIdx = (*ppEndNdArr)->StartOfSectionIndex() + 1;
 /*N*/ 			ULONG nEndIdx = (*ppEndNdArr)->GetIndex();
-/*N*/ 
+/*N*/
 /*N*/ 			if( nSttIdx != nEndIdx )
 /*N*/ 				RemoveNode( nSttIdx, nEndIdx - nSttIdx, TRUE );
-/*N*/ 
+/*N*/
 /*N*/ 			++ppEndNdArr;
 /*N*/ 		}
 /*N*/ 	}
@@ -1460,7 +1458,7 @@ namespace binfilter {
 /*N*/ 		for( ULONG n = nSttIdx, nEnd = nSttIdx + nCnt; n < nEnd; ++n )
 /*N*/ 		{
 /*N*/ 			SwNode* pNd = (*this)[ n ];
-/*N*/ 
+/*N*/
 /*N*/ 			if( pNd->IsTxtNode() &&
 /*N*/ 				NO_NUMBERING != ((SwTxtNode*)pNd)->GetTxtColl()->GetOutlineLevel() )
 /*N*/ 			{                   // loesche die Gliederungs-Indizies.
@@ -1475,7 +1473,7 @@ namespace binfilter {
 /*N*/ 				((SwCntntNode*)pNd)->InvalidateNumRule();
 /*N*/ 		}
 /*N*/ 		RemoveNode( nSttIdx, nCnt, TRUE );
-/*N*/ 
+/*N*/
 /*N*/ 		// rufe noch das Update fuer die Gliederungsnumerierung auf
 /*N*/ 		if( bUpdateNum )
 /*?*/ 			UpdtOutlineIdx( rStart.GetNode() );
@@ -1539,21 +1537,21 @@ namespace binfilter {
 /*N*/ 			const SwNodeIndex& rIndex, BOOL bNewFrms, BOOL bTblInsDummyNode ) const
 /*N*/ {
 /*N*/ 	SwDoc* pDoc = rIndex.GetNode().GetDoc();
-/*N*/ 
+/*N*/
 /*N*/ 	SwNode * pAktNode;
 /*N*/ 	if( rIndex == 0 ||
 /*N*/ 		( (pAktNode = &rIndex.GetNode())->GetStartNode() &&
 /*N*/ 		  !pAktNode->StartOfSectionIndex() ))
 /*?*/ 		return;
-/*N*/ 
+/*N*/
 /*N*/ 	SwNodeRange aRg( rRange );
-/*N*/ 
+/*N*/
 /*N*/ 	// "einfache" StartNodes oder EndNodes ueberspringen
 /*N*/ 	while( ND_STARTNODE == (pAktNode = (*this)[ aRg.aStart ])->GetNodeType()
 /*N*/ 			|| ( pAktNode->IsEndNode() &&
 /*N*/ 				!pAktNode->pStartOfSection->IsSectionNode() ) )
 /*N*/ 		aRg.aStart++;
-/*N*/ 
+/*N*/
 /*N*/ 	// falls aEnd-1 auf keinem ContentNode steht, dann suche den vorherigen
 /*N*/ 	aRg.aEnd--;
 /*N*/ 	while( (( pAktNode = (*this)[ aRg.aEnd ])->GetStartNode() &&
@@ -1562,20 +1560,20 @@ namespace binfilter {
 /*N*/ 			ND_STARTNODE == pAktNode->pStartOfSection->GetNodeType()) )
 /*N*/ 		aRg.aEnd--;
 /*N*/ 	aRg.aEnd++;
-/*N*/ 
+/*N*/
 /*N*/ 	// wird im selben Array's verschoben, dann ueberpruefe die Einfuegepos.
 /*N*/ 	if( aRg.aStart >= aRg.aEnd )
 /*?*/ 		return;
-/*N*/ 
+/*N*/
 /*N*/ 	if( this == &pDoc->GetNodes() &&
 /*N*/ 		rIndex.GetIndex() >= aRg.aStart.GetIndex() &&
 /*N*/ 		rIndex.GetIndex() < aRg.aEnd.GetIndex() )
 /*?*/ 			return;
-/*N*/ 
+/*N*/
 /*N*/ 	SwNodeIndex aInsPos( rIndex );
 /*N*/ 	SwNodeIndex aOrigInsPos( rIndex, -1 );			// Originale Insert Pos
 /*N*/ 	USHORT nLevel = 0;							// Level-Counter
-/*N*/ 
+/*N*/
 /*N*/ 	for( ULONG nNodeCnt = aRg.aEnd.GetIndex() - aRg.aStart.GetIndex();
 /*N*/ 			nNodeCnt > 0; --nNodeCnt )
 /*N*/ 	{
@@ -1594,12 +1592,12 @@ namespace binfilter {
 /*?*/ 				nNodeCnt -=
 /*?*/ 					( pAktNode->EndOfSectionIndex() -
 /*?*/ 						aRg.aStart.GetIndex() );
-/*?*/ 
+/*?*/
 /*?*/ 				// dann alle Nodes der Tabelle in die akt. Zelle kopieren
 /*?*/ 				// fuer den TabellenNode einen DummyNode einfuegen?
 /*?*/ 				if( bTblInsDummyNode )
 /*?*/ 					new SwNode( aInsPos, ND_SECTIONDUMMY );
-/*?*/ 
+/*?*/
 /*?*/ 				for( aRg.aStart++; aRg.aStart.GetIndex() <
 /*?*/ 					pAktNode->EndOfSectionIndex();
 /*?*/ 					aRg.aStart++ )
@@ -1607,12 +1605,12 @@ namespace binfilter {
 /*?*/ 					// fuer den Box-StartNode einen DummyNode einfuegen?
 /*?*/ 					if( bTblInsDummyNode )
 /*?*/ 						new SwNode( aInsPos, ND_SECTIONDUMMY );
-/*?*/ 
+/*?*/
 /*?*/ 					SwStartNode* pSttNd = aRg.aStart.GetNode().GetStartNode();
 /*?*/ 					_CopyNodes( SwNodeRange( *pSttNd, + 1,
 /*?*/ 											*pSttNd->EndOfSectionNode() ),
 /*?*/ 								aInsPos, bNewFrms, FALSE );
-/*?*/ 
+/*?*/
 /*?*/ 					// fuer den Box-EndNode einen DummyNode einfuegen?
 /*?*/ 					if( bTblInsDummyNode )
 /*?*/ 						new SwNode( aInsPos, ND_SECTIONDUMMY );
@@ -1629,9 +1627,9 @@ namespace binfilter {
 /*N*/ 				SwTableNode* pTblNd = ((SwTableNode*)pAktNode)->
 /*N*/ 										MakeCopy( pDoc, aInsPos );
 /*N*/ 				nNodeCnt -= aInsPos.GetIndex() - nStt.GetIndex() -2;
-/*N*/ 
+/*N*/
 /*N*/ 				aRg.aStart = pAktNode->EndOfSectionIndex();
-/*N*/ 
+/*N*/
 /*N*/ 				if( bNewFrms && pTblNd )
 /*N*/ 				{
 /*N*/ 					nStt = aInsPos;
@@ -1639,7 +1637,7 @@ namespace binfilter {
 /*N*/ 				}
 /*N*/ 			}
 /*N*/ 			break;
-/*N*/ 
+/*N*/
 /*N*/ 		case ND_SECTIONNODE:			// SectionNode
 /*?*/ 			// der gesamte Bereich oder nur ein Teil ??
 /*?*/ 			if( pAktNode->EndOfSectionIndex() < aRg.aEnd.GetIndex() )
@@ -1648,7 +1646,7 @@ namespace binfilter {
 /*?*/ 				DBG_BF_ASSERT(0, "STRIP"); //STRIP001 SwNodeIndex nStt( aInsPos, -1 );
 /*?*/ 			}
 /*?*/ 			break;
-/*?*/ 
+/*?*/
 /*N*/ 		case ND_STARTNODE:				// StartNode gefunden
 /*N*/ 			{
 /*N*/ 				SwStartNode* pTmp = new SwStartNode( aInsPos, ND_STARTNODE,
@@ -1658,7 +1656,7 @@ namespace binfilter {
 /*N*/ 				nLevel++;
 /*N*/ 			}
 /*N*/ 			break;
-/*N*/ 
+/*N*/
 /*N*/ 		case ND_ENDNODE:
 /*N*/ 			if( nLevel )						// vollstaendige Section
 /*N*/ 			{
@@ -1673,7 +1671,7 @@ namespace binfilter {
 /*N*/ 						pAktNode->pStartOfSection->GetStartNodeType() );
 /*N*/ 			}
 /*N*/ 			break;
-/*N*/ 
+/*N*/
 /*N*/ 		case ND_TEXTNODE:
 /*N*/ 		case ND_GRFNODE:
 /*N*/ 		case ND_OLENODE:
@@ -1684,33 +1682,33 @@ namespace binfilter {
 /*N*/ 					pNew->DelFrms();
 /*N*/ 			}
 /*N*/ 			break;
-/*N*/ 
+/*N*/
 /*N*/ 		case ND_SECTIONDUMMY:
-/*?*/ 			if( (const SwNodes*)this == GetDoc()->GetUndoNds() )
-/*?*/ 			{
-/*?*/ 				// dann muss an der akt. InsPos auch ein SectionNode
-/*?*/ 				// (Start/Ende) stehen; dann diesen ueberspringen.
-/*?*/ 				// Andernfalls nicht weiter beachten.
-/*?*/ 				SwNode* pTmpNd = pDoc->GetNodes()[ aInsPos ];
-/*?*/ 				if( pTmpNd->IsSectionNode() ||
-/*?*/ 					pTmpNd->FindStartNode()->IsSectionNode() )
-/*?*/ 					aInsPos++;	// ueberspringen
-/*?*/ 			}
-/*?*/ 			else
-/*?*/ 				ASSERT( FALSE, "wie kommt diser Node ins Nodes-Array??" );
-/*?*/ 			break;
-/*?*/ 
+            /*if( (const SwNodes*)this == GetDoc()->GetUndoNds() )
+            {
+                // dann muss an der akt. InsPos auch ein SectionNode
+                // (Start/Ende) stehen; dann diesen ueberspringen.
+                // Andernfalls nicht weiter beachten.
+                SwNode* pTmpNd = pDoc->GetNodes()[ aInsPos ];
+                if( pTmpNd->IsSectionNode() ||
+                    pTmpNd->FindStartNode()->IsSectionNode() )
+                    aInsPos++;  // ueberspringen
+            }
+            else */
+                ASSERT( FALSE, "wie kommt diser Node ins Nodes-Array??" );
+            break;
+
 /*?*/ 		default:
 /*?*/ 			ASSERT( FALSE, "weder Start-/End-/Content-Node, unbekannter Typ" );
 /*N*/ 		}
 /*N*/ 		aRg.aStart++;
 /*N*/ 	}
-/*N*/ 
-/*N*/ 
+/*N*/
+/*N*/
 /*N*/ #ifdef JP_DEBUG
 /*N*/ 	{
 /*N*/ 			extern Writer* GetDebugWriter(const String&);
-/*N*/ 
+/*N*/
 /*N*/ 		Writer* pWriter = GetDebugWriter(aEmptyStr);
 /*N*/ 		if( pWriter )
 /*N*/ 		{
