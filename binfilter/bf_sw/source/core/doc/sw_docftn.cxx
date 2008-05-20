@@ -7,7 +7,7 @@
  * OpenOffice.org - a multi-platform office productivity suite
  *
  * $RCSfile: sw_docftn.cxx,v $
- * $Revision: 1.8 $
+ * $Revision: 1.9 $
  *
  * This file is part of OpenOffice.org.
  *
@@ -53,12 +53,6 @@
 #endif
 #ifndef _CHARFMT_HXX //autogen
 #include <charfmt.hxx>
-#endif
-#ifndef _UNDOBJ_HXX
-#include <undobj.hxx>
-#endif
-#ifndef _ROLBCK_HXX
-#include <rolbck.hxx>
 #endif
 
 #ifndef _HORIORNT_HXX
@@ -108,7 +102,7 @@ namespace binfilter {
 /*N*/ 	else if( aAnchorCharFmtDep.GetRegisteredIn() )
 /*N*/ 		((SwModify*)aAnchorCharFmtDep.GetRegisteredIn())->Remove(
 /*N*/ 													&aAnchorCharFmtDep );
-/*N*/ 
+/*N*/
 /*N*/ 	aFmt = rInfo.aFmt;
 /*N*/ 	nFtnOffset = rInfo.nFtnOffset;
 /*N*/ 	bEndNote = rInfo.bEndNote;
@@ -148,10 +142,10 @@ namespace binfilter {
 /*N*/ {
 /*N*/ 	if( rInfo.GetPageDescDep()->GetRegisteredIn() )
 /*N*/ 		((SwModify*)rInfo.GetPageDescDep()->GetRegisteredIn())->Add( &aPageDescDep );
-/*N*/ 
+/*N*/
 /*N*/ 	if( rInfo.aCharFmtDep.GetRegisteredIn() )
 /*N*/ 		((SwModify*)rInfo.aCharFmtDep.GetRegisteredIn())->Add( &aCharFmtDep );
-/*N*/ 
+/*N*/
 /*N*/ 	if( rInfo.aAnchorCharFmtDep.GetRegisteredIn() )
 /*N*/ 		((SwModify*)rInfo.aAnchorCharFmtDep.GetRegisteredIn())->Add(
 /*?*/ 				&aAnchorCharFmtDep );
@@ -229,7 +223,7 @@ namespace binfilter {
 /*N*/ void SwEndNoteInfo::Modify( SfxPoolItem* pOld, SfxPoolItem* pNew )
 /*N*/ {
 /*N*/ 	USHORT nWhich = pOld ? pOld->Which() : pNew ? pNew->Which() : 0 ;
-/*N*/ 
+/*N*/
 /*N*/ 	if( RES_ATTRSET_CHG == nWhich ||
 /*N*/ 		RES_FMT_CHG == nWhich )
 /*N*/ 	{
@@ -299,12 +293,8 @@ namespace binfilter {
 /*N*/ 	if( !(GetFtnInfo() == rInfo) )
 /*N*/ 	{
 /*N*/ 		const SwFtnInfo &rOld = GetFtnInfo();
-/*N*/ 
-/*N*/ 		if( DoesUndo() )
-/*N*/ 		{
-/*?*/ 		DBG_BF_ASSERT(0, "STRIP"); //STRIP001 	ClearRedo();
-/*N*/ 		}
-/*N*/ 
+/*N*/
+/*N*/
 /*N*/ 		FASTBOOL bPageNum = rInfo.eNum == FTNNUM_PAGE &&
 /*N*/ 							rOld.eNum != FTNNUM_PAGE;
 /*N*/ 		FASTBOOL bFtnPos  = rInfo.ePos != rOld.ePos;
@@ -318,9 +308,9 @@ namespace binfilter {
 /*N*/ 		SwCharFmt *pOldChrFmt = rOld.GetCharFmt( *this ),
 /*N*/ 				  *pNewChrFmt = rInfo.GetCharFmt( *this );
 /*N*/ 		FASTBOOL bFtnChrFmts = pOldChrFmt != pNewChrFmt;
-/*N*/ 
+/*N*/
 /*N*/ 		*pFtnInfo = rInfo;
-/*N*/ 
+/*N*/
 /*N*/ 		if ( GetRootFrm() )
 /*N*/ 		{
 /*?*/ 			if ( bFtnPos )
@@ -338,9 +328,9 @@ namespace binfilter {
 /*?*/ 			SwFmtChg aNew( pNewChrFmt );
 /*?*/ 			pFtnInfo->Modify( &aOld, &aNew );
 /*?*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		UpdateRefFlds();
-/*N*/ 
+/*N*/
 /*N*/ 		SetModified();
 /*N*/ 	}
 /*N*/ }
@@ -349,11 +339,6 @@ namespace binfilter {
 /*N*/ {
 /*N*/ 	if( !(GetEndNoteInfo() == rInfo) )
 /*N*/ 	{
-/*N*/ 		if( DoesUndo() )
-/*N*/ 		{
-/*?*/ 		DBG_BF_ASSERT(0, "STRIP"); //STRIP001 	ClearRedo();
-/*N*/ 		}
-/*N*/ 
 /*N*/ 		FASTBOOL bNumChg  = rInfo.nFtnOffset != GetEndNoteInfo().nFtnOffset;
 /*N*/ 		FASTBOOL bExtra   = !bNumChg &&
 /*N*/ 							rInfo.aFmt.GetNumberingType() != GetEndNoteInfo().aFmt.GetNumberingType()||
@@ -364,9 +349,9 @@ namespace binfilter {
 /*N*/ 		SwCharFmt *pOldChrFmt = GetEndNoteInfo().GetCharFmt( *this ),
 /*N*/ 				  *pNewChrFmt = rInfo.GetCharFmt( *this );
 /*N*/ 		FASTBOOL bFtnChrFmts = pOldChrFmt != pNewChrFmt;
-/*N*/ 
+/*N*/
 /*N*/ 		*pEndNoteInfo = rInfo;
-/*N*/ 
+/*N*/
 /*N*/ 		if ( GetRootFrm() )
 /*N*/ 		{
 /*?*/ 			if ( bFtnDesc )
@@ -393,7 +378,7 @@ namespace binfilter {
 /*?*/ 			SwFmtChg aNew( pNewChrFmt );
 /*?*/ 			pEndNoteInfo->Modify( &aOld, &aNew );
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		UpdateRefFlds();
 /*N*/ 		SetModified();
 /*N*/ 	}
@@ -404,23 +389,16 @@ namespace binfilter {
 /*N*/ 						USHORT nNumber, BOOL bIsEndNote )
 /*N*/ {
 /*N*/ 	SwFtnIdxs& rFtnArr = GetFtnIdxs();
-/*N*/ 
+/*N*/
 /*N*/ 	const SwPosition* pStt = rPam.Start(), *pEnd = rPam.End();
 /*N*/ 	const ULONG nSttNd = pStt->nNode.GetIndex();
 /*N*/ 	const xub_StrLen nSttCnt = pStt->nContent.GetIndex();
 /*N*/ 	const ULONG nEndNd = pEnd->nNode.GetIndex();
 /*N*/ 	const xub_StrLen nEndCnt = pEnd->nContent.GetIndex();
-/*N*/ 
+/*N*/
 /*N*/ 	USHORT nPos;
 /*N*/ 	rFtnArr.SeekEntry( pStt->nNode, &nPos );
-/*N*/ 
-/*N*/ 	SwUndoChgFtn* pUndo = 0;
-/*N*/ 	if( DoesUndo() )
-/*N*/ 	{
-/*N*/ 		ClearRedo();
-/*N*/ 		pUndo = new SwUndoChgFtn( rPam, rNumStr, nNumber, bIsEndNote );
-/*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	SwTxtFtn* pTxtFtn;
 /*N*/ 	ULONG nIdx;
 /*N*/ 	BOOL bChg = FALSE;
@@ -439,9 +417,7 @@ namespace binfilter {
 /*N*/ 				rFtn.IsEndNote() != bIsEndNote )
 /*N*/ 			{
 /*N*/ 				bChg = TRUE;
-/*N*/ 				if( pUndo )
-/*N*/ 					pUndo->GetHistory()->Add( *pTxtFtn );
-/*N*/ 
+/*N*/
 /*N*/ 				pTxtFtn->SetNumber( nNumber, &rNumStr );
 /*N*/ 				if( rFtn.IsEndNote() != bIsEndNote )
 /*N*/ 				{
@@ -449,7 +425,7 @@ namespace binfilter {
 /*N*/ 				}
 /*N*/ 			}
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 	nPos = n;		// nach vorne gibt es auch noch welche !
 /*N*/ 	while( nPos &&
 /*N*/ 			(( nIdx = _SwTxtFtn_GetIndex((pTxtFtn = rFtnArr[ --nPos ] )))
@@ -464,9 +440,7 @@ namespace binfilter {
 /*?*/ 				rFtn.IsEndNote() != bIsEndNote )
 /*?*/ 			{
 /*?*/ 				bChg = TRUE;
-/*?*/ 				if( pUndo )
-/*?*/ 					pUndo->GetHistory()->Add( *pTxtFtn );
-/*?*/ 
+/*?*/
 /*?*/ 				pTxtFtn->SetNumber( nNumber, &rNumStr );
 /*?*/ 				if( rFtn.IsEndNote() != bIsEndNote )
 /*?*/ 				{
@@ -474,16 +448,11 @@ namespace binfilter {
 /*?*/ 				}
 /*?*/ 			}
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 	// wer muss angestossen werden ??
 /*N*/ 	if( bChg )
 /*N*/ 	{
-/*N*/ 		if( pUndo )
-/*N*/ 		{
-/*N*/ 			ClearRedo();
-/*N*/ 			AppendUndo( pUndo );
-/*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		if ( bTypeChgd )
 /*?*/ 			rFtnArr.UpdateAllFtn();
 /*N*/ 		if( FTNNUM_PAGE != GetFtnInfo().eNum )
@@ -494,8 +463,6 @@ namespace binfilter {
 /*N*/ 		else if( GetRootFrm() )
 /*?*/ 			{DBG_BF_ASSERT(0, "STRIP");} //STRIP001 GetRootFrm()->UpdateFtnNums();
 /*N*/ 	}
-/*N*/ 	else
-/*?*/ 		delete pUndo;
 /*N*/ 	return bChg;
 /*N*/ }
 
