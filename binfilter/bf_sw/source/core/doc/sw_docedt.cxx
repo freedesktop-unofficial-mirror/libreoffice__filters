@@ -7,7 +7,7 @@
  * OpenOffice.org - a multi-platform office productivity suite
  *
  * $RCSfile: sw_docedt.cxx,v $
- * $Revision: 1.10 $
+ * $Revision: 1.11 $
  *
  * This file is part of OpenOffice.org.
  *
@@ -78,12 +78,6 @@
 #ifndef _SECTION_HXX
 #include <section.hxx>
 #endif
-#ifndef _SWUNDO_HXX
-#include <swundo.hxx>		// fuer die UndoIds
-#endif
-#ifndef _UNDOBJ_HXX
-#include <undobj.hxx>
-#endif
 #include "comcore.hrc"
 #ifndef _VISCRS_HXX
 #include <viscrs.hxx>
@@ -119,7 +113,7 @@ SV_IMPL_PTRARR( SaveBookmarks, SaveBookmark* )
 /*N*/ 					const SwNodeIndex& rPtNdIdx )
 /*N*/ {
 /*N*/ 	const sal_Bool bDelFwrd = rMkNdIdx.GetIndex() <= rPtNdIdx.GetIndex();
-/*N*/ 
+/*N*/
 /*N*/ 	SwDoc* pDoc = rMkNdIdx.GetNode().GetDoc();
 /*N*/ 	SwSpzFrmFmts& rTbl = *pDoc->GetSpzFrmFmts();
 /*N*/ 	const SwPosition* pAPos;
@@ -159,7 +153,7 @@ SV_IMPL_PTRARR( SaveBookmarks, SaveBookmark* )
 /*N*/ 					else if( pFmt != rTbl[i] )
 /*?*/ 						i = rTbl.GetPos( pFmt );
 /*N*/ 				}
-/*N*/ 
+/*N*/
 /*N*/ 				pDoc->DelLayoutFmt( pFmt );
 /*N*/ //				i++;	// keinen auslassen
 /*N*/ 			}
@@ -227,18 +221,18 @@ SV_IMPL_PTRARR( SaveBookmarks, SaveBookmark* )
 /*N*/ 	SwStartNode* pSttNd = pNode->IsStartNode() ? (SwStartNode*)pNode
 /*N*/ 											   : pNode->StartOfSectionNode();
 /*N*/ 	SwNodeIndex aSttIdx( *pSttNd ), aEndIdx( *pNode->EndOfSectionNode() );
-/*N*/ 
+/*N*/
 /*N*/ 	// dann loesche mal alle Fly's, text::Bookmarks, ...
 /*N*/ 	DelFlyInRange( aSttIdx, aEndIdx );
 /*N*/ 	DeleteRedline( *pSttNd );
 /*N*/ 	_DelBookmarks( aSttIdx, aEndIdx );
-/*N*/ 
+/*N*/
 /*N*/ 	{
 /*N*/ 		// alle Crsr/StkCrsr/UnoCrsr aus dem Loeschbereich verschieben
 /*N*/ 		SwNodeIndex aMvStt( aSttIdx, 1 );
 /*N*/ 		CorrAbs( aMvStt, aEndIdx, SwPosition( aSttIdx ), sal_True );
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	GetNodes().DelNodes( aSttIdx, aEndIdx.GetIndex() - aSttIdx.GetIndex() + 1 );
 /*N*/ }
 
@@ -251,11 +245,8 @@ SV_IMPL_PTRARR( SaveBookmarks, SaveBookmark* )
 
 /*N*/ sal_Bool SwDoc::Insert( const SwPaM &rRg, sal_Unicode c )
 /*N*/ {
-/*N*/ 	if( DoesUndo() )
-/*N*/ 		ClearRedo();
-/*N*/ 
 /*N*/ 	const SwPosition & rPos = *rRg.GetPoint();
-/*N*/ 
+/*N*/
 /*N*/ 	if( pACEWord )					// Aufnahme in die Autokorrektur
 /*N*/ 	{
 /*?*/ 	DBG_BF_ASSERT(0, "STRIP"); //STRIP001 	if( pACEWord->IsDeleted() )
@@ -264,32 +255,17 @@ SV_IMPL_PTRARR( SaveBookmarks, SaveBookmark* )
 /*N*/ 	if(!pNode)
 /*?*/ 		return sal_False;
 /*N*/ 	sal_Bool bInsOneChar = sal_True;
-/*N*/ 
+/*N*/
 /*N*/ 	SwDataChanged aTmp( rRg, 0 );
-/*N*/ 
+/*N*/
 /*N*/ 	pNode->Insert( c, rPos.nContent );
-/*N*/ 
-/*N*/ 	if ( DoesUndo() )
-/*N*/ 	{
-/*N*/ 		sal_uInt16 nUndoSize = pUndos->Count();
-/*N*/ 		SwUndo * pUndo;
-/*N*/ 		if( DoesGroupUndo() && bInsOneChar && nUndoSize-- &&
-/*N*/ 			UNDO_INSERT == ( pUndo = (*pUndos)[ nUndoSize ])->GetId() &&
-/*N*/ 			((SwUndoInsert*)pUndo)->CanGrouping( rPos, c ))
-/*N*/ 			; // wenn CanGrouping() sal_True returnt, ist schon alles erledigt
-/*N*/ 		else
-/*N*/ 			AppendUndo( new SwUndoInsert( rPos.nNode,
-/*N*/ 										rPos.nContent.GetIndex(), 1,
-/*N*/ 										!GetAppCharClass().isLetterNumeric(
-/*N*/ 											pNode->GetTxt(),
-/*N*/ 											rPos.nContent.GetIndex() - 1 )));
-/*N*/ 	}
-/*N*/ 
+/*N*/
+/*N*/
 /*N*/ 	if( IsRedlineOn() || (!IsIgnoreRedline() && pRedlineTbl->Count() ))
 /*N*/ 	{
 /*?*/ 	DBG_BF_ASSERT(0, "STRIP"); //STRIP001 	SwPaM aPam( rPos.nNode, rPos.nContent.GetIndex() - 1,
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	SetModified();
 /*N*/ 	return sal_True;
 /*N*/ }
@@ -316,7 +292,7 @@ SV_IMPL_PTRARR( SaveBookmarks, SaveBookmark* )
 /*N*/ 		const SwPosition* pStt = rPam.Start(), *pEnd = rPam.End();
 /*N*/ 		SwTxtNode* pTxtNd = pStt->nNode.GetNode().GetTxtNode();
 /*N*/ 		rJoinTxt = (0 != pTxtNd) && pEnd->nNode.GetNode().IsTxtNode();
-/*N*/ 
+/*N*/
 /*N*/ 		if( rJoinTxt && pStt == rPam.GetPoint() &&
 /*N*/ 			0 != ( pTxtNd = pEnd->nNode.GetNode().GetTxtNode() ) &&
 /*N*/ 			pTxtNd->GetTxt().Len() == pEnd->nContent.GetIndex() )
@@ -337,25 +313,20 @@ SV_IMPL_PTRARR( SaveBookmarks, SaveBookmark* )
 /*N*/ 	SwTxtNode *pTxtNd = aIdx.GetNode().GetTxtNode();
 /*N*/ 	SwNodeIndex aOldIdx( aIdx );
 /*N*/ 	SwTxtNode *pOldTxtNd = pTxtNd;
-/*N*/ 
+/*N*/
 /*N*/ 	if( pTxtNd && pTxtNd->CanJoinNext( &aIdx ) )
 /*N*/ 	{
 /*N*/ 		SwDoc* pDoc = rPam.GetDoc();
 /*N*/ 		if( bJoinPrev )
 /*N*/ 		{
 /*N*/ 			{
-/*N*/ 				// falls PageBreaks geloescht / gesetzt werden, darf das
-/*N*/ 				// nicht in die Undo-History aufgenommen werden !!
-/*N*/ 				// (das loeschen vom Node geht auch am Undo vorbei !!!)
-/*N*/ 				sal_Bool bDoUndo = pDoc->DoesUndo();
-/*N*/ 				pDoc->DoUndo( sal_False );
-/*N*/ 
+/*N*/
 /*N*/ 				/* PageBreaks, PageDesc, ColumnBreaks */
 /*N*/ 				// Sollte an der Logik zum Kopieren der PageBreak's ...
 /*N*/ 				// etwas geaendert werden, muss es auch im SwUndoDelete
 /*N*/ 				// geandert werden. Dort wird sich das AUTO-PageBreak
 /*N*/ 				// aus dem GetMarkNode kopiert.!!!
-/*N*/ 
+/*N*/
 /*N*/ 				/* Der GetMarkNode */
 /*N*/ 				if( ( pTxtNd = aIdx.GetNode().GetTxtNode())->GetpSwAttrSet() )
 /*N*/ 				{
@@ -368,7 +339,7 @@ SV_IMPL_PTRARR( SaveBookmarks, SaveBookmark* )
 /*?*/ 						RES_PAGEDESC, sal_False, &pItem ) )
 /*?*/ 						pTxtNd->ResetAttr( RES_PAGEDESC );
 /*N*/ 				}
-/*N*/ 
+/*N*/
 /*N*/ 				/* Der PointNode */
 /*N*/ 				if( pOldTxtNd->GetpSwAttrSet() )
 /*N*/ 				{
@@ -385,23 +356,21 @@ SV_IMPL_PTRARR( SaveBookmarks, SaveBookmark* )
 /*?*/ 						pTxtNd->SwCntntNode::SetAttr( aSet );
 /*N*/ 				}
 /*N*/ 				pOldTxtNd->FmtToTxtAttr( pTxtNd );
-/*N*/ 
+/*N*/
 /*N*/ 				SvULongs aBkmkArr( 15, 15 );
 /*N*/ 				::binfilter::_SaveCntntIdx( pDoc, aOldIdx.GetIndex(),
 /*N*/ 									pOldTxtNd->Len(), aBkmkArr );
-/*N*/ 
+/*N*/
 /*N*/ 				SwIndex aAlphaIdx(pTxtNd);
 /*N*/ 				pOldTxtNd->Cut( pTxtNd, aAlphaIdx, SwIndex(pOldTxtNd),
 /*N*/ 									pOldTxtNd->Len() );
 /*N*/ 				SwPosition aAlphaPos( aIdx, aAlphaIdx );
 /*N*/ 				pDoc->CorrRel( rPam.GetPoint()->nNode, aAlphaPos, 0, sal_True );
-/*N*/ 
+/*N*/
 /*N*/ 				// verschiebe noch alle Bookmarks/TOXMarks
 /*N*/ 				if( aBkmkArr.Count() )
 /*?*/ 					{DBG_BF_ASSERT(0, "STRIP");} //STRIP001 ::_RestoreCntntIdx( pDoc, aBkmkArr, aIdx.GetIndex() );
-/*N*/ 
-/*N*/ 				pDoc->DoUndo( bDoUndo );
-/*N*/ 
+/*N*/
 /*N*/ 				// falls der uebergebene PaM nicht im Crsr-Ring steht,
 /*N*/ 				// gesondert behandeln (z.B. Aufruf aus dem Auto-Format)
 /*N*/ 				if( pOldTxtNd == rPam.GetBound( sal_True ).nContent.GetIdxReg() )
@@ -413,7 +382,7 @@ SV_IMPL_PTRARR( SaveBookmarks, SaveBookmark* )
 /*N*/ 			pDoc->GetNodes().Delete( aOldIdx, 1 );
 /*N*/ 		}
 /*N*/ 		else
-/*N*/ 		{DBG_BF_ASSERT(0, "STRIP"); //STRIP001 
+/*N*/ 		{DBG_BF_ASSERT(0, "STRIP"); //STRIP001
 /*N*/ 		}
 /*N*/ 	}
 /*N*/ }
@@ -424,41 +393,41 @@ SV_IMPL_PTRARR( SaveBookmarks, SaveBookmark* )
 /*N*/ 	{
 /*?*/ 	DBG_BF_ASSERT(0, "STRIP"); //STRIP001 	sal_uInt16 nUndoSize = 0;
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	sal_Bool bJoinTxt, bJoinPrev;
 /*N*/ 	lcl_GetJoinFlags( rPam, bJoinTxt, bJoinPrev );
-/*N*/ 
+/*N*/
 /*N*/ 	{
 /*N*/ 		// dann eine Kopie vom Cursor erzeugen um alle Pams aus den
 /*N*/ 		// anderen Sichten aus dem Loeschbereich zu verschieben
 /*N*/ 		// ABER NICHT SICH SELBST !!
 /*N*/ 		SwPaM aDelPam( *rPam.GetMark(), *rPam.GetPoint() );
 /*N*/ 		::binfilter::PaMCorrAbs( aDelPam, *aDelPam.GetPoint() );
-/*N*/ 
+/*N*/
 /*N*/ 		if( !Delete( aDelPam ) )
 /*N*/ 			return sal_False;
-/*N*/ 
+/*N*/
 /*N*/ 		*rPam.GetPoint() = *aDelPam.GetPoint();
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	if( bJoinTxt )
 /*N*/ 		lcl_JoinText( rPam, bJoinPrev );
-/*N*/ 
+/*N*/
 /*N*/ 	return sal_True;
 /*N*/ }
 
 /*N*/ sal_Bool SwDoc::Delete( SwPaM & rPam )
 /*N*/ {
 /*N*/ 	SwPosition *pStt = (SwPosition*)rPam.Start(), *pEnd = (SwPosition*)rPam.End();
-/*N*/ 
+/*N*/
 /*N*/ 	if( !rPam.HasMark() || *pStt >= *pEnd )
 /*N*/ 		return sal_False;
-/*N*/ 
+/*N*/
 /*N*/ 	if( pACEWord )
 /*N*/ 	{
 /*?*/ 	DBG_BF_ASSERT(0, "STRIP"); //STRIP001 	// ggfs. das gesicherte Word fuer die Ausnahme
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	{
 /*N*/ 		// loesche alle leeren TextHints an der Mark-Position
 /*N*/ 		SwTxtNode* pTxtNd = rPam.GetMark()->nNode.GetNode().GetTxtNode();
@@ -472,7 +441,7 @@ SV_IMPL_PTRARR( SaveBookmarks, SaveBookmark* )
 /*N*/ 				const SwTxtAttr* pAttr = (*pHts)[ --n ];
 /*N*/ 				if( nMkCntPos > *pAttr->GetStart() )
 /*N*/ 					break;
-/*N*/ 
+/*N*/
 /*N*/ 				if( nMkCntPos == *pAttr->GetStart() &&
 /*N*/ 					0 != (pEndIdx = pAttr->GetEnd()) &&
 /*N*/ 					*pEndIdx == *pAttr->GetStart() )
@@ -480,44 +449,28 @@ SV_IMPL_PTRARR( SaveBookmarks, SaveBookmark* )
 /*N*/ 			}
 /*N*/ 		}
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	{
 /*N*/ 		// Bug 26675:	DataChanged vorm loeschen verschicken, dann bekommt
 /*N*/ 		//			man noch mit, welche Objecte sich im Bereich befinden.
 /*N*/ 		//			Danach koennen sie vor/hinter der Position befinden.
 /*N*/ 		SwDataChanged aTmp( rPam, 0 );
 /*N*/ 	}
-/*N*/ 
-/*N*/ 
-/*N*/ 	if( DoesUndo() )
-/*N*/ 	{
-/*N*/ 		ClearRedo();
-/*N*/ 		sal_uInt16 nUndoSize = pUndos->Count();
-/*N*/ 		SwUndo * pUndo;
-/*N*/ 		if( DoesGroupUndo() && nUndoSize-- &&
-/*N*/ 			UNDO_DELETE == ( pUndo = (*pUndos)[ nUndoSize ])->GetId() &&
-/*N*/ 			((SwUndoDelete*)pUndo)->CanGrouping( this, rPam ))
-/*N*/ 			;// wenn CanGrouping() sal_True returnt, ist schon alles erledigt
-/*N*/ 		else
-/*N*/ 			AppendUndo( new SwUndoDelete( rPam ) );
-/*N*/ 
-/*N*/ 		SetModified();
-/*N*/ 
-/*N*/ 		return sal_True;
-/*N*/ 	}
-/*N*/ 
+/*N*/
+/*N*/
+/*N*/
 /*?*/ 	if( !IsIgnoreRedline() && GetRedlineTbl().Count() )
 /*?*/ 		DeleteRedline( rPam );
-/*?*/ 
+/*?*/
 /*?*/ 	// loesche und verschiebe erstmal alle "Fly's am Absatz", die in der
 /*?*/ 	// SSelection liegen
 /*?*/ 	DelFlyInRange( rPam.GetMark()->nNode, rPam.GetPoint()->nNode );
 /*?*/ 	_DelBookmarks( pStt->nNode, pEnd->nNode, 0,
 /*?*/ 				   	&pStt->nContent, &pEnd->nContent );
-/*?*/ 
+/*?*/
 /*?*/ 	SwNodeIndex aSttIdx( pStt->nNode );
 /*?*/ 	SwCntntNode * pCNd = aSttIdx.GetNode().GetCntntNode();
-/*?*/ 
+/*?*/
 /*?*/ 	do {		// middle checked loop!
 /*?*/ 		if( pCNd )
 /*?*/ 		{
@@ -528,14 +481,14 @@ SV_IMPL_PTRARR( SaveBookmarks, SaveBookmark* )
 /*?*/ 				xub_StrLen nLen = ( bOneNd ? pEnd->nContent.GetIndex()
 /*?*/ 										   : pCNd->Len() )
 /*?*/ 										- pStt->nContent.GetIndex();
-/*?*/ 
+/*?*/
 /*?*/ 				// falls schon leer, dann nicht noch aufrufen
 /*?*/ 				if( nLen )
 /*?*/ 					((SwTxtNode*)pCNd)->Erase( pStt->nContent, nLen );
-/*?*/ 
+/*?*/
 /*?*/ 				if( bOneNd )		// das wars schon
 /*?*/ 					break;
-/*?*/ 
+/*?*/
 /*?*/ 				aSttIdx++;
 /*?*/ 			}
 /*?*/ 			else
@@ -545,7 +498,7 @@ SV_IMPL_PTRARR( SaveBookmarks, SaveBookmark* )
 /*?*/ 				pStt->nContent.Assign( 0, 0 );
 /*?*/ 			}
 /*?*/ 		}
-/*?*/ 
+/*?*/
 /*?*/ 		sal_uInt32 nEnde = pEnd->nNode.GetIndex();
 /*?*/ 		pCNd = pEnd->nNode.GetNode().GetCntntNode();
 /*?*/ 		if( pCNd )
@@ -568,31 +521,31 @@ SV_IMPL_PTRARR( SaveBookmarks, SaveBookmark* )
 /*?*/ 				nEnde--;
 /*?*/ 			}
 /*?*/ 		}
-/*?*/ 
+/*?*/
 /*?*/ 		nEnde++;
 /*?*/ 		if( aSttIdx != nEnde )
 /*?*/ 		{
 /*?*/ 			// loesche jetzt die Nodes in das NodesArary
 /*?*/ 			GetNodes().Delete( aSttIdx, nEnde - aSttIdx.GetIndex() );
 /*?*/ 		}
-/*?*/ 
+/*?*/
 /*?*/ 		// falls der Node geloescht wurde, in dem der Cursor stand, so
 /*?*/ 		// muss der Content im akt. Content angemeldet werden !!!
 /*?*/ 		pStt->nContent.Assign( pStt->nNode.GetNode().GetCntntNode(),
 /*?*/ 								pStt->nContent.GetIndex() );
-/*?*/ 
+/*?*/
 /*?*/ 		// der PaM wird korrigiert, denn falls ueber Nodegrenzen geloescht
 /*?*/ 		// wurde, so stehen sie in unterschieden Nodes. Auch die Selektion
 /*?*/ 		// wird aufgehoben !
 /*?*/ 		*pEnd = *pStt;
 /*?*/ 		rPam.DeleteMark();
-/*?*/ 
+/*?*/
 /*?*/ 	} while( sal_False );
-/*?*/ 
+/*?*/
 /*?*/ 	if( !IsIgnoreRedline() && GetRedlineTbl().Count() )
 /*?*/ 	{DBG_BF_ASSERT(0, "STRIP");} //STRIP001 	::com::pressRedlines();
 /*?*/ 	SetModified();
-/*?*/ 
+/*?*/
 /*?*/ 	return sal_True;
 /*N*/ }
 
@@ -623,20 +576,20 @@ DBG_BF_ASSERT(0, "STRIP");  //STRIP001 	if( !rPam.HasMark() || *rPam.GetPoint() 
 /*N*/ 	sal_uInt32 nSectDiff = pNd->FindStartNode()->EndOfSectionIndex() -
 /*N*/ 						pNd->StartOfSectionIndex();
 /*N*/ 	sal_uInt32 nNodeDiff = rEnd.nNode.GetIndex() - rStt.nNode.GetIndex();
-/*N*/ 
-/*N*/ 		if ( nSectDiff-2 <= nNodeDiff || IsRedlineOn() || 
+/*N*/
+/*N*/ 		if ( nSectDiff-2 <= nNodeDiff || IsRedlineOn() ||
 /*N*/ 		 /* #i9185# Prevent getting the node after the end node (see below) */
 /*N*/ 		rEnd.nNode.GetIndex() + 1 == aNodes.Count() )
 /*N*/ 		return sal_False;
-/*N*/ 
+/*N*/
 /*N*/ 	// harte SeitenUmbrueche am nachfolgenden Node verschieben
 /*N*/ 	sal_Bool bSavePageBreak = sal_False, bSavePageDesc = sal_False;
-/*N*/ 
+/*N*/
     /* #i9185# This whould lead to a segmentation fault if not catched
        above. */
 /*N*/ 	ULONG nNextNd = rEnd.nNode.GetIndex() + 1;
 /*N*/ 	SwTableNode* pTblNd = aNodes[ nNextNd ]->GetTableNode();
-/*N*/ 
+/*N*/
 /*N*/ 	if( pTblNd && pNd->IsCntntNode() )
 /*N*/ 	{
 /*?*/ 		SwFrmFmt* pTableFmt = pTblNd->GetTable().GetFrmFmt();
@@ -654,7 +607,7 @@ DBG_BF_ASSERT(0, "STRIP");  //STRIP001 	if( !rPam.HasMark() || *rPam.GetPoint() 
 /*?*/ 				pTableFmt->SetAttr( *pItem );
 /*?*/ 				bSavePageDesc = sal_True;
 /*?*/ 			}
-/*?*/ 
+/*?*/
 /*?*/ 			if( pSet && SFX_ITEM_SET == pSet->GetItemState( RES_BREAK,
 /*?*/ 				sal_False, &pItem ) )
 /*?*/ 			{
@@ -663,30 +616,12 @@ DBG_BF_ASSERT(0, "STRIP");  //STRIP001 	if( !rPam.HasMark() || *rPam.GetPoint() 
 /*?*/ 			}
 /*?*/ 		}
 /*N*/ 	}
-/*N*/ 
-/*N*/ 	sal_Bool bDoesUndo = DoesUndo();
-/*N*/ 	if( bDoesUndo )
-/*N*/ 	{
-/*N*/ 		if( !rPam.HasMark() )
-/*N*/ 			rPam.SetMark();
-/*N*/ 		else if( rPam.GetPoint() == &rStt )
-/*?*/ 			rPam.Exchange();
-/*N*/ 		rPam.GetPoint()->nNode++;
-/*N*/ 
-/*N*/ 		rPam.GetPoint()->nContent.Assign( 0, 0 );
-/*N*/ 		rPam.GetMark()->nContent.Assign( 0, 0 );
-/*N*/ 
-/*N*/ 		ClearRedo();
-/*N*/ 		SwUndoDelete* pUndo = new SwUndoDelete( rPam, sal_True );
-/*N*/ 		pUndo->SetPgBrkFlags( bSavePageBreak, bSavePageDesc );
-/*N*/ 		AppendUndo( pUndo );
-/*N*/ 	}
-/*N*/ 	else
+/*N*/
 /*N*/ 	{
 /*N*/ 		SwNodeRange aRg( rStt.nNode, rEnd.nNode );
 /*N*/ 		if( rPam.GetPoint() != &rEnd )
 /*?*/ 			rPam.Exchange();
-/*N*/ 
+/*N*/
 /*N*/ 		// versuche hinters Ende zu verschieben
 /*N*/ 		if( !rPam.Move( fnMoveForward, fnGoNode ) )
 /*N*/ 		{
@@ -700,7 +635,7 @@ DBG_BF_ASSERT(0, "STRIP");  //STRIP001 	if( !rPam.HasMark() || *rPam.GetPoint() 
 /*N*/ 		}
 /*N*/ 			// text::Bookmarks usw. verschieben
 /*N*/ 		CorrAbs( aRg.aStart, aRg.aEnd, *rPam.GetPoint(), sal_True );
-/*N*/ 
+/*N*/
 /*N*/ 			// was ist mit Fly's ??
 /*N*/ 		{
 /*N*/ 			// stehen noch FlyFrames rum, loesche auch diese
@@ -719,14 +654,14 @@ DBG_BF_ASSERT(0, "STRIP");  //STRIP001 	if( !rPam.HasMark() || *rPam.GetPoint() 
 /*N*/ 				}
 /*N*/ 			}
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		rPam.GetBound( TRUE ).nContent.Assign( 0, 0 );
 /*N*/ 		rPam.GetBound( FALSE ).nContent.Assign( 0, 0 );
 /*N*/ 		GetNodes().Delete( aRg.aStart, nNodeDiff+1 );
 /*N*/ 	}
 /*N*/ 	rPam.DeleteMark();
 /*N*/ 	SetModified();
-/*N*/ 
+/*N*/
 /*N*/ 	return sal_True;
 /*N*/ }
 
