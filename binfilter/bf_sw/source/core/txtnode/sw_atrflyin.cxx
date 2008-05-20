@@ -7,7 +7,7 @@
  * OpenOffice.org - a multi-platform office productivity suite
  *
  * $RCSfile: sw_atrflyin.cxx,v $
- * $Revision: 1.8 $
+ * $Revision: 1.9 $
  *
  * This file is part of OpenOffice.org.
  *
@@ -122,10 +122,8 @@ int __EXPORT SwFmtFlyCnt::operator==( const SfxPoolItem& rAttr ) const
 /*N*/ 	// Das FlyFrmFmt muss dupliziert werden.
 /*N*/ 	// In CopyLayoutFmt (siehe doclay.cxx) wird das FlyFrmFmt erzeugt
 /*N*/ 	// und der Inhalt dupliziert.
-/*N*/ 
+/*N*/
 /*N*/ 	// fuers kopieren vom Attribut das Undo immer abschalten
-/*N*/ 	BOOL bUndo = pDoc->DoesUndo();
-/*N*/ 	pDoc->DoUndo( FALSE );
 /*N*/ 	SwFmtAnchor aAnchor( pFmt->GetAnchor() );
 /*N*/ 	if( FLY_PAGE != aAnchor.GetAnchorId() &&
 /*N*/ 		pDoc != pFmt->GetDoc() )		// Unterschiedliche Docs?
@@ -137,7 +135,7 @@ int __EXPORT SwFmtFlyCnt::operator==( const SfxPoolItem& rAttr ) const
 /*?*/ 		SwCntntNode* pCNd = aIdx.GetNode().GetCntntNode();
 /*?*/ 		if( !pCNd )
 /*?*/ 			pCNd = pDoc->GetNodes().GoNext( &aIdx );
-/*?*/ 
+/*?*/
 /*?*/ 		SwPosition* pPos = (SwPosition*)aAnchor.GetCntntAnchor();
 /*?*/ 		pPos->nNode = aIdx;
 /*?*/ 		if( FLY_IN_CNTNT == aAnchor.GetAnchorId() )
@@ -148,9 +146,8 @@ int __EXPORT SwFmtFlyCnt::operator==( const SfxPoolItem& rAttr ) const
 /*?*/ 			ASSERT( !this, "CopyFlyFmt: Was fuer ein Anker?" );
 /*?*/ 		}
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	SwFrmFmt* pNew = pDoc->CopyLayoutFmt( *pFmt, aAnchor, FALSE, FALSE );
-/*N*/ 	pDoc->DoUndo( bUndo );
 /*N*/ 	((SwFmtFlyCnt&)GetFlyCnt()).SetFlyFmt( pNew );
 /*N*/ }
 
@@ -166,47 +163,38 @@ int __EXPORT SwFmtFlyCnt::operator==( const SfxPoolItem& rAttr ) const
 
 /*N*/ void SwTxtFlyCnt::SetAnchor( const SwTxtNode *pNode )
 /*N*/ {
-/*N*/ 	// fuers Undo muss der neue Anker schon bekannt sein !
-/*N*/ 
 /*N*/ 	// Wir ermitteln den Index im Nodesarray zum Node
-/*N*/ 
+/*N*/
 /*N*/ 	SwDoc* pDoc = (SwDoc*)pNode->GetDoc();
-/*N*/ 
+/*N*/
 /*N*/ 	SwIndex aIdx( (SwTxtNode*)pNode, *GetStart() );
 /*N*/ 	SwPosition aPos( *pNode->StartOfSectionNode(), aIdx );
 /*N*/ 	SwFrmFmt* pFmt = GetFlyCnt().GetFrmFmt();
 /*N*/ 	SwFmtAnchor aAnchor( pFmt->GetAnchor() );
-/*N*/ 
+/*N*/
 /*N*/ 	if( !aAnchor.GetCntntAnchor() ||
 /*N*/ 		!aAnchor.GetCntntAnchor()->nNode.GetNode().GetNodes().IsDocNodes() ||
 /*N*/ 		&aAnchor.GetCntntAnchor()->nNode.GetNode() != (SwNode*)pNode )
 /*N*/ 		aPos.nNode = *pNode;
 /*N*/ 	else
 /*N*/ 		aPos.nNode = aAnchor.GetCntntAnchor()->nNode;
-/*N*/ 
+/*N*/
 /*N*/ 	aAnchor.SetType( FLY_IN_CNTNT );		// defaulten !!
 /*N*/ 	aAnchor.SetAnchor( &aPos );
-/*N*/ 
+/*N*/
 /*N*/ 	// beim Ankerwechsel werden immer alle FlyFrms vom Attribut geloescht
 /*N*/ 	// JP 25.04.95: wird innerhalb des SplitNodes die Frames verschoben
 /*N*/ 	//				koennen die Frames erhalten bleiben.
 /*N*/ 	if( ( !pNode->GetpSwpHints() || !pNode->GetpSwpHints()->IsInSplitNode() )
 /*N*/ 		&& RES_DRAWFRMFMT != pFmt->Which() )
 /*N*/ 		pFmt->DelFrms();
-/*N*/ 
+/*N*/
 /*N*/ 	// stehen wir noch im falschen Dokument ?
 /*N*/ 	if( pDoc != pFmt->GetDoc() )
 /*N*/ 	{
-/*N*/ 		// fuers kopieren vom Attribut das Undo immer abschalten
-/*?*/ 		BOOL bUndo = pDoc->DoesUndo();
-/*?*/ 		pDoc->DoUndo( FALSE );
 /*?*/ 		SwFrmFmt* pNew = pDoc->CopyLayoutFmt( *pFmt, aAnchor, FALSE, FALSE );
-/*?*/ 		pDoc->DoUndo( bUndo );
-/*?*/ 
-/*?*/ 		bUndo = pFmt->GetDoc()->DoesUndo();
-/*?*/ 		pFmt->GetDoc()->DoUndo( FALSE );
+/*?*/
 /*?*/ 		pFmt->GetDoc()->DelLayoutFmt( pFmt );
-/*?*/ 		pFmt->GetDoc()->DoUndo( bUndo );
 /*?*/ 		((SwFmtFlyCnt&)GetFlyCnt()).SetFlyFmt( pNew );
 /*N*/ 	}
 /*N*/ 	else if( pNode->GetpSwpHints() &&
@@ -219,7 +207,7 @@ int __EXPORT SwFmtFlyCnt::operator==( const SfxPoolItem& rAttr ) const
 /*N*/ 	}
 /*N*/ 	else
 /*N*/ 		pFmt->SetAttr( aAnchor );		// nur den Anker neu setzen
-/*N*/ 
+/*N*/
 /*N*/ 	// Am Node haengen u.a. abhaengige CntFrms.
 /*N*/ 	// Fuer jeden CntFrm wird ein SwFlyInCntFrm angelegt.
 /*N*/ }
@@ -241,10 +229,10 @@ int __EXPORT SwFmtFlyCnt::operator==( const SfxPoolItem& rAttr ) const
 /*?*/ 		ASSERT(  !this, "SwTxtFlyCnt::_GetFlyFrm: DrawInCnt-Baustelle!" );
 /*?*/ 		return NULL;
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	SwClientIter aIter( *GetFlyCnt().pFmt );
 /*N*/ 	ASSERT( pCurrFrm->IsTxtFrm(), "SwTxtFlyCnt::_GetFlyFrm for TxtFrms only." );
-/*N*/ 
+/*N*/
 /*N*/ 	if( aIter.GoStart() )
 /*N*/ 	{
 /*N*/ 		SwTxtFrm *pFirst = (SwTxtFrm*)pCurrFrm;
@@ -270,7 +258,7 @@ int __EXPORT SwFmtFlyCnt::operator==( const SfxPoolItem& rAttr ) const
 /*N*/ 			}
 /*N*/ 		} while( aIter++ );
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	// Wir haben keinen passenden FlyFrm gefunden, deswegen wird ein
 /*N*/ 	// neuer angelegt.
 /*N*/ 	// Dabei wird eine sofortige Neuformatierung von pCurrFrm angestossen.
@@ -279,7 +267,7 @@ int __EXPORT SwFmtFlyCnt::operator==( const SfxPoolItem& rAttr ) const
 /*N*/ 	SwFlyInCntFrm *pFly = new SwFlyInCntFrm( (SwFlyFrmFmt*)pFrmFmt, (SwFrm*)pCurrFrm );
 /*N*/ 	((SwFrm*)pCurrFrm)->AppendFly( pFly );
 /*N*/ 	pFly->RegistFlys();
-/*N*/ 
+/*N*/
 /*N*/ 	// 7922: Wir muessen dafuer sorgen, dass der Inhalt des FlyInCnt
 /*N*/ 	// nach seiner Konstruktion stramm durchformatiert wird.
 /*N*/ 	SwCntntFrm *pFrm = pFly->ContainsCntnt();
@@ -288,7 +276,7 @@ int __EXPORT SwFmtFlyCnt::operator==( const SfxPoolItem& rAttr ) const
 /*N*/ 		pFrm->Calc();
 /*N*/ 		pFrm = pFrm->GetNextCntntFrm();
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	return pFly;
 /*N*/ }
 
