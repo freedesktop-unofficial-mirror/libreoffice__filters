@@ -7,7 +7,7 @@
  * OpenOffice.org - a multi-platform office productivity suite
  *
  * $RCSfile: OOXMLFastContextHandler.hxx,v $
- * $Revision: 1.5 $
+ * $Revision: 1.6 $
  *
  * This file is part of OpenOffice.org.
  *
@@ -194,7 +194,11 @@ protected:
     OOXMLFastContextHandler * mpParent;
     Id mId;
     Token_t mnToken;
-
+    
+#ifdef DEBUG_CONTEXT_STACK
+    string msTokenString;
+#endif
+    
     // the stream to send the stream events to.
     Stream * mpStream;
 
@@ -631,6 +635,10 @@ public:
      const uno::Reference< xml::sax::XFastAttributeList > & Attribs) 
         throw (uno::RuntimeException, xml::sax::SAXException);
     
+    virtual void attributes
+    (const uno::Reference< xml::sax::XFastAttributeList > & Attribs)
+    throw (uno::RuntimeException, xml::sax::SAXException);
+
     virtual ResourceEnum_t getResource() const;
 
     void addNamespace(const Id & nId);
