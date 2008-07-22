@@ -1,13 +1,13 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
  *
  * $RCSfile: timenode.cxx,v $
- * $Revision: 1.3 $
+ * $Revision: 1.4 $
  *
  * This file is part of OpenOffice.org.
  *
@@ -241,7 +241,7 @@ namespace oox { namespace ppt {
             {
                 pSlide->getAnimNodesMap()[ msId ] = xNode;
             }
-            
+
             if( mpTarget )
             {
                 sal_Int16 nSubType;
@@ -259,7 +259,7 @@ namespace oox { namespace ppt {
                 {
                     xNode->setBegin( aAny );
                 }
-                
+
             }
             if( !maEndCondList.empty() )
             {
@@ -340,7 +340,7 @@ namespace oox { namespace ppt {
                         {
                             if( aValue >>= nInt16 )
                                 xAnimate->setSubItem( nInt16 );
-                            else 
+                            else
                             {
                                 OSL_TRACE( "any >>= failed %d", __LINE__ );
                             }
@@ -386,7 +386,7 @@ namespace oox { namespace ppt {
                             Sequence<Any> aValues;
                             if( aValue >>= aValues )
                                 xAnimate->setValues(aValues);
-                            else 
+                            else
                             {
                                 OSL_TRACE( "any >>= failed %d", __LINE__ );
                             }
@@ -397,7 +397,7 @@ namespace oox { namespace ppt {
                         {
                             if( aValue >>= sString )
                                 xAnimate->setFormula(sString);
-                            else 
+                            else
                             {
                                 OSL_TRACE( "any >>= failed %d", __LINE__ );
                             }
@@ -408,7 +408,7 @@ namespace oox { namespace ppt {
                         {
                             if( aValue >>= nInt16 )
                                 xAnimateColor->setColorInterpolation( nInt16 );
-                            else 
+                            else
                             {
                                 OSL_TRACE( "any >>= failed %d", __LINE__ );
                             }
@@ -418,7 +418,7 @@ namespace oox { namespace ppt {
                         if( xAnimateColor.is() )
                         {
                             if( aValue >>= bBool )
-                                xAnimateColor->setDirection( bBool );  
+                                xAnimateColor->setDirection( bBool );
                             else
                             {
                                 OSL_TRACE( "any >>= failed %d", __LINE__ );
@@ -434,7 +434,7 @@ namespace oox { namespace ppt {
                         {
                             if( aValue >>= nInt16 )
                                 xAnimateTransform->setTransformType( nInt16 );
-                            else 
+                            else
                             {
                                 OSL_TRACE( "any >>= failed %d", __LINE__ );
                             }
@@ -443,7 +443,7 @@ namespace oox { namespace ppt {
                     case NP_USERDATA:
                         if( aValue >>= aSeq )
                             xNode->setUserData( aSeq );
-                        else 
+                        else
                         {
                             OSL_TRACE( "any >>= failed %d", __LINE__ );
                         }
@@ -478,7 +478,7 @@ namespace oox { namespace ppt {
                     case NP_FILL:
                         if( aValue >>= nInt16 )
                             xNode->setFill( nInt16 );
-                        else 
+                        else
                         {
                             OSL_TRACE( "any >>= failed %d", __LINE__ );
                         }
@@ -548,11 +548,11 @@ namespace oox { namespace ppt {
                 maTransitionFilter.setTransitionFilterProperties( xFilter );
             }
 
-            std::for_each( maChilds.begin(), maChilds.end(),
+            std::for_each( maChildren.begin(), maChildren.end(),
                            boost::bind(&TimeNode::addNode, _1, rxModel, boost::ref(xNode),
                                        boost::ref(pSlide) ) );
 
-            switch( mnNodeType ) 
+            switch( mnNodeType )
             {
             case AnimationNodeType::SEQ:
             {
