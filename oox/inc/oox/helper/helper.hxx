@@ -1,13 +1,13 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
  *
  * $RCSfile: helper.hxx,v $
- * $Revision: 1.5 $
+ * $Revision: 1.6 $
  *
  * This file is part of OpenOffice.org.
  *
@@ -152,7 +152,10 @@ public:
 
     inline void         reset() { mbHasValue = false; }
     inline void         set( const Type& rValue ) { maValue = rValue; mbHasValue = true; }
+    inline Type&        use() { mbHasValue = true; return maValue; }
+
     inline OptValue&    operator=( const Type& rValue ) { set( rValue ); return *this; }
+    inline void         assignIfUsed( const OptValue& rValue ) { if( rValue.mbHasValue ) set( rValue.maValue ); }
 
 private:
     Type                maValue;
