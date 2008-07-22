@@ -1,13 +1,13 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
  *
  * $RCSfile: PropertyIds.hxx,v $
- * $Revision: 1.28 $
+ * $Revision: 1.29 $
  *
  * This file is part of OpenOffice.org.
  *
@@ -269,14 +269,14 @@ enum PropertyIds
 /*230*/ ,META_PROP_CELL_MAR_RIGHT
 /*231*/ ,PROP_START_AT
 /*232*/ ,PROP_ADD_PARA_TABLE_SPACING
-/*233*/ ,PROP_CHAR_PROP_HEIGHT        
-/*234*/ ,PROP_CHAR_PROP_HEIGHT_ASIAN  
+/*233*/ ,PROP_CHAR_PROP_HEIGHT
+/*234*/ ,PROP_CHAR_PROP_HEIGHT_ASIAN
 /*235*/ ,PROP_CHAR_PROP_HEIGHT_COMPLEX
 /*236*/ ,PROP_FORMAT
 /*237*/ ,PROP_INSERT
 /*238*/ ,PROP_DELETE
 /*239*/ ,PROP_STREAM_NAME
-
+/*240*/ ,PROP_BITMAP
 };
 struct PropertyNameSupplier_Impl;
 class PropertyNameSupplier
