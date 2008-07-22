@@ -1,13 +1,13 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
  *
  * $RCSfile: diagram.cxx,v $
- * $Revision: 1.4 $
+ * $Revision: 1.5 $
  *
  * This file is part of OpenOffice.org.
  *
@@ -35,6 +35,7 @@
 #include <com/sun/star/awt/Point.hpp>
 #include <com/sun/star/awt/Size.hpp>
 #include "oox/drawingml/diagram/diagram.hxx"
+#include "oox/drawingml/fillproperties.hxx"
 #include "oox/core/namespaces.hxx"
 #include "tokens.hxx"
 
@@ -49,7 +50,7 @@ namespace dgm {
 void Connection::dump()
 {
     OSL_TRACE("dgm: cnx modelId %s, srcId %s, dstId %s",
-              OUSTRING_TO_CSTR( msModelId ), 
+              OUSTRING_TO_CSTR( msModelId ),
               OUSTRING_TO_CSTR( msSourceId ),
               OUSTRING_TO_CSTR( msDestId ) );
 }
@@ -68,8 +69,8 @@ void Point::dump()
 }
 
 void Point::setModelId( const ::rtl::OUString & sModelId )
-{ 
-    msModelId = sModelId; 
+{
+    msModelId = sModelId;
     mpShape->setName( msModelId );
 }
 
@@ -80,7 +81,7 @@ bool PointsTree::addChild( const PointsTreePtr & pChild )
 
     OSL_ENSURE( pChild->mpParent.expired(), "can't add, has already a parent" );
     OSL_ENSURE( mpNode, "has no node" );
-    if( mpNode && pChild->mpParent.expired() ) 
+    if( mpNode && pChild->mpParent.expired() )
     {
         pChild->mpParent = shared_from_this();
         maChildrens.push_back( pChild );
@@ -92,7 +93,7 @@ bool PointsTree::addChild( const PointsTreePtr & pChild )
 
 PointsTreePtr PointsTree::getParent() const
 {
-    if( !mpParent.expired() ) 
+    if( !mpParent.expired() )
     {
         return mpParent.lock() ;
     }
@@ -103,7 +104,7 @@ PointsTreePtr PointsTree::getParent() const
 } // dgm namespace
 
 DiagramData::DiagramData()
-    : mpFillProperties( new FillProperties( ) )
+    : mpFillProperties( new FillProperties )
 {
 }
 
@@ -117,7 +118,7 @@ void DiagramData::dump()
                   boost::bind( &dgm::Point::dump, _1 ) );
 }
 
-static void setPosition( const dgm::PointPtr & pPoint, const awt::Point & pt ) 
+static void setPosition( const dgm::PointPtr & pPoint, const awt::Point & pt )
 {
     ShapePtr pShape = pPoint->getShape();
     awt::Size sz;
@@ -171,17 +172,17 @@ void Diagram::build(  )
     for( ; aPointsIter != mpData->getPoints( ).end() ; aPointsIter++ )
     {
         const OUString & sName((*aPointsIter)->getModelId());
-        if( sName.getLength() > 0 ) 
+        if( sName.getLength() > 0 )
         {
             aPointsMap[ sName ] = *aPointsIter;
         }
-    }		   
+    }
 
     typedef std::map< OUString, dgm::PointsTreePtr > PointsTreeMap;
     PointsTreeMap aTreeMap;
     PointsTreeMap aRoots;
 
-    dgm::Connections & aConnections(mpData->getConnections( ) ); 
+    dgm::Connections & aConnections(mpData->getConnections( ) );
     dgm::Connections::iterator aCnxIter;
     for( aCnxIter = aConnections.begin(); aCnxIter != aConnections.end(); ++aCnxIter )
     {
@@ -196,38 +197,38 @@ void Diagram::build(  )
         PointsMap::iterator iterP;
         OUString & srcId( (*aCnxIter)->msSourceId );
         OUString & dstId( (*aCnxIter)->msDestId );
-        OSL_TRACE( "connexion %s -> %s", OUSTRING_TO_CSTR( srcId ), 
+        OSL_TRACE( "connexion %s -> %s", OUSTRING_TO_CSTR( srcId ),
                    OUSTRING_TO_CSTR( dstId ) );
 
         PointsTreeMap::iterator iterT = aTreeMap.find( srcId );
-        if( iterT != aTreeMap.end() ) 
+        if( iterT != aTreeMap.end() )
         {
             pSource = iterT->second;
         }
-        else 
+        else
         {
             // this tree node is not found. create it with the source
             // and make it the root node.
             iterP = aPointsMap.find( srcId );
-            if( iterP != aPointsMap.end() ) 
+            if( iterP != aPointsMap.end() )
             {
                 pSource.reset( new dgm::PointsTree( iterP->second ) );
                 aRoots[ srcId ] = pSource;
                 aTreeMap[ srcId ] = pSource;
             }
-            else 
+            else
             {
                 OSL_TRACE("parent node not found !");
             }
         }
         iterP = aPointsMap.find( dstId );
-        if( iterP != aPointsMap.end() ) 
+        if( iterP != aPointsMap.end() )
         {
             pDest = iterP->second;
         }
         OSL_ENSURE( pDest, "destination not found" );
         OSL_ENSURE( pSource, "source not found" );
-        if(pDest && pSource) 
+        if(pDest && pSource)
         {
             dgm::PointsTreePtr pNode( new dgm::PointsTree( pDest ) );
             bool added = pSource->addChild( pNode );
@@ -244,7 +245,7 @@ void Diagram::build(  )
     for( PointsTreeMap::iterator iter = aTreeMap.begin();
          iter != aTreeMap.end(); iter++ )
     {
-        if(! iter->second->getParent() ) 
+        if(! iter->second->getParent() )
         {
             OSL_TRACE("node without parent %s", OUSTRING_TO_CSTR( iter->first ) );
         }
@@ -266,7 +267,7 @@ void Diagram::addTo( const ShapePtr & pParentShape )
             continue;
         }
         ShapePtr pShape = ( *aPointsIter )->getShape( );
-        if( pShape->getName( ).getLength() > 0 ) 
+        if( pShape->getName( ).getLength() > 0 )
         {
             maShapeMap[ pShape->getName( ) ] = pShape;
             OSL_TRACE( "Dgm: added shape %s to map", OUSTRING_TO_CSTR( pShape->getName() ) );
@@ -274,9 +275,9 @@ void Diagram::addTo( const ShapePtr & pParentShape )
         pParentShape->addChild( pShape );
     }
 
-    OSL_TRACE( "Dgm: addTo() # of childs %d", pParentShape->getChilds().size() );
-    for( std::vector< ShapePtr >::iterator iter = pParentShape->getChilds().begin();
-         iter != pParentShape->getChilds().end(); ++iter) 
+    OSL_TRACE( "Dgm: addTo() # of childs %d", pParentShape->getChildren().size() );
+    for( std::vector< ShapePtr >::iterator iter = pParentShape->getChildren().begin();
+         iter != pParentShape->getChildren().end(); ++iter)
     {
         OSL_TRACE( "Dgm: shape name %s", OUSTRING_TO_CSTR( (*iter)->getName() ) );
     }
@@ -285,7 +286,7 @@ void Diagram::addTo( const ShapePtr & pParentShape )
 OUString Diagram::getLayoutId() const
 {
     OUString sLayoutId;
-    if( mpLayout ) 
+    if( mpLayout )
     {
         sLayoutId = mpLayout->getUniqueId();
     }
