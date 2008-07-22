@@ -1,13 +1,13 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
  *
  * $RCSfile: CellColorHandler.cxx,v $
- * $Revision: 1.6 $
+ * $Revision: 1.7 $
  *
  * This file is part of OpenOffice.org.
  *
@@ -73,7 +73,7 @@ void CellColorHandler::attribute(Id rName, Value & rVal)
         /* WRITERFILTERSTATUS: done: 0, planned: 0, spent: 0 */
         case NS_rtf::LN_cellLeftColor:
         /* WRITERFILTERSTATUS: done: 0, planned: 0, spent: 0 */
-        case NS_rtf::LN_cellBottomColor: 
+        case NS_rtf::LN_cellBottomColor:
         /* WRITERFILTERSTATUS: done: 0, planned: 0, spent: 0 */
         case NS_rtf::LN_cellRightColor:
             // nIntValue contains the color, directly
@@ -84,16 +84,16 @@ void CellColorHandler::attribute(Id rName, Value & rVal)
             //might be clear, pct5...90, some hatch types
             //TODO: The values need symbolic names!
             m_nShadowType = nIntValue; //clear == 0, solid: 1, pct5: 2, pct50:8, pct95: x3c, horzStripe:0x0e, thinVertStripe: 0x15
-            m_bOOXMLColor = true;
-        }        
+            m_bOOXMLColor = m_nShadowType != 0;
+        }
         break;
         /* WRITERFILTERSTATUS: done: 1, planned: 0, spent: 0 */
-        case NS_ooxml::LN_CT_Shd_fill: 
+        case NS_ooxml::LN_CT_Shd_fill:
             m_nFillColor = nIntValue;
-        break;   
+        break;
         /* WRITERFILTERSTATUS: done: 1, planned: 0, spent: 0 */
         case NS_ooxml::LN_CT_Shd_color:
-            //color of the shading 
+            //color of the shading
             m_nColor = nIntValue;
         break;
 //        case NS_rtf::LN_rgbrc:
@@ -125,7 +125,7 @@ TablePropertyMapPtr  CellColorHandler::getProperties()
     TablePropertyMapPtr pPropertyMap(new TablePropertyMap);
     if( m_bOOXMLColor )
     {
-        pPropertyMap->Insert( m_bParagraph ? PROP_PARA_BACK_COLOR : PROP_BACK_COLOR, false, 
+        pPropertyMap->Insert( m_bParagraph ? PROP_PARA_BACK_COLOR : PROP_BACK_COLOR, false,
                                 uno::makeAny( m_nShadowType ? m_nColor : m_nFillColor ));
     }
     return pPropertyMap;
