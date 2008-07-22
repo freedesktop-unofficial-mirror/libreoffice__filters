@@ -1,13 +1,13 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
  *
  * $RCSfile: diagram.hxx,v $
- * $Revision: 1.4 $
+ * $Revision: 1.5 $
  *
  * This file is part of OpenOffice.org.
  *
@@ -34,21 +34,16 @@
 #define OOX_DRAWINGML_DIAGRAM_HXX
 
 #include <vector>
-
 #include <boost/shared_ptr.hpp>
 #include <boost/enable_shared_from_this.hpp>
-
-#include <rtl/ustring.hxx>
-
 #include "oox/drawingml/shape.hxx"
 #include "oox/drawingml/diagram/diagramlayoutatoms.hxx"
-#include "oox/drawingml/fillproperties.hxx"
 
 namespace oox { namespace drawingml {
 
 namespace dgm {
 
-/** A Connection 
+/** A Connection
  */
 class Connection
 {
@@ -71,7 +66,7 @@ public:
     ::rtl::OUString msSibTransId;
     sal_Int32 mnSourceOrder;
     sal_Int32 mnDestOrder;
-    
+
 };
 
 typedef boost::shared_ptr< Connection > ConnectionPtr;
@@ -134,14 +129,14 @@ public:
 private:
     PointPtr                           mpNode;
     boost::weak_ptr< PointsTree >      mpParent;
-    Childrens       maChildrens;	
+    Childrens       maChildrens;
 };
 
 }
 
 ////////////////////
 
-class DiagramData 
+class DiagramData
 {
 public:
 
@@ -198,7 +193,7 @@ public:
 private:
     ::rtl::OUString msDefStyle;
     ::rtl::OUString msMinVer;
-    ::rtl::OUString msUniqueId;	
+    ::rtl::OUString msUniqueId;
 
     ::rtl::OUString msTitle;
     ::rtl::OUString msDesc;
@@ -214,7 +209,7 @@ typedef boost::shared_ptr< DiagramLayout > DiagramLayoutPtr;
 
 ///////////////////////
 
-class DiagramQStyles 
+class DiagramQStyles
 {
 
 };
