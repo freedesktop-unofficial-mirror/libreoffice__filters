@@ -1,13 +1,13 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
  *
  * $RCSfile: textparagraphpropertiescontext.hxx,v $
- * $Revision: 1.5 $
+ * $Revision: 1.6 $
  *
  * This file is part of OpenOffice.org.
  *
@@ -34,6 +34,7 @@
 #include <list>
 
 #include <com/sun/star/style/TabStop.hpp>
+#include "oox/drawingml/drawingmltypes.hxx"
 #include "oox/drawingml/textparagraphproperties.hxx"
 #include "oox/drawingml/textspacing.hxx"
 #include "oox/core/contexthandler.hxx"
