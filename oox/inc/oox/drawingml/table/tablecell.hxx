@@ -1,14 +1,14 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
  *
  * $RCSfile: tablecell.hxx,v $
  *
- * $Revision: 1.3 $
+ * $Revision: 1.4 $
  *
  * This file is part of OpenOffice.org.
  *
@@ -34,8 +34,10 @@
 
 #include "oox/helper/propertymap.hxx"
 #include "oox/drawingml/color.hxx"
-#include "oox/drawingml/textbody.hxx"
 #include "oox/drawingml/drawingmltypes.hxx"
+#include "oox/drawingml/lineproperties.hxx"
+#include "oox/drawingml/fillproperties.hxx"
+#include "oox/drawingml/textliststyle.hxx"
 #include <com/sun/star/table/XCell.hpp>
 
 #include <boost/shared_ptr.hpp>
@@ -47,6 +49,8 @@ namespace oox { namespace drawingml { namespace table {
 
 class TableCellContext;
 class TableProperties;
+class TableStyle;
+
 class TableCell
 {
     friend class TableCellContext;
@@ -55,7 +59,7 @@ public:
 
     TableCell();
     ~TableCell();
-    
+
     sal_Int32	getRowSpan() const { return mnRowSpan; };
     void		setRowSpan( sal_Int32 nRowSpan ){ mnRowSpan = nRowSpan; };
     sal_Int32	getGridSpan() const { return mnGridSpan; };
