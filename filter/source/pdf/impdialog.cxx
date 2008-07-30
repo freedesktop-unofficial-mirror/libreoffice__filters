@@ -1,13 +1,13 @@
  /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
  *
  * $RCSfile: impdialog.cxx,v $
- * $Revision: 1.35 $
+ * $Revision: 1.36 $
  *
  * This file is part of OpenOffice.org.
  *
@@ -227,7 +227,7 @@ ImpPDFTabDialog::ImpPDFTabDialog( Window* pParent,
 
 //queue the tab pages for later creation (created when first shown)
     AddTabPage( RID_PDF_TAB_SECURITY, ImpPDFTabSecurityPage::Create, 0 );
-    AddTabPage( RID_PDF_TAB_LINKS, ImpPDFTabLinksPage::Create, 0 );   
+    AddTabPage( RID_PDF_TAB_LINKS, ImpPDFTabLinksPage::Create, 0 );
     AddTabPage( RID_PDF_TAB_VPREFER, ImpPDFTabViewerPage::Create, 0 );
     AddTabPage( RID_PDF_TAB_OPNFTR, ImpPDFTabOpnFtrPage::Create, 0 );
 
@@ -239,9 +239,9 @@ ImpPDFTabDialog::ImpPDFTabDialog( Window* pParent,
 
 //change text on the Ok button: get the relevant string from resources, update it on the button
 //according to the exported pdf file destination: send as e-mail or write to file?
-    GetOKButton().SetText( ( sOkButtonText.getLength() > 0 ) ? 
+    GetOKButton().SetText( ( sOkButtonText.getLength() > 0 ) ?
                             sOkButtonText : OUString( String( ResId( STR_PDF_EXPORT, rResMgr ) ) ));
-    
+
 //remove the reset button, not needed in this tabbed dialog
     RemoveResetButton();
 /////////////////
@@ -306,12 +306,12 @@ Sequence< PropertyValue > ImpPDFTabDialog::GetFilterData()
 
     maConfigItem.WriteBool( OUString( RTL_CONSTASCII_USTRINGPARAM( "UseTaggedPDF" ) ), mbUseTaggedPDF );
     maConfigItem.WriteInt32( OUString( RTL_CONSTASCII_USTRINGPARAM( "SelectPdfVersion" ) ), mnPDFTypeSelection );
-    
+
     if ( mbIsPresentation )
         maConfigItem.WriteBool( OUString( RTL_CONSTASCII_USTRINGPARAM( "ExportNotesPages" ) ), mbExportNotesBoth );
     else
         maConfigItem.WriteBool( OUString( RTL_CONSTASCII_USTRINGPARAM( "ExportNotes" ) ), mbExportNotesBoth );
-    
+
     maConfigItem.WriteBool( OUString( RTL_CONSTASCII_USTRINGPARAM( "ExportBookmarks" ) ), mbExportBookmarks );
     maConfigItem.WriteBool( OUString( RTL_CONSTASCII_USTRINGPARAM( "UseTransitionEffects" ) ), mbUseTransitionEffects );
     maConfigItem.WriteBool( OUString( RTL_CONSTASCII_USTRINGPARAM( "IsSkipEmptyPages" ) ), mbIsSkipEmptyPages );
@@ -381,7 +381,7 @@ Sequence< PropertyValue > ImpPDFTabDialog::GetFilterData()
     aRet[ aRet.getLength() - nElementAdded ].Name = OUString( RTL_CONSTASCII_USTRINGPARAM( "RestrictPermissions" ) );
     aRet[ aRet.getLength() - nElementAdded ].Value <<= mbRestrictPermissions;
     nElementAdded--;
-        
+
 //add the permission password
     aRet[ aRet.getLength() - nElementAdded ].Name = OUString( RTL_CONSTASCII_USTRINGPARAM( "PermissionPassword" ) );
     aRet[ aRet.getLength() - nElementAdded ].Value <<= OUString( msOwnerPassword );
@@ -443,6 +443,19 @@ ImpPDFTabGeneralPage::ImpPDFTabGeneralPage( Window* pParent,
 {
     mpaResMgr = paResMgr;
     FreeResource();
+
+    // pb: #i91991# maCbExportEmptyPages double-spaced if necessary
+    Size aSize = maCbExportEmptyPages.GetSizePixel();
+    Size aMinSize = maCbExportEmptyPages.CalcMinimumSize();
+    if ( aSize.Width() > aMinSize.Width() )
+    {
+        Size aNewSize = maCbExportNotes.GetSizePixel();
+        long nDelta = aSize.Height() - aNewSize.Height();
+        maCbExportEmptyPages.SetSizePixel( aNewSize );
+        Point aNewPos = maCbAddStream.GetPosPixel();
+        aNewPos.Y() -= nDelta;
+        maCbAddStream.SetPosPixel( aNewPos );
+    }
 }
 
 // -----------------------------------------------------------------------------
@@ -455,7 +468,7 @@ ImpPDFTabGeneralPage::~ImpPDFTabGeneralPage()
 void ImpPDFTabGeneralPage::SetFilterConfigItem( const ImpPDFTabDialog* paParent )
 {
     mpaParent = paParent;
-    
+
 //init this class data
     maRbRange.SetToggleHdl( LINK( this, ImpPDFTabGeneralPage, TogglePagesHdl ) );
 
@@ -492,7 +505,7 @@ void ImpPDFTabGeneralPage::SetFilterConfigItem( const ImpPDFTabDialog* paParent 
     aStrRes.Append( String( RTL_CONSTASCII_USTRINGPARAM( " DPI" ) ) );
     maCoReduceImageResolution.SetText( aStrRes );
     maCoReduceImageResolution.Enable( bReduceImageResolution );
-    
+
     maCbPDFA1b.SetToggleHdl( LINK( this, ImpPDFTabGeneralPage, ToggleExportPDFAHdl) );
     switch( paParent->mnPDFTypeSelection )
     {
@@ -527,7 +540,7 @@ void ImpPDFTabGeneralPage::SetFilterConfigItem( const ImpPDFTabDialog* paParent 
     maCbExportBookmarks.Check( paParent->mbExportBookmarks );
 
     maCbExportEmptyPages.Check( !paParent->mbIsSkipEmptyPages );
-    
+
     Reference< XMultiServiceFactory > xFactory = paParent->getServiceFactory();
     Reference< XInterface > xIfc;
     if( xFactory.is() )
@@ -551,7 +564,7 @@ void ImpPDFTabGeneralPage::SetFilterConfigItem( const ImpPDFTabDialog* paParent 
 
 // -----------------------------------------------------------------------------
 void ImpPDFTabGeneralPage::GetFilterConfigItem( ImpPDFTabDialog* paParent )
-{    
+{
 // updating the FilterData sequence and storing FilterData to configuration
     paParent->mbUseLosslessCompression = maRbLosslessCompression.IsChecked();
     paParent->mnQuality = static_cast<sal_Int32>(maNfQuality.GetValue());
@@ -578,7 +591,7 @@ void ImpPDFTabGeneralPage::GetFilterConfigItem( ImpPDFTabDialog* paParent )
     if( maCbPDFA1b.IsChecked() )
     {
         paParent->mnPDFTypeSelection = 1;
-        paParent->mbUseTaggedPDF =  mbTaggedPDFUserSelection;  
+        paParent->mbUseTaggedPDF =  mbTaggedPDFUserSelection;
         paParent->mbExportFormFields = mbExportFormFieldsUserSelection;
     }
     else
@@ -686,10 +699,10 @@ IMPL_LINK( ImpPDFTabGeneralPage, ToggleExportPDFAHdl, void*, EMPTYARG )
         maCbExportFormFields.Enable();
     }
 // PDF/A-1 doesn't allow launch action, so enable/disable the selection on
-// Link page 
+// Link page
     if( mpaParent && mpaParent->GetTabPage( RID_PDF_TAB_LINKS ) )
         ( ( ImpPDFTabLinksPage* )mpaParent->GetTabPage( RID_PDF_TAB_LINKS ) )->ImplPDFALinkControl( !maCbPDFA1b.IsChecked() );
-        
+
     return 0;
 }
 
@@ -697,7 +710,7 @@ IMPL_LINK( ImpPDFTabGeneralPage, ToggleExportPDFAHdl, void*, EMPTYARG )
 // the option features tab page
 // -----------------------------------------------------------------------------
 ImpPDFTabOpnFtrPage::ImpPDFTabOpnFtrPage( Window* pParent,
-                                          const SfxItemSet& rCoreSet, 
+                                          const SfxItemSet& rCoreSet,
                                           ResMgr* paResMgr ) :
     SfxTabPage( pParent, ResId( RID_PDF_TAB_OPNFTR, *paResMgr ), rCoreSet ),
 
@@ -726,7 +739,7 @@ ImpPDFTabOpnFtrPage::ImpPDFTabOpnFtrPage( Window* pParent,
 {
     mpaResMgr = paResMgr;
     FreeResource();
-    
+
     maRbMagnDefault.SetToggleHdl( LINK( this, ImpPDFTabOpnFtrPage, ToggleRbMagnHdl ) );
     maRbMagnFitWin.SetToggleHdl( LINK( this, ImpPDFTabOpnFtrPage, ToggleRbMagnHdl ) );
     maRbMagnFitWidth.SetToggleHdl( LINK( this, ImpPDFTabOpnFtrPage, ToggleRbMagnHdl ) );
@@ -770,7 +783,7 @@ void ImpPDFTabOpnFtrPage::GetFilterConfigItem( ImpPDFTabDialog* paParent  )
         paParent->mnMagnification = 4;
         paParent->mnZoom = static_cast<sal_Int32>(maNumZoom.GetValue());
     }
-    
+
     paParent->mnInitialPage = static_cast<sal_Int32>(maNumInitialPage.GetValue());
 
     paParent->mnPageLayout = 0;
@@ -843,10 +856,10 @@ void ImpPDFTabOpnFtrPage::SetFilterConfigItem( const  ImpPDFTabDialog* paParent 
         maNumZoom.Enable( TRUE );
         break;
     };
-    
+
     maNumZoom.SetValue( paParent->mnZoom );
     maNumInitialPage.SetValue( paParent->mnInitialPage );
-    
+
     if( !mbUseCTLFont )
         maCbPgLyFirstOnLeft.Hide( );
     else
@@ -946,7 +959,7 @@ void ImpPDFTabViewerPage::SetFilterConfigItem( const  ImpPDFTabDialog* paParent 
     maCbHideViewerWindowControls.Check( paParent->mbHideViewerWindowControls );
 
     maCbResWinInit.Check( paParent->mbResizeWinToInit );
-    maCbOpenFullScreen.Check( paParent->mbOpenInFullScreenMode ); 
+    maCbOpenFullScreen.Check( paParent->mbOpenInFullScreenMode );
     maCbCenterWindow.Check( paParent->mbCenterWindow );
     maCbDispDocTitle.Check( paParent->mbDisplayPDFDocumentTitle );
     mbIsPresentation = paParent->mbIsPresentation;
@@ -1008,6 +1021,25 @@ ImpPDFTabSecurityPage::ImpPDFTabSecurityPage( Window* pParent,
     FreeResource();
     maCbPermissions.SetText( OUString( msRestrPermissions ) );
     maCbPermissions.SetStyle( maCbPermissions.GetStyle() | WB_CBLINESTYLE );
+
+    // pb: #i91991# maRbChangesComment double-spaced if necessary
+    Size aSize = maRbChangesComment.GetSizePixel();
+    Size aMinSize = maRbChangesComment.CalcMinimumSize();
+    if ( aSize.Width() > aMinSize.Width() )
+    {
+        Size aNewSize = maRbChangesFillForm.GetSizePixel();
+        long nDelta = aSize.Height() - aNewSize.Height();
+        maRbChangesComment.SetSizePixel( aNewSize );
+        Window* pWins[] =
+            { &maRbChangesAnyNoCopy, &maCbEnableCopy, &maCbEnableAccessibility, NULL };
+        Window** pCurrent = pWins;
+        while ( *pCurrent )
+        {
+            Point aNewPos = (*pCurrent)->GetPosPixel();
+            aNewPos.Y() -= nDelta;
+            (*pCurrent++)->SetPosPixel( aNewPos );
+        }
+    }
 }
 
 // -----------------------------------------------------------------------------
@@ -1067,10 +1099,10 @@ void ImpPDFTabSecurityPage::GetFilterConfigItem( ImpPDFTabDialog* paParent  )
 // -----------------------------------------------------------------------------
 void ImpPDFTabSecurityPage::SetFilterConfigItem( const  ImpPDFTabDialog* paParent )
 {
-    maPbUserPwd.SetText( OUString( msSetUserPwd ) ); 
+    maPbUserPwd.SetText( OUString( msSetUserPwd ) );
     maPbUserPwd.SetClickHdl( LINK( this, ImpPDFTabSecurityPage, ClickmaPbUserPwdHdl ) );
 
-    maPbOwnerPwd.SetText( OUString( msSetOwnerPwd ) ); 
+    maPbOwnerPwd.SetText( OUString( msSetOwnerPwd ) );
     maPbOwnerPwd.SetClickHdl( LINK( this, ImpPDFTabSecurityPage, ClickmaPbOwnerPwdHdl ) );
 
     switch( paParent->mnPrint )
@@ -1113,12 +1145,12 @@ void ImpPDFTabSecurityPage::SetFilterConfigItem( const  ImpPDFTabDialog* paParen
     maCbEncrypt.SetToggleHdl( LINK( this, ImpPDFTabSecurityPage, TogglemaCbEncryptHdl ) );
     maCbEncrypt.Check( sal_False );
     TogglemaCbEncryptHdl( NULL );
-    
+
     maCbPermissions.SetToggleHdl( LINK( this, ImpPDFTabSecurityPage, TogglemaCbPermissionsHdl ) );
     maCbPermissions.Check( sal_False );
     TogglemaCbPermissionsHdl( NULL );
 // set the status of this windows, according to the PDFA selection
-    
+
     if( paParent && paParent->GetTabPage( RID_PDF_TAB_GENER ) )
         ImplPDFASecurityControl(
             !( ( ImpPDFTabGeneralPage* )paParent->GetTabPage( RID_PDF_TAB_GENER ) )->IsPdfaSelected() );
@@ -1232,6 +1264,56 @@ ImpPDFTabLinksPage::ImpPDFTabLinksPage( Window* pParent,
 {
     mpaResMgr = &rResMgr;
     FreeResource();
+
+    // pb: #i91991# checkboxes only double-spaced if necessary
+    long nDelta = 0;
+    Size aSize = maCbExprtBmkrToNmDst.GetSizePixel();
+    Size aMinSize = maCbExprtBmkrToNmDst.CalcMinimumSize();
+    long nLineHeight =
+        maCbExprtBmkrToNmDst.LogicToPixel( Size( 10, 10 ), MAP_APPFONT ).Height();
+    if ( aSize.Width() > aMinSize.Width() )
+    {
+        Size aNewSize( aSize.Width(), nLineHeight );
+        nDelta += ( aSize.Height() - nLineHeight );
+        maCbExprtBmkrToNmDst.SetSizePixel( aNewSize );
+        Point aNewPos = maCbOOoToPDFTargets.GetPosPixel();
+        aNewPos.Y() -= nDelta;
+        maCbOOoToPDFTargets.SetPosPixel( aNewPos );
+    }
+
+    aSize = maCbOOoToPDFTargets.GetSizePixel();
+    aMinSize = maCbOOoToPDFTargets.CalcMinimumSize();
+    if ( aSize.Width() > aMinSize.Width() )
+    {
+        Size aNewSize( aSize.Width(), nLineHeight );
+        nDelta += ( aSize.Height() - nLineHeight );
+        maCbOOoToPDFTargets.SetSizePixel( aNewSize );
+        Point aNewPos = maCbExportRelativeFsysLinks.GetPosPixel();
+        aNewPos.Y() -= nDelta;
+        maCbExportRelativeFsysLinks.SetPosPixel( aNewPos );
+    }
+
+    aSize = maCbExportRelativeFsysLinks.GetSizePixel();
+    aMinSize = maCbExportRelativeFsysLinks.CalcMinimumSize();
+    if ( aSize.Width() > aMinSize.Width() )
+    {
+        Size aNewSize( aSize.Width(), nLineHeight );
+        nDelta += ( aSize.Height() - nLineHeight );
+        maCbExportRelativeFsysLinks.SetSizePixel( aNewSize );
+    }
+
+    if ( nDelta > 0 )
+    {
+        Window* pWins[] =
+            { &maFlDefaultTitle, &maRbOpnLnksDefault, &maRbOpnLnksLaunch, &maRbOpnLnksBrowser, NULL };
+        Window** pCurrent = pWins;
+        while ( *pCurrent )
+        {
+            Point aNewPos = (*pCurrent)->GetPosPixel();
+            aNewPos.Y() -= nDelta;
+            (*pCurrent++)->SetPosPixel( aNewPos );
+        }
+    }
 }
 
 // -----------------------------------------------------------------------------
@@ -1347,7 +1429,7 @@ IMPL_LINK( ImpPDFTabLinksPage, ClickRbOpnLnksDefaultHdl, void*, EMPTYARG )
 {
     mbOpnLnksDefaultUserState = maRbOpnLnksDefault.IsChecked();
     mbOpnLnksLaunchUserState = maRbOpnLnksLaunch.IsChecked();
-    mbOpnLnksBrowserUserState = maRbOpnLnksBrowser.IsChecked();   
+    mbOpnLnksBrowserUserState = maRbOpnLnksBrowser.IsChecked();
     return 0;
 }
 
@@ -1374,7 +1456,7 @@ ImplErrorDialog::ImplErrorDialog( const std::set< vcl::PDFWriter::ErrorCode >& r
     // load images
     Image aWarnImg( BitmapEx( ResId( IMG_WARN, rResMgr ) ) );
     Image aErrImg( BitmapEx( ResId( IMG_ERR, rResMgr ) ) );
-    
+
     for( std::set<vcl::PDFWriter::ErrorCode>::const_iterator it = rErrors.begin();
          it != rErrors.end(); ++it )
     {
@@ -1405,16 +1487,16 @@ ImplErrorDialog::ImplErrorDialog( const std::set< vcl::PDFWriter::ErrorCode >& r
             break;
         }
     }
-    
+
     FreeResource();
-    
+
     if( maErrors.GetEntryCount() > 0 )
     {
         maErrors.SelectEntryPos( 0 );
         String* pStr = reinterpret_cast<String*>(maErrors.GetEntryData( 0 ));
         maExplanation.SetText( pStr ? *pStr : String() );
     }
-    
+
     // adjust layout
     Image aWarnImage( WarningBox::GetStandardImage() );
     Size aImageSize( aWarnImage.GetSizePixel() );
@@ -1424,17 +1506,17 @@ ImplErrorDialog::ImplErrorDialog( const std::set< vcl::PDFWriter::ErrorCode >& r
     maFI.SetImage( aWarnImage );
     maFI.SetPosSizePixel( Point( 5, 5 ), aImageSize );
     maFI.Show();
-    
+
     maProcessText.SetStyle( maProcessText.GetStyle() | WB_VCENTER );
     maProcessText.SetPosSizePixel( Point( aImageSize.Width() + 10, 5 ),
                                    Size(  aDlgSize.Width() - aImageSize.Width() - 15, aImageSize.Height() ) );
-    
+
     Point aErrorLBPos( 5, aImageSize.Height() + 10 );
     Size aErrorLBSize( aDlgSize.Width()/2 - 10, aDlgSize.Height() - aErrorLBPos.Y() - 35 );
     maErrors.SetPosSizePixel( aErrorLBPos, aErrorLBSize );
     maErrors.SetSelectHdl( LINK( this, ImplErrorDialog, SelectHdl ) );
     maErrors.Show();
-    
+
     maExplanation.SetPosSizePixel( Point( aErrorLBPos.X() + aErrorLBSize.Width() + 5, aErrorLBPos.Y() ),
                                    Size( aDlgSize.Width() - aErrorLBPos.X() - aErrorLBSize.Width() - 10, aErrorLBSize.Height() ) );
     maExplanation.Show();
@@ -1453,7 +1535,7 @@ ImplErrorDialog::~ImplErrorDialog()
 
 IMPL_LINK( ImplErrorDialog, SelectHdl, ListBox*, EMPTYARG )
 {
-    String* pStr = reinterpret_cast<String*>(maErrors.GetEntryData( maErrors.GetSelectEntryPos() )); 
+    String* pStr = reinterpret_cast<String*>(maErrors.GetEntryData( maErrors.GetSelectEntryPos() ));
     maExplanation.SetText( pStr ? *pStr : String() );
     return 0;
 }
