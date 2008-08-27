@@ -1,13 +1,13 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
  *
  * $RCSfile: ooxmldocpropimport.cxx,v $
- * $Revision: 1.2 $
+ * $Revision: 1.3 $
  *
  * This file is part of OpenOffice.org.
  *
@@ -108,7 +108,7 @@ uno::Sequence< xml::sax::InputSource > OOXMLDocPropImportImpl::GetRelatedStreams
 
         aResult.realloc( nLength );
     }
-    
+
     return aResult;
 }
 
@@ -176,14 +176,14 @@ void SAL_CALL OOXMLDocPropImportImpl::importProperties(const uno::Reference< emb
                 m_xContext ),
             uno::UNO_QUERY_THROW );
 
-        uno::Reference< xml::sax::XFastTokenHandler > xTokenHandler( 
+        uno::Reference< xml::sax::XFastTokenHandler > xTokenHandler(
             xFactory->createInstanceWithContext(
                 ::rtl::OUString( RTL_CONSTASCII_USTRINGPARAM( "com.sun.star.comp.oox.FastTokenHandlerService" ) ),
                 m_xContext ),
             uno::UNO_QUERY_THROW );
 
         uno::Reference< xml::sax::XFastDocumentHandler > xDocHandler( static_cast< xml::sax::XFastDocumentHandler* >( new OOXMLDocPropHandler( m_xContext, xDocumentProperties ) ) );
- 
+
         xParser->setFastDocumentHandler( xDocHandler );
         xParser->setTokenHandler( xTokenHandler );
 
@@ -194,11 +194,17 @@ void SAL_CALL OOXMLDocPropImportImpl::importProperties(const uno::Reference< emb
         xParser->registerNamespace( ::rtl::OUString( RTL_CONSTASCII_USTRINGPARAM( "http://schemas.openxmlformats.org/officeDocument/2006/custom-properties" ) ), NMSP_CUSTPR );
         xParser->registerNamespace( ::rtl::OUString( RTL_CONSTASCII_USTRINGPARAM( "http://schemas.openxmlformats.org/officeDocument/2006/docPropsVTypes" ) ), NMSP_VT );
 
-        if ( aCoreStreams.getLength() )
+        // #158414# XFastParser::parseStream() throws on invalid XML
+        if ( aCoreStreams.getLength() ) try
         {
-            xParser->parseStream( aCoreStreams[0] );
             if ( aCoreStreams[0].aInputStream.is() )
+            {
+                xParser->parseStream( aCoreStreams[0] );
                 aCoreStreams[0].aInputStream->closeInput();
+            }
+        }
+        catch( uno::Exception& )
+        {
         }
 
         sal_Int32 nInd = 0;
