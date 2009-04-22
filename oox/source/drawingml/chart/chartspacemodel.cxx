@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -38,7 +38,7 @@ namespace chart {
 // ============================================================================
 
 ChartSpaceModel::ChartSpaceModel() :
-    mnDispBlanksAs( XML_zero ),
+    mnDispBlanksAs( XML_gap ),  // not zero as specified
     mnStyle( 2 ),
     mbAutoTitleDel( false ),
     mbPlotVisOnly( false ),

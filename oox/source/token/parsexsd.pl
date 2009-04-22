@@ -13,7 +13,7 @@ foreach( @files )
     {
         chomp($_);
         if( /element (\S*:)?(\S*)/ )
-        {		
+        {
             $tokens{$2} = 1;
             print(".");
         }
@@ -32,12 +32,12 @@ foreach( @files )
                 {
                     $tokens{$1} = 1;
                     print(".");
-                }				
+                }
             }
         }
     }
     close ( XSD );
-    
+
     print("\n" );
 }
 
