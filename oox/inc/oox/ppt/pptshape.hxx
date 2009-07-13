@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -53,7 +53,7 @@ public:
     void addShape(
             const oox::core::XmlFilterBase& rFilterBase,
             const SlidePersist& rPersist,
-            const oox::drawingml::ThemePtr& rxTheme,
+            const oox::drawingml::Theme* pTheme,
             const ::com::sun::star::uno::Reference< ::com::sun::star::drawing::XShapes >& rxShapes,
             const com::sun::star::awt::Rectangle* pShapeRect = 0,
             ::oox::drawingml::ShapeIdMap* pShapeMap = 0 );

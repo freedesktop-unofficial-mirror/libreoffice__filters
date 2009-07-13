@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -56,7 +56,7 @@ ShapeContextHandler::~ShapeContextHandler()
 {
 }
 
-uno::Reference<xml::sax::XFastContextHandler> 
+uno::Reference<xml::sax::XFastContextHandler>
 ShapeContextHandler::getGraphicShapeContext(::sal_Int32 Element )
 {
     if (! mxGraphicShapeContext.is())
@@ -64,7 +64,7 @@ ShapeContextHandler::getGraphicShapeContext(::sal_Int32 Element )
         FragmentHandlerRef rFragmentHandler
             (new ShapeFragmentHandler(*mxFilterBase, msRelationFragmentPath));
         ShapePtr pMasterShape;
-        
+
         switch (Element & 0xffff)
         {
             case XML_graphic:
@@ -85,7 +85,7 @@ ShapeContextHandler::getGraphicShapeContext(::sal_Int32 Element )
     return mxGraphicShapeContext;
 }
 
-uno::Reference<xml::sax::XFastContextHandler> 
+uno::Reference<xml::sax::XFastContextHandler>
 ShapeContextHandler::getDrawingShapeContext()
 {
     if (!mxDrawingFragmentHandler.is())
@@ -96,15 +96,15 @@ ShapeContextHandler::getDrawingShapeContext()
          (new oox::vml::DrawingFragmentHandler
           ( *mxFilterBase, msRelationFragmentPath, mpDrawing->getShapes(), mpDrawing->getShapeTypes() )));
     }
-    
+
     return mxDrawingFragmentHandler;
 }
-    
-uno::Reference<xml::sax::XFastContextHandler> 
+
+uno::Reference<xml::sax::XFastContextHandler>
 ShapeContextHandler::getContextHandler()
 {
     uno::Reference<xml::sax::XFastContextHandler> xResult;
-    
+
     switch (mnStartToken & NMSP_MASK)
     {
         case NMSP_VML:
@@ -231,7 +231,7 @@ ShapeContextHandler::getShape() throw (uno::RuntimeException)
         }
         else if (mpShape.get() != NULL)
         {
-            mpShape->addShape(*mxFilterBase, mpThemePtr, mxShapes);
+            mpShape->addShape(*mxFilterBase, mpThemePtr.get(), mxShapes);
             xResult.set(mpShape->getXShape());
         }
     }
@@ -304,8 +304,8 @@ void SAL_CALL ShapeContextHandler::setRelationFragmentPath
 void SAL_CALL ShapeContextHandler::setStartToken( ::sal_Int32 _starttoken ) throw (::com::sun::star::uno::RuntimeException)
 {
     mnStartToken = _starttoken;
-    
-    
+
+
 }
 
 ::rtl::OUString ShapeContextHandler::getImplementationName()
