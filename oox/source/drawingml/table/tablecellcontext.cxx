@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -115,7 +115,7 @@ TableCellContext::createFastChildContext( ::sal_Int32 aElementToken, const uno::
     break;
 
     default:
-        xRet.set( oox::drawingml::FillPropertiesGroupContext::StaticCreateContext( *this, aElementToken, xAttribs, mrTableCell.maFillProperties ) );
+        xRet.set( FillPropertiesContext::createFillContext( *this, aElementToken, xAttribs, mrTableCell.maFillProperties ) );
     break;
 
     }

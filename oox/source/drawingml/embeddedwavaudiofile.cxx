@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -50,7 +50,7 @@ namespace oox { namespace drawingml {
         AttributeList attribs(xAttribs);
 
         OUString sId = xAttribs->getOptionalValue( NMSP_RELATIONSHIPS|XML_embed );
-        aAudio.msLink = rRelations.getTargetFromRelId( sId );
+        aAudio.msEmbed = rRelations.getFragmentPathFromRelId( sId );
         aAudio.mbBuiltIn = attribs.getBool( XML_builtIn, false );
         aAudio.msName = xAttribs->getOptionalValue( XML_name );
     }
