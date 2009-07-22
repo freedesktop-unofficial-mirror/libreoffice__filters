@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -45,7 +45,7 @@
 #include <com/sun/star/xml/sax/XFastParser.hpp>
 #include <com/sun/star/xml/sax/XFastTokenHandler.hpp>
 #include <com/sun/star/frame/XModel.hpp>
-#include <com/sun/star/drawing/XShapes.hpp>
+#include <com/sun/star/drawing/XDrawPage.hpp>
 
 /**
    @file OOXMLDocument.hxx
@@ -87,10 +87,10 @@ namespace ooxml
 
 using namespace com::sun::star;
 
-class WRITERFILTER_DLLPUBLIC OOXMLStream 
+class WRITERFILTER_DLLPUBLIC OOXMLStream
 {
 public:
-    enum StreamType_t { UNKNOWN, DOCUMENT, STYLES, FONTTABLE, NUMBERING, 
+    enum StreamType_t { UNKNOWN, DOCUMENT, STYLES, FONTTABLE, NUMBERING,
         FOOTNOTES, ENDNOTES, COMMENTS, THEME, SETTINGS };
     typedef boost::shared_ptr<OOXMLStream> Pointer_t;
 
@@ -126,7 +126,7 @@ public:
 
     virtual const ::rtl::OUString & getTarget() const = 0;
 
-    virtual uno::Reference<xml::sax::XFastTokenHandler> 
+    virtual uno::Reference<xml::sax::XFastTokenHandler>
     getFastTokenHandler(uno::Reference<uno::XComponentContext> rContext) = 0;
 
 };
@@ -147,38 +147,38 @@ public:
        @param rStream     stream handler to resolve this document to
      */
     virtual void resolve(Stream & rStream) = 0;
-    
+
     /**
        Returns string representation of the type of this reference.
 
        DEBUGGING PURPOSE ONLY.
      */
     virtual string getType() const = 0;
-    
+
     /**
        Resolves a footnote to a stream handler.
 
-       A footnote is resolved if either the note type or 
+       A footnote is resolved if either the note type or
        note id matches.
 
        @param rStream       stream handler to resolve to
        @param rNoteType     type of footnote to resolve
        @param rNoteId       id of the footnote to resolve
      */
-    virtual void resolveFootnote(Stream & rStream, 
+    virtual void resolveFootnote(Stream & rStream,
                                  const Id & rNoteType,
                                  const rtl::OUString & rNoteId) = 0;
     /**
        Resolves an endnote to a stream handler.
 
-       An endnote is resolved if either the note type or 
+       An endnote is resolved if either the note type or
        note id matches.
 
        @param rStream       stream handler to resolve to
        @param rNoteType     type of footnote to resolve
        @param rNoteId       id of the endnote to resolve
      */
-    virtual void resolveEndnote(Stream & rStream, 
+    virtual void resolveEndnote(Stream & rStream,
                                 const Id & rNoteType,
                                 const rtl::OUString & rNoteId) = 0;
 
@@ -188,7 +188,7 @@ public:
        @param rStream       stream handler to resolve to
        @param rComment      id of the comment to resolve
      */
-    virtual void resolveComment(Stream & rStream, 
+    virtual void resolveComment(Stream & rStream,
                                 const rtl::OUString & rCommentId) = 0;
 
     /**
@@ -208,7 +208,7 @@ public:
                             NS_ooxml::LN_Value_ST_HrdFtr_even     header on even page
                             NS_ooxml::LN_Value_ST_HrdFtr_default  header on right page
                             NS_ooxml::LN_Value_ST_HrdFtr_first    header on first page
-       
+
        @param rId           id of the header
      */
     virtual void resolveHeader(Stream & rStream,
@@ -223,7 +223,7 @@ public:
                             NS_ooxml::LN_Value_ST_HrdFtr_even     header on even page
                             NS_ooxml::LN_Value_ST_HrdFtr_default  header on right page
                             NS_ooxml::LN_Value_ST_HrdFtr_first    header on first page
-                            
+
        @param rId           id of the header
     */
     virtual void resolveFooter(Stream & rStream,
@@ -242,8 +242,8 @@ public:
 
     virtual void setModel(uno::Reference<frame::XModel> xModel) = 0;
     virtual uno::Reference<frame::XModel> getModel() = 0;
-    virtual void setShapes(uno::Reference<drawing::XShapes> xShapes) = 0;
-    virtual uno::Reference<drawing::XShapes> getShapes() = 0;
+    virtual void setDrawPage(uno::Reference<drawing::XDrawPage> xDrawPage) = 0;
+    virtual uno::Reference<drawing::XDrawPage> getDrawPage() = 0;
     virtual uno::Reference<io::XInputStream> getInputStream() = 0;
     virtual uno::Reference<io::XInputStream> getStorageStream() = 0;
     virtual uno::Reference<io::XInputStream> getInputStreamForId
@@ -261,7 +261,7 @@ class WRITERFILTER_DLLPUBLIC OOXMLDocumentFactory
 public:
     static OOXMLStream::Pointer_t
     createStream(uno::Reference<uno::XComponentContext> rContext,
-                 uno::Reference<io::XInputStream> rStream, 
+                 uno::Reference<io::XInputStream> rStream,
                  OOXMLStream::StreamType_t nStreamType = OOXMLStream::DOCUMENT);
 
     static OOXMLStream::Pointer_t
@@ -271,7 +271,7 @@ public:
     static OOXMLStream::Pointer_t
     createStream(OOXMLStream::Pointer_t pStream, const rtl::OUString & rId);
 
-    static OOXMLDocument * 
+    static OOXMLDocument *
     createDocument(OOXMLStream::Pointer_t pStream);
 
 };

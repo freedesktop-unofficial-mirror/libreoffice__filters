@@ -1,13 +1,13 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
  *
- * $RCSfile: skipcontext.cxx,v $
- * $Revision: 1.4 $
+ * $RCSfile: vmldrawingfragment.hxx,v $
+ * $Revision: 1.5 $
  *
  * This file is part of OpenOffice.org.
  *
@@ -28,17 +28,42 @@
  *
  ************************************************************************/
 
-#include "oox/core/skipcontext.hxx"
+#ifndef OOX_VML_VMLDRAWINGFRAGMENT_HXX
+#define OOX_VML_VMLDRAWINGFRAGMENT_HXX
+
+#include "oox/core/fragmenthandler2.hxx"
 
 namespace oox {
-namespace core {
+namespace vml {
 
-SkipContext::SkipContext( ContextHandler& rParent )
-    : ContextHandler( rParent )
+class Drawing;
+
+// ============================================================================
+
+class DrawingFragment : public ::oox::core::FragmentHandler2
 {
-    OSL_TRACE( "OOX: Skipping Context" );
-}
+public:
+    explicit            DrawingFragment(
+                            ::oox::core::XmlFilterBase& rFilter,
+                            const ::rtl::OUString& rFragmentPath,
+                            Drawing& rDrawing );
 
-} // namespace core
+    virtual ::com::sun::star::uno::Reference< ::com::sun::star::io::XInputStream >
+                        openFragmentStream() const;
+
+    virtual ::oox::core::ContextHandlerRef
+                        onCreateContext( sal_Int32 nElement, const AttributeList& rAttribs );
+
+    virtual void        finalizeImport();
+
+private:
+    Drawing&            mrDrawing;
+};
+
+// ============================================================================
+
+} // namespace vml
 } // namespace oox
+
+#endif
 

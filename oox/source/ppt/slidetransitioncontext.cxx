@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -42,7 +42,6 @@
 #include "oox/drawingml/shapegroupcontext.hxx"
 #include "oox/helper/attributelist.hxx"
 #include "oox/core/namespaces.hxx"
-#include "oox/core/skipcontext.hxx"
 
 #include "tokens.hxx"
 
@@ -154,7 +153,7 @@ Reference< XFastContextHandler > SlideTransitionContext::createFastChildContext(
         {
             mbHasTransition = true;
             AttributeList attribs(xAttribs);
-            maTransition.setOoxTransitionType( aElementToken, attribs.getUnsignedInteger( XML_spokes, 4 ), 0 );
+            maTransition.setOoxTransitionType( aElementToken, attribs.getUnsigned( XML_spokes, 4 ), 0 );
             // unsignedInt
         }
         break;
@@ -179,8 +178,7 @@ Reference< XFastContextHandler > SlideTransitionContext::createFastChildContext(
         xRet.set( new SoundActionContext ( *this, maSlideProperties ) );
         break;
     case NMSP_PPT|XML_extLst: // CT_OfficeArtExtensionList
-        xRet.set( new SkipContext( *this ) );
-        break;
+        return xRet;
     default:
         break;
     }

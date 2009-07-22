@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -103,7 +103,7 @@ void WebQueryBuffer::importConnection( const AttributeList& rAttribs )
         return;
     }
 
-    sal_uInt32 nId = rAttribs.getUnsignedInteger( XML_id, 0 );
+    sal_uInt32 nId = rAttribs.getUnsigned( XML_id, 0 );
     if ( maConnections.size() < (nId + 1) )
         maConnections.resize(nId + 1);
 
