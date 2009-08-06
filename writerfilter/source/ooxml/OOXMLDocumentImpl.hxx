@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -51,36 +51,36 @@ class OOXMLDocumentImpl : public OOXMLDocument
     Id mXNoteType;
 
     uno::Reference<frame::XModel> mxModel;
-    uno::Reference<drawing::XShapes> mxShapes;
+    uno::Reference<drawing::XDrawPage> mxDrawPage;
 
 protected:
-    virtual void resolveFastSubStream(Stream & rStream, 
+    virtual void resolveFastSubStream(Stream & rStream,
                                       OOXMLStream::StreamType_t nType);
 
     virtual void resolveFastSubStreamWithId(Stream & rStream,
                                       writerfilter::Reference<Stream>::Pointer_t pStream,
                       sal_uInt32 nId);
 
-    writerfilter::Reference<Stream>::Pointer_t 
+    writerfilter::Reference<Stream>::Pointer_t
     getSubStream(const rtl::OUString & rId);
 
     writerfilter::Reference<Stream>::Pointer_t
-    getXNoteStream(OOXMLStream::StreamType_t nType, 
+    getXNoteStream(OOXMLStream::StreamType_t nType,
                    const Id & rType,
                    const rtl::OUString & rNoteId);
 
 public:
     OOXMLDocumentImpl(OOXMLStream::Pointer_t pStream);
     virtual ~OOXMLDocumentImpl();
-    
+
     virtual void resolve(Stream & rStream);
 
     virtual string getType() const;
 
-    virtual void resolveFootnote(Stream & rStream, 
+    virtual void resolveFootnote(Stream & rStream,
                                  const Id & rType,
                                  const rtl::OUString & rNoteId);
-    virtual void resolveEndnote(Stream & rStream, 
+    virtual void resolveEndnote(Stream & rStream,
                                 const Id & rType,
                                 const rtl::OUString & rNoteId);
     virtual void resolveHeader(Stream & rStream,
@@ -100,8 +100,8 @@ public:
 
     virtual void setModel(uno::Reference<frame::XModel> xModel);
     virtual uno::Reference<frame::XModel> getModel();
-    virtual void setShapes(uno::Reference<drawing::XShapes> xShapes);
-    virtual uno::Reference<drawing::XShapes> getShapes();
+    virtual void setDrawPage(uno::Reference<drawing::XDrawPage> xDrawPage);
+    virtual uno::Reference<drawing::XDrawPage> getDrawPage();
     virtual uno::Reference<io::XInputStream> getInputStream();
     virtual uno::Reference<io::XInputStream> getStorageStream();
     virtual uno::Reference<io::XInputStream> getInputStreamForId(const rtl::OUString & rId);

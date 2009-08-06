@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -33,7 +33,6 @@
 #include "oox/drawingml/table/tablestylecellstylecontext.hxx"
 #include "oox/drawingml/fillpropertiesgroupcontext.hxx"
 #include "oox/drawingml/linepropertiescontext.hxx"
-#include "oox/drawingml/stylematrixreferencecontext.hxx"
 #include "oox/core/namespaces.hxx"
 #include "oox/helper/attributelist.hxx"
 #include "tokens.hxx"
@@ -56,7 +55,7 @@ TableStyleCellStyleContext::~TableStyleCellStyleContext()
 {
 }
 
-// CT_TableStyleCellStyle 
+// CT_TableStyleCellStyle
 uno::Reference< xml::sax::XFastContextHandler > SAL_CALL
 TableStyleCellStyleContext::createFastChildContext( ::sal_Int32 aElementToken, const uno::Reference< xml::sax::XFastAttributeList >& xAttribs )
     throw ( xml::sax::SAXException, uno::RuntimeException)
@@ -95,7 +94,7 @@ TableStyleCellStyleContext::createFastChildContext( ::sal_Int32 aElementToken, c
                 {
                     ShapeStyleRef& rLineStyleRef = mrTableStylePart.getStyleRefs()[ mnLineType ];
                     rLineStyleRef.mnThemedIdx = aAttribs.getInteger( XML_idx, 0 );
-                    xRet.set( new StyleMatrixReferenceContext( *this, rLineStyleRef.maPhClr ) );
+                    xRet.set( new ColorContext( *this, rLineStyleRef.maPhClr ) );
                 }
             }
             break;
@@ -103,16 +102,16 @@ TableStyleCellStyleContext::createFastChildContext( ::sal_Int32 aElementToken, c
         // EG_ThemeableFillStyle (choice)
         case NMSP_DRAWINGML|XML_fill:		// CT_FillProperties
             {
-                oox::drawingml::FillPropertiesPtr& rFillProperties( mrTableStylePart.getFillProperties() );
-                rFillProperties.reset( new oox::drawingml::FillProperties );
-                xRet.set( new oox::drawingml::FillPropertiesContext( *this, *rFillProperties ) );
+                FillPropertiesPtr& rxFillProperties = mrTableStylePart.getFillProperties();
+                rxFillProperties.reset( new FillProperties );
+                xRet.set( new FillPropertiesContext( *this, *rxFillProperties ) );
             }
             break;
         case NMSP_DRAWINGML|XML_fillRef:	// CT_StyleMatrixReference
             {
                 ShapeStyleRef& rStyleRef = mrTableStylePart.getStyleRefs()[ XML_fillRef ];
                 rStyleRef.mnThemedIdx = aAttribs.getInteger( XML_idx, 0 );
-                xRet.set( new StyleMatrixReferenceContext( *this, rStyleRef.maPhClr ) );
+                xRet.set( new ColorContext( *this, rStyleRef.maPhClr ) );
             }
             break;
 

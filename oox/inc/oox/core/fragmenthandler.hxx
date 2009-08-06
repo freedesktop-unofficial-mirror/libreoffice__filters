@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -35,6 +35,10 @@
 #include <cppuhelper/implbase1.hxx>
 #include "oox/core/contexthandler.hxx"
 #include "oox/core/relations.hxx"
+
+namespace com { namespace sun { namespace star {
+    namespace io { class XInputStream; }
+} } }
 
 namespace oox {
 namespace core {
@@ -109,6 +113,13 @@ public:
     virtual void SAL_CALL characters( const ::rtl::OUString& aChars ) throw (::com::sun::star::xml::sax::SAXException, ::com::sun::star::uno::RuntimeException);
     virtual void SAL_CALL ignorableWhitespace( const ::rtl::OUString& aWhitespaces ) throw (::com::sun::star::xml::sax::SAXException, ::com::sun::star::uno::RuntimeException);
     virtual void SAL_CALL processingInstruction( const ::rtl::OUString& aTarget, const ::rtl::OUString& aData ) throw (::com::sun::star::xml::sax::SAXException, ::com::sun::star::uno::RuntimeException);
+
+    // XML stream handling ----------------------------------------------------
+
+    /** Opens the fragment stream referred by the own fragment path. Derived
+        classes may provide specilized stream implementations. */
+    virtual ::com::sun::star::uno::Reference< ::com::sun::star::io::XInputStream >
+                        openFragmentStream() const;
 
     // binary records ---------------------------------------------------------
 
