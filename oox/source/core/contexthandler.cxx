@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -74,9 +74,9 @@ const OUString& ContextHandler::getFragmentPath() const
     return mxBaseData->maFragmentPath;
 }
 
-OUString ContextHandler::getFragmentPathFromTarget( const OUString& rTarget ) const
+OUString ContextHandler::getFragmentPathFromRelation( const Relation& rRelation ) const
 {
-    return mxBaseData->mxRelations->getFragmentPathFromTarget( rTarget );
+    return mxBaseData->mxRelations->getFragmentPathFromRelation( rRelation );
 }
 
 OUString ContextHandler::getFragmentPathFromRelId( const OUString& rRelId ) const
@@ -84,9 +84,9 @@ OUString ContextHandler::getFragmentPathFromRelId( const OUString& rRelId ) cons
     return mxBaseData->mxRelations->getFragmentPathFromRelId( rRelId );
 }
 
-OUString ContextHandler::getFragmentPathFromType( const OUString& rType ) const
+OUString ContextHandler::getFragmentPathFromFirstType( const OUString& rType ) const
 {
-    return mxBaseData->mxRelations->getFragmentPathFromType( rType );
+    return mxBaseData->mxRelations->getFragmentPathFromFirstType( rType );
 }
 
 void ContextHandler::implSetLocator( const Reference< XLocator >& rxLocator )
