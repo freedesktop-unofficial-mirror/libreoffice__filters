@@ -133,7 +133,7 @@ public:
      */
     virtual string getType() const { return "??"; }
 
-    virtual ResourceEnum_t getResource() const { return UNKNOWN; }
+    virtual ResourceEnum_t getResource() const { return STREAM; }
 
     static XMLTag::Pointer_t toPropertiesTag(OOXMLPropertySet::Pointer_t);
     virtual XMLTag::Pointer_t toTag() const;
@@ -367,7 +367,7 @@ class OOXMLFastContextHandlerPropertyTable :
 public:
     OOXMLFastContextHandlerPropertyTable(OOXMLFastContextHandler * pContext);
     virtual ~OOXMLFastContextHandlerPropertyTable();
-    
+
 protected:
     OOXMLTableImpl mTable;
 
