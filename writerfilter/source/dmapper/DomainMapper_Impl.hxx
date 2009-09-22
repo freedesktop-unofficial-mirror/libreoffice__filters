@@ -516,6 +516,8 @@ public:
     void SetCurrentRedlineToken(sal_Int32 nSet) { n_CurrentRedlineToken = nSet;  }
 
     void ResetRedlineProperties();
+    
+    void ApplySettingsTable();
 
 };
 } //namespace dmapper
