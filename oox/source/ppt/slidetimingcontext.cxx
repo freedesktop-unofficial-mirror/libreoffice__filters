@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -38,7 +38,6 @@
 #include "oox/drawingml/shapegroupcontext.hxx"
 #include "oox/helper/attributelist.hxx"
 #include "oox/core/namespaces.hxx"
-#include "oox/core/skipcontext.hxx"
 #include "oox/ppt/timenodelistcontext.hxx"
 #include "buildlistcontext.hxx"
 #include "tokens.hxx"
@@ -80,8 +79,7 @@ Reference< XFastContextHandler > SlideTimingContext::createFastChildContext( sal
         xRet.set( new BuildListContext( *this, xAttribs, maTimeNodeList ) );
         break;
     case NMSP_PPT|XML_extLst:
-        xRet.set( new SkipContext( *this ) );
-        break;
+        return xRet;
     case NMSP_PPT|XML_tnLst:
         // timing nodes
     {

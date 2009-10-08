@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -68,7 +68,7 @@ void OOXMLDocumentImpl::resolveFastSubStream(Stream & rStreamHandler,
     if (xParser.is())
     {
         uno::Reference<uno::XComponentContext> xContext(mpStream->getContext());
-        OOXMLFastDocumentHandler * pDocHandler = 
+        OOXMLFastDocumentHandler * pDocHandler =
             new OOXMLFastDocumentHandler(xContext);
         pDocHandler->setStream(&rStreamHandler);
         pDocHandler->setDocument(this);
@@ -82,15 +82,15 @@ void OOXMLDocumentImpl::resolveFastSubStream(Stream & rStreamHandler,
         xParser->setFastDocumentHandler(xDocumentHandler);
         xParser->setTokenHandler(xTokenHandler);
 
-        uno::Reference<io::XInputStream> xInputStream = 
+        uno::Reference<io::XInputStream> xInputStream =
             pStream->getDocumentStream();
-            
+
         if (xInputStream.is())
-        {            
-            struct xml::sax::InputSource oInputSource; 
+        {
+            struct xml::sax::InputSource oInputSource;
             oInputSource.aInputStream = xInputStream;
             xParser->parseStream(oInputSource);
-            
+
             xInputStream->closeInput();
         }
     }
@@ -128,7 +128,7 @@ const ::rtl::OUString & OOXMLDocumentImpl::getTarget() const
     return mpStream->getTarget();
 }
 
-writerfilter::Reference<Stream>::Pointer_t 
+writerfilter::Reference<Stream>::Pointer_t
 OOXMLDocumentImpl::getSubStream(const rtl::OUString & rId)
 {
     OOXMLStream::Pointer_t pStream
@@ -137,12 +137,12 @@ OOXMLDocumentImpl::getSubStream(const rtl::OUString & rId)
     OOXMLDocumentImpl * pTemp;
     writerfilter::Reference<Stream>::Pointer_t pRet( pTemp = new OOXMLDocumentImpl(pStream) );
     pTemp->setModel(mxModel);
-    pTemp->setShapes(mxShapes);
+    pTemp->setDrawPage(mxDrawPage);
     return pRet;
 }
 
 writerfilter::Reference<Stream>::Pointer_t
-OOXMLDocumentImpl::getXNoteStream(OOXMLStream::StreamType_t nType, const Id & rType, 
+OOXMLDocumentImpl::getXNoteStream(OOXMLStream::StreamType_t nType, const Id & rType,
                                   const rtl::OUString & rId)
 {
 #ifdef DEBUG_ELEMENT
@@ -151,7 +151,7 @@ OOXMLDocumentImpl::getXNoteStream(OOXMLStream::StreamType_t nType, const Id & rT
     debug_logger->endElement("getXNoteStream");
 #endif
 
-    OOXMLStream::Pointer_t pStream = 
+    OOXMLStream::Pointer_t pStream =
         (OOXMLDocumentFactory::createStream(mpStream, nType));
     OOXMLDocumentImpl * pDocument = new OOXMLDocumentImpl(pStream);
     pDocument->setXNoteId(rId);
@@ -164,9 +164,9 @@ void OOXMLDocumentImpl::resolveFootnote(Stream & rStream,
                                         const Id & rType,
                                         const rtl::OUString & rNoteId)
 {
-    writerfilter::Reference<Stream>::Pointer_t pStream = 
+    writerfilter::Reference<Stream>::Pointer_t pStream =
         getXNoteStream(OOXMLStream::FOOTNOTES, rType, rNoteId);
-    
+
     Id nId;
     switch (rType)
     {
@@ -178,7 +178,7 @@ void OOXMLDocumentImpl::resolveFootnote(Stream & rStream,
         nId = NS_rtf::LN_footnote;
         break;
     }
-    
+
     resolveFastSubStreamWithId(rStream, pStream, nId);
 }
 
@@ -186,7 +186,7 @@ void OOXMLDocumentImpl::resolveEndnote(Stream & rStream,
                                        const Id & rType,
                                        const rtl::OUString & rNoteId)
 {
-    writerfilter::Reference<Stream>::Pointer_t pStream = 
+    writerfilter::Reference<Stream>::Pointer_t pStream =
         getXNoteStream(OOXMLStream::ENDNOTES, rType, rNoteId);
 
     Id nId;
@@ -200,16 +200,16 @@ void OOXMLDocumentImpl::resolveEndnote(Stream & rStream,
         nId = NS_rtf::LN_endnote;
         break;
     }
-    
+
     resolveFastSubStreamWithId(rStream, pStream, nId);
 }
 
-void OOXMLDocumentImpl::resolveComment(Stream & rStream, 
+void OOXMLDocumentImpl::resolveComment(Stream & rStream,
                                        const rtl::OUString & rId)
 {
-    writerfilter::Reference<Stream>::Pointer_t pStream = 
+    writerfilter::Reference<Stream>::Pointer_t pStream =
         getXNoteStream(OOXMLStream::COMMENTS, 0, rId);
-    
+
     resolveFastSubStreamWithId(rStream, pStream, NS_rtf::LN_annotation);
 }
 
@@ -225,7 +225,7 @@ OOXMLPropertySet * OOXMLDocumentImpl::getPicturePropSet
     OOXMLValue::Pointer_t pPayloadValue(new OOXMLBinaryValue(pPicture));
 
     OOXMLProperty::Pointer_t pPayloadProperty
-        (new OOXMLPropertyImpl(NS_rtf::LN_payload, pPayloadValue, 
+        (new OOXMLPropertyImpl(NS_rtf::LN_payload, pPayloadValue,
                                OOXMLPropertyImpl::ATTRIBUTE));
 
     OOXMLPropertySet::Pointer_t pBlipSet(new OOXMLPropertySetImpl());
@@ -235,7 +235,7 @@ OOXMLPropertySet * OOXMLDocumentImpl::getPicturePropSet
     OOXMLValue::Pointer_t pBlipValue(new OOXMLPropertySetValue(pBlipSet));
 
     OOXMLProperty::Pointer_t pBlipProperty
-        (new OOXMLPropertyImpl(NS_rtf::LN_blip, pBlipValue, 
+        (new OOXMLPropertyImpl(NS_rtf::LN_blip, pBlipValue,
                                OOXMLPropertyImpl::ATTRIBUTE));
 
     OOXMLPropertySet * pProps = new OOXMLPropertySetImpl();
@@ -245,7 +245,7 @@ OOXMLPropertySet * OOXMLDocumentImpl::getPicturePropSet
     return pProps;
 }
 
-void OOXMLDocumentImpl::resolvePicture(Stream & rStream, 
+void OOXMLDocumentImpl::resolvePicture(Stream & rStream,
                                        const rtl::OUString & rId)
 {
     OOXMLPropertySet * pProps = getPicturePropSet(rId);
@@ -286,7 +286,7 @@ void OOXMLDocumentImpl::resolveFooter(Stream & rStream,
 {
      writerfilter::Reference<Stream>::Pointer_t pStream =
          getSubStream(rId);
-     
+
      switch (type)
      {
      case NS_ooxml::LN_Value_ST_HrdFtr_even:
@@ -307,12 +307,12 @@ void OOXMLDocumentImpl::resolve(Stream & rStream)
 {
     uno::Reference< xml::sax::XFastParser > xParser
         (mpStream->getFastParser());
-    
+
     if (xParser.is())
     {
         uno::Reference<uno::XComponentContext> xContext(mpStream->getContext());
 
-        OOXMLFastDocumentHandler * pDocHandler = 
+        OOXMLFastDocumentHandler * pDocHandler =
             new OOXMLFastDocumentHandler(xContext);
         pDocHandler->setStream(&rStream);
         pDocHandler->setDocument(this);
@@ -321,16 +321,16 @@ void OOXMLDocumentImpl::resolve(Stream & rStream)
             (pDocHandler);
         uno::Reference < xml::sax::XFastTokenHandler > xTokenHandler
             (mpStream->getFastTokenHandler(xContext));
-        
+
         resolveFastSubStream(rStream, OOXMLStream::SETTINGS);
         resolveFastSubStream(rStream, OOXMLStream::THEME);
         resolveFastSubStream(rStream, OOXMLStream::NUMBERING);
         resolveFastSubStream(rStream, OOXMLStream::FONTTABLE);
         resolveFastSubStream(rStream, OOXMLStream::STYLES);
-        
+
         xParser->setFastDocumentHandler( xDocumentHandler );
         xParser->setTokenHandler( xTokenHandler );
-        
+
         xml::sax::InputSource aParserInput;
         aParserInput.aInputStream = mpStream->getDocumentStream();
         xParser->parseStream(aParserInput);
@@ -340,7 +340,7 @@ void OOXMLDocumentImpl::resolve(Stream & rStream)
 uno::Reference<io::XInputStream> OOXMLDocumentImpl::getInputStreamForId(const ::rtl::OUString & rId)
 {
     OOXMLStream::Pointer_t pStream(OOXMLDocumentFactory::createStream(mpStream, rId));
-    
+
     return pStream->getDocumentStream();
 }
 
@@ -359,14 +359,14 @@ uno::Reference<frame::XModel> OOXMLDocumentImpl::getModel()
     return mxModel;
 }
 
-void OOXMLDocumentImpl::setShapes(uno::Reference<drawing::XShapes> xShapes)
+void OOXMLDocumentImpl::setDrawPage(uno::Reference<drawing::XDrawPage> xDrawPage)
 {
-    mxShapes.set(xShapes);
+    mxDrawPage.set(xDrawPage);
 }
 
-uno::Reference<drawing::XShapes> OOXMLDocumentImpl::getShapes()
+uno::Reference<drawing::XDrawPage> OOXMLDocumentImpl::getDrawPage()
 {
-    return mxShapes;
+    return mxDrawPage;
 }
 
 uno::Reference<io::XInputStream> OOXMLDocumentImpl::getInputStream()
@@ -379,7 +379,7 @@ uno::Reference<io::XInputStream> OOXMLDocumentImpl::getStorageStream()
     return mpStream->getStorageStream();
 }
 
-OOXMLDocument * 
+OOXMLDocument *
 OOXMLDocumentFactory::createDocument
 (OOXMLStream::Pointer_t pStream)
 {

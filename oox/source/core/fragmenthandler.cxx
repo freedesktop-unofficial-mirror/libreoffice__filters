@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -34,6 +34,7 @@
 using ::rtl::OUString;
 using ::com::sun::star::uno::Reference;
 using ::com::sun::star::uno::RuntimeException;
+using ::com::sun::star::io::XInputStream;
 using ::com::sun::star::xml::sax::SAXException;
 using ::com::sun::star::xml::sax::XFastAttributeList;
 using ::com::sun::star::xml::sax::XFastContextHandler;
@@ -120,6 +121,13 @@ void FragmentHandler::ignorableWhitespace( const OUString& ) throw( SAXException
 
 void FragmentHandler::processingInstruction( const OUString&, const OUString& ) throw( SAXException, RuntimeException )
 {
+}
+
+// XML stream handling --------------------------------------------------------
+
+Reference< XInputStream > FragmentHandler::openFragmentStream() const
+{
+    return getFilter().openInputStream( getFragmentPath() );
 }
 
 // binary records -------------------------------------------------------------
