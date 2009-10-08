@@ -1,13 +1,13 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
  *
  * $RCSfile: formulaparser.hxx,v $
- * $Revision: 1.3 $
+ * $Revision: 1.3.22.1 $
  *
  * This file is part of OpenOffice.org.
  *
@@ -79,6 +79,12 @@ public:
     void                convertNameToFormula(
                             FormulaContext& rContext,
                             sal_Int32 nTokenIndex ) const;
+
+    /** Converts the passed number into a HYPERLINK formula with the passed URL. */
+    void                convertNumberToHyperlink(
+                            FormulaContext& rContext,
+                            const ::rtl::OUString& rUrl,
+                            double fValue ) const;
 
 private:
     ::std::auto_ptr< FormulaParserImpl > mxImpl;

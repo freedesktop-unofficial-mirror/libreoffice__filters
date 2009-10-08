@@ -1,13 +1,13 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
  *
  * $RCSfile: pagesettings.cxx,v $
- * $Revision: 1.5 $
+ * $Revision: 1.5.4.1 $
  *
  * This file is part of OpenOffice.org.
  *
@@ -376,7 +376,7 @@ void PageSettings::importPrintGridLines( BiffInputStream& rStrm )
 
 void PageSettings::importHeader( BiffInputStream& rStrm )
 {
-    if( rStrm.getRecLeft() > 0 )
+    if( rStrm.getRemaining() > 0 )
         maOoxData.maOddHeader = (getBiff() == BIFF8) ? rStrm.readUniString() : rStrm.readByteString( false, getTextEncoding() );
     else
         maOoxData.maOddHeader = OUString();
@@ -384,7 +384,7 @@ void PageSettings::importHeader( BiffInputStream& rStrm )
 
 void PageSettings::importFooter( BiffInputStream& rStrm )
 {
-    if( rStrm.getRecLeft() > 0 )
+    if( rStrm.getRemaining() > 0 )
         maOoxData.maOddFooter = (getBiff() == BIFF8) ? rStrm.readUniString() : rStrm.readByteString( false, getTextEncoding() );
     else
         maOoxData.maOddFooter = OUString();
