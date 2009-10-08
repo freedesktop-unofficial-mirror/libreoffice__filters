@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -32,7 +32,6 @@
 
 #include "oox/drawingml/table/tablestyletextstylecontext.hxx"
 #include "oox/drawingml/colorchoicecontext.hxx"
-#include "oox/drawingml/stylematrixreferencecontext.hxx"
 #include "oox/core/namespaces.hxx"
 #include "oox/helper/attributelist.hxx"
 #include "tokens.hxx"
@@ -92,12 +91,12 @@ TableStyleTextStyleContext::createFastChildContext( ::sal_Int32 aElementToken, c
         case NMSP_DRAWINGML|XML_latin:			// CT_TextFont
             mrTableStylePart.getLatinFont().setAttributes( aAttribs );
             return 0;
-        
+
         case NMSP_DRAWINGML|XML_fontRef:	// CT_FontReference
             {
                 ShapeStyleRef& rFontStyle = mrTableStylePart.getStyleRefs()[ XML_fontRef ];
                 rFontStyle.mnThemedIdx = aAttribs.getToken( XML_idx, XML_none );
-                xRet.set( new StyleMatrixReferenceContext( *this, rFontStyle.maPhClr ) );
+                xRet.set( new ColorContext( *this, rFontStyle.maPhClr ) );
             }
             break;
 
@@ -105,7 +104,7 @@ TableStyleTextStyleContext::createFastChildContext( ::sal_Int32 aElementToken, c
             break;
     }
     if( !xRet.is() )
-        xRet.set( new colorChoiceContext( *this, mrTableStylePart.getTextColor() ) );
+        xRet.set( new ColorValueContext( *this, mrTableStylePart.getTextColor() ) );
 
     return xRet;
 }
