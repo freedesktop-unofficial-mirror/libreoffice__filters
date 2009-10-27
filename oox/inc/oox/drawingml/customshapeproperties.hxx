@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -72,7 +72,7 @@ public:
     virtual ~CustomShapeProperties();
 
     void apply( const CustomShapePropertiesPtr& );
-    void pushToPropSet( const ::oox::core::XmlFilterBase& rFilterBase,
+    void pushToPropSet( const ::oox::core::FilterBase& rFilterBase,
             const ::com::sun::star::uno::Reference < ::com::sun::star::beans::XPropertySet > & xPropSet,
                         const ::com::sun::star::uno::Reference < ::com::sun::star::drawing::XShape > & xShape) const;
 
