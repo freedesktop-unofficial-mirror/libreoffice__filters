@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -34,25 +34,6 @@
 namespace oox {
 namespace drawingml {
 namespace chart {
-
-// ============================================================================
-
-LayoutModel::LayoutModel() :
-    mfX( 0.0 ),
-    mfY( 0.0 ),
-    mfW( 0.0 ),
-    mfH( 0.0 ),
-    mnXMode( XML_factor ),
-    mnYMode( XML_factor ),
-    mnWMode( XML_factor ),
-    mnHMode( XML_factor ),
-    mnTarget( XML_outer )
-{
-}
-
-LayoutModel::~LayoutModel()
-{
-}
 
 // ============================================================================
 
