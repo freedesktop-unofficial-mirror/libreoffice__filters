@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -34,7 +34,6 @@
 #include <com/sun/star/drawing/XDrawPage.hpp>
 #include "oox/helper/propertymap.hxx"
 #include "oox/core/fragmenthandler.hxx"
-#include "oox/vml/drawingfragmenthandler.hxx"
 #include "oox/ppt/slidepersist.hxx"
 
 #include <stack>

@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -46,7 +46,7 @@ namespace oox { namespace drawingml {
             }
         bool mbBuiltIn;
         ::rtl::OUString msName;
-        ::rtl::OUString msLink;
+        ::rtl::OUString msEmbed;
     };
 
     void getEmbeddedWAVAudioFile(

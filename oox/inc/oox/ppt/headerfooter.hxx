@@ -6,8 +6,8 @@
  *
  * OpenOffice.org - a multi-platform office productivity suite
  *
- * $RCSfile: skipcontext.hxx,v $
- * $Revision: 1.4 $
+ * $RCSfile:$
+ * $Revision:$
  *
  * This file is part of OpenOffice.org.
  *
@@ -28,24 +28,26 @@
  *
  ************************************************************************/
 
-#ifndef OOX_CORE_SKIPCONTEXT_HXX
-#define OOX_CORE_SKIPCONTEXT_HXX
+#ifndef OOX_PPT_HEADERFOOTER
+#define OOX_PPT_HEADERFOOTER
 
-#include "oox/core/contexthandler.hxx"
+#include <sal/types.h>
 
-namespace oox { namespace core {
+namespace oox { namespace ppt {
 
-/** define a context whose purpose is to ignore what is inside.
- * It is basically a NO-OP
- */
-class SkipContext : public ContextHandler
-{
-public:
-    SkipContext( ContextHandler& rParent );
+    struct HeaderFooter
+    {
+        sal_Bool mbSlideNumber;
+        sal_Bool mbHeader;
+        sal_Bool mbFooter;
+        sal_Bool mbDateTime;
 
-};
-
-
+        HeaderFooter()
+        : mbSlideNumber( sal_True )
+        , mbHeader( sal_True )
+        , mbFooter( sal_True )
+        , mbDateTime( sal_True ) {};
+    };
 
 } }
 

@@ -6,9 +6,8 @@
  *
  * OpenOffice.org - a multi-platform office productivity suite
  *
- * $RCSfile: stylematrixreferencecontext.cxx,v $
- *
- * $Revision: 1.3 $
+ * $RCSfile:$
+ * $Revision:$
  *
  * This file is part of OpenOffice.org.
  *
@@ -29,27 +28,42 @@
  *
  ************************************************************************/
 
-#include "oox/drawingml/stylematrixreferencecontext.hxx"
-#include "oox/drawingml/colorchoicecontext.hxx"
+#include "headerfootercontext.hxx"
 #include "oox/core/namespaces.hxx"
+#include "oox/helper/attributelist.hxx"
 #include "tokens.hxx"
 
-using ::rtl::OUString;
 using namespace ::oox::core;
 using namespace ::com::sun::star::uno;
 using namespace ::com::sun::star::xml::sax;
 
-namespace oox { namespace drawingml {
+namespace oox { namespace ppt {
 
-StyleMatrixReferenceContext::StyleMatrixReferenceContext( ContextHandler& rParent, Color& rColor )
-: ContextHandler( rParent )
-, mrColor( rColor )
-{
-}
+    HeaderFooterContext::HeaderFooterContext( ContextHandler& rParent,
+        const Reference< XFastAttributeList >& xAttribs, HeaderFooter& rHeaderFooter )
+        : ContextHandler( rParent )
+    {
+        AttributeList aAttribs( xAttribs );
+        if ( xAttribs->hasAttribute( XML_sldNum ) )
+        {
+            rHeaderFooter.mbSlideNumber = aAttribs.getBool( XML_sldNum, sal_True );
+        }
+        if ( xAttribs->hasAttribute( XML_hdr ) )
+        {
+            rHeaderFooter.mbHeader = aAttribs.getBool( XML_hdr, sal_True );
+        }
+        if ( xAttribs->hasAttribute( XML_ftr ) )
+        {
+            rHeaderFooter.mbFooter = aAttribs.getBool( XML_ftr, sal_True );
+        }
+        if ( xAttribs->hasAttribute( XML_dt ) )
+        {
+            rHeaderFooter.mbDateTime = aAttribs.getBool( XML_dt, sal_True );
+        }
+    }
 
-Reference< XFastContextHandler > StyleMatrixReferenceContext::createFastChildContext( sal_Int32 /* aElementToken */, const Reference< XFastAttributeList >& /* rxAttributes */ ) throw (SAXException, RuntimeException)
-{
-    return new colorChoiceContext( *this, mrColor );
-}
+    HeaderFooterContext::~HeaderFooterContext( )
+    {
+    }
 
 } }
