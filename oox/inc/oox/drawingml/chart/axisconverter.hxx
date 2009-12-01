@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -69,6 +69,7 @@ public:
     void                convertFromModel(
                             const ::com::sun::star::uno::Reference< ::com::sun::star::chart2::XCoordinateSystem >& rxCoordSystem,
                             TypeGroupConverter& rTypeGroup,
+                            const AxisModel* pCrossingAxis,
                             sal_Int32 nAxesSetIdx,
                             sal_Int32 nAxisIdx );
 };

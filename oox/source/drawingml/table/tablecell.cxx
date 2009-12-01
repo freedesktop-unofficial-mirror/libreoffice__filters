@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -33,6 +33,7 @@
 #include "oox/drawingml/textbody.hxx"
 #include "oox/core/namespaces.hxx"
 #include "oox/core/xmlfilterbase.hxx"
+#include "properties.hxx"
 #include "tokens.hxx"
 #include "oox/helper/propertyset.hxx"
 #include <com/sun/star/container/XNameContainer.hpp>
@@ -75,8 +76,8 @@ TableCell::~TableCell()
 }
 
 void applyLineAttributes( const ::oox::core::XmlFilterBase& rFilterBase,
-    Reference< XPropertySet >& rxPropSet, oox::drawingml::LineProperties& rLineProperties,
-        const rtl::OUString& sPropertyName )
+        Reference< XPropertySet >& rxPropSet, oox::drawingml::LineProperties& rLineProperties,
+        sal_Int32 nPropId )
 {
     BorderLine aBorderLine( 0, 0, 0, 0 );
     if( rLineProperties.maLineFill.moFillType.differsFrom( XML_noFill ) )
@@ -89,7 +90,7 @@ void applyLineAttributes( const ::oox::core::XmlFilterBase& rFilterBase,
     }
 
     PropertySet aPropSet( rxPropSet );
-    aPropSet.setProperty( sPropertyName, aBorderLine );
+    aPropSet.setProperty( nPropId, aBorderLine );
 }
 
 void applyBorder( TableStylePart& rTableStylePart, sal_Int32 nLineType, oox::drawingml::LineProperties& rLineProperties )
@@ -144,7 +145,7 @@ void applyTableCellProperties( const Reference < ::com::sun::star::table::XCell 
     xPropSet->setPropertyValue( sRightBorder, Any( static_cast< sal_Int32 >( rTableCell.getRightMargin() / 360 ) ) );
     xPropSet->setPropertyValue( sLeftBorder, Any( static_cast< sal_Int32 >( rTableCell.getLeftMargin() / 360 ) ) );
     xPropSet->setPropertyValue( sBottomBorder, Any( static_cast< sal_Int32 >( rTableCell.getBottomMargin() / 360 ) ) );
-    
+
     drawing::TextVerticalAdjust eVA;
     switch( rTableCell.getAnchorToken() )
     {
@@ -173,12 +174,6 @@ void TableCell::pushToXCell( const ::oox::core::XmlFilterBase& rFilterBase, ::oo
     getTextBody()->insertAt( rFilterBase, xText, xAt, aTextStyleProps, pMasterTextListStyle );
 
     Reference< XPropertySet > xPropSet( rxCell, UNO_QUERY_THROW );
-    static const rtl::OUString sLeftBorder( RTL_CONSTASCII_USTRINGPARAM( "LeftBorder" ) );
-    static const rtl::OUString sRightBorder( RTL_CONSTASCII_USTRINGPARAM( "RightBorder" ) );	
-    static const rtl::OUString sTopBorder( RTL_CONSTASCII_USTRINGPARAM( "TopBorder" ) );
-    static const rtl::OUString sBottomBorder( RTL_CONSTASCII_USTRINGPARAM( "BottomBorder" ) );
-    static const rtl::OUString sDiagonalTLBR( RTL_CONSTASCII_USTRINGPARAM ( "DiagonalTLBR" ) );
-    static const rtl::OUString sDiagonalBLTR( RTL_CONSTASCII_USTRINGPARAM ( "DiagonalBLTR" ) );
     oox::drawingml::FillProperties aFillProperties;
     oox::drawingml::LineProperties aLinePropertiesLeft;
     oox::drawingml::LineProperties aLinePropertiesRight;
@@ -186,7 +181,7 @@ void TableCell::pushToXCell( const ::oox::core::XmlFilterBase& rFilterBase, ::oo
     oox::drawingml::LineProperties aLinePropertiesBottom;
     oox::drawingml::LineProperties aLinePropertiesTopLeftToBottomRight;
     oox::drawingml::LineProperties aLinePropertiesBottomLeftToTopRight;
-    
+
     boost::shared_ptr< ::oox::drawingml::FillProperties >& rBackgroundFillPropertiesPtr( rTable.getBackgroundFillProperties() );
     if ( rBackgroundFillPropertiesPtr.get() )
         aFillProperties.assignUsed( *rBackgroundFillPropertiesPtr );
@@ -246,7 +241,7 @@ void TableCell::pushToXCell( const ::oox::core::XmlFilterBase& rFilterBase, ::oo
     }
     if ( rProperties.isBandRow() )
     {
-        if ( ( !rProperties.isFirstRow() || ( nRow != 0 ) ) && 
+        if ( ( !rProperties.isFirstRow() || ( nRow != 0 ) ) &&
             ( !rProperties.isLastRow() || ( nRow != nMaxRow ) ) )
         {
             sal_Int32 nBand = nRow;
@@ -322,7 +317,7 @@ void TableCell::pushToXCell( const ::oox::core::XmlFilterBase& rFilterBase, ::oo
     }
     if ( rProperties.isBandCol() )
     {
-        if ( ( !rProperties.isFirstCol() || ( nColumn != 0 ) ) && 
+        if ( ( !rProperties.isFirstCol() || ( nColumn != 0 ) ) &&
             ( !rProperties.isLastCol() || ( nColumn != nMaxColumn ) ) )
         {
             sal_Int32 nBand = nColumn;
@@ -353,22 +348,22 @@ void TableCell::pushToXCell( const ::oox::core::XmlFilterBase& rFilterBase, ::oo
         }
     }
     aLinePropertiesLeft.assignUsed( maLinePropertiesLeft );
-    aLinePropertiesLeft.assignUsed( maLinePropertiesRight );
-    aLinePropertiesLeft.assignUsed( maLinePropertiesTop );
-    aLinePropertiesLeft.assignUsed( maLinePropertiesBottom );
-    aLinePropertiesLeft.assignUsed( maLinePropertiesTopLeftToBottomRight );
-    aLinePropertiesLeft.assignUsed( maLinePropertiesBottomLeftToTopRight );
-    applyLineAttributes( rFilterBase, xPropSet, aLinePropertiesLeft, sLeftBorder );
-    applyLineAttributes( rFilterBase, xPropSet, aLinePropertiesRight, sRightBorder );
-    applyLineAttributes( rFilterBase, xPropSet, aLinePropertiesTop, sTopBorder );
-    applyLineAttributes( rFilterBase, xPropSet, aLinePropertiesBottom, sBottomBorder );
-    applyLineAttributes( rFilterBase, xPropSet, aLinePropertiesTopLeftToBottomRight, sDiagonalTLBR );
-    applyLineAttributes( rFilterBase, xPropSet, aLinePropertiesBottomLeftToTopRight, sDiagonalBLTR );
+    aLinePropertiesRight.assignUsed( maLinePropertiesRight );
+    aLinePropertiesTop.assignUsed( maLinePropertiesTop );
+    aLinePropertiesBottom.assignUsed( maLinePropertiesBottom );
+    aLinePropertiesTopLeftToBottomRight.assignUsed( maLinePropertiesTopLeftToBottomRight );
+    aLinePropertiesBottomLeftToTopRight.assignUsed( maLinePropertiesBottomLeftToTopRight );
+    applyLineAttributes( rFilterBase, xPropSet, aLinePropertiesLeft, PROP_LeftBorder );
+    applyLineAttributes( rFilterBase, xPropSet, aLinePropertiesRight, PROP_RightBorder );
+    applyLineAttributes( rFilterBase, xPropSet, aLinePropertiesTop, PROP_TopBorder );
+    applyLineAttributes( rFilterBase, xPropSet, aLinePropertiesBottom, PROP_BottomBorder );
+    applyLineAttributes( rFilterBase, xPropSet, aLinePropertiesTopLeftToBottomRight, PROP_DiagonalTLBR );
+    applyLineAttributes( rFilterBase, xPropSet, aLinePropertiesBottomLeftToTopRight, PROP_DiagonalBLTR );
 
     aFillProperties.assignUsed( maFillProperties );
     PropertySet aPropSet( xPropSet );
     // TODO: phClr?
-    aFillProperties.pushToPropSet( aPropSet, FillProperties::DEFAULTNAMES, 
+    aFillProperties.pushToPropSet( aPropSet, FillProperties::DEFAULT_IDS,
         rFilterBase, rFilterBase.getModelObjectContainer(), 0, -1 );
 }
 
