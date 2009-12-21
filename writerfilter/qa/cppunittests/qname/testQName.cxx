@@ -1,6 +1,6 @@
 /*  Copyright 2005 Sun Microsystems, Inc. */
 
-#include <cppunit/simpleheader.hxx>
+#include <testshl/simpleheader.hxx>
 #include <odiapi/qname/QName.hxx>
 #include <stdio.h>
 #include <rtl/string.hxx>
@@ -26,7 +26,7 @@ public:
     }
 
     void test()
-    { 
+    {
         rtlRandomPool rndPool=rtl_random_createPool();
         int numOfIterations=100000; //int numOfIterations=5000000;
         for(int i=0;i<numOfIterations;i++)
@@ -43,7 +43,7 @@ public:
     }
 
     void testperf()
-    { 
+    {
         rtlRandomPool rndPool=rtl_random_createPool();
         int numOfIterations=5000000;
         TimeValue t1; osl_getSystemTime(&t1);
@@ -63,7 +63,7 @@ public:
 
 
     void testinsert()
-    { 
+    {
         testAdd("myns", "myname");
     }
 
