@@ -1,6 +1,6 @@
 /*  Copyright 2005 Sun Microsystems, Inc. */
 
-#include <cppunit/simpleheader.hxx>
+#include <testshl/simpleheader.hxx>
 #include <odiapi/core/Node.hxx>
 #include <odiapi/props/Properties.hxx>
 
@@ -17,7 +17,7 @@ public:
         PropertyPool::Pointer_t pool = createPropertyPool();
         PropertyBag_Pointer_t pb = createPropertyBag();
 
-        pb->insert(createIntegerProperty(NS_fo::LN_font_weight, 12));	
+        pb->insert(createIntegerProperty(NS_fo::LN_font_weight, 12));
         PropertyPoolHandle_Pointer_t ph = pool->insert(pb);
 
         Node::Pointer_t node = createNode(NS_style::LN_char, ph, "NS_style::LN_char");
@@ -26,18 +26,18 @@ public:
         CPPUNIT_ASSERT_MESSAGE("Create node failed wrong text", node->getText() == "NS_style::LN_char");
         CPPUNIT_ASSERT_MESSAGE("Create node failed wrong pool handle", node->getProperties() == ph);
     }
-  
+
     void testInsertSibling()
     {
         PropertyPool::Pointer_t pool = createPropertyPool();
         PropertyBag_Pointer_t pb = createPropertyBag();
 
-        pb->insert(createIntegerProperty(NS_fo::LN_font_weight, 12));	
+        pb->insert(createIntegerProperty(NS_fo::LN_font_weight, 12));
         PropertyPoolHandle_Pointer_t ph = pool->insert(pb);
 
         Node::Pointer_t node1 = createNode(NS_style::LN_char, ph, "Text");
         Node::Pointer_t node2 = createNode(NS_style::LN_char, ph, "\\par");
-    
+
         node1->insertSibling(node2);
 
         string postfixSeq = node1->getText();
@@ -47,20 +47,20 @@ public:
             n = &n->getNext();
             postfixSeq = postfixSeq + n->getText();
         }
-    
+
         CPPUNIT_ASSERT_MESSAGE("Insert sibling failed", postfixSeq == "Text\\par");
 
         Node::Pointer_t node3 = createNode(NS_style::LN_char, ph, "\\span");
 
         node1->insertSibling(node3);
-    
+
         postfixSeq = node1->getText();
         n = node1.get();
         while (n->hasNext())
         {
             n = &n->getNext();
             postfixSeq = postfixSeq + n->getText();
-        }    
+        }
 
         CPPUNIT_ASSERT_MESSAGE("Insert sibling failed", postfixSeq == "Text\\span\\par");
     }
@@ -70,7 +70,7 @@ public:
         PropertyPool::Pointer_t pool = createPropertyPool();
         PropertyBag_Pointer_t pb = createPropertyBag();
 
-        pb->insert(createIntegerProperty(NS_fo::LN_font_weight, 12));	
+        pb->insert(createIntegerProperty(NS_fo::LN_font_weight, 12));
         PropertyPoolHandle_Pointer_t ph = pool->insert(pb);
 
         Node::Pointer_t node1 = createNode(NS_style::LN_char, ph, "Text");
@@ -81,7 +81,7 @@ public:
         node2->appendChildren(node1);
 
         CPPUNIT_ASSERT_MESSAGE("Append children failed", &node2->getFirstChild() == pn1);
-      
+
         const Node* n = &node2->getFirstChild();
         string postfixSeq = n->getText() + n->getNext().getText();
 
@@ -93,41 +93,41 @@ public:
         PropertyPool::Pointer_t pool = createPropertyPool();
         PropertyBag_Pointer_t pb = createPropertyBag();
 
-        pb->insert(createIntegerProperty(NS_fo::LN_font_weight, 12));	
+        pb->insert(createIntegerProperty(NS_fo::LN_font_weight, 12));
         PropertyPoolHandle_Pointer_t ph = pool->insert(pb);
 
         Node::Pointer_t node1 = createNode(NS_style::LN_char, ph, "A");
-        Node::Pointer_t node2 = createNode(NS_style::LN_char, ph, "\\span");        
+        Node::Pointer_t node2 = createNode(NS_style::LN_char, ph, "\\span");
 
         node2->appendChildren(node1);
 
         Node::Pointer_t node3 = createNode(NS_style::LN_char, ph, "B");
-        Node::Pointer_t node4 = createNode(NS_style::LN_char, ph, "\\span");        
+        Node::Pointer_t node4 = createNode(NS_style::LN_char, ph, "\\span");
 
         node4->appendChildren(node3);
-        
+
         node2->insertSibling(node4);
 
         Node::Pointer_t node5 = createNode(NS_style::LN_char, ph, "\\par");
-        
+
         node5->appendChildren(node2);
 
         Node::Pointer_t node6 = createNode(NS_style::LN_char, ph, "C");
-        Node::Pointer_t node7 = createNode(NS_style::LN_char, ph, "\\span");        
+        Node::Pointer_t node7 = createNode(NS_style::LN_char, ph, "\\span");
 
         node7->appendChildren(node6);
-        
+
         node5->appendChildren(node7);
-        
-        
+
+
         string postfixSeq = node5->getText();
         const Node* n = node5.get();
         while (n->hasPrevious())
         {
-            n = &n->getPrevious(); 
+            n = &n->getPrevious();
             postfixSeq = postfixSeq + n->getText();
         }
-    
+
         CPPUNIT_ASSERT_MESSAGE("Insert sibling failed", postfixSeq == "\\par\\spanC\\spanB\\spanA");
     }
 
