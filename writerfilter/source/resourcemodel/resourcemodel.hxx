@@ -50,6 +50,9 @@ public:
     virtual void props(writerfilter::Reference<Properties>::Pointer_t ref);
     virtual void table(Id name, 
                        writerfilter::Reference<Table>::Pointer_t ref);
+    
+    virtual void startShape( ::com::sun::star::uno::Reference< ::com::sun::star::drawing::XShape > xShape );
+    virtual void endShape( );
 
     virtual void substream(Id name, writerfilter::Reference<Stream>::Pointer_t ref);
 
