@@ -1,6 +1,6 @@
 /*  Copyright 2005 Sun Microsystems, Inc. */
 
-#include <cppunit/simpleheader.hxx>
+#include <testshl/simpleheader.hxx>
 #include <odiapi/xxml/XXmlReader.hxx>
 #include <osl/time.h>
 
@@ -14,7 +14,7 @@ public:
     Node *next;
     Node *prev;
 
-    Node(QName_t tag) : prev(NULL), next(NULL), tag(tag) { 
+    Node(QName_t tag) : prev(NULL), next(NULL), tag(tag) {
     };
 
     void append(Node &node)
@@ -141,7 +141,7 @@ public:
 
 //		reader->read("test.xml");
 //		reader->read("C:\\Documents and Settings\\fr156068\\My Documents\\odt\\testfile.xml");
-        reader->read("C:\\Documents and Settings\\fr156068\\My Documents\\odt\\testfile\\content.xml");		
+        reader->read("C:\\Documents and Settings\\fr156068\\My Documents\\odt\\testfile\\content.xml");
         TimeValue t2; osl_getSystemTime(&t2);
         printf("Events=%i time=%is time/event=%0.10fs\n", handler.events, t2.Seconds-t1.Seconds, (double)(t2.Seconds-t1.Seconds)/(double)handler.events);
     }
