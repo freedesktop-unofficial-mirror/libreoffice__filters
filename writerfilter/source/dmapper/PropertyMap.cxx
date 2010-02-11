@@ -149,7 +149,16 @@ XMLTag::Pointer_t PropertyMap::toTag()
             case PROP_TABLE_COLUMN_SEPARATORS:
                 pTag->addTag(lcl_TableColumnSeparatorsToTag(aMapIter->second));
                 break;
-            default: 
+            default:
+            {
+                try {
+                    sal_Int32 aInt;
+                    aMapIter->second >>= aInt;
+                    pTag->addAttr("value", aInt);
+                }
+                catch (...) {
+                }
+            }
                 break;
         }
         
