@@ -165,6 +165,7 @@ namespace writerfilter
     static TagLoggerHashMap_t * tagLoggers = NULL;
 
     TagLogger::TagLogger()
+    : mFileName("writerfilter")
     {
     }
 
@@ -172,6 +173,11 @@ namespace writerfilter
     {
     }
 
+    void TagLogger::setFileName(const string & rName)
+    {
+        mFileName = rName;
+    }
+    
     TagLogger::Pointer_t TagLogger::getInstance(const char * name)
     {
         if (tagLoggers == NULL)
@@ -290,7 +296,18 @@ namespace writerfilter
             else
                 fileName += "/tmp";
             
-            fileName += "/writerfilter.";
+            string sPrefix = aIt->second->mFileName;
+            size_t nLastSlash = sPrefix.find_last_of('/');
+            size_t nLastBackslash = sPrefix.find_last_of('\\');
+            size_t nCutPos = nLastSlash;
+            if (nLastBackslash < nCutPos)
+                nCutPos = nLastBackslash;
+            if (nCutPos < sPrefix.size())
+                sPrefix = sPrefix.substr(nCutPos + 1);
+            
+            fileName += "/";
+            fileName += sPrefix;
+            fileName +=".";
             fileName += name;
             fileName += ".xml";
 
