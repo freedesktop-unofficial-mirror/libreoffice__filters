@@ -1,6 +1,31 @@
-/*  Copyright 2005 Sun Microsystems, Inc. */
+/*************************************************************************
+ *
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+ * 
+ * Copyright 2000, 2010 Oracle and/or its affiliates.
+ *
+ * OpenOffice.org - a multi-platform office productivity suite
+ *
+ * This file is part of OpenOffice.org.
+ *
+ * OpenOffice.org is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License version 3
+ * only, as published by the Free Software Foundation.
+ *
+ * OpenOffice.org is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License version 3 for more details
+ * (a copy is included in the LICENSE file that accompanied this code).
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * version 3 along with OpenOffice.org.  If not, see
+ * <http://www.openoffice.org/license.html>
+ * for a copy of the LGPLv3 License.
+ *
+ ************************************************************************/
 
-#include <cppunit/simpleheader.hxx>
+#include <testshl/simpleheader.hxx>
 #include <odiapi/xxml/XXmlReader.hxx>
 #include <odiapi/props/Properties.hxx>
 #include <odiapi/sl/od_sl.hxx>
@@ -51,12 +76,12 @@ OString getTempFileName(const OUString& fileName)
   if (!ousTmpUrl.endsWithIgnoreAsciiCaseAsciiL("/", 1))
     ousTmpUrl += OUString::createFromAscii("/");
   ousTmpUrl += fileName;
-    
+
   OUString sysTmpPath;
   FileBase::getSystemPathFromFileURL(ousTmpUrl, sysTmpPath);
 
   return OUStringToOString(sysTmpPath, osl_getThreadTextEncoding());
-} 
+}
 
 class TestXXML : public CppUnit::TestFixture
 {
@@ -69,14 +94,14 @@ public:
         reader->read("helloworld.odt.flat.xml");
 
         OString tmpFileName = getTempFileName(OUString::createFromAscii("dumpSlPool_int.dot"));
-        printf("Pool dump: %s\n", tmpFileName.getStr());	
+        printf("Pool dump: %s\n", tmpFileName.getStr());
         FileLoggerImpl fl(tmpFileName.getStr());
         propertyPool->dump(&fl);
 
         OString tmpFileName2 = getTempFileName(OUString::createFromAscii("dumpSlPool_ext.dot"));
         printf("Pool dump: %s\n", tmpFileName2.getStr());
         ExternalViewLoggerImpl evl(tmpFileName2.getStr());
-        propertyPool->dump(&evl); 
+        propertyPool->dump(&evl);
     }
 
     CPPUNIT_TEST_SUITE(TestXXML);

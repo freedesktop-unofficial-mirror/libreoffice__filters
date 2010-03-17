@@ -2,12 +2,9 @@
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  * 
- * Copyright 2008 by Sun Microsystems, Inc.
+ * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
- *
- * $RCSfile: sw_wsfrm.cxx,v $
- * $Revision: 1.9 $
  *
  * This file is part of OpenOffice.org.
  *
@@ -158,11 +155,11 @@ namespace binfilter {
 /*N*/ 	pNext( 0 ),
 /*N*/ 	pUpper( 0 ),
 /*N*/ 	pDrawObjs( 0 )
-/*N*/ #ifndef PRODUCT
+/*N*/ #ifdef DBG_UTIL
 /*N*/ 	, nFrmId( SwFrm::nLastFrmId++ )
 /*N*/ #endif
 /*N*/ {
-/*N*/ #ifndef PRODUCT
+/*N*/ #ifdef DBG_UTIL
 /*N*/     bFlag01 = bFlag02 = bFlag03 = bFlag04 = bFlag05 = 0;
 /*N*/ #if OSL_DEBUG_LEVEL > 1
 /*N*/ 	static USHORT nStopAt = USHRT_MAX;
@@ -172,7 +169,7 @@ namespace binfilter {
 /*N*/ 	}
 /*N*/ #endif
 /*N*/ #endif
-/*N*/ 
+/*N*/
 /*N*/ 	ASSERT( pMod, "Kein Frameformat uebergeben." );
 /*N*/     bInvalidR2L = bInvalidVert = 1;
 /*N*/     bDerivedR2L = bDerivedVert = bRightToLeft = bVertical = bReverse = 0;
@@ -264,7 +261,7 @@ namespace binfilter {
 /*N*/ void SwFrm::Modify( SfxPoolItem * pOld, SfxPoolItem * pNew )
 /*N*/ {
 /*N*/ 	BYTE nInvFlags = 0;
-/*N*/ 
+/*N*/
 /*N*/ 	if( pNew && RES_ATTRSET_CHG == pNew->Which() )
 /*N*/ 	{
 /*N*/ 		SfxItemIter aNIter( *((SwAttrSetChg*)pNew)->GetChgSet() );
@@ -281,7 +278,7 @@ namespace binfilter {
 /*N*/ 	}
 /*N*/ 	else
 /*N*/ 		_UpdateAttr( pOld, pNew, nInvFlags );
-/*N*/ 
+/*N*/
 /*N*/ 	if ( nInvFlags != 0 )
 /*N*/ 	{
 /*N*/ 		SwPageFrm *pPage = FindPageFrm();
@@ -324,32 +321,32 @@ namespace binfilter {
 /*N*/ 		case RES_UL_SPACE:
 /*N*/ 			rInvFlags |= 0x0B;
 /*N*/ 			break;
-/*N*/       
+/*N*/
 /*M*/ 			case RES_HEADER_FOOTER_EAT_SPACING:
 /*M*/ 				rInvFlags |= 0x03;
 /*M*/ 				break;
-/*M*/ 
+/*M*/
 /*N*/ 		case RES_BACKGROUND:
 /*N*/ 			rInvFlags |= 0x28;
 /*N*/ 			break;
-/*N*/ 
+/*N*/
 /*N*/ 		case RES_KEEP:
 /*N*/ 			rInvFlags |= 0x04;
 /*N*/ 			break;
-/*N*/ 
+/*N*/
 /*N*/ 		case RES_FRM_SIZE:
 /*N*/ 			ReinitializeFrmSizeAttrFlags();
 /*N*/ 			rInvFlags |= 0x13;
 /*N*/ 			break;
-/*N*/ 
+/*N*/
 /*N*/ 		case RES_FMT_CHG:
 /*N*/ 			rInvFlags |= 0x0F;
 /*N*/ 			break;
-/*N*/ 
+/*N*/
 /*?*/ 		case RES_COL:
 /*?*/ 			ASSERT( FALSE, "Spalten fuer neuen FrmTyp?" );
 /*?*/ 			break;
-/*N*/ 
+/*N*/
 /*N*/ 		default:
 /*N*/ 			/* do Nothing */;
 /*N*/ 	}
@@ -379,22 +376,22 @@ namespace binfilter {
 |*************************************************************************/
 /*N*/ void SwFrm::InvalidatePage( const SwPageFrm *pPage ) const
 /*N*/ {
-/*N*/ #if (OSL_DEBUG_LEVEL > 1) && !defined(PRODUCT)
+/*N*/ #if (OSL_DEBUG_LEVEL > 1) && defined(DBG_UTIL)
 /*N*/ 	static USHORT nStop = 0;
 /*N*/ 	if ( nStop == GetFrmId() )
 /*N*/ 	{
 /*N*/ 		int bla = 5;
 /*N*/ 	}
 /*N*/ #endif
-/*N*/ 
+/*N*/
 /*N*/ 	if ( !pPage )
 /*N*/ 		pPage = FindPageFrm();
-/*N*/ 
+/*N*/
 /*N*/ 	if ( pPage && pPage->GetUpper() )
 /*N*/ 	{
 /*N*/ 		if ( pPage->GetFmt()->GetDoc()->IsInDtor() )
 /*?*/ 			return;
-/*N*/ 
+/*N*/
 /*N*/ 		SwRootFrm *pRoot = (SwRootFrm*)pPage->GetUpper();
 /*N*/ 		const SwFlyFrm *pFly = FindFlyFrm();
 /*N*/ 		if ( IsCntntFrm() )
@@ -451,7 +448,7 @@ namespace binfilter {
 /*N*/ 			}
 /*N*/ 			else
 /*N*/ 				pPage->InvalidateLayout();
-/*N*/ 
+/*N*/
 /*N*/ 			if ( pRoot->GetTurbo() )
 /*N*/ 			{	const SwFrm *pTmp = pRoot->GetTurbo();
 /*N*/ 				pRoot->ResetTurbo();
@@ -476,7 +473,7 @@ namespace binfilter {
 /*N*/ 	const Size aOldSize( Frm().SSize() );
 /*N*/ 	if ( aNewSize == aOldSize )
 /*N*/ 		return;
-/*N*/ 
+/*N*/
 /*N*/ 	if ( GetUpper() )
 /*N*/ 	{
 /*N*/         SWRECTFN2( this )
@@ -505,11 +502,11 @@ namespace binfilter {
 /*N*/                         Grow( nDiff );
 /*N*/                     else
 /*N*/                         Shrink( -nDiff );
-/*N*/ 
+/*N*/
 /*N*/                     if ( GetUpper() && (aFrm.*fnRect->fnGetHeight)() != nNew )
 /*N*/                         GetUpper()->_InvalidateSize();
 /*N*/                 }
-/*N*/ 
+/*N*/
 /*N*/                 // Auch wenn das Grow/Shrink noch nicht die gewuenschte Breite eingestellt hat,
 /*N*/                 // wie z.B. beim Aufruf durch ChgColumns, um die Spaltenbreiten einzustellen,
 /*N*/                 // wird die Breite jetzt gesetzt.
@@ -519,7 +516,7 @@ namespace binfilter {
 /*N*/ 	}
 /*N*/ 	else
 /*N*/         aFrm.SSize( aNewSize );
-/*N*/ 
+/*N*/
 /*N*/ 	if ( Frm().SSize() != aOldSize )
 /*N*/ 	{
 /*N*/ 		SwPageFrm *pPage = FindPageFrm();
@@ -557,7 +554,7 @@ namespace binfilter {
 /*N*/ 	ASSERT( pParent, "Kein Parent fuer Insert." );
 /*N*/ 	ASSERT( (!pBehind || (pBehind && pParent == pBehind->GetUpper())),
 /*N*/ 			"Framebaum inkonsistent." );
-/*N*/ 
+/*N*/
 /*N*/ 	pUpper = pParent;
 /*N*/ 	pNext = pBehind;
 /*N*/ 	if( pBehind )
@@ -598,7 +595,7 @@ namespace binfilter {
 /*N*/ 	ASSERT( pParent, "Kein Parent fuer Insert." );
 /*N*/ 	ASSERT( (!pBefore || (pBefore && pParent == pBefore->GetUpper())),
 /*N*/ 			"Framebaum inkonsistent." );
-/*N*/ 
+/*N*/
 /*N*/ 	pUpper = pParent;
 /*N*/ 	pPrev = pBefore;
 /*N*/ 	if ( pBefore )
@@ -654,7 +651,7 @@ namespace binfilter {
 /*N*/ void SwFrm::Remove()
 /*N*/ {
 /*N*/ 	ASSERT( pUpper, "Removen ohne Upper?" );
-/*N*/ 
+/*N*/
 /*N*/ 	if( pPrev )
 /*N*/ 		// einer aus der Mitte wird removed
 /*N*/ 		pPrev->pNext = pNext;
@@ -665,18 +662,18 @@ namespace binfilter {
 /*N*/ 	}
 /*N*/ 	if( pNext )
 /*N*/ 		pNext->pPrev = pPrev;
-/*N*/ 
+/*N*/
 /*N*/ #ifdef ACCESSIBLE_LAYOUT
 /*N*/     // inform accessibility API
 /*N*/     if ( IsInTab() )
 /*N*/     {
 /*N*/         SwTabFrm* pTableFrm = FindTabFrm();
-/*N*/         if( pTableFrm != NULL  &&  
+/*N*/         if( pTableFrm != NULL  &&
 /*N*/             pTableFrm->IsAccessibleFrm()  &&
 /*N*/             pTableFrm->GetFmt() != NULL )
 /*N*/         {
 /*N*/             SwRootFrm *pRootFrm = pTableFrm->FindRootFrm();
-/*N*/             if( pRootFrm != NULL && 
+/*N*/             if( pRootFrm != NULL &&
 /*N*/                 pRootFrm->IsAnyShellAccessible() )
 /*N*/             {
 /*N*/                 ViewShell* pShell = pRootFrm->GetCurrShell();
@@ -685,8 +682,8 @@ namespace binfilter {
 /*N*/             }
 /*N*/         }
 /*N*/     }
-/*N*/ #endif    
-/*N*/ 
+/*N*/ #endif
+/*N*/
 /*N*/ 	// Verbindung kappen.
 /*N*/ 	pNext  = pPrev  = 0;
 /*N*/ 	pUpper = 0;
@@ -3406,7 +3403,7 @@ namespace binfilter {
 /*?*/ 				if( pLastSctCnt == pCnt )
 /*?*/ 					pLastSctCnt = NULL;
 /*?*/ 			}
-/*?*/ #ifndef PRODUCT
+/*?*/ #ifdef DBG_UTIL
 /*?*/ 			else
 /*?*/ 				ASSERT( !pLastSctCnt, "Where's the last SctCntnt?" );
 /*?*/ #endif
@@ -3433,7 +3430,7 @@ namespace binfilter {
 /*?*/ 					pLastSctCnt = NULL;
 /*?*/ 				}
 /*?*/ 			}
-/*?*/ #ifndef PRODUCT
+/*?*/ #ifdef DBG_UTIL
 /*?*/ 			else
 /*?*/ 				ASSERT( !pLastTabCnt, "Where's the last TabCntnt?" );
 /*?*/ #endif
