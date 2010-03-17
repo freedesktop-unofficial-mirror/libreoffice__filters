@@ -2,12 +2,9 @@
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  * 
- * Copyright 2008 by Sun Microsystems, Inc.
+ * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
- *
- * $RCSfile: xmlfiltersettingsdialog.hxx,v $
- * $Revision: 1.9 $
  *
  * This file is part of OpenOffice.org.
  *
@@ -36,12 +33,12 @@
 #include <com/sun/star/container/XNameContainer.hpp>
 #include <vcl/wrkwin.hxx>
 
-#ifndef _SV_BUTTON_HXX 
+#ifndef _SV_BUTTON_HXX
 #include <vcl/button.hxx>
 #endif
 #include <svtools/svtabbx.hxx>
-#include <svtools/poolitem.hxx>
-#include <svtools/moduleoptions.hxx>
+#include <svl/poolitem.hxx>
+#include <unotools/moduleoptions.hxx>
 
 #include "xmlfiltercommon.hxx"
 
@@ -132,7 +129,7 @@ private:
     rtl::OUString createUniqueFilterName( const rtl::OUString& rUIName );
     rtl::OUString createUniqueTypeName( const rtl::OUString& rTypeName );
     rtl::OUString createUniqueInterfaceName( const rtl::OUString& rInterfaceName );
-    
+
 private:
 
     com::sun::star::uno::Reference< com::sun::star::lang::XMultiServiceFactory > mxMSF;
@@ -157,7 +154,7 @@ private:
 
     ::rtl::OUString sTemplatePath;
     ::rtl::OUString sDocTypePrefix;
-    
+
     SvtModuleOptions maModuleOpt;
 };
 
