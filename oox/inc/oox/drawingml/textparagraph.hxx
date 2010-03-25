@@ -57,8 +57,8 @@ public:
     inline TextParagraphProperties&         getProperties() { return maProperties; }
     inline const TextParagraphProperties&   getProperties() const { return maProperties; }
 
-    inline TextParagraphProperties&         getEndProperties() { return maEndProperties; }
-    inline const TextParagraphProperties&   getEndProperties() const { return maEndProperties; }
+    inline TextCharacterProperties&         getEndProperties() { return maEndProperties; }
+    inline const TextCharacterProperties&   getEndProperties() const { return maEndProperties; }
 
     //inline void                        setProperties( TextParagraphPropertiesPtr pProps ) { mpProperties = pProps; }
 
@@ -72,7 +72,7 @@ public:
 
 private:
     TextParagraphProperties     maProperties;
-    TextParagraphProperties     maEndProperties;
+    TextCharacterProperties     maEndProperties;
     TextRunVector               maRuns;
 };
 
