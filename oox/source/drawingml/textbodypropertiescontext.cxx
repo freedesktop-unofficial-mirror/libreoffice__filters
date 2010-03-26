@@ -31,6 +31,8 @@
 #include "oox/drawingml/textbodypropertiescontext.hxx"
 
 #include <com/sun/star/text/ControlCharacter.hpp>
+#include <com/sun/star/drawing/TextVerticalAdjust.hpp>
+#include <com/sun/star/drawing/TextHorizontalAdjust.hpp>
 #include "oox/drawingml/textbodyproperties.hxx"
 #include "oox/drawingml/drawingmltypes.hxx"
 #include "oox/helper/attributelist.hxx"
@@ -41,6 +43,7 @@
 
 using ::rtl::OUString;
 using namespace ::oox::core;
+using namespace ::com::sun::star;
 using namespace ::com::sun::star::uno;
 using namespace ::com::sun::star::text;
 using namespace ::com::sun::star::xml::sax;
@@ -81,7 +84,17 @@ TextBodyPropertiesContext::TextBodyPropertiesContext( ContextHandler& rParent,
 
 
     // ST_TextAnchoringType
-//   sal_Int32 nAnchoringType = xAttributes->getOptionalValueToken( XML_anchor, XML_t );
+    drawing::TextVerticalAdjust	eVA( drawing::TextVerticalAdjust_TOP );
+    switch( xAttributes->getOptionalValueToken( XML_anchor, XML_t ) )
+    {
+        case XML_b :	eVA = drawing::TextVerticalAdjust_BOTTOM; break;
+        case XML_dist :
+        case XML_just :
+        case XML_ctr :	eVA = drawing::TextVerticalAdjust_CENTER; break;
+        default:
+        case XML_t :	eVA = drawing::TextVerticalAdjust_TOP; break;
+    }
+    mrTextBodyProp.maPropertyMap[ PROP_TextVerticalAdjust ] <<= eVA;
 
 //   bool bAnchorCenter = aAttribs.getBool( XML_anchorCtr, false );
 
