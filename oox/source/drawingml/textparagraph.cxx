@@ -84,7 +84,6 @@ void TextParagraph::insertAt(
         }
         if ( maRuns.begin() == maRuns.end() )
         {
-            Reference< XTextRange > xStart( xAt, UNO_QUERY );
             PropertySet aPropSet( xStart );
 
             TextCharacterProperties aTextCharacterProps( aTextCharacterStyle );
