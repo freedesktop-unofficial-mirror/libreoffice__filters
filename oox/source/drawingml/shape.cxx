@@ -90,7 +90,7 @@ Shape::Shape( const sal_Char* pServiceName )
 , mpCustomShapePropertiesPtr( new CustomShapeProperties )
 , mpMasterTextListStyle( new TextListStyle )
 , mnSubType( 0 )
-, mnIndex( 0 )
+, mnSubTypeIndex( -1 )
 , mnRotation( 0 )
 , mbFlipH( false )
 , mbFlipV( false )
@@ -414,13 +414,23 @@ Reference< XShape > Shape::createAndInsert(
         aFillProperties.assignUsed( getFillProperties() );
 
         PropertyMap aShapeProperties;
+        PropertyMap::const_iterator	aShapePropIter;
+
         aShapeProperties.insert( getShapeProperties().begin(), getShapeProperties().end() );
         if( mxCreateCallback.get() )
-            aShapeProperties.insert( mxCreateCallback->getShapeProperties().begin(), mxCreateCallback->getShapeProperties().end() );
+        {
+            for ( aShapePropIter = mxCreateCallback->getShapeProperties().begin();
+                aShapePropIter != mxCreateCallback->getShapeProperties().end(); aShapePropIter++ )
+                aShapeProperties[ (*aShapePropIter).first ] = (*aShapePropIter).second;		
+        }
 
         // add properties from textbody to shape properties
         if( mpTextBody.get() )
-            aShapeProperties.insert( mpTextBody->getTextProperties().maPropertyMap.begin(), mpTextBody->getTextProperties().maPropertyMap.end() );
+        {
+            for ( aShapePropIter = mpTextBody->getTextProperties().maPropertyMap.begin();
+                aShapePropIter != mpTextBody->getTextProperties().maPropertyMap.end(); aShapePropIter++ )
+                aShapeProperties[ (*aShapePropIter).first ] = (*aShapePropIter).second;		
+        }
 
         // applying properties
         PropertySet aPropSet( xSet );
