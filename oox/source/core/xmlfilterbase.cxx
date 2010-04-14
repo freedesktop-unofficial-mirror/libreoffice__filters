@@ -93,7 +93,7 @@ struct XmlFilterBaseImpl
     Reference< XFastTokenHandler >
                         mxTokenHandler;
     RelationsMap        maRelationsMap;
-    TextFieldStack		maTextFieldStack;
+    TextFieldStack      maTextFieldStack;
     explicit            XmlFilterBaseImpl();
 };
 
