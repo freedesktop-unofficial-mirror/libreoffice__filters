@@ -105,7 +105,7 @@ struct XmlFilterBaseImpl
     OUString            maBinSuffix;
     OUString            maVmlSuffix;
     RelationsMap        maRelationsMap;
-    TextFieldStack		maTextFieldStack;
+    TextFieldStack      maTextFieldStack;
     explicit            XmlFilterBaseImpl();
 };
 
