@@ -2,12 +2,9 @@
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  * 
- * Copyright 2008 by Sun Microsystems, Inc.
+ * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
- *
- * $RCSfile: WW8DocumentImpl.hxx,v $
- * $Revision: 1.10 $
  *
  * This file is part of OpenOffice.org.
  *
@@ -301,6 +298,9 @@ class WW8DocumentImpl : public WW8Document
 
     /// pointer to the file information block
     WW8Fib::Pointer_t mpFib;
+    
+    /// pointer to the file information block for post 2000 documents
+    WW8FibRgFcLcb2000::Pointer_t mpFibRgFcLcb2000;
 
     /// pointer to the offsets of headers/footers
     WW8StructBase::Pointer_t mpHeaderOffsets;
@@ -397,8 +397,6 @@ public:
     virtual WW8DocumentIterator::Pointer_t end();
 
     virtual WW8Stream::Sequence getText(const CpAndFc & rStart);
-
-    WW8Fib::Pointer_t getFib() const;
 
     /**
        Returns the document stream.
@@ -530,6 +528,11 @@ public:
      */
     WW8SED * getSED(const CpAndFc & rCpAndFc) const;
 
+    /**
+     Return reference to list plcs.
+    */
+    writerfilter::Reference<Table>::Pointer_t getListTplcs() const;
+    
     /**
        Return reference to list table.
      */

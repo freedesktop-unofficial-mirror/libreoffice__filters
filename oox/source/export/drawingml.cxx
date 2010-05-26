@@ -1,13 +1,10 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- *
- * Copyright 2008 by Sun Microsystems, Inc.
+ * 
+ * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
- *
- * $RCSfile$
- * $Revision$
  *
  * This file is part of OpenOffice.org.
  *
@@ -62,7 +59,7 @@
 #include <vcl/cvtgrf.hxx>
 #include <unotools/fontcvt.hxx>
 #include <vcl/graph.hxx>
-#include <goodies/grfmgr.hxx>
+#include <svtools/grfmgr.hxx>
 #include <rtl/strbuf.hxx>
 #include <sfx2/app.hxx>
 #include <svl/languageoptions.hxx>
@@ -496,7 +493,7 @@ OUString DrawingML::WriteImage( const Graphic& rGraphic )
                                                                     sMediaType );
     xOutStream->writeBytes( Sequence< sal_Int8 >( (const sal_Int8*) aData, nDataSize ) );
     xOutStream->closeOutput();
-    
+
     const char *pImagePrefix = NULL;
     switch ( meDocumentType )
     {
@@ -916,7 +913,7 @@ inline static const char* GetAutoNumType( sal_Int16 nNumberingType, bool bSDot, 
         default:
             break;
         }
-    
+
     return pAutoNumType;
 }
 
@@ -932,7 +929,7 @@ void DrawingML::WriteParagraphNumbering( Reference< XPropertySet > rXPropSet, sa
 
             Sequence< PropertyValue > aPropertySequence;
             rXIndexAccess->getByIndex( nLevel ) >>= aPropertySequence;
-           
+
 
             const PropertyValue* pPropValue = aPropertySequence.getArray();
 
@@ -989,7 +986,7 @@ void DrawingML::WriteParagraphNumbering( Reference< XPropertySet > rXPropSet, sa
                             DBG(printf ("graphic url: %s\n", OUStringToOString( aGraphicURL, RTL_TEXTENCODING_UTF8 ).getStr()));
                         } else if ( aPropName.equalsAsciiL( RTL_CONSTASCII_STRINGPARAM( "GraphicSize" ) ) )
                         {
-                            if ( pPropValue[ i ].Value.getValueType() == ::getCppuType( (awt::Size*)0) ) 
+                            if ( pPropValue[ i ].Value.getValueType() == ::getCppuType( (awt::Size*)0) )
                             {
                                 // don't cast awt::Size to Size as on 64-bits they are not the same.
                                 ::com::sun::star::awt::Size aSize;
@@ -1297,7 +1294,7 @@ void DrawingML::WritePolyPolygon( const PolyPolygon& rPolyPolygon )
                 mpFS->endElementNS( XML_a, XML_lnTo );
             else if( bBezier && ( j % 3 ) == 0 )
             {
-                // //a:cubicBezTo can only contain 3 //a:pt elements, so we 
+                // //a:cubicBezTo can only contain 3 //a:pt elements, so we
                 // need to break things up...
                 mpFS->endElementNS( XML_a, XML_cubicBezTo );
                 mpFS->startElementNS( XML_a, XML_cubicBezTo, FSEND );
@@ -1342,15 +1339,10 @@ void DrawingML::WriteConnectorConnections( EscherConnectorListEntry& rConnectorE
 // from sw/source/filter/ww8/wrtw8num.cxx for default bullets to export to MS intact
 static void lcl_SubstituteBullet(String& rNumStr, rtl_TextEncoding& rChrSet, String& rFontName)
 {
-    StarSymbolToMSMultiFont *pConvert = 0;
-    FontFamily eFamily = FAMILY_DECORATIVE;
-
-    if (!pConvert)
-    {
-        pConvert = CreateStarSymbolToMSMultiFont();
-    }    
     sal_Unicode cChar = rNumStr.GetChar(0);
+    StarSymbolToMSMultiFont *pConvert = CreateStarSymbolToMSMultiFont();
     String sFont = pConvert->ConvertChar(cChar);
+    delete pConvert;
     if (sFont.Len())
     {
         rNumStr = static_cast< sal_Unicode >(cChar | 0xF000);
@@ -1366,7 +1358,6 @@ static void lcl_SubstituteBullet(String& rNumStr, rtl_TextEncoding& rChrSet, Str
            let words own font substitution kick in
            */
         rChrSet = RTL_TEXTENCODING_UNICODE;
-        eFamily = FAMILY_SWISS;
         rFontName = ::GetFontToken(rFontName, 0);
     }
     else
@@ -1378,8 +1369,7 @@ static void lcl_SubstituteBullet(String& rNumStr, rtl_TextEncoding& rChrSet, Str
            */
         rFontName.AssignAscii(RTL_CONSTASCII_STRINGPARAM("Wingdings"));
         rNumStr = static_cast< sal_Unicode >(0x6C);
-    }      
-    delete pConvert;
+    }
 }
 
 sal_Unicode DrawingML::SubstituteBullet( sal_Unicode cBulletId, ::com::sun::star::awt::FontDescriptor& rFontDesc )
