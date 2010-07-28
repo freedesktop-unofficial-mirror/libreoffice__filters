@@ -24,27 +24,17 @@
  * for a copy of the LGPLv3 License.
  *
  ************************************************************************/
+#ifndef INCLUDED_RESOURCE_MODEL_HELPER_HXX
+#define INCLUDED_RESOURCE_MODEL_HELPER_HXX
 
-#ifndef INCLUDED_RESOURCEMODEL_UTIL_HXX
-#define INCLUDED_RESOURCEMODEL_UTIL_HXX
-#include <com/sun/star/beans/XPropertySet.hpp>
-#include <com/sun/star/text/XTextRange.hpp>
-#include <WriterFilterDllApi.hxx>
-#include <string>
+#include <resourcemodel/WW8ResourceModel.hxx>
 
-namespace writerfilter
-{
-    using namespace ::std;
-    using namespace ::com::sun::star;
-    
-    string WRITERFILTER_DLLPUBLIC xmlify(const string & str);
-    
-#ifdef DEBUG
-    string WRITERFILTER_DLLPUBLIC propertysetToString
-    (uno::Reference<beans::XPropertySet> const & rProps);
-    
-    string toString(uno::Reference< text::XTextRange > textRange);
-    string toString(const string & rString);
-#endif
-}
-#endif // INCLUDED_RESOURCEMODEL_UTIL_HXX
+namespace writerfilter {
+namespace resourcemodel {
+
+void WRITERFILTER_DLLPUBLIC resolveSprmProps(Properties & rHandler, Sprm & rSprm);
+void  WRITERFILTER_DLLPUBLIC resolveAttributeProperties(Properties & rHandler, Value & rValue);
+
+}}
+
+#endif // INCLUDED_RESOURCE_MODEL_HELPER_HXX
