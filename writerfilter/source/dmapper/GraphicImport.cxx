@@ -1117,13 +1117,9 @@ void GraphicImport::lcl_attribute(Id nName, Value & val)
             val.getString();
             //TODO: does it need to be handled?
         break;
-        default: 
-#if OSL_DEBUG_LEVEL > 0
-            ::rtl::OString sMessage( "GraphicImport::attribute() - Id: ");
-            sMessage += ::rtl::OString::valueOf( sal_Int32( nName ), 10 );
-            sMessage += ::rtl::OString(" / 0x");
-            sMessage += ::rtl::OString::valueOf( sal_Int32( nName ), 16 );
-            OSL_ENSURE( false, sMessage.getStr())
+        default:
+#ifdef DEBUG_DMAPPER_GRAPHIC_IMPORT
+            dmapper_logger->element("unhandled");
 #endif               
             ;
     }
