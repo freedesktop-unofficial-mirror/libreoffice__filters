@@ -25,45 +25,58 @@
  *
  ************************************************************************/
 
-#include "oox/core/binaryfilterbase.hxx"
+#include "oox/vml/vmltextbox.hxx"
 
-#include "oox/ole/olestorage.hxx"
+#include <rtl/ustrbuf.hxx>
+#include "tokens.hxx"
 
 namespace oox {
-namespace core {
+namespace vml {
 
 // ============================================================================
-
-using namespace ::com::sun::star::lang;
-using namespace ::com::sun::star::io;
-using namespace ::com::sun::star::uno;
 
 using ::rtl::OUString;
+using ::rtl::OUStringBuffer;
 
 // ============================================================================
 
-BinaryFilterBase::BinaryFilterBase( const Reference< XMultiServiceFactory >& rxGlobalFactory ) :
-    FilterBase( rxGlobalFactory )
+TextFontModel::TextFontModel()
 {
-}
-
-BinaryFilterBase::~BinaryFilterBase()
-{
-}
-
-// private --------------------------------------------------------------------
-
-StorageRef BinaryFilterBase::implCreateStorage( const Reference< XInputStream >& rxInStream ) const
-{
-    return StorageRef( new ::oox::ole::OleStorage( getGlobalFactory(), rxInStream, true ) );
-}
-
-StorageRef BinaryFilterBase::implCreateStorage( const Reference< XStream >& rxOutStream ) const
-{
-    return StorageRef( new ::oox::ole::OleStorage( getGlobalFactory(), rxOutStream, true ) );
 }
 
 // ============================================================================
 
-} // namespace core
+TextPortionModel::TextPortionModel( const TextFontModel& rFont, const OUString& rText ) :
+    maFont( rFont ),
+    maText( rText )
+{
+}
+
+// ============================================================================
+
+TextBox::TextBox()
+{
+}
+
+void TextBox::appendPortion( const TextFontModel& rFont, const OUString& rText )
+{
+    maPortions.push_back( TextPortionModel( rFont, rText ) );
+}
+
+const TextFontModel* TextBox::getFirstFont() const
+{
+    return maPortions.empty() ? 0 : &maPortions.front().maFont;
+}
+
+OUString TextBox::getText() const
+{
+    OUStringBuffer aBuffer;
+    for( PortionVector::const_iterator aIt = maPortions.begin(), aEnd = maPortions.end(); aIt != aEnd; ++aIt )
+        aBuffer.append( aIt->maText );
+    return aBuffer.makeStringAndClear();
+}
+
+// ============================================================================
+
+} // namespace vml
 } // namespace oox
