@@ -24,25 +24,41 @@
  * for a copy of the LGPLv3 License.
  *
  ************************************************************************/
-#ifndef _SFX_EACOPIER_HXX
-#define _SFX_EACOPIER_HXX
+#ifndef INCLUDED_FORM_CONTROL_HELPER_HXX
+#define INCLUDED_FORM_CONTROL_HELPER_HXX
 
-#include <tools/eacopier.hxx>
-namespace binfilter {
-class SvFileStream;
+#include <FFDataHandler.hxx>
+#include <com/sun/star/text/XTextDocument.hpp>
+#include <com/sun/star/uno/Reference.hxx>
+#include "FieldTypes.hxx"
 
-// class SfxEA_Copier ----------------------------------------------------
+namespace writerfilter {
+namespace dmapper {
 
-class SfxEA_Copier : public EA_Copier
+using namespace ::com::sun::star;
+
+class FormControlHelper
 {
 public:
-    SfxEA_Copier()	{ Register( this ); }
-    ~SfxEA_Copier()	{ Register( NULL ); }
+    typedef boost::shared_ptr<FormControlHelper> Pointer_t;
+    FormControlHelper(FieldId eFieldId,
+                      uno::Reference<text::XTextDocument> rTextDocument,
+                      FFDataHandler::Pointer_t pFFData);
+    ~FormControlHelper();
 
-    virtual	BOOL	Copy( const SvFileStream& rFrom, const SvFileStream& rTo ) const;
+    bool insertControl(uno::Reference<text::XTextRange> xTextRange);
+
+private:
+    FFDataHandler::Pointer_t m_pFFData;
+    struct FormControlHelper_Impl;
+    typedef boost::shared_ptr<FormControlHelper_Impl> ImplPointer_t;
+    ImplPointer_t m_pImpl;
+
+    bool createCheckbox(uno::Reference<text::XTextRange> xTextRange,
+                        const ::rtl::OUString & rControlName);
 };
 
-}//end of namespace binfilter
-#endif // #ifndef _SFX_EACOPIER_HXX
+}
+}
 
-
+#endif // INCLUDED_FORM_CONTROL_HELPER_HXX

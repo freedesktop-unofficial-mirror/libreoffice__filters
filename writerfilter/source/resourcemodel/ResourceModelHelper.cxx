@@ -25,33 +25,24 @@
  *
  ************************************************************************/
 
-#ifndef INCLUDED_UTIL_HXX
-#define INCLUDED_UTIL_HXX
-
-#include <string>
-#include <iostream>
+#include "resourcemodel/ResourceModelHelper.hxx"
 
 namespace writerfilter {
-namespace doctok {
-using namespace ::std;
+namespace resourcemodel {
 
-/**
-   Assertion
+void resolveSprmProps(Properties & rHandler, Sprm & rSprm)
+{
+    writerfilter::Reference<Properties>::Pointer_t pProperties = rSprm.getProps();
+    if( pProperties.get())
+        pProperties->resolve(rHandler);
+}
 
-   @bTest       if false the assertion is raised
-*/
-void util_assert(bool bTest);
+void resolveAttributeProperties(Properties & rHandler, Value & val)
+{
+    writerfilter::Reference<Properties>::Pointer_t pProperties = val.getProperties();
+    if( pProperties.get())
+        pProperties->resolve(rHandler);
+}
 
-/**
-   Print string to ostream. 
 
-   Printable characters are passed without change. Non-printable
-   characters are replaced by '.'.
-
-   @param o      ostream for output
-   @param str    string to print
- */
-void printBytes(ostream & o, const string & str);
 }}
-
-#endif // INCLUDED_UTIL_HXX
