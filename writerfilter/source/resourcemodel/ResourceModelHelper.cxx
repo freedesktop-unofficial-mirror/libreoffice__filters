@@ -24,5 +24,25 @@
  * for a copy of the LGPLv3 License.
  *
  ************************************************************************/
-#define KEY_INTER	256
-#define KEY_TRANS	257
+
+#include "resourcemodel/ResourceModelHelper.hxx"
+
+namespace writerfilter {
+namespace resourcemodel {
+
+void resolveSprmProps(Properties & rHandler, Sprm & rSprm)
+{
+    writerfilter::Reference<Properties>::Pointer_t pProperties = rSprm.getProps();
+    if( pProperties.get())
+        pProperties->resolve(rHandler);
+}
+
+void resolveAttributeProperties(Properties & rHandler, Value & val)
+{
+    writerfilter::Reference<Properties>::Pointer_t pProperties = val.getProperties();
+    if( pProperties.get())
+        pProperties->resolve(rHandler);
+}
+
+
+}}

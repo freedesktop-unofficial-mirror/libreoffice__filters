@@ -24,34 +24,41 @@
  * for a copy of the LGPLv3 License.
  *
  ************************************************************************/
+#ifndef INCLUDED_FORM_CONTROL_HELPER_HXX
+#define INCLUDED_FORM_CONTROL_HELPER_HXX
 
-#ifndef INCLUDED_UTIL_HXX
-#define INCLUDED_UTIL_HXX
-
-#include <string>
-#include <iostream>
+#include <FFDataHandler.hxx>
+#include <com/sun/star/text/XTextDocument.hpp>
+#include <com/sun/star/uno/Reference.hxx>
+#include "FieldTypes.hxx"
 
 namespace writerfilter {
-namespace doctok {
-using namespace ::std;
+namespace dmapper {
 
-/**
-   Assertion
+using namespace ::com::sun::star;
 
-   @bTest       if false the assertion is raised
-*/
-void util_assert(bool bTest);
+class FormControlHelper
+{
+public:
+    typedef boost::shared_ptr<FormControlHelper> Pointer_t;
+    FormControlHelper(FieldId eFieldId,
+                      uno::Reference<text::XTextDocument> rTextDocument,
+                      FFDataHandler::Pointer_t pFFData);
+    ~FormControlHelper();
 
-/**
-   Print string to ostream. 
+    bool insertControl(uno::Reference<text::XTextRange> xTextRange);
 
-   Printable characters are passed without change. Non-printable
-   characters are replaced by '.'.
+private:
+    FFDataHandler::Pointer_t m_pFFData;
+    struct FormControlHelper_Impl;
+    typedef boost::shared_ptr<FormControlHelper_Impl> ImplPointer_t;
+    ImplPointer_t m_pImpl;
 
-   @param o      ostream for output
-   @param str    string to print
- */
-void printBytes(ostream & o, const string & str);
-}}
+    bool createCheckbox(uno::Reference<text::XTextRange> xTextRange,
+                        const ::rtl::OUString & rControlName);
+};
 
-#endif // INCLUDED_UTIL_HXX
+}
+}
+
+#endif // INCLUDED_FORM_CONTROL_HELPER_HXX

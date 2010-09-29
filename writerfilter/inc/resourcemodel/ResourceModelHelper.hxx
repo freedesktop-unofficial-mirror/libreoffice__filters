@@ -24,48 +24,17 @@
  * for a copy of the LGPLv3 License.
  *
  ************************************************************************/
+#ifndef INCLUDED_RESOURCE_MODEL_HELPER_HXX
+#define INCLUDED_RESOURCE_MODEL_HELPER_HXX
 
+#include <resourcemodel/WW8ResourceModel.hxx>
 
-#ifndef _DLGEPBM_HXX_
-#define _DLGEPBM_HXX_
-#include <svtools/fltcall.hxx>
-#include <vcl/dialog.hxx>
-#include <vcl/button.hxx>
-#include <vcl/fixed.hxx>
-#include <vcl/field.hxx>
-#include <svtools/stdctrl.hxx>
+namespace writerfilter {
+namespace resourcemodel {
 
+void WRITERFILTER_DLLPUBLIC resolveSprmProps(Properties & rHandler, Sprm & rSprm);
+void  WRITERFILTER_DLLPUBLIC resolveAttributeProperties(Properties & rHandler, Value & rValue);
 
-/*************************************************************************
-|*
-|* Dialog zum Einstellen von Filteroptionen
-|*
-\************************************************************************/
+}}
 
-class ResMgr;
-
-class FilterConfigItem;
-class DlgExportEPBM : public ModalDialog
-{
-private:
-
-    FltCallDialogParameter& rFltCallPara;
-
-    FixedLine			aGrpFormat;
-    RadioButton			aRBRaw;
-    RadioButton			aRBASCII;
-    OKButton			aBtnOK;
-    CancelButton		aBtnCancel;
-    HelpButton			aBtnHelp;
-
-    FilterConfigItem*	pConfigItem;
-    ResMgr*				pMgr;
-
-    DECL_LINK( OK, void * );
-
-public:
-            DlgExportEPBM( FltCallDialogParameter& rPara );
-            ~DlgExportEPBM();
-};
-
-#endif // _DLGEPBM_HXX_
+#endif // INCLUDED_RESOURCE_MODEL_HELPER_HXX
