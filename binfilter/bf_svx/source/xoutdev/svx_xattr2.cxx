@@ -179,10 +179,10 @@ namespace binfilter {
 
 // -----------------------------------------------------------------------------
 
-/*N*/ sal_Bool XLineJointItem::QueryValue( ::com::sun::star::uno::Any& rVal, BYTE nMemberId ) const
+/*N*/ bool XLineJointItem::QueryValue( ::com::sun::star::uno::Any& rVal, BYTE nMemberId ) const
 /*N*/ {
 /*N*/ 	::com::sun::star::drawing::LineJoint eJoint = ::com::sun::star::drawing::LineJoint_NONE;
-/*N*/ 
+/*N*/
 /*N*/ 	switch( GetValue() )
 /*N*/ 	{
 /*N*/ 	case XLINEJOINT_NONE:
@@ -202,18 +202,18 @@ namespace binfilter {
 /*N*/ 	default:
 /*N*/ 		DBG_ERROR( "Unknown LineJoint enum value!" );
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	rVal <<= eJoint;
-/*N*/ 	return sal_True;
+/*N*/ 	return true;
 /*N*/ }
 
 // -----------------------------------------------------------------------------
 
-/*N*/ BOOL XLineJointItem::PutValue( const ::com::sun::star::uno::Any& rVal, BYTE nMemberId )
+/*N*/ bool XLineJointItem::PutValue( const ::com::sun::star::uno::Any& rVal, BYTE nMemberId )
 /*N*/ {
 /*N*/ 	XLineJoint eJoint = XLINEJOINT_NONE;
 /*N*/ 	::com::sun::star::drawing::LineJoint eUnoJoint;
-/*N*/ 
+/*N*/
 /*N*/ 	if(!(rVal >>= eUnoJoint))
 /*N*/     {
 /*?*/         // also try an int (for Basic)
@@ -240,10 +240,10 @@ namespace binfilter {
 /*N*/ 		eJoint = XLINEJOINT_ROUND;
 /*N*/ 		break;
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	SetValue( eJoint );
-/*N*/ 
-/*N*/ 	return sal_True;
+/*N*/
+/*N*/ 	return true;
 /*N*/ }
 
 // -----------------------------------------------------------------------------
