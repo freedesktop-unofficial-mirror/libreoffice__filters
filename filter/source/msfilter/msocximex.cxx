@@ -88,7 +88,10 @@
 #include <com/sun/star/sheet/XCellRangeAddressable.hpp>
 #include <com/sun/star/sheet/XCellRangeReferrer.hpp>
 #include <svtools/filterutils.hxx>
- 
+// #TODO remove this when oox is used for control/userform import
+#include <vbahelper/vbahelper.hxx>
+#include <com/sun/star/util/MeasureUnit.hpp>
+
 #ifndef C2S
 #define C2S(cChar)	String::CreateFromAscii(RTL_CONSTASCII_STRINGPARAM(cChar))
 #endif
@@ -103,6 +106,209 @@ using namespace cppu;
 
 #define WW8_ASCII2STR(s) String::CreateFromAscii(RTL_CONSTASCII_STRINGPARAM(s))
 #define GRAPHOBJ_URLPREFIX "vnd.sun.star.GraphicObject:"
+
+
+// #FIXME remove when oox is used for control import
+// convertion class lifted from oox ( yes, duplication I know but
+// should be very short term )
+class GraphicHelper
+{
+public:
+   GraphicHelper( const ::com::sun::star::uno::Reference< ::com::sun::star::frame::XModel >& xModel );
+    ~GraphicHelper();
+
+    /** Returns information about the output device. */
+    const ::com::sun::star::awt::DeviceInfo& getDeviceInfo() const;
+
+    /** Converts the passed value from horizontal screen pixels to 1/100 mm. */
+    sal_Int32           convertScreenPixelXToHmm( double fPixelX ) const;
+    /** Converts the passed value from vertical screen pixels to 1/100 mm. */
+    sal_Int32           convertScreenPixelYToHmm( double fPixelY ) const;
+    /** Converts the passed point from screen pixels to 1/100 mm. */
+    ::com::sun::star::awt::Point convertScreenPixelToHmm( const ::com::sun::star::awt::Point& rPixel ) const;
+    /** Converts the passed size from screen pixels to 1/100 mm. */
+    ::com::sun::star::awt::Size convertScreenPixelToHmm( const ::com::sun::star::awt::Size& rPixel ) const;
+
+    /** Converts the passed value from 1/100 mm to horizontal screen pixels. */
+    double              convertHmmToScreenPixelX( sal_Int32 nHmmX ) const;
+    /** Converts the passed value from 1/100 mm to vertical screen pixels. */
+    double              convertHmmToScreenPixelY( sal_Int32 nHmmY ) const;
+    /** Converts the passed point from 1/100 mm to screen pixels. */
+    ::com::sun::star::awt::Point convertHmmToScreenPixel( const ::com::sun::star::awt::Point& rHmm ) const;
+    /** Converts the passed size from 1/100 mm to screen pixels. */
+    ::com::sun::star::awt::Size convertHmmToScreenPixel( const ::com::sun::star::awt::Size& rHmm ) const;
+
+    /** Converts the passed point from AppFont units to 1/100 mm. */
+    ::com::sun::star::awt::Point convertAppFontToHmm( const ::com::sun::star::awt::Point& rAppFont ) const;
+    /** Converts the passed point from AppFont units to 1/100 mm. */
+    ::com::sun::star::awt::Size convertAppFontToHmm( const ::com::sun::star::awt::Size& rAppFont ) const;
+
+    /** Converts the passed point from 1/100 mm to AppFont units. */
+    ::com::sun::star::awt::Point convertHmmToAppFont( const ::com::sun::star::awt::Point& rHmm ) const;
+    /** Converts the passed size from 1/100 mm to AppFont units. */
+    ::com::sun::star::awt::Size convertHmmToAppFont( const ::com::sun::star::awt::Size& rHmm ) const;
+
+private:
+    ::com::sun::star::uno::Reference< ::com::sun::star::lang::XMultiServiceFactory > mxGlobalFactory;
+    ::com::sun::star::uno::Reference< ::com::sun::star::uno::XComponentContext > mxCompContext;
+    ::com::sun::star::uno::Reference< ::com::sun::star::awt::XUnitConversion > mxUnitConversion;
+    ::com::sun::star::awt::DeviceInfo maDeviceInfo; /// Current output device info.
+    double              mfPixelPerHmmX;             /// Number of screen pixels per 1/100 mm in X direction.
+    double              mfPixelPerHmmY;             /// Number of screen pixels per 1/100 mm in Y direction.
+};
+
+inline sal_Int32 lclConvertScreenPixelToHmm( double fPixel, double fPixelPerHmm )
+{
+    return static_cast< sal_Int32 >( (fPixelPerHmm > 0.0) ? (fPixel / fPixelPerHmm + 0.5) : 0.0 );
+}
+
+GraphicHelper::GraphicHelper( const uno::Reference< frame::XModel >& rxModel )
+{
+    mxGlobalFactory = comphelper::getProcessServiceFactory();
+    ::comphelper::ComponentContext aContext( mxGlobalFactory );
+    mxCompContext = aContext.getUNOContext();
+
+    // if no target frame has been passed (e.g. OLE objects), try to fallback to the active frame
+    // TODO: we need some mechanism to keep and pass the parent frame
+    uno::Reference< frame::XFrame > xFrame;
+    if ( rxModel.is() )
+    {
+        uno::Reference< frame::XController > xController = rxModel->getCurrentController();
+        xFrame = xController.is() ? xController->getFrame() : NULL;
+    }
+    if( !xFrame.is() && mxGlobalFactory.is() ) try
+    {
+        uno::Reference< frame::XFramesSupplier > xFramesSupp( mxGlobalFactory->createInstance( WW8_ASCII2STR( "com.sun.star.frame.Desktop" ) ), uno::UNO_QUERY_THROW );
+        xFrame = xFramesSupp->getActiveFrame();
+    }
+    catch( uno::Exception& )
+    {
+    }
+
+    // get the metric of the output device
+    OSL_ENSURE( xFrame.is(), "GraphicHelper::GraphicHelper - cannot get target frame" );
+    maDeviceInfo.PixelPerMeterX = maDeviceInfo.PixelPerMeterY = 3500.0; // some default just in case
+    if( xFrame.is() ) try
+    {
+        uno::Reference< awt::XDevice > xDevice( xFrame->getContainerWindow(), uno::UNO_QUERY_THROW );
+        mxUnitConversion.set( xDevice, uno::UNO_QUERY );
+        OSL_ENSURE( mxUnitConversion.is(), "GraphicHelper::GraphicHelper - cannot get unit converter" );
+        maDeviceInfo = xDevice->getInfo();
+    }
+    catch( uno::Exception& )
+    {
+        OSL_ENSURE( false, "GraphicHelper::GraphicHelper - cannot get output device info" );
+    }
+    mfPixelPerHmmX = maDeviceInfo.PixelPerMeterX / 100000.0;
+    mfPixelPerHmmY = maDeviceInfo.PixelPerMeterY / 100000.0;
+}
+
+GraphicHelper::~GraphicHelper()
+{
+}
+
+// Device info and device dependent unit conversion ---------------------------
+
+const awt::DeviceInfo& GraphicHelper::getDeviceInfo() const
+{
+    return maDeviceInfo;
+}
+
+sal_Int32 GraphicHelper::convertScreenPixelXToHmm( double fPixelX ) const
+{
+    return lclConvertScreenPixelToHmm( fPixelX, mfPixelPerHmmX );
+}
+
+sal_Int32 GraphicHelper::convertScreenPixelYToHmm( double fPixelY ) const
+{
+    return lclConvertScreenPixelToHmm( fPixelY, mfPixelPerHmmY );
+}
+
+awt::Point GraphicHelper::convertScreenPixelToHmm( const awt::Point& rPixel ) const
+{
+    return awt::Point( convertScreenPixelXToHmm( rPixel.X ), convertScreenPixelYToHmm( rPixel.Y ) );
+}
+
+awt::Size GraphicHelper::convertScreenPixelToHmm( const awt::Size& rPixel ) const
+{
+    return awt::Size( convertScreenPixelXToHmm( rPixel.Width ), convertScreenPixelYToHmm( rPixel.Height ) );
+}
+
+double GraphicHelper::convertHmmToScreenPixelX( sal_Int32 nHmmX ) const
+{
+    return nHmmX * mfPixelPerHmmX;
+}
+
+double GraphicHelper::convertHmmToScreenPixelY( sal_Int32 nHmmY ) const
+{
+    return nHmmY * mfPixelPerHmmY;
+}
+
+awt::Point GraphicHelper::convertHmmToScreenPixel( const awt::Point& rHmm ) const
+{
+    return awt::Point(
+        static_cast< sal_Int32 >( convertHmmToScreenPixelX( rHmm.X ) + 0.5 ),
+        static_cast< sal_Int32 >( convertHmmToScreenPixelY( rHmm.Y ) + 0.5 ) );
+}
+
+awt::Size GraphicHelper::convertHmmToScreenPixel( const awt::Size& rHmm ) const
+{
+    return awt::Size(
+        static_cast< sal_Int32 >( convertHmmToScreenPixelX( rHmm.Width ) + 0.5 ),
+        static_cast< sal_Int32 >( convertHmmToScreenPixelY( rHmm.Height ) + 0.5 ) );
+}
+
+awt::Point GraphicHelper::convertAppFontToHmm( const awt::Point& rAppFont ) const
+{
+    if( mxUnitConversion.is() ) try
+    {
+        awt::Point aPixel = mxUnitConversion->convertPointToPixel( rAppFont, ::com::sun::star::util::MeasureUnit::APPFONT );
+        return convertScreenPixelToHmm( aPixel );
+    }
+    catch( uno::Exception& )
+    {
+    }
+    return awt::Point( 0, 0 );
+}
+
+awt::Size GraphicHelper::convertAppFontToHmm( const awt::Size& rAppFont ) const
+{
+    if( mxUnitConversion.is() ) try
+    {
+        awt::Size aPixel = mxUnitConversion->convertSizeToPixel( rAppFont, ::com::sun::star::util::MeasureUnit::APPFONT );
+        return convertScreenPixelToHmm( aPixel );
+    }
+    catch( uno::Exception& )
+    {
+    }
+    return awt::Size( 0, 0 );
+}
+
+awt::Point GraphicHelper::convertHmmToAppFont( const awt::Point& rHmm ) const
+{
+    if( mxUnitConversion.is() ) try
+    {
+        awt::Point aPixel = convertHmmToScreenPixel( rHmm );
+        return mxUnitConversion->convertPointToLogic( aPixel, ::com::sun::star::util::MeasureUnit::APPFONT );
+    }
+    catch( uno::Exception& )
+    {
+    }
+    return awt::Point( 0, 0 );
+}
+
+awt::Size GraphicHelper::convertHmmToAppFont( const awt::Size& rHmm ) const
+{
+    if( mxUnitConversion.is() ) try
+    {
+        awt::Size aPixel = convertHmmToScreenPixel( rHmm );
+        return mxUnitConversion->convertSizeToLogic( aPixel, ::com::sun::star::util::MeasureUnit::APPFONT );
+    }
+    catch( uno::Exception& )
+    {
+    }
+    return awt::Size( 0, 0 );
+}
 
 
 static char sWW8_form[] = "WW-Standard";
@@ -138,39 +344,39 @@ long ReadAlign(SvStorageStream *pS, long nPos, int nAmount)
 // or embeded in the document.
 uno::Reference< graphic::XGraphicObject> lcl_readGraphicObject( SotStorageStream *pS )
 {
-	uno::Reference< graphic::XGraphicObject > xGrfObj;
-	uno::Reference< lang::XMultiServiceFactory > xServiceManager = ::comphelper::getProcessServiceFactory();
-	if( xServiceManager.is() )
-	{
-		try
-		{
-			// use the GraphicProvider service to get the XGraphic
-			uno::Reference< graphic::XGraphicProvider > xGraphProvider(
-					xServiceManager->createInstance( ::rtl::OUString::createFromAscii( "com.sun.star.graphic.GraphicProvider" ) ), uno::UNO_QUERY );
-			if( xGraphProvider.is() )
-			{
-				uno::Reference< io::XInputStream > xStream( new utl::OInputStreamWrapper( *pS ) );
-				if( xStream.is() )
-				{
-					uno::Sequence< beans::PropertyValue > aMediaProps( 1 );
-					aMediaProps[0].Name = ::rtl::OUString::createFromAscii( "InputStream" );
-					aMediaProps[0].Value <<= xStream;
-					uno::Reference< graphic::XGraphic > xGraphic = xGraphProvider->queryGraphic( aMediaProps );
-					if( xGraphic.is() )
-					{
-						// create an XGraphicObject
-						::comphelper::ComponentContext aContext( xServiceManager );
-						xGrfObj = graphic::GraphicObject::create( aContext.getUNOContext() );
-						xGrfObj->setGraphic(xGraphic);
-					}
-				}
-			}
-		}
-		catch( uno::Exception& )
-		{
-		}
-	}
-	return xGrfObj;
+    uno::Reference< graphic::XGraphicObject > xGrfObj;
+    uno::Reference< lang::XMultiServiceFactory > xServiceManager = ::comphelper::getProcessServiceFactory();
+    if( xServiceManager.is() )
+    {
+        try
+        {
+            // use the GraphicProvider service to get the XGraphic
+            uno::Reference< graphic::XGraphicProvider > xGraphProvider(
+                    xServiceManager->createInstance( ::rtl::OUString::createFromAscii( "com.sun.star.graphic.GraphicProvider" ) ), uno::UNO_QUERY );
+            if( xGraphProvider.is() )
+            {
+                uno::Reference< io::XInputStream > xStream( new utl::OInputStreamWrapper( *pS ) );
+                if( xStream.is() )
+                {
+                    uno::Sequence< beans::PropertyValue > aMediaProps( 1 );
+                    aMediaProps[0].Name = ::rtl::OUString::createFromAscii( "InputStream" );
+                    aMediaProps[0].Value <<= xStream;
+                    uno::Reference< graphic::XGraphic > xGraphic = xGraphProvider->queryGraphic( aMediaProps );
+                    if( xGraphic.is() )
+                    {
+                        // create an XGraphicObject
+                        ::comphelper::ComponentContext aContext( xServiceManager );
+                        xGrfObj = graphic::GraphicObject::create( aContext.getUNOContext() );
+                        xGrfObj->setGraphic(xGraphic);
+                    }
+                }
+            }
+        }
+        catch( uno::Exception& )
+        {
+        }
+    }
+    return xGrfObj;
 }
 
 
@@ -465,12 +671,12 @@ const sal_uInt16 MULTIPAGE = (sal_uInt16)0x39;
 // ActiveX controls that can be present in a Userform
 // ( note: RefEdit seems to be an exception )
 // In UserForm::Read just before the Container record starts
-// you will notice there can be sometimes trailing records, 
+// you will notice there can be sometimes trailing records,
 // it seems that these records have a 1:1 relationship with the non-toolbox
 // controls present in the Userform. An id in the trailing record
 // seems to identify the specific ActiveX control and an artificial nTypeIdent
 // e.g. 0x8000, 0x8001 etc. is created so as to be able to associate
-// the ActiveX control when referenced later 
+// the ActiveX control when referenced later
 // [1] Such ActiveX controls are added via Tools/AddionalControls
 // menu
 
@@ -479,7 +685,7 @@ const sal_uInt16 MULTIPAGE = (sal_uInt16)0x39;
 const sal_uInt16 PROGRESSBAR = (sal_uInt16)0x8000;
 
 // A set of IDs from the trailing records mentioned above that seem to
-// identify the following ActiveX controls 
+// identify the following ActiveX controls
 // Currently we only can process ( in a limited way ) the ProgressBar
 // the other ID's are for reference ( & future )
 
@@ -495,7 +701,7 @@ const sal_uInt8 aProgressID[] =
 0x22, 0x3a, 0x05, 0x35, 0x89, 0x85, 0xd1, 0x11,  0xb1, 0x6a, 0x00, 0xc0, 0xf0, 0x28, 0x36, 0x28,
 };
 
-// Calendar Control 10.0 
+// Calendar Control 10.0
 const sal_uInt8 aCalendarID[] =
 {
 0x2b, 0xc9, 0x27, 0x8e, 0x64, 0x12, 0x1c, 0x10, 0x8a, 0x2f, 0x04, 0x02, 0x24, 0x00, 0x9c, 0x02,
@@ -537,11 +743,11 @@ const sal_Int16 ActiveXIDBlockLen = 0x30; // the block len that contains the CLS
 
 bool lcl_handleActiveXControl(  SvStorageStream *pS, sal_uInt16& nTypeID )
 {
-    nTypeID = 0; // Illegal ActiveX ID 
+    nTypeID = 0; // Illegal ActiveX ID
     bool bRes = false;
     sal_uInt16 nIdentifier, nFixedAreaLen;
-    *pS >> nIdentifier;    
-    *pS >> nFixedAreaLen;    
+    *pS >> nIdentifier;
+    *pS >> nFixedAreaLen;
     pS->SeekRel( ( nFixedAreaLen - ActiveXIDBlockLen ) );
     sal_uInt8 aID[ ActiveXIDLen ];
     if ( !pS->IsEof() )
@@ -555,9 +761,9 @@ bool lcl_handleActiveXControl(  SvStorageStream *pS, sal_uInt16& nTypeID )
             bRes = true;
         }
 #if (OSL_DEBUG_LEVEL > 0)
-        // If we really want to process these more controls we should put them in 
-        // a list or array and have a single loop testing each id. For the moment 
-        // as we only can process PROGRESSBAR, not much point doing that until 
+        // If we really want to process these more controls we should put them in
+        // a list or array and have a single loop testing each id. For the moment
+        // as we only can process PROGRESSBAR, not much point doing that until
         // we add support for at least another activex control
 
         else if ( memcmp( aID, aCalendarID, ActiveXIDLen ) == 0 )
@@ -768,10 +974,10 @@ class ContainerRecReader
             else if ( rec.nTypeIdent & 0x8000 )
             {
                 // Skip ActiveX Controls we can't import
-                SotStorageStreamRef oStream = pContainerControl->getContainedControlsStream(); 
+                SotStorageStreamRef oStream = pContainerControl->getContainedControlsStream();
                 ULONG nStrmPos = oStream->Tell();
                 oStream->Seek( nStrmPos + rec.nSubStreamLen );
-            }  
+            }
             else
             {
                 DBG_ERROR("Terminating import, unexpected error");
@@ -792,7 +998,7 @@ class ContainerRecReader
     {
         sal_uInt8 aUnknown11[4];
         pS->Read(aUnknown11, sizeof(aUnknown11));
-        // discovered a dialog with value of 0xFF for aUnknown11 
+        // discovered a dialog with value of 0xFF for aUnknown11
         // needed an extra 4 bytes to offset correctly  into the control
         // records. Valid test or coincidence ?
         if ( aUnknown11[1] == 0xFF )
@@ -1039,7 +1245,7 @@ sal_Bool OCX_Control::Import(uno::Reference<container::XNameContainer> &rDialog
 {
     uno::Reference<beans::XPropertySet > xDlgProps( rDialog, uno::UNO_QUERY);
 
-    
+
     uno::Reference<lang::XMultiServiceFactory>
         xFactory(rDialog, uno::UNO_QUERY);
 
@@ -1052,15 +1258,11 @@ sal_Bool OCX_Control::Import(uno::Reference<container::XNameContainer> &rDialog
     if (!xModel.is())
         return sal_False;
 
-    sal_Bool bVBA = sal_False;
     /*  #147900# sometimes insertion of a control fails due to existing name,
         do not break entire form import then... */
     try
     {
         rDialog->insertByName(sName, uno::makeAny(xModel));
-        if ( xDlgProps.is() )
-            xDlgProps->getPropertyValue( OUString(RTL_CONSTASCII_USTRINGPARAM("VBAForm") ) ) >>= bVBA;
-
     }
     catch( uno::Exception& )
     {
@@ -1076,31 +1278,22 @@ sal_Bool OCX_Control::Import(uno::Reference<container::XNameContainer> &rDialog
 
     if (!Import(xPropSet))
         return sal_False;
-    
+
     uno::Any aTmp;
 
-    if ( !bVBA  )
-    {
-        aTmp <<= sal_Int32((mnLeft * 2) / 100);
-        xPropSet->setPropertyValue(WW8_ASCII2STR("PositionX"), aTmp);
-        aTmp <<= sal_Int32((mnTop * 2) / 100);
-        xPropSet->setPropertyValue(WW8_ASCII2STR("PositionY"), aTmp);
-        aTmp <<= sal_Int32((nWidth * 2) / 100);
-        xPropSet->setPropertyValue(WW8_ASCII2STR("Width"), aTmp);
-        aTmp <<= sal_Int32((nHeight * 2) / 100);
-        xPropSet->setPropertyValue(WW8_ASCII2STR("Height"), aTmp);
-    }
-    else
-    {
-        aTmp <<= sal_Int32(mnLeft); // 100thmm
-        xPropSet->setPropertyValue(WW8_ASCII2STR("PositionX"), aTmp);
-        aTmp <<= sal_Int32(mnTop); //100th mm
-        xPropSet->setPropertyValue(WW8_ASCII2STR("PositionY"), aTmp);
-        aTmp <<= sal_Int32(nWidth); // 100thmm
-        xPropSet->setPropertyValue(WW8_ASCII2STR("Width"), aTmp);
-        aTmp <<= sal_Int32(nHeight); //100th mm
-        xPropSet->setPropertyValue(WW8_ASCII2STR("Height"), aTmp);
-    }
+    GraphicHelper gHelper( pDocSh->GetModel() );
+
+    awt::Point aAppFontPos = gHelper.convertHmmToAppFont( awt::Point( mnLeft, mnTop )  );
+    aTmp <<= sal_Int32( aAppFontPos.X );
+    xPropSet->setPropertyValue(WW8_ASCII2STR("PositionX"), aTmp);
+    aTmp <<= sal_Int32( aAppFontPos.Y );
+    xPropSet->setPropertyValue(WW8_ASCII2STR("PositionY"), aTmp);
+
+    awt::Size aAppFontSize = gHelper.convertHmmToAppFont( awt::Size( nWidth, nHeight ) );
+    aTmp <<= sal_Int32( aAppFontSize.Width ); // 100thmm
+    xPropSet->setPropertyValue(WW8_ASCII2STR("Width"), aTmp);
+    aTmp <<= sal_Int32( aAppFontSize.Height); //100th mm
+    xPropSet->setPropertyValue(WW8_ASCII2STR("Height"), aTmp);
     if ( msToolTip.Len() > 0 )
         xPropSet->setPropertyValue(WW8_ASCII2STR("HelpText"), uno::Any(OUString(msToolTip)));
 
@@ -1604,7 +1797,7 @@ void lcl_ApplyListSourceAndBindableStuff( uno::Reference< frame::XModel >& xMode
     uno::Reference< form::binding::XBindableValue > xBindable( rPropSet, uno::UNO_QUERY );
     if (  xFac.is() && rsCtrlSource.getLength() && xBindable.is() )
     {
-         
+
          // OOo address structures
          // RefCell - convert from XL
          // pretend we converted the imported string address into the
@@ -1616,9 +1809,9 @@ void lcl_ApplyListSourceAndBindableStuff( uno::Reference< frame::XModel >& xMode
              // we need this service to properly convert XL notation also
              // Should be easy to extend
              xConvertor->setPropertyValue( C2U( "XL_A1_Representation" ), uno::makeAny( rsCtrlSource ) );
-             xConvertor->getPropertyValue( C2U( "Address" ) ) >>= aAddress;    
+             xConvertor->getPropertyValue( C2U( "Address" ) ) >>= aAddress;
          }
-        
+
          beans::NamedValue aArg1;
          aArg1.Name = C2U("BoundCell");
          aArg1.Value <<= aAddress;
@@ -1632,7 +1825,7 @@ void lcl_ApplyListSourceAndBindableStuff( uno::Reference< frame::XModel >& xMode
     uno::Reference< form::binding::XListEntrySink > xListEntrySink( rPropSet, uno::UNO_QUERY );
     if (  xFac.is() && rsRowSource.getLength() && xListEntrySink.is() )
     {
-         
+
          // OOo address structures
          // RefCell - convert from XL
          // pretend we converted the imported string address into the
@@ -1649,7 +1842,7 @@ void lcl_ApplyListSourceAndBindableStuff( uno::Reference< frame::XModel >& xMode
                  xConvertor->getPropertyValue( C2U( "Address" ) ) >>= aAddress;
              }
          }
-        
+
          beans::NamedValue aArg1;
          aArg1.Name = C2U("CellRange");
          aArg1.Value <<= aAddress;
@@ -1693,21 +1886,21 @@ sal_Bool OCX_OptionButton::Import(com::sun::star::uno::Reference<
     aTmp <<= ImportSpecEffect( nSpecialEffect );
     rPropSet->setPropertyValue( WW8_ASCII2STR("VisualEffect"), aTmp);
 
-	if (pValue)
+    if (pValue)
     {
         INT16 nTmp = pValue[0]-0x30;
         aTmp <<= nTmp;
-		if (!bSetInDialog)
-			rPropSet->setPropertyValue( WW8_ASCII2STR("DefaultState"), aTmp);
-		else
-		{
-			// dialog ( but we might be using the form model )
-			if ( rPropSet->getPropertySetInfo()->hasPropertyByName( WW8_ASCII2STR("DefaultState") ) )
-				rPropSet->setPropertyValue( WW8_ASCII2STR("DefaultState"), aTmp);
-			else
-				rPropSet->setPropertyValue( WW8_ASCII2STR("State"), aTmp);
-		}
-	}
+        if (!bSetInDialog)
+            rPropSet->setPropertyValue( WW8_ASCII2STR("DefaultState"), aTmp);
+        else
+        {
+            // dialog ( but we might be using the form model )
+            if ( rPropSet->getPropertySetInfo()->hasPropertyByName( WW8_ASCII2STR("DefaultState") ) )
+                rPropSet->setPropertyValue( WW8_ASCII2STR("DefaultState"), aTmp);
+            else
+                rPropSet->setPropertyValue( WW8_ASCII2STR("State"), aTmp);
+        }
+    }
     // If this is a dialog control then we need to  set a groupname *always*
     rtl::OUString sGroupName = lclCreateOUString( pGroupName, nGroupNameLen );
     if ( GetInDialog() ) // Userform/Dialog
@@ -1720,16 +1913,16 @@ sal_Bool OCX_OptionButton::Import(com::sun::star::uno::Reference<
         // Unfortunately in openoffice there are no containers below the dialog itself :-(
         // To ensure correct grouping for imported radiobuttons either with no groupname
         // or identical groupnames that are in separate containers we *must* ensure
-        // that a suitable groupname is applied. 
+        // that a suitable groupname is applied.
         // Because controlNames are unique even across different containers we can use the
         // controls container (e.g. parent) name as a prefix for a group name
-	rtl::OUString sParentName = msParentName;
+    rtl::OUString sParentName = msParentName;
         sGroupName = sParentName.concat( C2U( ":" ) ).concat( sGroupName );
     }
     if ( sGroupName.getLength() == 0 )
         sGroupName = rtl::OUString::createFromAscii("DefaultGroup");
-	OSL_TRACE("RadioButton %s has groupname %s", 
-		rtl::OUStringToOString( sName, RTL_TEXTENCODING_UTF8 ).getStr(),  rtl::OUStringToOString( sGroupName, RTL_TEXTENCODING_UTF8 ).getStr() );
+    OSL_TRACE("RadioButton %s has groupname %s",
+        rtl::OUStringToOString( sName, RTL_TEXTENCODING_UTF8 ).getStr(),  rtl::OUStringToOString( sGroupName, RTL_TEXTENCODING_UTF8 ).getStr() );
         try
         {
             aTmp <<= sGroupName;
@@ -1749,8 +1942,8 @@ sal_Bool OCX_OptionButton::Import(com::sun::star::uno::Reference<
     aTmp <<= ::com::sun::star::style::VerticalAlignment_MIDDLE;
     rPropSet->setPropertyValue( WW8_ASCII2STR("VerticalAlign"), aTmp );
 
-	uno::Reference< frame::XModel > xModel ( pDocSh ? pDocSh->GetModel() : NULL );
-	lcl_ApplyListSourceAndBindableStuff( xModel, rPropSet, msCtrlSource, msRowSource );
+    uno::Reference< frame::XModel > xModel ( pDocSh ? pDocSh->GetModel() : NULL );
+    lcl_ApplyListSourceAndBindableStuff( xModel, rPropSet, msCtrlSource, msRowSource );
     if ( sImageUrl.getLength() )
     {
         aTmp <<= sImageUrl;
@@ -2393,7 +2586,7 @@ sal_Bool OCX_ToggleButton::Import(com::sun::star::uno::Reference<
     }
 
     aFontData.Import(rPropSet);
-	
+
     if ( sImageUrl.getLength() )
     {
         aTmp <<= sImageUrl;
@@ -2654,8 +2847,8 @@ sal_Bool OCX_ComboBox::Import(com::sun::star::uno::Reference<
     rPropSet->setPropertyValue( WW8_ASCII2STR("MaxTextLen"), aTmp);
 
     aFontData.Import(rPropSet);
-	uno::Reference< frame::XModel > xModel ( pDocSh ? pDocSh->GetModel() : NULL );
-	lcl_ApplyListSourceAndBindableStuff( xModel, rPropSet, msCtrlSource, msRowSource );
+    uno::Reference< frame::XModel > xModel ( pDocSh ? pDocSh->GetModel() : NULL );
+    lcl_ApplyListSourceAndBindableStuff( xModel, rPropSet, msCtrlSource, msRowSource );
     return sal_True;
 }
 
@@ -2875,8 +3068,8 @@ sal_Bool OCX_ListBox::Import(com::sun::star::uno::Reference<
 
     aTmp <<= ImportColor( nBorderColor );
     rPropSet->setPropertyValue( WW8_ASCII2STR("BorderColor"), aTmp);
-	uno::Reference< frame::XModel > xModel ( pDocSh ? pDocSh->GetModel() : NULL );
-	lcl_ApplyListSourceAndBindableStuff( xModel, rPropSet, msCtrlSource, msRowSource );
+    uno::Reference< frame::XModel > xModel ( pDocSh ? pDocSh->GetModel() : NULL );
+    lcl_ApplyListSourceAndBindableStuff( xModel, rPropSet, msCtrlSource, msRowSource );
     aFontData.Import(rPropSet);
     return sal_True;
 }
@@ -3254,15 +3447,15 @@ sal_Bool OCX_ModernControl::Read(SvStorageStream *pS)
     {
         pS->Read(pPictureHeader,20);
         *pS >> nPictureLen;
-		long imagePos = pS->Tell();
-		mxGrfObj = lcl_readGraphicObject( pS );
-		if( mxGrfObj.is() )
-		{
-			sImageUrl = rtl::OUString( RTL_CONSTASCII_USTRINGPARAM( GRAPHOBJ_URLPREFIX ) );
-			sImageUrl = sImageUrl + mxGrfObj->getUniqueID();
-		}
-		// make sure the stream position should be pointing after the image
-		pS->Seek( imagePos + nPictureLen );
+        long imagePos = pS->Tell();
+        mxGrfObj = lcl_readGraphicObject( pS );
+        if( mxGrfObj.is() )
+        {
+            sImageUrl = rtl::OUString( RTL_CONSTASCII_USTRINGPARAM( GRAPHOBJ_URLPREFIX ) );
+            sImageUrl = sImageUrl + mxGrfObj->getUniqueID();
+        }
+        // make sure the stream position should be pointing after the image
+        pS->Seek( imagePos + nPictureLen );
     }
 
     return sal_True;
@@ -3352,15 +3545,15 @@ sal_Bool OCX_CommandButton::Read(SvStorageStream *pS)
     {
         pS->Read(pPictureHeader,20);
         *pS >> nPictureLen;
-		long imagePos = pS->Tell();
-		mxGrfObj = lcl_readGraphicObject( pS );
-		if( mxGrfObj.is() )
-		{
-			sImageUrl = rtl::OUString( RTL_CONSTASCII_USTRINGPARAM( GRAPHOBJ_URLPREFIX ) );
-			sImageUrl = sImageUrl + mxGrfObj->getUniqueID();
-		}
-		// make sure the stream position should be pointing after the image
-		pS->Seek( imagePos + nPictureLen );
+        long imagePos = pS->Tell();
+        mxGrfObj = lcl_readGraphicObject( pS );
+        if( mxGrfObj.is() )
+        {
+            sImageUrl = rtl::OUString( RTL_CONSTASCII_USTRINGPARAM( GRAPHOBJ_URLPREFIX ) );
+            sImageUrl = sImageUrl + mxGrfObj->getUniqueID();
+        }
+        // make sure the stream position should be pointing after the image
+        pS->Seek( imagePos + nPictureLen );
     }
 
     return sal_True;
@@ -3554,7 +3747,7 @@ bool OCX_ContainerControl::createFromContainerRecord( ContainerRecord& record, O
         if ( it == mActiveXIDMap.end() )
             return false;
         // replace the generated id with our hardcoded one
-        record.nTypeIdent = it->second; 
+        record.nTypeIdent = it->second;
     }
     switch ( record.nTypeIdent)
         {
@@ -3687,8 +3880,8 @@ void OCX_ContainerControl::ProcessControl(OCX_Control* pControl,SvStorageStream*
             case LISTBOX:
             case OPTIONBUTTON:
             case COMBOBOX:
-			case SPINBUTTON:
-			case SCROLLBAR:
+            case SPINBUTTON:
+            case SCROLLBAR:
                 {
                     pControl->msCtrlSource = rec.sCtrlSource;
                     pControl->msRowSource = rec.sRowSource;
@@ -3851,27 +4044,27 @@ sal_Bool OCX_MultiPage::Import(com::sun::star::uno::Reference<
     {
         uno::Reference<lang::XMultiServiceFactory>
             xFactory(rDialog, uno::UNO_QUERY);
-	OSL_TRACE("** MultiPage creating control %s", rtl::OUStringToOString( msDialogType, RTL_TEXTENCODING_UTF8 ).getStr() );
-	uno::Reference<uno::XInterface> xCreate = xFactory->createInstance(msDialogType);
-	if (!xCreate.is())
-		return sal_False;
+    OSL_TRACE("** MultiPage creating control %s", rtl::OUStringToOString( msDialogType, RTL_TEXTENCODING_UTF8 ).getStr() );
+    uno::Reference<uno::XInterface> xCreate = xFactory->createInstance(msDialogType);
+    if (!xCreate.is())
+        return sal_False;
 
-	uno::Reference<awt::XControlModel> xModel(xCreate, uno::UNO_QUERY);
-	if (!xModel.is())
-		return sal_False;
+    uno::Reference<awt::XControlModel> xModel(xCreate, uno::UNO_QUERY);
+    if (!xModel.is())
+        return sal_False;
 
         try
         {
-		// we should just call MultiPage::Import( XPropertySet )
+        // we should just call MultiPage::Import( XPropertySet )
     		OSL_TRACE("********* MULTIPAGE cName %s", rtl::OUStringToOString( sName, RTL_TEXTENCODING_UTF8 ).getStr() );
-		uno::Any aTmp(&sName,getCppuType((OUString *)0));
-		uno::Reference<beans::XPropertySet> xPrps(xModel, uno::UNO_QUERY);
-		xPrps->setPropertyValue( WW8_ASCII2STR("Name"), aTmp );
-		aTmp = uno::makeAny( mnCurrentPageStep );
-		xPrps->setPropertyValue( WW8_ASCII2STR("ProgressValueMax"), aTmp );
-		// default current page to 0 ( #FIXME, we need to read this value )
-		aTmp = uno::makeAny( sal_Int32(0) );
-		xPrps->setPropertyValue( WW8_ASCII2STR("ProgressValue"), aTmp );
+        uno::Any aTmp(&sName,getCppuType((OUString *)0));
+        uno::Reference<beans::XPropertySet> xPrps(xModel, uno::UNO_QUERY);
+        xPrps->setPropertyValue( WW8_ASCII2STR("Name"), aTmp );
+        aTmp = uno::makeAny( mnCurrentPageStep );
+        xPrps->setPropertyValue( WW8_ASCII2STR("ProgressValueMax"), aTmp );
+        // default current page to 0 ( #FIXME, we need to read this value )
+        aTmp = uno::makeAny( sal_Int32(0) );
+        xPrps->setPropertyValue( WW8_ASCII2STR("ProgressValue"), aTmp );
     		OSL_TRACE("********* MULTIPAGE vomitted out properties");
 
     // Calls import on contained controls
@@ -4172,7 +4365,7 @@ OCX_UserForm::OCX_UserForm( SotStorageRef& parent,
         nKeepScrollBarsVisible(3), nCycle(0), nBorderStyle(0), nSpecialEffect(0),
         nPicture(0), nPictureAlignment(2), nPictureSizeMode(0),
         bPictureTiling(FALSE), nAccelerator(0), nIcon(0), pCaption(0),
-		nScrollWidth(0), nScrollHeight(0), nScrollLeft(0), nScrollTop(0), nIconLen(0), pIcon(0), nPictureLen(0)
+        nScrollWidth(0), nScrollHeight(0), nScrollLeft(0), nScrollTop(0), nIconLen(0), pIcon(0), nPictureLen(0)
     {
             mnForeColor = 0x80000012;
             mnBackColor = 0x8000000F;
@@ -4302,30 +4495,30 @@ sal_Bool OCX_UserForm::Read(SvStorageStream *pS)
         pS->Read(pIcon,nIconLen);
     }
 
-	ReadAlign( pS, pS->Tell() - nStart, 4);
-	if (pBlockFlags[2] & 0x10)
-	{
-		//Font Stuff..
-		pS->SeekRel(0x1a);
-		sal_uInt8 nFontLen;
-		*pS >> nFontLen;
-		pS->SeekRel(nFontLen);
-	}
+    ReadAlign( pS, pS->Tell() - nStart, 4);
+    if (pBlockFlags[2] & 0x10)
+    {
+        //Font Stuff..
+        pS->SeekRel(0x1a);
+        sal_uInt8 nFontLen;
+        *pS >> nFontLen;
+        pS->SeekRel(nFontLen);
+    }
     if (nPicture)
     {
         pS->Read(pPictureHeader,20);
         *pS >> nPictureLen;
-		long imagePos = pS->Tell();
-		// great embedded object
-		mxGrfObj = lcl_readGraphicObject( pS );
-		if( mxGrfObj.is() )
-		{
-			sImageUrl = rtl::OUString( RTL_CONSTASCII_USTRINGPARAM( GRAPHOBJ_URLPREFIX ) );
-			sImageUrl = sImageUrl + mxGrfObj->getUniqueID();
-		}
-		// make sure the stream position should be pointing after the image.
-		pS->Seek( imagePos + nPictureLen );
-	}
+        long imagePos = pS->Tell();
+        // great embedded object
+        mxGrfObj = lcl_readGraphicObject( pS );
+        if( mxGrfObj.is() )
+        {
+            sImageUrl = rtl::OUString( RTL_CONSTASCII_USTRINGPARAM( GRAPHOBJ_URLPREFIX ) );
+            sImageUrl = sImageUrl + mxGrfObj->getUniqueID();
+        }
+        // make sure the stream position should be pointing after the image.
+        pS->Seek( imagePos + nPictureLen );
+    }
 
     sal_Int16 numTrailingRecs = 0;
     *pS >> numTrailingRecs;
@@ -4361,30 +4554,14 @@ sal_Bool OCX_UserForm::Import(
         OUString(RTL_CONSTASCII_USTRINGPARAM("Title")), aTmp);
     aTmp <<= ImportColor(mnBackColor);
     xDialogPropSet->setPropertyValue( WW8_ASCII2STR("BackgroundColor"), aTmp);
-    sal_Bool bVBA = sal_False;
-    // Ok we are importing xls but maybe we aren't in VBA mode
-    // if we are not in VBA mode then we should import sizes etc. ( as before )
-    try
-    {
-        xDialogPropSet->getPropertyValue( OUString(RTL_CONSTASCII_USTRINGPARAM("VBAForm") ) ) >>= bVBA;
-    }
-    catch( uno::Exception& e )
-    {
-    }
-    if ( !bVBA )
-    {
-        aTmp <<= sal_Int32((nWidth * 2) / 100); 
-        xDialogPropSet->setPropertyValue(WW8_ASCII2STR("Width"), aTmp);
-        aTmp <<= sal_Int32((nHeight * 2) / 100); 
-        xDialogPropSet->setPropertyValue(WW8_ASCII2STR("Height"), aTmp);
-    }
-    else
-    {
-        aTmp <<= sal_Int32( nWidth + 160 ); // 100thmm
-        xDialogPropSet->setPropertyValue(WW8_ASCII2STR("Width"), aTmp);
-        aTmp <<= sal_Int32(nHeight + 662 - 714); //100th mm
-        xDialogPropSet->setPropertyValue(WW8_ASCII2STR("Height"), aTmp);
-    }
+
+    GraphicHelper gHelper( pDocSh->GetModel() );
+
+    awt::Size aAppFontSize = gHelper.convertHmmToAppFont( awt::Size( nWidth, nHeight ) );
+    aTmp <<= sal_Int32( aAppFontSize.Width ); //
+    xDialogPropSet->setPropertyValue(WW8_ASCII2STR("Width"), aTmp);
+    aTmp <<= sal_Int32( aAppFontSize.Height ); //100th mm
+    xDialogPropSet->setPropertyValue(WW8_ASCII2STR("Height"), aTmp);
 
 
     uno::Reference<beans::XPropertySet> xPropSet( mxParent, uno::UNO_QUERY );
@@ -4401,14 +4578,14 @@ sal_Bool OCX_UserForm::Import(
     if ( sImageUrl.getLength() )
     {
         aTmp <<= sImageUrl;
-		try
-		{
+        try
+        {
         	xDialogPropSet->setPropertyValue( WW8_ASCII2STR("ImageURL"), aTmp);
-		}
-		catch( uno::Exception& )
-		{
-			OSL_TRACE("OCX_UserForm::Import, Image fails to import");
-		}
+        }
+        catch( uno::Exception& )
+        {
+            OSL_TRACE("OCX_UserForm::Import, Image fails to import");
+        }
     }
     return sal_True;
 }
@@ -4935,14 +5112,14 @@ sal_Bool OCX_CheckBox::Import(com::sun::star::uno::Reference<
     aTmp <<= ImportSpecEffect( nSpecialEffect );
     rPropSet->setPropertyValue( WW8_ASCII2STR("VisualEffect"), aTmp);
 
-	if (pValue)
+    if (pValue)
     {
         INT16 nTmp=pValue[0]-0x30;
         aTmp <<= nTmp;
-		if ( !bSetInDialog )
-		 	rPropSet->setPropertyValue( WW8_ASCII2STR("DefaultState"), aTmp);
-		else
-		 	rPropSet->setPropertyValue( WW8_ASCII2STR("State"), aTmp);
+        if ( !bSetInDialog )
+            rPropSet->setPropertyValue( WW8_ASCII2STR("DefaultState"), aTmp);
+        else
+            rPropSet->setPropertyValue( WW8_ASCII2STR("State"), aTmp);
     }
 
     if (pCaption)
@@ -5539,14 +5716,14 @@ sal_Bool OCX_Image::Read(SotStorageStream *pS)
 
         long imagePos = pS->Tell();
 
-		mxGrfObj = lcl_readGraphicObject( pS );
-		if( mxGrfObj.is() )
-		{
-			sImageUrl = rtl::OUString( RTL_CONSTASCII_USTRINGPARAM( GRAPHOBJ_URLPREFIX ) );
-			sImageUrl = sImageUrl + mxGrfObj->getUniqueID();
-		}
-		// make sure the stream position should be pointing after the image
-		pS->Seek( imagePos + nImageLen );
+        mxGrfObj = lcl_readGraphicObject( pS );
+        if( mxGrfObj.is() )
+        {
+            sImageUrl = rtl::OUString( RTL_CONSTASCII_USTRINGPARAM( GRAPHOBJ_URLPREFIX ) );
+            sImageUrl = sImageUrl + mxGrfObj->getUniqueID();
+        }
+        // make sure the stream position should be pointing after the image
+        pS->Seek( imagePos + nImageLen );
     }
     return sal_True;
 }
@@ -5837,8 +6014,8 @@ sal_Bool OCX_SpinButton::Import(com::sun::star::uno::Reference<
     aTmp <<= sal_Int16( 0 );
     rPropSet->setPropertyValue( WW8_ASCII2STR("Border"), aTmp);
 
-	uno::Reference< frame::XModel > xModel ( pDocSh ? pDocSh->GetModel() : NULL );
-	lcl_ApplyListSourceAndBindableStuff( xModel, rPropSet, msCtrlSource, msRowSource );
+    uno::Reference< frame::XModel > xModel ( pDocSh ? pDocSh->GetModel() : NULL );
+    lcl_ApplyListSourceAndBindableStuff( xModel, rPropSet, msCtrlSource, msRowSource );
 
     return sal_True;
 }
@@ -6073,8 +6250,8 @@ sal_Bool OCX_ScrollBar::Import(com::sun::star::uno::Reference<
     aTmp <<= sal_Int16( 0 );
     rPropSet->setPropertyValue( WW8_ASCII2STR("Border"), aTmp);
 
-	uno::Reference< frame::XModel > xModel ( pDocSh ? pDocSh->GetModel() : NULL );
-	lcl_ApplyListSourceAndBindableStuff( xModel, rPropSet, msCtrlSource, msRowSource );
+    uno::Reference< frame::XModel > xModel ( pDocSh ? pDocSh->GetModel() : NULL );
+    lcl_ApplyListSourceAndBindableStuff( xModel, rPropSet, msCtrlSource, msRowSource );
 
     return sal_True;
 }
