@@ -2,7 +2,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -33,6 +33,8 @@
 #include <com/sun/star/drawing/XDrawPages.hpp>
 #include <com/sun/star/drawing/XDrawPagesSupplier.hpp>
 #include <com/sun/star/drawing/XMasterPageTarget.hpp>
+#include <com/sun/star/xml/dom/XDocument.hpp>
+#include <com/sun/star/xml/sax/XFastSAXSerializable.hpp>
 #include <com/sun/star/style/XStyleFamiliesSupplier.hpp>
 #include <com/sun/star/style/XStyle.hpp>
 #include <com/sun/star/presentation/XPresentationPage.hpp>
@@ -131,7 +133,7 @@ void ResolveTextFields( XmlFilterBase& rFilter )
                             aURL = CREATE_OUSTRING( "#" ).concat( xNamed->getName() );
                             xPropSet->setPropertyValue( sURL, Any( aURL ) );
                             Reference< text::XTextContent > xContent( rTextField.xTextField, UNO_QUERY);
-                            Reference< text::XTextRange > xTextRange( rTextField.xTextCursor, UNO_QUERY );						
+                            Reference< text::XTextRange > xTextRange( rTextField.xTextCursor, UNO_QUERY );
                             rTextField.xText->insertTextContent( xTextRange, xContent, sal_True );
                         }
                         catch( uno::Exception& )
@@ -139,7 +141,7 @@ void ResolveTextFields( XmlFilterBase& rFilter )
                         }
                     }
                 }
-            }		
+            }
         }
     }
 }
@@ -231,8 +233,17 @@ void PresentationFragmentHandler::endDocument() throw (SAXException, RuntimeExce
                                 {
                                     oox::drawingml::ThemePtr pThemePtr( new oox::drawingml::Theme() );
                                     pMasterPersistPtr->setTheme( pThemePtr );
-                                    rFilter.importFragment( new ThemeFragmentHandler( rFilter, aThemeFragmentPath, *pThemePtr ) );
+                                    Reference<xml::dom::XDocument> xDoc=
+                                        rFilter.importFragment(aThemeFragmentPath);
+
+                                    rFilter.importFragment(
+                                        new ThemeFragmentHandler(
+                                            rFilter, aThemeFragmentPath, *pThemePtr ),
+                                        Reference<xml::sax::XFastSAXSerializable>(
+                                            xDoc,
+                                            UNO_QUERY_THROW));
                                     rThemes[ aThemeFragmentPath ] = pThemePtr;
+                                    pThemePtr->setFragment(xDoc);
                                 }
                                 else
                                 {
@@ -282,7 +293,7 @@ void PresentationFragmentHandler::endDocument() throw (SAXException, RuntimeExce
                 }
             }
         }
-        ResolveTextFields( rFilter ); 
+        ResolveTextFields( rFilter );
     }
     catch( uno::Exception& )
     {
@@ -379,7 +390,7 @@ bool PresentationFragmentHandler::importSlide( const FragmentHandlerRef& rxSlide
                 xPropertySet->setPropertyValue( sIsHeaderVisible, Any( aHeaderFooter.mbHeader ) );
             xPropertySet->setPropertyValue( sIsFooterVisible, Any( aHeaderFooter.mbFooter ) );
             xPropertySet->setPropertyValue( sIsDateTimeVisible, Any( aHeaderFooter.mbDateTime ) );
-            xPropertySet->setPropertyValue( sIsPageNumberVisible, Any( aHeaderFooter.mbSlideNumber ) );	
+            xPropertySet->setPropertyValue( sIsPageNumberVisible, Any( aHeaderFooter.mbSlideNumber ) );
         }
         catch( uno::Exception& )
         {
