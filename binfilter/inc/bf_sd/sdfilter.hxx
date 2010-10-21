@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -32,7 +32,6 @@
 
 #include <com/sun/star/frame/XModel.hpp>
 #include <com/sun/star/task/XStatusIndicatorSupplier.hpp>
-namespace vos { class OModule; }
 namespace binfilter {
 
 // ------------
@@ -64,7 +63,7 @@ protected:
     void						CreateProgress();
 
 public:
-    
+
                                 SdFilter( SfxMedium& rMedium, SdDrawDocShell& rDocShell, sal_Bool bShowProgress );
                                 ~SdFilter();
 
