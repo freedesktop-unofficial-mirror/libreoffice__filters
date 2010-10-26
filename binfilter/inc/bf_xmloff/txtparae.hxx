@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -60,7 +60,6 @@ class XMLIndexMarkExport;
 class XMLRedlineExport;
 struct XMLPropertyState;
 class MultiPropertySetHelper;
-
 
 namespace xmloff { class OFormLayerXMLExport; }
 
@@ -194,9 +193,6 @@ protected:
     const ::rtl::OUString sRubyCharStyleName;
 
     SinglePropertySetInfoCache aCharStyleNamesPropInfoCache;
-
-//	SvXMLExport& GetExport() { return rExport; }
-//	const SvXMLExport& GetExport() const  { return rExport; }
 
     UniReference < SvXMLExportPropertyMapper > GetParaPropMapper() const
     {
@@ -441,7 +437,7 @@ protected:
         ::com::sun::star::uno::Reference <
             ::com::sun::star::text::XTextSection > & rOldSection,
         MultiPropertySetHelper& rPropSetHelper,
-        sal_Int16 nTextSectionId,	
+        sal_Int16 nTextSectionId,
         const ::com::sun::star::uno::Reference <
             ::com::sun::star::text::XTextContent > & rNewContent,
         const XMLTextNumRuleInfo& rOldList,
@@ -506,10 +502,10 @@ public:
 
     /// export the (text field) declarations for a particular XText
     void exportTextDeclarations(
-        const ::com::sun::star::uno::Reference < 
+        const ::com::sun::star::uno::Reference <
             ::com::sun::star::text::XText > & rText );
 
-    /// true: export only those declarations that are used; 
+    /// true: export only those declarations that are used;
     /// false: export all declarations
     void exportUsedDeclarations( sal_Bool bOnlyUsed );
 
@@ -519,7 +515,7 @@ public:
 
     /// Export the list of change information (enclosed by <tracked-changes>)
     /// (or the necessary automatic styles)
-    void exportTrackedChanges(const ::com::sun::star::uno::Reference < 
+    void exportTrackedChanges(const ::com::sun::star::uno::Reference <
                                   ::com::sun::star::text::XText > & rText,
                               sal_Bool bAutoStyle );
 
@@ -529,11 +525,11 @@ public:
     /// be exported seperately via the exportTrackedChanges(sal_Bool,
     /// Reference<XText>) method.
     void recordTrackedChangesForXText(
-        const ::com::sun::star::uno::Reference < 
+        const ::com::sun::star::uno::Reference <
             ::com::sun::star::text::XText > & rText );
 
-    /// Stop recording tracked changes. 
-    /// This is the same as calling recordTrackedChanges(...) with an 
+    /// Stop recording tracked changes.
+    /// This is the same as calling recordTrackedChanges(...) with an
     /// empty reference.
     void recordTrackedChangesNoXText();
 
@@ -546,10 +542,10 @@ public:
     void collectTextAutoStyles(
         const ::com::sun::star::uno::Reference <
             ::com::sun::star::text::XText > & rText,
-        sal_Bool bProgress = sal_False,
+        sal_Bool bProgressIn = sal_False,
         sal_Bool bExportParagraph = sal_True )
     {
-        exportText( rText, sal_True, bProgress, bExportParagraph );
+        exportText( rText, sal_True, bProgressIn, bExportParagraph );
     }
 
     void collectTextAutoStyles(
@@ -557,32 +553,36 @@ public:
             ::com::sun::star::text::XText > & rText,
         const ::com::sun::star::uno::Reference <
             ::com::sun::star::text::XTextSection > & rBaseSection,
-        sal_Bool bProgress = sal_False,
+        sal_Bool bProgressIn = sal_False,
         sal_Bool bExportParagraph = sal_True )
     {
-        exportText( rText, rBaseSection, sal_True, bProgress, bExportParagraph );
+        exportText( rText, rBaseSection, sal_True, bProgressIn, bExportParagraph );
     }
 
     // This method prepares the collection of auto styles for frames
     // that are bound to a frame.
-    void collectFramesBoundToFrameAutoStyles( sal_Bool bProgress = sal_False )
+    void collectFramesBoundToFrameAutoStyles( sal_Bool bProgressIn = sal_False )
     {
+        // unused
+        bProgressIn;
         collectFrames( sal_True );
     }
+
     // This method prepares the collection of auto styles for frames
     // that are bound to a frame and it collects auto styles
     // for frames bound to a page.
-    void collectFramesBoundToPageOrFrameAutoStyles( sal_Bool bProgress = sal_False )
+    void collectFramesBoundToPageOrFrameAutoStyles( sal_Bool bProgressIn = sal_False )
     {
         collectFrames( sal_False );
-        exportPageFrames( sal_True, bProgress );
+        exportPageFrames( sal_True, bProgressIn );
     }
+
     void collectFramesBoundToFrameAutoStyles(
             const ::com::sun::star::uno::Reference <
                     ::com::sun::star::text::XTextFrame >& rParentTxtFrame,
-            sal_Bool bProgress = sal_False )
+            sal_Bool bProgressIn = sal_False )
     {
-        exportFrameFrames( sal_True, bProgress, &rParentTxtFrame );
+        exportFrameFrames( sal_True, bProgressIn, &rParentTxtFrame );
     }
 
     // This method exports all automatic styles that have been collected.
@@ -596,10 +596,10 @@ public:
     void exportText(
         const ::com::sun::star::uno::Reference <
             ::com::sun::star::text::XText > & rText,
-        sal_Bool bProgress = sal_False,
+        sal_Bool bProgressIn = sal_False,
         sal_Bool bExportParagraph = sal_True)
     {
-        exportText( rText, sal_False, bProgress, bExportParagraph );
+        exportText( rText, sal_False, bProgressIn, bExportParagraph );
     }
 
     void exportText(
@@ -607,22 +607,22 @@ public:
             ::com::sun::star::text::XText > & rText,
         const ::com::sun::star::uno::Reference <
             ::com::sun::star::text::XTextSection > & rBaseSection,
-        sal_Bool bProgress = sal_False,
+        sal_Bool bProgressIn = sal_False,
         sal_Bool bExportParagraph = sal_True)
     {
-        exportText( rText, rBaseSection, sal_False, bProgress, bExportParagraph );
+        exportText( rText, rBaseSection, sal_False, bProgressIn, bExportParagraph );
     }
 
-    void exportFramesBoundToPage( sal_Bool bProgress = sal_False )
+    void exportFramesBoundToPage( sal_Bool bProgressIn = sal_False )
     {
-        exportPageFrames( sal_False, bProgress );
+        exportPageFrames( sal_False, bProgressIn );
     }
     void exportFramesBoundToFrame(
             const ::com::sun::star::uno::Reference <
                     ::com::sun::star::text::XTextFrame >& rParentTxtFrame,
-            sal_Bool bProgress = sal_False )
+            sal_Bool bProgressIn = sal_False )
     {
-        exportFrameFrames( sal_False, bProgress, &rParentTxtFrame );
+        exportFrameFrames( sal_False, bProgressIn, &rParentTxtFrame );
     }
     inline const XMLTextListAutoStylePool& GetListAutoStylePool() const;
 
@@ -645,8 +645,8 @@ public:
      * The reason this method is located here is tha it needs to access the
      * XMLSectionExport, which is only available here.
      */
-    void PreventExportOfControlsInMuteSections( 
-        const ::com::sun::star::uno::Reference< 
+    void PreventExportOfControlsInMuteSections(
+        const ::com::sun::star::uno::Reference<
             ::com::sun::star::container::XIndexAccess> & rShapes,
         UniReference<xmloff::OFormLayerXMLExport> xFormExport );
 
@@ -662,11 +662,11 @@ inline const XMLTextListAutoStylePool&
 inline void XMLTextParagraphExport::exportTextFrame(
         const ::com::sun::star::uno::Reference <
             ::com::sun::star::text::XTextContent > & rTextContent,
-        sal_Bool bAutoStyles, sal_Bool bProgress,
+        sal_Bool bAutoStyles, sal_Bool bProgressIn,
         const ::com::sun::star::uno::Reference <
             ::com::sun::star::beans::XPropertySet > *pRangePropSet)
 {
-    exportAnyTextFrame( rTextContent, FT_TEXT, bAutoStyles, bProgress,
+    exportAnyTextFrame( rTextContent, FT_TEXT, bAutoStyles, bProgressIn,
                         pRangePropSet );
 }
 
