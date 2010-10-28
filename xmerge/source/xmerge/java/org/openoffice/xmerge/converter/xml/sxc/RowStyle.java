@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -40,15 +40,15 @@ import org.openoffice.xmerge.util.TwipsConverter;
 /**
  *  Represents a text <code>Style</code> in an OpenOffice document.
  *
- *  @author	Martin Maher 
+ *  @author	Martin Maher
  */
 public class RowStyle extends Style implements Cloneable {
 
-    private	int rowHeight = 255; 
+    private	int rowHeight = 255;
     /**
      *  Constructor for use when going from DOM to client device format.
      *
-     *  @param  Node  The <i>style:style</i> <code>Node</code> containing
+     *  @param  node  The <i>style:style</i> <code>Node</code> containing
      *                the <code>Style</code>.  (This <code>Node</code> is
      *                assumed have a <i>family</i> attribute of <i>text</i>).
      *  @param  sc    The <code>StyleCatalog</code>, which is used for
@@ -56,7 +56,7 @@ public class RowStyle extends Style implements Cloneable {
      */
     public RowStyle(Node node, StyleCatalog sc) {
         super(node, sc);
-        
+
         // Run through the attributes of this node, saving
         // the ones we're interested in.
         NamedNodeMap attrNodes = node.getAttributes();
@@ -67,7 +67,7 @@ public class RowStyle extends Style implements Cloneable {
                 handleAttribute(attr.getNodeName(), attr.getNodeValue());
             }
         }
-        
+
         // Look for children.  Only ones we care about are "style:properties"
         // nodes.  If any are found, recursively traverse them, passing
         // along the style element to add properties to.
@@ -91,17 +91,16 @@ public class RowStyle extends Style implements Cloneable {
             }
         }
     }
-    
-    
+
     /**
      *  Constructor for use when going from client device format to DOM
      *
-     *  @param  name     Name of text <code>Style</code>.  Can be null.
-     *  @param  family   Family of text <code>Style</code> (usually
+     *  @param name      Name of text <code>Style</code>.  Can be null.
+     *  @param family    Family of text <code>Style</code> (usually
      *                   <i>text</i>).  Can be null.
-     *  @param  parent   Name of parent text <code>Style</code>, or null
+     *  @param parent    Name of parent text <code>Style</code>, or null
      *                   for none.
-     *  @param  mask     The height of this row 
+     *  @param rowHeight The height of this row
      *  @param sc        The <code>StyleCatalog</code>, which is used for
      *                   looking up ancestor <code>Style</code> objects.
      */
@@ -113,23 +112,23 @@ public class RowStyle extends Style implements Cloneable {
     /**
      * Returns the height of this row
      *
-     * @return the <code>Format</code> object 
+     * @return The height of this row.
      */
     public int getRowHeight() {
         return rowHeight;
     }
-    
+
     /**
      * Sets the height of this row
      *
-     * @return the <code>Format</code> object 
+     * @param RowHeight The height of this row.
      */
     public void setRowHeight(int RowHeight) {
 
         this.rowHeight = rowHeight;
-    }	
+    }
     /**
-     *  Parse a colheight in the form "1.234cm" to twips  
+     *  Parse a rowheight in the form "1.234cm" to twips
      *
      *  @param  value  <code>String</code> specification to parse.
      *
@@ -138,7 +137,7 @@ public class RowStyle extends Style implements Cloneable {
     private int parseRowHeight(String value) {
 
         int height = 255;	// Default value
-        
+
         if(value.indexOf("cm")!=-1) {
             float heightCM = Float.parseFloat(value.substring(0,value.indexOf("c")));
             height = TwipsConverter.cm2twips(heightCM);
@@ -146,11 +145,10 @@ public class RowStyle extends Style implements Cloneable {
             float heightInch = Float.parseFloat(value.substring(0,value.indexOf("i")));
             height = TwipsConverter.inches2twips(heightInch);
         }
-        
+
         return (height);
 
     }
- 
 
     /**
      *  Set an attribute.
@@ -159,7 +157,7 @@ public class RowStyle extends Style implements Cloneable {
      *  @param  value  The attribute value to set.
      */
     private void handleAttribute(String attr, String value) {
-        
+
         if (attr.equals("style:row-height")) {
             rowHeight = parseRowHeight(value);
         }
@@ -167,10 +165,9 @@ public class RowStyle extends Style implements Cloneable {
             Debug.log(Debug.INFO, "RowStyle Unhandled: " + attr + "=" + value);
         }
     }
-    
-    
+
     /**
-     *  Return a <code>Style</code> object corresponding to this one, 
+     *  Return a <code>Style</code> object corresponding to this one,
      *  but with all of the inherited information from parent
      *  <code>Style</code> objects filled in.  The object returned will
      *  be a new object, not a reference to this object, even if it does
@@ -187,7 +184,7 @@ public class RowStyle extends Style implements Cloneable {
         } catch (Exception e) {
             Debug.log(Debug.ERROR, "Can't clone", e);
         }
-        
+
         // Look up the parentStyle.  (If there is no style catalog
         // specified, we can't do any lookups.)
         RowStyle parentStyle = null;
@@ -206,19 +203,18 @@ public class RowStyle extends Style implements Cloneable {
                     null, this.getClass());
             }
         }
-        
+
         // If we found a parent, for any attributes which we don't have
         // set, try to get the values from the parent.
         if (parentStyle != null) {
             parentStyle = (RowStyle)parentStyle.getResolved();
-               
+
             if ((rowHeight == 0) && (parentStyle.getRowHeight() != 0))
                 resolved.setRowHeight(parentStyle.getRowHeight());
         }
         return resolved;
     }
-    
-    
+
     /**
      *  Create a new <code>Node</code> in the <code>Document</code>, and
      *  write this <code>Style</code> to it.
@@ -235,10 +231,9 @@ public class RowStyle extends Style implements Cloneable {
         writeAttributes(node);
         return node;
     }
-    
-    
+
     /**
-     *  Return true if <code>style</code> specifies as much or less 
+     *  Return true if <code>style</code> specifies as much or less
      *  than this <code>Style</code>, and nothing it specifies
      *  contradicts this <code>Style</code>.
      *
@@ -248,17 +243,16 @@ public class RowStyle extends Style implements Cloneable {
      *           otherwise.
      */
     public boolean isSubset(Style style) {
-        if (style.getClass() != this.getClass()) 
+        if (style.getClass() != this.getClass())
                 return false;
         RowStyle tStyle = (RowStyle)style;
-        
+
         if(rowHeight!=tStyle.getRowHeight())
             return false;
 
         return true;
     }
-    
-    
+
     /**
      *  Write this <code>Style</code> object's attributes to a
      *  <code>Node</code> in the <code>Document</code>.
@@ -269,16 +263,14 @@ public class RowStyle extends Style implements Cloneable {
     public void writeAttributes(Element node) {
 
         if(rowHeight!=0) {
-            String height = TwipsConverter.twips2cm(rowHeight) + "cm"; 
+            String height = TwipsConverter.twips2cm(rowHeight) + "cm";
             node.setAttribute("style:row-height", height);
         }
     }
 
-
     private static String[] ignored = {
         "fo:break-before", "fo:keep-with-next"
     };
-
 
     /*
      * This code checks whether an attribute is one that we
@@ -291,10 +283,9 @@ public class RowStyle extends Style implements Cloneable {
      */
     private boolean isIgnored(String attribute) {
         for (int i = 0; i < ignored.length; i++) {
-            if (ignored[i].equals(attribute)) 
+            if (ignored[i].equals(attribute))
                 return true;
         }
         return false;
     }
 }
-
