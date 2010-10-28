@@ -87,7 +87,7 @@ private:
 
     MSFILTER_DLLPRIVATE BOOL ImportCode_Impl( const String& rStorageName,
                           const String &rSubStorageName,
-                          const std::vector< String >& codeNames,	
+                          const std::vector< String >& codeNames,
                           BOOL bAsComment, BOOL bStripped);
     MSFILTER_DLLPRIVATE bool ImportForms_Impl(const String& rStorageName, 
         const String &rSubStorageName);
