@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -37,7 +37,6 @@ import org.openoffice.xmerge.util.EndianConverter;
 import org.openoffice.xmerge.converter.xml.sxc.pexcel.PocketExcelConstants;
 import org.openoffice.xmerge.converter.xml.sxc.SheetSettings;
 
-
 /**
  * Represents a BIFF Record that describes worksheet window attributes
  */
@@ -49,27 +48,27 @@ public class Window2 implements BIFFRecord {
     private byte[] rwTop	= new byte[2];
     private byte   colLeft;
     private byte[] grbit	= new byte[2];
-    
+
     /**
-     * Constructor  
+     * Constructor
      */
     public Window2() {
         this.rwTop		= EndianConverter.writeShort((short) 0);
-        this.colLeft	= 0; 
+        this.colLeft	= 0;
         this.grbit		= EndianConverter.writeShort((short) 0);
     }
-    
+
        /**
-      * Constructs a Window2 Record from an <code>InputStream</code> 
+      * Constructs a Window2 Record from an <code>InputStream</code>
       *
-      * @param	is InputStream containing a Window2 Record 
+      * @param	is InputStream containing a Window2 Record
       */
     public Window2(InputStream is) throws IOException {
-        read(is);	
+        read(is);
     }
 
     /**
-     * Get the hex code for this particular <code>BIFFRecord</code> 
+     * Get the hex code for this particular <code>BIFFRecord</code>
      *
      * @return the hex code for <code>Window2</code>
      */
@@ -94,8 +93,8 @@ public class Window2 implements BIFFRecord {
         }
     }
 
-    /** 
-     * This method tests if this object describes a freeze 
+    /**
+     * This method tests if this object describes a freeze
      *
      * @return true if freeze otherwise false
      */
@@ -109,7 +108,7 @@ public class Window2 implements BIFFRecord {
         return true;
     }
 
-    /** 
+    /**
      * This method tests if this object describes a split
      *
      * @return true if split otherwise false
@@ -123,25 +122,25 @@ public class Window2 implements BIFFRecord {
 
         return true;
     }
-    
+
        /**
-      * Reads a Window2 Record from an <code>InputStream</code> 
+      * Reads a Window2 Record from an <code>InputStream</code>
       *
-      * @param	is InputStream containing a Window2 Record 
+      * @param	input InputStream containing a Window2 Record
       */
     public int read(InputStream input) throws IOException {
-        
+
         int numOfBytesRead	= input.read(rwTop);
         colLeft				= (byte) input.read();
         numOfBytesRead++;
         numOfBytesRead		+= input.read(grbit);
-        
-        Debug.log(Debug.TRACE,"\trwTop : "+ EndianConverter.readShort(rwTop) + 
+
+        Debug.log(Debug.TRACE,"\trwTop : "+ EndianConverter.readShort(rwTop) +
                             " colLeft : " + colLeft +
                             " grbit : " + EndianConverter.readShort(grbit));
-        return numOfBytesRead;        
+        return numOfBytesRead;
     }
-    
+
     public void write(OutputStream output) throws IOException {
 
         output.write(getBiffType());
