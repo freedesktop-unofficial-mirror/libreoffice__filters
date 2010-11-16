@@ -2,7 +2,7 @@
 /* FilterInternal: Debugging information
  *
  * Copyright (C) 2002-2003 William Lachance (william.lachance@sympatico.ca)
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -20,6 +20,10 @@
  * For further information visit http://libwpd.sourceforge.net
  *
  */
+
+#ifndef _FILTERINTERNAL_HXX
+#define _FILTERINTERNAL_HXX
+
 #include <stdio.h>
 #ifdef DEBUG
 #define WRITER_DEBUG_MSG(M) printf M
@@ -30,5 +34,7 @@
 const float fDefaultSideMargin = 1.0f; // inches
 const float fDefaultPageWidth = 8.5f; // inches (OOo required default: we will handle this later)
 const float fDefaultPageHeight = 11.0f; // inches
+
+#endif
 
 /* vim:set shiftwidth=4 softtabstop=4 expandtab: */
