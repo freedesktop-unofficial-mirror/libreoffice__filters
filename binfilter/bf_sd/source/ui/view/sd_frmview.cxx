@@ -2,7 +2,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -102,11 +102,7 @@ FrameView::FrameView(SdDrawDocument* pDrawDoc, FrameView* pFrameView )
         eHandoutEditMode = EM_MASTERPAGE;
         bLayerMode = FALSE;
         SetEliminatePolyPoints(FALSE);
-
-        {
-            bool bUseContrast = Application::GetSettings().GetStyleSettings().GetHighContrastMode();
-            nDrawMode = bUseContrast ? OUTPUT_DRAWMODE_CONTRAST : OUTPUT_DRAWMODE_COLOR;
-        }
+        nDrawMode = OUTPUT_DRAWMODE_COLOR;
         nPreviewDrawMode = nDrawMode;
         bShowPreviewInPageMode = FALSE;
         bShowPreviewInMasterPageMode = TRUE;
@@ -368,7 +364,7 @@ EditMode FrameView::GetViewShEditMode(PageKind eKind)
 static OUString createHelpLinesString( const SdrHelpLineList& rHelpLines )
 {
     OUStringBuffer aLines;
- 
+
     const USHORT nCount = rHelpLines.GetCount();
     for( USHORT nHlpLine = 0; nHlpLine < nCount; nHlpLine++ )
     {
@@ -492,11 +488,11 @@ void FrameView::WriteUserDataSequence ( ::com::sun::star::uno::Sequence < ::com:
      const sal_Unicode * pStr = rLines.getStr();
      SdrHelpLine aNewHelpLine;
      ::rtl::OUStringBuffer sBuffer;
- 
+
      while( *pStr )
      {
          Point aPoint;
- 
+
          switch( *pStr )
          {
          case (sal_Unicode)'P':
@@ -512,16 +508,16 @@ void FrameView::WriteUserDataSequence ( ::com::sun::star::uno::Sequence < ::com:
              DBG_ERROR( "syntax error in snap lines settings string" );
              return;
          }
- 
+
          pStr++;
- 
+
          while( (*pStr >= sal_Unicode('0') && *pStr <= sal_Unicode('9')) || (*pStr == '+') || (*pStr == '-') )
          {
              sBuffer.append( *pStr++ );
          }
- 
+
          sal_Int32 nValue = sBuffer.makeStringAndClear().toInt32();
- 
+
          if( aNewHelpLine.GetKind() == SDRHELPLINE_HORIZONTAL )
          {
              aPoint.Y() = nValue;
@@ -529,22 +525,22 @@ void FrameView::WriteUserDataSequence ( ::com::sun::star::uno::Sequence < ::com:
          else
          {
              aPoint.X() = nValue;
- 
+
              if( aNewHelpLine.GetKind() == SDRHELPLINE_POINT )
              {
                  if( *pStr++ != ',' )
                      return;
- 
+
                  while( (*pStr >= sal_Unicode('0') && *pStr <= sal_Unicode('9')) || (*pStr == '+') || (*pStr == '-')  )
                  {
                      sBuffer.append( *pStr++ );
                  }
- 
+
                  aPoint.Y() = sBuffer.makeStringAndClear().toInt32();
- 
+
              }
          }
- 
+
          aNewHelpLine.SetPos( aPoint );
          rHelpLines.Insert( aNewHelpLine );
      }
@@ -559,13 +555,13 @@ void FrameView::WriteUserDataSequence ( ::com::sun::star::uno::Sequence < ::com:
          sal_Int32 nInt32;
          sal_Int16 nInt16;
          ::rtl::OUString aString;
- 
+
          sal_Int32 aSnapGridWidthXNum = GetSnapGridWidthX().GetNumerator();
          sal_Int32 aSnapGridWidthXDom = GetSnapGridWidthX().GetDenominator();
- 
+
          sal_Int32 aSnapGridWidthYNum = GetSnapGridWidthY().GetNumerator();
          sal_Int32 aSnapGridWidthYDom = GetSnapGridWidthY().GetDenominator();
- 
+
          const ::com::sun::star::beans::PropertyValue *pValue = rSequence.getConstArray();
          for (sal_Int16 i = 0 ; i < nLength; i++, pValue++ )
          {
@@ -732,7 +728,7 @@ void FrameView::WriteUserDataSequence ( ::com::sun::star::uno::Sequence < ::com:
                      SetVisArea( aVisArea );
                  }
              }
- 
+
              else if (pValue->Name.equalsAsciiL( RTL_CONSTASCII_STRINGPARAM( sUNO_View_GridIsVisible ) ) )
              {
                  if( pValue->Value >>= bBool )
@@ -740,7 +736,7 @@ void FrameView::WriteUserDataSequence ( ::com::sun::star::uno::Sequence < ::com:
                      SetGridVisible( bBool );
                  }
              }
- 
+
              else if (pValue->Name.equalsAsciiL( RTL_CONSTASCII_STRINGPARAM( sUNO_View_IsSnapToGrid ) ) )
              {
                  if( pValue->Value >>= bBool )
@@ -929,10 +925,10 @@ void FrameView::WriteUserDataSequence ( ::com::sun::star::uno::Sequence < ::com:
                  SetLockedLayers( aSetOfBytes );
              }
          }
- 
+
          const Fraction aSnapGridWidthX( aSnapGridWidthXNum, aSnapGridWidthXDom );
          const Fraction aSnapGridWidthY( aSnapGridWidthYNum, aSnapGridWidthYDom );
- 
+
          SetSnapGridWidth( aSnapGridWidthX, aSnapGridWidthY );
      }
 }

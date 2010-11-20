@@ -2,7 +2,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -57,10 +57,10 @@ namespace binfilter
 static const sal_Char cColor[] = "/Color";
 static const sal_Char cColorSchemes[] = "ColorSchemes/";
 sal_Int32            nColorRefCount_Impl = 0;
-namespace 
+namespace
 {
-    struct ColorMutex_Impl 
-        : public rtl::Static< ::osl::Mutex, ColorMutex_Impl > {}; 
+    struct ColorMutex_Impl
+        : public rtl::Static< ::osl::Mutex, ColorMutex_Impl > {};
 }
 
 ColorConfig_Impl*    ColorConfig::m_pImpl = NULL;
@@ -460,17 +460,14 @@ Color ColorConfig::GetDefaultColor(ColorConfigEntry eEntry)
 
         case SPELL :
         case DRAWDRAWING :
-        case SMARTTAGS :            
+        case SMARTTAGS :
         {
-            const StyleSettings& rStyleSettings = Application::GetSettings().GetStyleSettings();
-                aRet = rStyleSettings.GetHighContrastMode() ?
-                    rStyleSettings.GetDialogTextColor().GetColor() : aAutoColors[eEntry];
+            aRet = aAutoColors[eEntry];
         }
         break;
 
         case DRAWFILL            :
-                aRet = /*rStyleSettings.GetHighContrastMode() ?
-                    rStyleSettings.OutlineMode??? : */	aAutoColors[eEntry];
+                aRet = aAutoColors[eEntry];
         break;
 
         case FONTCOLOR :

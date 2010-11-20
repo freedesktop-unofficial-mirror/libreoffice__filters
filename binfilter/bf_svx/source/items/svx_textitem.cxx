@@ -2,7 +2,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -179,7 +179,7 @@ BOOL SvxFontItem::bEnableStoreUnicodeNames = FALSE;
 // -----------------------------------------------------------------------
 
 /*N*/ SvxFontListItem::SvxFontListItem( const SvxFontListItem& rItem ) :
-/*N*/ 
+/*N*/
 /*N*/ 	SfxPoolItem( rItem ),
 /*N*/ 	pFontList( rItem.GetFontList() )
 /*N*/ {
@@ -217,9 +217,9 @@ BOOL SvxFontItem::bEnableStoreUnicodeNames = FALSE;
 /*N*/ SvxFontItem::SvxFontItem( const FontFamily eFam, const XubString& aName,
 /*N*/ 				  const XubString& aStName, const FontPitch eFontPitch,
 /*N*/ 				  const rtl_TextEncoding eFontTextEncoding, const USHORT nId ) :
-/*N*/ 
+/*N*/
 /*N*/ 	SfxPoolItem( nId ),
-/*N*/ 
+/*N*/
 /*N*/ 	aFamilyName(aName),
 /*N*/ 	aStyleName(aStName)
 /*N*/ {
@@ -273,7 +273,7 @@ BOOL SvxFontItem::bEnableStoreUnicodeNames = FALSE;
 /*N*/ 		break;
 /*N*/ 		case MID_FONT_FAMILY :
 /*N*/ 		{
-/*N*/ 			sal_Int16 nFamily;
+/*N*/ 			sal_Int16 nFamily(0);
 /*N*/ 			if(!(rVal >>= nFamily))
 /*N*/ 				return sal_False;
 /*N*/ 			eFamily = (FontFamily)nFamily;
@@ -281,7 +281,7 @@ BOOL SvxFontItem::bEnableStoreUnicodeNames = FALSE;
 /*N*/ 		break;
 /*N*/ 		case MID_FONT_CHAR_SET  :
 /*N*/ 		{
-/*N*/ 			sal_Int16 nSet;
+/*N*/ 			sal_Int16 nSet(0);
 /*N*/ 			if(!(rVal >>= nSet))
 /*N*/ 				return sal_False;
 /*N*/ 			eTextEncoding = (rtl_TextEncoding)nSet;
@@ -289,7 +289,7 @@ BOOL SvxFontItem::bEnableStoreUnicodeNames = FALSE;
 /*N*/ 		break;
 /*N*/ 		case MID_FONT_PITCH     :
 /*N*/ 		{
-/*N*/ 			sal_Int16 nPitch;
+/*N*/ 			sal_Int16 nPitch(0);
 /*N*/ 			if(!(rVal >>= nPitch))
 /*N*/ 				return sal_False;
 /*N*/ 			ePitch =  (FontPitch)nPitch;
@@ -304,13 +304,13 @@ BOOL SvxFontItem::bEnableStoreUnicodeNames = FALSE;
 /*N*/ int SvxFontItem::operator==( const SfxPoolItem& rAttr ) const
 /*N*/ {
 /*N*/ 	DBG_ASSERT( SfxPoolItem::operator==(rAttr), "unequal types" );
-/*N*/ 
+/*N*/
 /*N*/ 	const SvxFontItem& rItem = (const SvxFontItem&)rAttr;
-/*N*/ 
+/*N*/
 /*N*/ 	int bRet = ( eFamily == rItem.eFamily &&
 /*N*/ 				 aFamilyName == rItem.aFamilyName &&
 /*N*/ 				 aStyleName == rItem.aStyleName );
-/*N*/ 
+/*N*/
 /*N*/ 	if ( bRet )
 /*N*/ 	{
 /*N*/ 		if ( ePitch != rItem.ePitch || eTextEncoding != rItem.eTextEncoding )
@@ -336,19 +336,19 @@ BOOL SvxFontItem::bEnableStoreUnicodeNames = FALSE;
 /*N*/ 	BOOL bToBats =
 /*N*/ 		GetFamilyName().EqualsAscii( "StarSymbol", 0, sizeof("StarSymbol")-1 ) ||
 /*N*/ 		GetFamilyName().EqualsAscii( "OpenSymbol", 0, sizeof("OpenSymbol")-1 );
-/*N*/ 
+/*N*/
 /*N*/ 	// #90477# rStrm << (BYTE) GetFamily()
 /*N*/ 	//	  << (BYTE) GetPitch()
 /*N*/ 	//	  << (BYTE)(bToBats ? RTL_TEXTENCODING_SYMBOL : GetStoreCharSet( GetCharSet(), (USHORT)rStrm.GetVersion() ) );
 /*N*/ 	rStrm << (BYTE) GetFamily() << (BYTE) GetPitch()
 /*N*/ 		  << (BYTE)(bToBats ? RTL_TEXTENCODING_SYMBOL : GetSOStoreTextEncoding(GetCharSet(), (sal_uInt16)rStrm.GetVersion()));
-/*N*/ 
+/*N*/
 /*N*/     String aStoreFamilyName( GetFamilyName() );
 /*N*/     if( bToBats )
 /*N*/ 		aStoreFamilyName = String( "StarBats", sizeof("StarBats")-1, RTL_TEXTENCODING_ASCII_US );
 /*N*/     rStrm.WriteByteString(aStoreFamilyName);
 /*N*/ 	rStrm.WriteByteString(GetStyleName());
-/*N*/ 
+/*N*/
 /*N*/     // #96441# Kach for EditEngine, only set while creating clipboard stream.
 /*N*/     if ( bEnableStoreUnicodeNames )
 /*N*/     {
@@ -357,7 +357,7 @@ BOOL SvxFontItem::bEnableStoreUnicodeNames = FALSE;
 /*N*/         rStrm.WriteByteString( aStoreFamilyName, RTL_TEXTENCODING_UNICODE );
 /*N*/ 	    rStrm.WriteByteString( GetStyleName(), RTL_TEXTENCODING_UNICODE );
 /*N*/     }
-/*N*/ 
+/*N*/
 /*N*/ 	return rStrm;
 /*N*/ }
 
@@ -370,20 +370,20 @@ BOOL SvxFontItem::bEnableStoreUnicodeNames = FALSE;
 /*N*/ 	rStrm >> _eFamily;
 /*N*/ 	rStrm >> eFontPitch;
 /*N*/ 	rStrm >> eFontTextEncoding;
-/*N*/ 
+/*N*/
 /*N*/ 	// UNICODE: rStrm >> aName;
 /*N*/ 	rStrm.ReadByteString(aName);
-/*N*/ 
+/*N*/
 /*N*/ 	// UNICODE: rStrm >> aStyle;
 /*N*/ 	rStrm.ReadByteString(aStyle);
-/*N*/ 
+/*N*/
 /*N*/ 	// Task 91008/90471: set the "correct" textencoding
 /*N*/ 	eFontTextEncoding = (BYTE)GetSOLoadTextEncoding( eFontTextEncoding, (USHORT)rStrm.GetVersion() );
-/*N*/ 
+/*N*/
 /*N*/ 	// irgendwann wandelte sich der StarBats vom ANSI- zum SYMBOL-Font
 /*N*/ 	if ( RTL_TEXTENCODING_SYMBOL != eFontTextEncoding && aName.EqualsAscii("StarBats") )
 /*N*/ 		eFontTextEncoding = RTL_TEXTENCODING_SYMBOL;
-/*N*/ 
+/*N*/
 /*N*/     // Check if we have stored unicode
 /*N*/     ULONG nStreamPos = rStrm.Tell();
 /*N*/     sal_uInt32 nMagic = STORE_UNICODE_MAGIC_MARKER;
@@ -397,9 +397,9 @@ BOOL SvxFontItem::bEnableStoreUnicodeNames = FALSE;
 /*N*/     {
 /*N*/         rStrm.Seek( nStreamPos );
 /*N*/     }
-/*N*/ 
-/*N*/ 
-/*N*/ 
+/*N*/
+/*N*/
+/*N*/
 /*N*/ 	return new SvxFontItem( (FontFamily)_eFamily, aName, aStyle,
 /*N*/ 							(FontPitch)eFontPitch, (rtl_TextEncoding)eFontTextEncoding,	Which() );
 /*N*/ }
@@ -487,10 +487,10 @@ BOOL SvxFontItem::bEnableStoreUnicodeNames = FALSE;
 /*?*/ 			awt::FontSlant eSlant;
 /*?*/ 			if(!(rVal >>= eSlant))
 /*?*/ 			{
-/*?*/ 				sal_Int32 nValue;
+/*?*/ 				sal_Int32 nValue(0);
 /*?*/ 				if(!(rVal >>= nValue))
 /*?*/ 					return sal_False;
-/*?*/ 
+/*?*/
 /*?*/ 				eSlant = (awt::FontSlant)nValue;
 /*N*/ 			}
 /*N*/ 			SetValue((USHORT)eSlant);
@@ -612,10 +612,10 @@ BOOL SvxFontItem::bEnableStoreUnicodeNames = FALSE;
 /*N*/ 		break;
 /*N*/ 		case MID_WEIGHT:
 /*N*/ 		{
-/*N*/             double fValue;
+/*N*/           double fValue(0);
 /*N*/ 			if(!(rVal >>= fValue))
 /*N*/ 			{
-/*?*/ 				sal_Int32 nValue;
+/*?*/ 				sal_Int32 nValue(0);
 /*?*/ 				if(!(rVal >>= nValue))
 /*?*/ 					return sal_False;
 /*?*/ 				fValue = (float)nValue;
@@ -649,7 +649,7 @@ BOOL SvxFontItem::bEnableStoreUnicodeNames = FALSE;
 /*N*/ SvStream& SvxFontHeightItem::Store( SvStream& rStrm , USHORT nItemVersion ) const
 /*N*/ {
 /*N*/ 	rStrm << (USHORT)GetHeight();
-/*N*/ 
+/*N*/
 /*N*/ 	if( FONTHEIGHT_UNIT_VERSION <= nItemVersion )
 /*N*/ 		rStrm << GetProp() << (USHORT)GetPropUnit();
 /*N*/ 	else
@@ -670,9 +670,9 @@ BOOL SvxFontItem::bEnableStoreUnicodeNames = FALSE;
 /*N*/ 												 USHORT nVersion ) const
 /*N*/ {
 /*N*/ 	USHORT nsize, nprop = 0, nPropUnit = SFX_MAPUNIT_RELATIVE;
-/*N*/ 
+/*N*/
 /*N*/ 	rStrm >> nsize;
-/*N*/ 
+/*N*/
 /*N*/ 	if( FONTHEIGHT_16_VERSION <= nVersion )
 /*N*/ 		rStrm >> nprop;
 /*N*/ 	else
@@ -681,10 +681,10 @@ BOOL SvxFontItem::bEnableStoreUnicodeNames = FALSE;
 /*?*/ 		rStrm  >> nP;
 /*?*/ 		nprop = (USHORT)nP;
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	if( FONTHEIGHT_UNIT_VERSION <= nVersion )
 /*N*/ 		rStrm >> nPropUnit;
-/*N*/ 
+/*N*/
 /*N*/ 	SvxFontHeightItem* pItem = new SvxFontHeightItem( nsize, 100, Which() );
 /*N*/ 	pItem->SetProp( nprop, (SfxMapUnit)nPropUnit );
 /*N*/ 	return pItem;
@@ -707,7 +707,7 @@ BOOL SvxFontItem::bEnableStoreUnicodeNames = FALSE;
 /*N*/ {
 /*N*/ 	//	In StarOne sind im uno::Any immer 1/100mm. Ueber die MemberId wird
 /*N*/ 	//	gesteuert, ob der Wert im Item 1/100mm oder Twips sind.
-/*N*/ 
+/*N*/
 /*N*/ 	sal_Bool bConvert = 0!=(nMemberId&CONVERT_TWIPS);
 /*N*/ 	nMemberId &= ~CONVERT_TWIPS;
 /*N*/ 	switch( nMemberId )
@@ -746,7 +746,7 @@ BOOL SvxFontItem::bEnableStoreUnicodeNames = FALSE;
 /*?*/ 					fRet /= 20.;
 /*?*/ 				break;
 /*?*/ 				case SFX_MAPUNIT_POINT:
-/*?*/ 
+/*?*/
 /*?*/ 				break;
 /*?*/ 				case SFX_MAPUNIT_TWIP:
 /*?*/ 					fRet /= 20.;
@@ -795,7 +795,7 @@ BOOL SvxFontItem::bEnableStoreUnicodeNames = FALSE;
                 break;
 /*N*/ 	}
 /*N*/ 	nRet -= nDiff;
-/*N*/ 
+/*N*/
 /*N*/ 	return nRet;
 /*N*/ }
 
@@ -812,17 +812,17 @@ BOOL SvxFontItem::bEnableStoreUnicodeNames = FALSE;
 /*N*/ 		{
 /*N*/ 			ePropUnit = SFX_MAPUNIT_RELATIVE;
 /*N*/ 			nProp = 100;
-/*N*/             double fPoint;
+/*N*/           double fPoint(0);
 /*N*/ 			if(!(rVal >>= fPoint))
 /*N*/ 			{
-/*N*/ 				sal_Int32 nValue;
+/*N*/ 				sal_Int32 nValue(0);
 /*?*/                 if(!(rVal >>= nValue))
 /*?*/ 					return sal_False;
 /*?*/ 				fPoint = (float)nValue;
 /*N*/ 			}
 /*N*/             if(fPoint < 0. || fPoint > 10000.)
 /*N*/ 					return sal_False;
-/*N*/ 
+/*N*/
 /*N*/ 			nHeight = (long)( fPoint * 20.0 + 0.5 );		// Twips
 /*N*/ 			if (!bConvert)
 /*N*/ 				nHeight = UTWIP_TO_MM100(nHeight);	// umrechnen, wenn das Item 1/100mm enthaelt
@@ -830,12 +830,12 @@ BOOL SvxFontItem::bEnableStoreUnicodeNames = FALSE;
 /*N*/ 		break;
 /*N*/ 		case MID_FONTHEIGHT_PROP:
 /*N*/ 		{
-/*N*/ 			sal_Int16 nNew;
+/*N*/ 			sal_Int16 nNew(0);
 /*N*/ 			if(!(rVal >>= nNew))
 /*N*/ 				return sal_True;
-/*N*/ 
+/*N*/
 /*N*/ 			nHeight = lcl_GetRealHeight_Impl(nHeight, nProp, ePropUnit, bConvert);
-/*N*/ 
+/*N*/
 /*N*/ 			nHeight *= nNew;
 /*N*/ 			nHeight /= 100;
 /*N*/ 			nProp = nNew;
@@ -845,10 +845,10 @@ BOOL SvxFontItem::bEnableStoreUnicodeNames = FALSE;
 /*N*/ 		case MID_FONTHEIGHT_DIFF:
 /*N*/ 		{
 /*?*/ 			nHeight = lcl_GetRealHeight_Impl(nHeight, nProp, ePropUnit, bConvert);
-/*?*/ 			float fValue;
+/*?*/ 			float fValue(0);
 /*?*/ 			if(!(rVal >>= fValue))
 /*?*/ 			{
-/*?*/ 				sal_Int32 nValue;
+/*?*/ 				sal_Int32 nValue(0);
 /*?*/ 				if(!(rVal >>= nValue))
 /*?*/ 					return sal_False;
 /*?*/ 				fValue = (float)nValue;
@@ -885,7 +885,7 @@ BOOL SvxFontItem::bEnableStoreUnicodeNames = FALSE;
 /*N*/ 									SfxMapUnit eUnit )
 /*N*/ {
 /*N*/ 	DBG_ASSERT( GetRefCount() == 0, "SetValue() with pooled item" );
-/*N*/ 
+/*N*/
 /*N*/ #ifndef SVX_LIGHT
 /*N*/ 	if( SFX_MAPUNIT_RELATIVE != eUnit )
 nHeight = nNewHeight + ::binfilter::ItemToControl( (short)nNewProp, eUnit,//STRIP008 /*N*/ 		nHeight = nNewHeight + ::ItemToControl( (short)nNewProp, eUnit,
@@ -896,7 +896,7 @@ nHeight = nNewHeight + ::binfilter::ItemToControl( (short)nNewProp, eUnit,//STRI
 /*N*/ 		nHeight = sal_uInt32(( nNewHeight * nNewProp ) / 100 );
 /*N*/ 	else
 /*N*/ 		nHeight = nNewHeight;
-/*N*/ 
+/*N*/
 /*N*/ 	nProp = nNewProp;
 /*N*/ 	ePropUnit = eUnit;
 /*N*/ }
@@ -987,7 +987,7 @@ nHeight = nNewHeight + ::binfilter::ItemToControl( (short)nNewProp, eUnit,//STRI
 /*N*/ 		break;
 /*N*/ 	}
 /*N*/ 	return sal_True;
-/*N*/ 
+/*N*/
 /*N*/ }
 /*-----------------13.03.98 16:28-------------------
 
@@ -1004,7 +1004,7 @@ nHeight = nNewHeight + ::binfilter::ItemToControl( (short)nNewProp, eUnit,//STRI
 /*N*/ 	break;
 /*N*/ 	case MID_UNDERLINE:
 /*N*/ 	{
-/*N*/ 		sal_Int32 nValue;
+/*N*/ 		sal_Int32 nValue(0);
 /*N*/ 		if(!(rVal >>= nValue))
 /*N*/ 			bRet = sal_False;
 /*N*/ 		else
@@ -1013,7 +1013,7 @@ nHeight = nNewHeight + ::binfilter::ItemToControl( (short)nNewProp, eUnit,//STRI
 /*N*/ 	break;
 /*N*/ 	case MID_UL_COLOR:
 /*N*/ 	{
-/*?*/ 		sal_Int32 nCol;
+/*?*/ 		sal_Int32 nCol(0);
 /*?*/ 		if( !( rVal >>= nCol ) )
 /*?*/ 			bRet = sal_False;
 /*?*/ 		else
@@ -1125,7 +1125,7 @@ nHeight = nNewHeight + ::binfilter::ItemToControl( (short)nNewProp, eUnit,//STRI
 /*N*/ 		break;
 /*N*/ 		case MID_CROSS_OUT:
 /*N*/ 		{
-/*N*/ 			sal_Int32 nValue;
+/*N*/ 			sal_Int32 nValue(0);
 /*N*/ 			if(!(rVal >>= nValue))
 /*N*/ 				return sal_False;
 /*N*/ 			SetValue((sal_Int16)nValue);
@@ -1355,7 +1355,7 @@ nHeight = nNewHeight + ::binfilter::ItemToControl( (short)nNewProp, eUnit,//STRI
 /*N*/ int SvxColorItem::operator==( const SfxPoolItem& rAttr ) const
 /*N*/ {
 /*N*/ 	DBG_ASSERT( SfxPoolItem::operator==(rAttr), "unequal types" );
-/*N*/ 
+/*N*/
 /*N*/ 	return	mColor == ( (const SvxColorItem&)rAttr ).mColor;
 /*N*/ }
 
@@ -1371,10 +1371,10 @@ nHeight = nNewHeight + ::binfilter::ItemToControl( (short)nNewProp, eUnit,//STRI
 
 /*N*/ bool SvxColorItem::PutValue( const uno::Any& rVal, BYTE /*nMemberId*/ )
 /*N*/ {
-/*N*/ 	sal_Int32 nColor;
+/*N*/ 	sal_Int32 nColor(0);
 /*N*/ 	if(!(rVal >>= nColor))
 /*N*/ 		return sal_False;
-/*N*/ 
+/*N*/
 /*N*/ 	mColor.SetColor( nColor );
 /*N*/ 	return sal_True;
 /*N*/ }
@@ -1419,7 +1419,7 @@ nHeight = nNewHeight + ::binfilter::ItemToControl( (short)nNewProp, eUnit,//STRI
 
 /*N*/ SvxCharSetColorItem::SvxCharSetColorItem( const USHORT nId ) :
 /*N*/ 	SvxColorItem( nId ),
-/*N*/ 
+/*N*/
 /*N*/ 	eFrom( RTL_TEXTENCODING_DONTKNOW )
 /*N*/ {
 /*N*/ }
@@ -1430,7 +1430,7 @@ nHeight = nNewHeight + ::binfilter::ItemToControl( (short)nNewProp, eUnit,//STRI
 /*N*/ 										  const rtl_TextEncoding _eFrom,
 /*N*/ 										  const USHORT nId ) :
 /*N*/ 	SvxColorItem( rCol, nId ),
-/*N*/ 
+/*N*/
 /*N*/ 	eFrom( _eFrom )
 /*N*/ {
 /*N*/ }
@@ -1499,7 +1499,7 @@ nHeight = nNewHeight + ::binfilter::ItemToControl( (short)nNewProp, eUnit,//STRI
 
 /*N*/ SfxPoolItem* SvxKerningItem::Create(SvStream& rStrm, USHORT) const
 /*N*/ {
-/*N*/ 	short nValue;
+/*N*/ 	short nValue(0);
 /*N*/ 	rStrm >> nValue;
 /*N*/ 	return new SvxKerningItem( nValue, Which() );
 /*N*/ }
@@ -1520,7 +1520,7 @@ nHeight = nNewHeight + ::binfilter::ItemToControl( (short)nNewProp, eUnit,//STRI
 // -----------------------------------------------------------------------
 /*N*/ bool SvxKerningItem::PutValue( const uno::Any& rVal, BYTE nMemberId)
 /*N*/ {
-/*N*/ 	sal_Int16 nVal;
+/*N*/ 	sal_Int16 nVal(0);
 /*N*/ 	if(!(rVal >>= nVal))
 /*N*/ 		return sal_False;
 /*N*/ 	if(nMemberId & CONVERT_TWIPS)
@@ -1595,17 +1595,17 @@ nHeight = nNewHeight + ::binfilter::ItemToControl( (short)nNewProp, eUnit,//STRI
 --------------------------------------------------*/
 /*N*/ bool SvxCaseMapItem::PutValue( const uno::Any& rVal, BYTE /*nMemberId*/ )
 /*N*/ {
-/*N*/ 	sal_uInt16 nVal;
+/*N*/ 	sal_uInt16 nVal(0);
 /*N*/ 	if(!(rVal >>= nVal))
 /*N*/ 		return sal_False;
-/*N*/ 
+/*N*/
 /*N*/ 	switch( nVal )
 /*N*/ 	{
 /*N*/ 	case style::CaseMap::NONE 	 :  nVal = SVX_CASEMAP_NOT_MAPPED  ; break;
-/*N*/ 	case style::CaseMap::UPPERCASE:  nVal = SVX_CASEMAP_VERSALIEN   ; break;
-/*?*/ 	case style::CaseMap::LOWERCASE:  nVal = SVX_CASEMAP_GEMEINE     ; break;
-/*N*/ 	case style::CaseMap::TITLE    :  nVal = SVX_CASEMAP_TITEL       ; break;
-/*N*/ 	case style::CaseMap::SMALLCAPS:  nVal = SVX_CASEMAP_KAPITAELCHEN; break;
+/*N*/ 	case style::CaseMap::UPPERCASE: nVal = SVX_CASEMAP_VERSALIEN   ; break;
+/*?*/ 	case style::CaseMap::LOWERCASE: nVal = SVX_CASEMAP_GEMEINE     ; break;
+/*N*/ 	case style::CaseMap::TITLE    : nVal = SVX_CASEMAP_TITEL       ; break;
+/*N*/ 	case style::CaseMap::SMALLCAPS: nVal = SVX_CASEMAP_KAPITAELCHEN; break;
 /*N*/ 	}
 /*N*/ 	SetValue(nVal);
 /*N*/ 	return sal_True;
@@ -1615,7 +1615,7 @@ nHeight = nNewHeight + ::binfilter::ItemToControl( (short)nNewProp, eUnit,//STRI
 
 /*N*/ SvxEscapementItem::SvxEscapementItem( const USHORT nId ) :
 /*N*/ 	SfxEnumItemInterface( nId ),
-/*N*/ 
+/*N*/
 /*N*/ 	nEsc	( 0 ),
 /*N*/ 	nProp	( 100 )
 /*N*/ {
@@ -1640,7 +1640,7 @@ nHeight = nNewHeight + ::binfilter::ItemToControl( (short)nNewProp, eUnit,//STRI
 /*N*/ int SvxEscapementItem::operator==( const SfxPoolItem& rAttr ) const
 /*N*/ {
 /*N*/ 	DBG_ASSERT( SfxPoolItem::operator==(rAttr), "unequal types" );
-/*N*/ 
+/*N*/
 /*N*/ 	return( nEsc  == ((SvxEscapementItem&)rAttr).nEsc &&
 /*N*/ 			nProp == ((SvxEscapementItem&)rAttr).nProp );
 /*N*/ }
@@ -1738,7 +1738,7 @@ nHeight = nNewHeight + ::binfilter::ItemToControl( (short)nNewProp, eUnit,//STRI
 /*N*/ 	{
 /*N*/ 		case MID_ESC:
 /*N*/ 		{
-/*N*/ 			sal_Int16 nVal;
+/*N*/ 			sal_Int16 nVal(0);
 /*N*/ 			if( (rVal >>= nVal) && (Abs(nVal) <= 101))
 /*N*/ 				nEsc = nVal;
 /*N*/ 			else
@@ -1747,7 +1747,7 @@ nHeight = nNewHeight + ::binfilter::ItemToControl( (short)nNewProp, eUnit,//STRI
 /*N*/ 		break;
 /*N*/ 		case MID_ESC_HEIGHT:
 /*N*/ 		{
-/*N*/ 			sal_Int8 nVal;
+/*N*/ 			sal_Int8 nVal(0);
 /*N*/ 			if( (rVal >>= nVal) && (nVal <= 100))
 /*N*/ 				nProp = nVal;
 /*N*/ 			else
@@ -1808,7 +1808,7 @@ nHeight = nNewHeight + ::binfilter::ItemToControl( (short)nNewProp, eUnit,//STRI
 
 /*N*/ SfxPoolItem* SvxLanguageItem::Create(SvStream& rStrm, USHORT) const
 /*N*/ {
-/*N*/ 	USHORT nValue;
+/*N*/ 	USHORT nValue(0);
 /*N*/ 	rStrm >> nValue;
 /*N*/ 	return new SvxLanguageItem( (LanguageType)nValue, Which() );
 /*N*/ }
@@ -1846,10 +1846,10 @@ nHeight = nNewHeight + ::binfilter::ItemToControl( (short)nNewProp, eUnit,//STRI
 /*N*/ 	{
 /*N*/         case MID_LANG_INT:  // for basic conversions!
 /*N*/ 		{
-/*?*/ 			sal_Int32 nValue;
+/*?*/ 			sal_Int32 nValue(0);
 /*?*/ 			if(!(rVal >>= nValue))
 /*?*/ 				return sal_False;
-/*?*/ 
+/*?*/
 /*?*/ 			SetValue((sal_Int16)nValue);
 /*N*/ 		}
 /*N*/ 		break;
@@ -1858,7 +1858,7 @@ nHeight = nNewHeight + ::binfilter::ItemToControl( (short)nNewProp, eUnit,//STRI
 /*N*/ 			lang::Locale aLocale;
 /*N*/ 			if(!(rVal >>= aLocale))
 /*N*/ 				return sal_False;
-/*N*/ 
+/*N*/
 /*N*/ 			if (aLocale.Language.getLength() || aLocale.Country.getLength())
 /*N*/ 				SetValue(MsLangId::convertIsoNamesToLanguage( aLocale.Language, aLocale.Country ));
 /*N*/ 			else
@@ -1994,7 +1994,7 @@ nHeight = nNewHeight + ::binfilter::ItemToControl( (short)nNewProp, eUnit,//STRI
 
 /*N*/ SfxPoolItem* SvxEmphasisMarkItem::Create( SvStream& rStrm, USHORT ) const
 /*N*/ {
-/*N*/ 	sal_uInt16 nValue;
+/*N*/ 	sal_uInt16 nValue(0);
 /*N*/ 	rStrm >> nValue;
 /*N*/ 	return new SvxEmphasisMarkItem( (FontEmphasisMark)nValue, Which() );
 /*N*/ }
@@ -2068,7 +2068,7 @@ nHeight = nNewHeight + ::binfilter::ItemToControl( (short)nNewProp, eUnit,//STRI
 /*N*/ 			SOFFICE_FILEFORMAT_40==nFFVer ||
 /*N*/ 			SOFFICE_FILEFORMAT_50==nFFVer,
 /*N*/ 			"SvxEmphasisMarkItem: Gibt es ein neues Fileformat?" );
-/*N*/ 
+/*N*/
 /*N*/ 	return SOFFICE_FILEFORMAT_50 > nFFVer ? USHRT_MAX : 0;
 /*N*/ }
 
@@ -2225,7 +2225,7 @@ nHeight = nNewHeight + ::binfilter::ItemToControl( (short)nNewProp, eUnit,//STRI
 /*N*/ 			SOFFICE_FILEFORMAT_40==nFFVer ||
 /*N*/ 			SOFFICE_FILEFORMAT_50==nFFVer,
 /*N*/ 			"SvxTwoLinesItem: Gibt es ein neues Fileformat?" );
-/*N*/ 
+/*N*/
 /*N*/ 	return SOFFICE_FILEFORMAT_50 > nFFVer ? USHRT_MAX : 0;
 /*N*/ }
 
@@ -2335,7 +2335,7 @@ nHeight = nNewHeight + ::binfilter::ItemToControl( (short)nNewProp, eUnit,//STRI
 /*NBFF*/ 		else
 /*NBFF*/ 			bRet = sal_False;
 /*NBFF*/ 		break;
-/*NBFF*/ 
+/*NBFF*/
 /*NBFF*/ 	case MID_FITTOLINE:
 /*NBFF*/ 		SetFitToLine( Any2Bool( rVal ) );
 /*NBFF*/ 		break;
@@ -2373,7 +2373,7 @@ nHeight = nNewHeight + ::binfilter::ItemToControl( (short)nNewProp, eUnit,//STRI
 /*N*/ 	sal_uInt16 nVal;
 /*N*/ 	rStrm >> nVal;
 /*N*/ 	SvxCharScaleWidthItem* pItem = new SvxCharScaleWidthItem( nVal, Which() );
-/*N*/ 
+/*N*/
 /*N*/     if ( Which() == EE_CHAR_FONTWIDTH )
 /*N*/     {
 /*N*/         // #87271#: Was a SvxFontWidthItem in 5.2
@@ -2387,7 +2387,7 @@ nHeight = nNewHeight + ::binfilter::ItemToControl( (short)nNewProp, eUnit,//STRI
 /*N*/         else
 /*N*/             rStrm.SeekRel( -2*(long)sizeof(sal_uInt16) );
 /*N*/     }
-/*N*/ 
+/*N*/
 /*N*/     return pItem;
 /*N*/ }
 
@@ -2417,13 +2417,13 @@ nHeight = nNewHeight + ::binfilter::ItemToControl( (short)nNewProp, eUnit,//STRI
 /*N*/ {
 /*N*/     // SfxUInt16Item::QueryValue returns sal_Int32 in Any now... (srx642w)
 /*N*/     // where we still want this to be a sal_Int16
-/*N*/     sal_Int16 nValue;
+/*N*/     sal_Int16 nValue(0);
 /*N*/ 	if (rVal >>= nValue)
 /*N*/ 	{
 /*N*/         SetValue( (UINT16) nValue );
 /*N*/ 		return TRUE;
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/     DBG_ERROR( "SvxCharScaleWidthItem::PutValue - Wrong type!" );
 /*N*/ 	return FALSE;
 /*N*/ }
@@ -2496,12 +2496,12 @@ nHeight = nNewHeight + ::binfilter::ItemToControl( (short)nNewProp, eUnit,//STRI
 /*?*/     case SFX_ITEM_PRESENTATION_NONE:
 /*?*/         rText.Erase();
 /*?*/ 		break;
-/*?*/ 
+/*?*/
 /*?*/     case SFX_ITEM_PRESENTATION_NAMELESS:
 /*?*/     case SFX_ITEM_PRESENTATION_COMPLETE:
 /*?*/         rText = GetValueTextByPos( GetValue() );
 /*?*/ 		break;
-/*?*/ 
+/*?*/
 /*?*/ 	default:
 /*?*/ 		eRet = SFX_ITEM_PRESENTATION_NONE;
 /*?*/     }
@@ -2572,7 +2572,7 @@ nHeight = nNewHeight + ::binfilter::ItemToControl( (short)nNewProp, eUnit,//STRI
 /*N*/ void GetDefaultFonts( SvxFontItem& rLatin, SvxFontItem& rAsian, SvxFontItem& rComplex )
 /*N*/ {
 /*N*/ 	const USHORT nItemCnt = 3;
-/*N*/ 
+/*N*/
 /*N*/ 	static struct
 /*N*/ 	{
 /*N*/ 		USHORT nFontType;
@@ -2584,9 +2584,9 @@ nHeight = nNewHeight + ::binfilter::ItemToControl( (short)nNewProp, eUnit,//STRI
 /*N*/ 		{  DEFAULTFONT_CJK_TEXT, LANGUAGE_ENGLISH_US },
 /*N*/ 		{  DEFAULTFONT_CTL_TEXT, LANGUAGE_ARABIC_SAUDI_ARABIA }
 /*N*/ 	};
-/*N*/ 
+/*N*/
 /*N*/ 	SvxFontItem* aItemArr[ nItemCnt ] = { &rLatin, &rAsian, &rComplex };
-/*N*/ 
+/*N*/
 /*N*/ 	for ( USHORT n = 0; n < nItemCnt; ++n )
 /*N*/ 	{
 /*N*/ 		Font aFont( OutputDevice::GetDefaultFont( aOutTypeArr[ n ].nFontType,

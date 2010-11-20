@@ -2,7 +2,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -72,7 +72,6 @@ long		ItemToControl( long nIn, SfxMapUnit eItem, SfxFieldUnit eCtrl );
 // replacement of the SfxIniManager
 
 #define OUTPUT_DRAWMODE_COLOR		(DRAWMODE_DEFAULT)
-#define OUTPUT_DRAWMODE_CONTRAST	(DRAWMODE_SETTINGSLINE | DRAWMODE_SETTINGSFILL | DRAWMODE_SETTINGSTEXT | DRAWMODE_SETTINGSGRADIENT)
 
 }//end of namespace binfilter
 #endif
