@@ -126,8 +126,8 @@ DomainMapper::DomainMapper( const uno::Reference< uno::XComponentContext >& xCon
 LoggedProperties(dmapper_logger, "DomainMapper"), 
 LoggedTable(dmapper_logger, "DomainMapper"),
 LoggedStream(dmapper_logger, "DomainMapper"),
-m_pImpl( new DomainMapper_Impl( *this, xContext, xModel, eDocumentType )),
-mnBackgroundColor(0), mbIsHighlightSet(false)
+    m_pImpl( new DomainMapper_Impl( *this, xContext, xModel, eDocumentType )),
+    mnBackgroundColor(0), mbIsHighlightSet(false)
 {
     // #i24363# tab stops relative to indent
     m_pImpl->SetDocumentSettingsProperty(
@@ -4232,9 +4232,9 @@ void DomainMapper::sprmWithProps( Sprm& rSprm, PropertyMapPtr rContext, SprmType
 
 -----------------------------------------------------------------------*/
 void DomainMapper::lcl_entry(int /*pos*/,
-                             writerfilter::Reference<Properties>::Pointer_t ref)
+                         writerfilter::Reference<Properties>::Pointer_t ref)
 {
-    ref->resolve(*this);    
+    ref->resolve(*this);
 }
 /*-- 09.06.2006 09:52:13---------------------------------------------------
 
@@ -4303,7 +4303,7 @@ void DomainMapper::lcl_startShape( uno::Reference< drawing::XShape > xShape )
 
 void DomainMapper::lcl_endShape( ) 
 {
-    m_pImpl->PopShapeContext( );    
+    m_pImpl->PopShapeContext( );
 }
 
 /*-- 13.06.2007 16:15:55---------------------------------------------------
@@ -4369,6 +4369,12 @@ void DomainMapper::lcl_text(const sal_uInt8 * data_, size_t len)
 {
     //TODO: Determine the right text encoding (FIB?)
     ::rtl::OUString sText( (const sal_Char*) data_, len, RTL_TEXTENCODING_MS_1252 );
+#ifdef DEBUG_DOMAINMAPPER
+    dmapper_logger->startElement("text");
+    dmapper_logger->chars(sText);
+    dmapper_logger->endElement("text");
+#endif
+
     try
     {
         if(len == 1)

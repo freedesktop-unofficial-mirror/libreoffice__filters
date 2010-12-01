@@ -85,7 +85,12 @@ OOXMLFastHelper<T>::createAndSetParent
     pTmp->setToken(nToken);
     pTmp->setId(nId);
 
-#ifdef DEBUG_HELPER
+#ifdef DEBUG_CREATE
+    debug_logger->startElement("createAndSetParent");
+    debug_logger->attribute("context", pHandler->getType());
+    debug_logger->attribute("token", fastTokenToId(pTmp->getToken()));
+    debug_logger->attribute("id", (*QNameToString::Instance())(nId));
+
     debug_logger->startElement("created");
     debug_logger->addTag(pTmp->toTag());
     debug_logger->endElement("created");
@@ -112,7 +117,7 @@ OOXMLFastHelper<T>::createAndSetParentAndDefine
      
     debug_logger->attribute("idnum", buffer);
 #endif
-
+    
     OOXMLFastContextHandler * pTmp = new T(pHandler);
     
     pTmp->setToken(nToken);
@@ -188,7 +193,7 @@ void OOXMLFastHelper<T>::newProperty(OOXMLFastContextHandler * pHandler,
     if (aStr.size() == 0)
         debug_logger->addTag(XMLTag::Pointer_t(new XMLTag("unknown-qname")));
 #endif
-
+    
     pHandler->newProperty(nId, pVal);
 
 #ifdef DEBUG_HELPER
