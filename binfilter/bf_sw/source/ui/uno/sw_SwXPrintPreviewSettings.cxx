@@ -2,7 +2,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -48,7 +48,7 @@ using namespace ::comphelper;
 using namespace ::rtl;
 
 enum SwPrintSettingsPropertyHandles
-{ 	
+{
     HANDLE_PRINTSET_PREVIEW_LEFT_MARGIN,
     HANDLE_PRINTSET_PREVIEW_RIGHT_MARGIN,
     HANDLE_PRINTSET_PREVIEW_TOP_MARGIN,
@@ -136,14 +136,14 @@ void SwXPrintPreviewSettings::_preSetValues ()
     }
 }
 
-void SwXPrintPreviewSettings::_setSingleValue( const comphelper::PropertyInfo & rInfo, const ::com::sun::star::uno::Any &rValue ) 
+void SwXPrintPreviewSettings::_setSingleValue( const comphelper::PropertyInfo & rInfo, const ::com::sun::star::uno::Any &rValue )
     throw(UnknownPropertyException, PropertyVetoException, IllegalArgumentException, WrappedTargetException )
 {
     switch( rInfo.mnHandle )
     {
         case HANDLE_PRINTSET_PREVIEW_LEFT_MARGIN:
         {
-            sal_Int32 nVal;
+            sal_Int32 nVal(0);
             rValue >>= nVal;
             nVal = MM100_TO_TWIP( nVal );
             if ( nVal != static_cast < sal_Int32 > (mpPreViewData->GetLeftSpace() ) )
@@ -155,7 +155,7 @@ void SwXPrintPreviewSettings::_setSingleValue( const comphelper::PropertyInfo & 
         break;
         case HANDLE_PRINTSET_PREVIEW_RIGHT_MARGIN:
         {
-            sal_Int32 nVal;
+            sal_Int32 nVal(0);
             rValue >>= nVal;
             nVal = MM100_TO_TWIP( nVal );
             if ( nVal != static_cast < sal_Int32 > (mpPreViewData->GetRightSpace() ) )
@@ -167,7 +167,7 @@ void SwXPrintPreviewSettings::_setSingleValue( const comphelper::PropertyInfo & 
         break;
         case HANDLE_PRINTSET_PREVIEW_TOP_MARGIN:
         {
-            sal_Int32 nVal;
+            sal_Int32 nVal(0);
             rValue >>= nVal;
             nVal = MM100_TO_TWIP( nVal );
             if ( nVal != static_cast < sal_Int32 > ( mpPreViewData->GetTopSpace() ) )
@@ -179,7 +179,7 @@ void SwXPrintPreviewSettings::_setSingleValue( const comphelper::PropertyInfo & 
         break;
         case HANDLE_PRINTSET_PREVIEW_BOTTOM_MARGIN:
         {
-            sal_Int32 nVal;
+            sal_Int32 nVal(0);
             rValue >>= nVal;
             nVal = MM100_TO_TWIP( nVal );
             if ( nVal != static_cast < sal_Int32 > ( mpPreViewData->GetBottomSpace() ) )
@@ -191,7 +191,7 @@ void SwXPrintPreviewSettings::_setSingleValue( const comphelper::PropertyInfo & 
         break;
         case HANDLE_PRINTSET_PREVIEW_HORIZONTAL_SPACING:
         {
-            sal_Int32 nVal;
+            sal_Int32 nVal(0);
             rValue >>= nVal;
             nVal = MM100_TO_TWIP( nVal );
             if ( nVal != static_cast < sal_Int32 > ( mpPreViewData->GetHorzSpace() ) )
@@ -203,7 +203,7 @@ void SwXPrintPreviewSettings::_setSingleValue( const comphelper::PropertyInfo & 
         break;
         case HANDLE_PRINTSET_PREVIEW_VERTICAL_SPACING:
         {
-            sal_Int32 nVal;
+            sal_Int32 nVal(0);
             rValue >>= nVal;
             nVal = MM100_TO_TWIP( nVal );
             if ( nVal != static_cast < sal_Int32 > ( mpPreViewData->GetVertSpace() ) )
@@ -215,7 +215,7 @@ void SwXPrintPreviewSettings::_setSingleValue( const comphelper::PropertyInfo & 
         break;
         case HANDLE_PRINTSET_PREVIEW_NUM_ROWS:
         {
-            sal_Int8 nVal;
+            sal_Int8 nVal(0);
             rValue >>= nVal;
             if ( nVal != mpPreViewData->GetRow() )
             {
@@ -226,7 +226,7 @@ void SwXPrintPreviewSettings::_setSingleValue( const comphelper::PropertyInfo & 
         break;
         case HANDLE_PRINTSET_PREVIEW_NUM_COLUMNS:
         {
-            sal_Int8 nVal;
+            sal_Int8 nVal(0);
             rValue >>= nVal;
             if ( nVal != mpPreViewData->GetCol() )
             {
@@ -245,7 +245,7 @@ void SwXPrintPreviewSettings::_setSingleValue( const comphelper::PropertyInfo & 
             }
         }
         break;
-        default: 
+        default:
             throw UnknownPropertyException();
     }
 }
@@ -267,7 +267,7 @@ void SwXPrintPreviewSettings::_preGetValues ()
     if (mpDoc)
         mpConstPreViewData = mpDoc->GetPreViewPrtData();
 }
-void SwXPrintPreviewSettings::_getSingleValue( const comphelper::PropertyInfo & rInfo, ::com::sun::star::uno::Any & rValue ) 
+void SwXPrintPreviewSettings::_getSingleValue( const comphelper::PropertyInfo & rInfo, ::com::sun::star::uno::Any & rValue )
     throw(UnknownPropertyException, WrappedTargetException )
 {
     sal_Bool bBool = TRUE;
