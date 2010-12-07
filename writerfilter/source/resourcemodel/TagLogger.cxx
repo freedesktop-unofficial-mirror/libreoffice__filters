@@ -2,7 +2,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -56,7 +56,7 @@ namespace writerfilter
         pWriter = NULL;
         pName = NULL;
     }
-   
+
     void TagLogger::setFileName( const string & filename )
     {
         if ( pWriter )
@@ -64,12 +64,12 @@ namespace writerfilter
 
         string fileName;
         char * temp = getenv("TAGLOGGERTMP");
-        
+
         if (temp != NULL)
             fileName += temp;
         else
             fileName += "/tmp";
-        
+
         string sPrefix = filename;
         size_t nLastSlash = sPrefix.find_last_of('/');
         size_t nLastBackslash = sPrefix.find_last_of('\\');
@@ -78,7 +78,7 @@ namespace writerfilter
             nCutPos = nLastBackslash;
         if (nCutPos < sPrefix.size())
             sPrefix = sPrefix.substr(nCutPos + 1);
-        
+
         fileName += "/";
         fileName += sPrefix;
         fileName += ".";
@@ -127,17 +127,17 @@ namespace writerfilter
         xmlTextWriterStartElement( pWriter, xmlName );
         xmlFree( xmlName );
     }
-    
+
     void TagLogger::attribute(const string & name, const string & value)
     {
         xmlChar* xmlName = xmlCharStrdup( name.c_str() );
         xmlChar* xmlValue = xmlCharStrdup( value.c_str() );
         xmlTextWriterWriteAttribute( pWriter, xmlName, xmlValue );
-        
+
         xmlFree( xmlValue );
         xmlFree( xmlName );
     }
-    
+
     void TagLogger::attribute(const string & name, const ::rtl::OUString & value)
     {
         attribute( name, OUStringToOString( value, RTL_TEXTENCODING_ASCII_US ).getStr() );
@@ -178,43 +178,43 @@ namespace writerfilter
         }
         xmlFree( xmlName );
     }
-    
+
     void TagLogger::chars(const string & rChars)
     {
         xmlChar* xmlChars = xmlCharStrdup( rChars.c_str() );
         xmlTextWriterWriteString( pWriter, xmlChars );
         xmlFree( xmlChars );
     }
-    
+
     void TagLogger::chars(const ::rtl::OUString & rChars)
     {
         chars(OUStringToOString(rChars, RTL_TEXTENCODING_ASCII_US).getStr());
     }
-    
+
     void TagLogger::endElement()
     {
         xmlTextWriterEndElement( pWriter );
     }
-    
+
     void TagLogger::endDocument()
     {
         xmlTextWriterEndDocument( pWriter );
         xmlFreeTextWriter( pWriter );
     }
-    
-    
+
+
     class PropertySetDumpHandler : public Properties
     {
         IdToString::Pointer_t mpIdToString;
         TagLogger::Pointer_t m_pLogger;
-        
+
     public:
-        PropertySetDumpHandler(TagLogger::Pointer_t pLogger, 
-                IdToString::Pointer_t pIdToString); 
+        PropertySetDumpHandler(TagLogger::Pointer_t pLogger,
+                IdToString::Pointer_t pIdToString);
         virtual ~PropertySetDumpHandler();
-        
+
         void resolve(writerfilter::Reference<Properties>::Pointer_t props);
-        
+
         virtual void attribute(Id name, Value & val);
         virtual void sprm(Sprm & sprm);
     };
@@ -229,45 +229,45 @@ namespace writerfilter
     PropertySetDumpHandler::~PropertySetDumpHandler()
     {
     }
-    
+
     void PropertySetDumpHandler::resolve(
             writerfilter::Reference<Properties>::Pointer_t pProps)
     {
         if (pProps.get() != NULL)
             pProps->resolve( *this );
     }
-    
+
     void PropertySetDumpHandler::attribute(Id name, Value & val)
     {
         m_pLogger->startElement( "attribute" );
-        
+
         m_pLogger->attribute("name", (*QNameToString::Instance())(name));
         m_pLogger->attribute("value", val.toString());
-        
+
         resolve(val.getProperties());
-        
+
         m_pLogger->endElement();
     }
-    
+
     void PropertySetDumpHandler::sprm(Sprm & rSprm)
     {
         m_pLogger->startElement( "sprm" );
-        
+
         string sName;
-        
+
         if (mpIdToString != IdToString::Pointer_t())
             sName = mpIdToString->toString(rSprm.getId());
-        
+
         m_pLogger->attribute( "name", sName );
-        
+
         m_pLogger->attribute( "id", rSprm.getId() );
         m_pLogger->attribute( "value", rSprm.getValue()->toString() );
-        
+
         resolve( rSprm.getProps() );
-        
+
         m_pLogger->endElement();
     }
-    
+
     void TagLogger::propertySet(writerfilter::Reference<Properties>::Pointer_t props,
             IdToString::Pointer_t pIdToString)
     {
@@ -279,7 +279,7 @@ namespace writerfilter
 
         endElement( );
     }
-    
+
     void TagLogger::unoPropertySet(uno::Reference<beans::XPropertySet> rPropSet)
     {
         uno::Reference<beans::XPropertySetInfo> xPropSetInfo(rPropSet->getPropertySetInfo());
@@ -291,16 +291,16 @@ namespace writerfilter
         {
             startElement( "property" );
             ::rtl::OUString sName(aProps[i].Name);
-            
+
             attribute( "name", sName );
-            try 
+            try
             {
                 attribute( "value", rPropSet->getPropertyValue( sName ) );
             }
             catch (uno::Exception aException)
             {
                 startElement( "exception" );
-                
+
                 chars("getPropertyValue(\"");
                 chars(sName);
                 chars("\")");
