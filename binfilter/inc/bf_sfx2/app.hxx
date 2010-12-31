@@ -2,7 +2,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -103,7 +103,6 @@ class SfxFilter;
 class SfxInterface;
 class SfxMacroConfig;
 class SfxMedium;
-class SfxMediumList;
 class SfxObjectFactory;
 class SfxObjectFactoryArr_Impl;
 class SfxObjectShell;

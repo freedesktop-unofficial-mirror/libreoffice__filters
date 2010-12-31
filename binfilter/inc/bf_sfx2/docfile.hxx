@@ -2,7 +2,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -308,8 +308,8 @@ public:
                                                 const String& aExtension,
                                                 const String& aDestDir );
 
-    sal_Bool 			TransactedTransferForFS_Impl( const INetURLObject& aSource, 
-                             const INetURLObject& aDest, 
+    sal_Bool 			TransactedTransferForFS_Impl( const INetURLObject& aSource,
+                             const INetURLObject& aDest,
                              const ::com::sun::star::uno::Reference< ::com::sun::star::ucb::XCommandEnvironment >& xComEnv );
 
 #endif
@@ -319,11 +319,6 @@ public:
 
 SV_DECL_IMPL_REF( SfxMedium )
 SV_DECL_COMPAT_WEAK( SfxMedium )
-
-#ifndef SFXMEDIUM_LIST
-#define SFXMEDIUM_LIST
-DECLARE_LIST( SfxMediumList, SfxMedium* )//STRIP008 DECLARE_LIST( SfxMediumList, SfxMedium* );
-#endif
 
 }//end of namespace binfilter
 #endif
