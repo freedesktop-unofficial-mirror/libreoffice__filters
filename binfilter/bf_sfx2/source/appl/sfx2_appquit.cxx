@@ -2,7 +2,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -25,8 +25,6 @@
  * for a copy of the LGPLv3 License.
  *
  ************************************************************************/
-#include "bf_basic/basmgr.hxx"
-
 #ifdef WIN
 #define _TL_LANG_SPECIAL
 #endif
@@ -67,20 +65,20 @@ SV_DECL_PTRARR(SfxInitLinkList, Link*, 2, 2)//STRIP008 ;
 /*?*/ {
 /*?*/     if ( bDowning )
 /*?*/         return;
-/*?*/ 
+/*?*/
 /*?*/ 	StarBASIC::Stop();
-/*?*/ 
+/*?*/
 /*?*/ 	bDowning = TRUE; // wegen Timer aus DecAliveCount und QueryExit
-/*?*/ 
+/*?*/
 /*?*/ 	bDowning = FALSE;
 /*?*/ 	DBG_ASSERT( !SfxObjectShell::GetFirst(),
 /*?*/ 				"existing SfxObjectShell after Execute" );
 /*?*/ 	bDowning = TRUE;
-/*?*/ 
+/*?*/
 /*?*/ 	// call derived application-exit
 /*?*/ 	bInExit = TRUE;
 /*?*/ 	Exit();
-/*?*/ 
+/*?*/
 /*?*/     // Controller u."a. freigeben
 /*?*/     // dabei sollten auch restliche Komponenten ( Beamer! ) verschwinden
 /*?*/ 	SfxObjectFactory::ClearAll_Impl();
@@ -89,21 +87,21 @@ SV_DECL_PTRARR(SfxInitLinkList, Link*, 2, 2)//STRIP008 ;
 /*?*/ 		pImp->pBasicLibContainer->release();
 /*?*/ 	if( pImp->pDialogLibContainer )
 /*?*/ 		pImp->pDialogLibContainer->release();
-/*?*/ 
+/*?*/
 /*?*/ 	bInExit = FALSE;
-/*?*/ 
+/*?*/
 /*?*/ 	// ab hier d"urfen keine SvObjects mehr existieren
 /*?*/ 	DELETEX(pAppData_Impl->pMatcher);
 /*?*/ 	DELETEX(pAppData_Impl->pSfxFrameObjectFactoryPtr);
-/*?*/ 
+/*?*/
 /*?*/ 	DELETEX(pAppData_Impl->pEventConfig);
 /*?*/   DELETEX(pAppData_Impl->pMiscConfig);
 /*?*/ 	SfxMacroConfig::Release_Impl();
 /*?*/ 	DELETEX(pAppData_Impl->pInitLinkList);
-/*?*/ 
+/*?*/
 /*?*/     DELETEX(pImp->pEventHdl);
 /*?*/     DELETEX(pImp->pObjShells);
-/*?*/ 
+/*?*/
 /*?*/ 	NoChaos::ReleaseItemPool();
 /*?*/ 	pAppData_Impl->pPool = NULL;
 /*?*/ }

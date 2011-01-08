@@ -2,7 +2,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -83,7 +83,6 @@ using namespace rtl;
 #include "sberrors.hxx"
 #include "sbunoobj.hxx"
 #include "sbjsmod.hxx"
-#include "basmgr.hxx"
 #include "sbintern.hxx"
 
 #include<math.h>
@@ -162,7 +161,7 @@ Reference< XHierarchicalNameAccess > getCoreReflection_HierarchicalNameAccess_Im
         Reference< XIdlReflection > xCoreReflection = getCoreReflection_Impl();
         if( xCoreReflection.is() )
         {
-            xCoreReflection_HierarchicalNameAccess = 
+            xCoreReflection_HierarchicalNameAccess =
                 Reference< XHierarchicalNameAccess >( xCoreReflection, UNO_QUERY );
         }
     }
@@ -377,7 +376,7 @@ static void implSequenceToMultiDimArray( SbxDimArray*& pArray, Sequence< sal_Int
     Type aType = aValue.getValueType();
     TypeClass eTypeClass = aType.getTypeClass();
 
-    sal_Int32 indicesIndex = indices.getLength() -1; 
+    sal_Int32 indicesIndex = indices.getLength() -1;
     sal_Int32 dimCopy = dimension;
 
     if ( eTypeClass == TypeClass_SEQUENCE )
@@ -394,7 +393,7 @@ static void implSequenceToMultiDimArray( SbxDimArray*& pArray, Sequence< sal_Int
                 ++dimCopy;
                 if ( sizes.getLength() < dimCopy )
                 {
-                    sizes.realloc( sizes.getLength() + 1 );	
+                    sizes.realloc( sizes.getLength() + 1 );
                     sizes[ sizes.getLength() - 1 ] = nLen;
                     indices.realloc( indices.getLength() + 1 );
                     indicesIndex = indices.getLength() - 1;
@@ -403,19 +402,19 @@ static void implSequenceToMultiDimArray( SbxDimArray*& pArray, Sequence< sal_Int
 
             if ( bIsZeroIndex )
                 indices[ dimCopy - 1 ] = index;
-            else 
+            else
                 indices[ dimCopy - 1] = index + 1;
 
             implSequenceToMultiDimArray( pArray, indices, sizes, aElementAny, dimCopy, bIsZeroIndex );
         }
-        
+
     }
     else
     {
-        if ( indices.getLength() < 1 ) 
+        if ( indices.getLength() < 1 )
         {
             // Should never ever get here ( indices.getLength()
-            // should equal number of dimensions in the array ) 
+            // should equal number of dimensions in the array )
             // And that should at least be 1 !
             // #QUESTION is there a better error?
             StarBASIC::Error( SbERR_INVALID_OBJECT );
@@ -427,7 +426,7 @@ static void implSequenceToMultiDimArray( SbxDimArray*& pArray, Sequence< sal_Int
             SbxDataType eSbxElementType = unoToSbxType( aValue.getValueTypeClass() );
             pArray = new SbxDimArray( eSbxElementType );
             sal_Int32 nIndexLen = indices.getLength();
-        
+
             // Dimension the array
             for ( sal_Int32 index = 0; index < nIndexLen; ++index )
             {
@@ -691,7 +690,7 @@ Type getUnoTypeForSbxValue( SbxValue* pVal )
                         {
                             if( aType.getTypeClass() == TypeClass_VOID )
                             {
-                                // #88522 
+                                // #88522
                                 // if only first element is void: different types  -> []any
                                 // if all elements are void: []void is not allowed -> []any
                                 aElementType = getCppuType( (Any*)0 );
@@ -854,8 +853,8 @@ Any sbxToUnoValueImpl( SbxVariable* pVar, bool bBlockConversionToSmallestType = 
 
 
 // Helper function for StepREDIMP
-static Any implRekMultiDimArrayToSequence( SbxDimArray* pArray, 
-    const Type& aElemType, short nMaxDimIndex, short nActualDim, 
+static Any implRekMultiDimArrayToSequence( SbxDimArray* pArray,
+    const Type& aElemType, short nMaxDimIndex, short nActualDim,
     sal_Int32* pActualIndices, sal_Int32* pLowerBounds, sal_Int32* pUpperBounds )
 {
     sal_Int32 nSeqLevel = nMaxDimIndex - nActualDim + 1;
@@ -880,7 +879,7 @@ static Any implRekMultiDimArrayToSequence( SbxDimArray* pArray,
     xArray->realloc( aRetVal, nSeqSize );
 
     sal_Int32& ri = pActualIndices[nActualDim];
-    
+
     for( ri = nLower,i = 0 ; ri <= nUpper ; ri++,i++ )
     {
         Any aElementVal;
@@ -903,7 +902,7 @@ static Any implRekMultiDimArrayToSequence( SbxDimArray* pArray,
         }
         catch( IllegalArgumentException& e1 )
         {
-            StarBASIC::Error( ERRCODE_BASIC_EXCEPTION, 
+            StarBASIC::Error( ERRCODE_BASIC_EXCEPTION,
                 implGetExceptionMsg( e1, aIllegalArgumentExceptionName ) );
         }
         catch (IndexOutOfBoundsException&)
@@ -1068,7 +1067,7 @@ Any sbxToUnoValue( SbxVariable* pVar, const Type& rType, Property* pUnoProperty 
                             pUpperBounds[j] = uBound;
                         }
 
-                        aRetVal = implRekMultiDimArrayToSequence( pArray, aElemType, 
+                        aRetVal = implRekMultiDimArrayToSequence( pArray, aElemType,
                             nDims - 1, 0, pActualIndices, pLowerBounds, pUpperBounds );
 
                         delete[] pUpperBounds;
@@ -2167,7 +2166,7 @@ SbxVariable* SbUnoObject::Find( const XubString& rName, SbxClassType t )
                     getMethod( aUName, MethodConcept::ALL - MethodConcept::DANGEROUS );
 
                 // SbUnoMethode anlegen und reinbraten
-                SbxVariableRef xMethRef = new SbUnoMethod( rxMethod->getName(), 
+                SbxVariableRef xMethRef = new SbUnoMethod( rxMethod->getName(),
                     unoToSbxType( rxMethod->getReturnType() ), rxMethod, false );
                 QuickInsert( (SbxVariable*)xMethRef );
                 pRes = xMethRef;
@@ -2444,7 +2443,7 @@ SbxVariable* findUnoClass( const String& rName )
 SbxVariable* SbUnoClass::Find( const XubString& rName, SbxClassType t )
 {
     (void)t;
-    
+
     SbxVariable* pRes = SbxObject::Find( rName, SbxCLASS_VARIABLE );
 
     // Wenn nichts gefunden wird, ist das Sub-Modul noch nicht bekannt

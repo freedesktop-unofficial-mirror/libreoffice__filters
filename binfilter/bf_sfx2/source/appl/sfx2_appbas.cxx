@@ -2,7 +2,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -51,14 +51,12 @@
 #include "appimp.hxx"
 #include "dlgcont.hxx"
 
-#include "bf_basic/basmgr.hxx"
-
 #include "scriptcont.hxx"
 
 #define ITEMID_SEARCH SID_SEARCH_ITEM
 
 
-#include <legacysmgr/legacy_binfilters_smgr.hxx>	//STRIP002 
+#include <legacysmgr/legacy_binfilters_smgr.hxx>	//STRIP002
 #include "bf_so3/staticbaseurl.hxx"
 
 namespace binfilter {
@@ -170,10 +168,10 @@ BasicManager* SfxApplication::GetBasicManager()
 /*N*/ 	if ( 1 == ++pAppData_Impl->nBasicCallLevel )
 /*N*/ 	{
 /*N*/ 		DBG_TRACE( "SfxShellObject: BASIC-on-demand" );
-/*N*/ 
+/*N*/
 /*N*/ 		// das kann l"anger dauern, da Progress nicht geht, wenigstens Sanduhr
 /*N*/ //(mba)/task        SfxWaitCursor aWait;
-/*N*/ 
+/*N*/
 /*N*/ 		// zuerst das BASIC laden
 /*N*/ 		GetBasic();
 /*

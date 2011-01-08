@@ -2,7 +2,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -75,7 +75,7 @@
 #include "objuno.hxx"
 #include "request.hxx"
 
-#include <legacysmgr/legacy_binfilters_smgr.hxx>	//STRIP002 
+#include <legacysmgr/legacy_binfilters_smgr.hxx>	//STRIP002
 
 #include "bf_basic/basmgr.hxx"
 
@@ -112,7 +112,7 @@ using namespace ::com::sun::star::uno;
 /*N*/ 	{
 /*N*/ 		SfxDocumentInfo &rDocInfo = GetDocInfo();
 /*N*/ 		rDocInfo.SetTemplateConfig( HasTemplateConfig() );
-/*N*/ 
+/*N*/
 /*N*/ 		if ( IsModified() )
 /*N*/ 		{
 /*N*/ 			// Keine Unterschiede mehr zwischen Save, SaveAs
@@ -125,25 +125,25 @@ using namespace ::com::sun::star::uno;
 /*N*/                 	aCreated.SetName( String() );
 /*N*/                 	rDocInfo.SetCreated( aCreated );
 /*N*/             	}
-/*N*/ 
+/*N*/
 /*N*/             	SfxStamp aPrinted = rDocInfo.GetPrinted();
 /*N*/             	if ( aUserName == aPrinted.GetName() )
 /*N*/             	{
 /*N*/                 	aPrinted.SetName( String() );
 /*N*/                 	rDocInfo.SetPrinted( aPrinted );
 /*N*/             	}
-/*N*/ 
+/*N*/
 /*N*/ 				aUserName.Erase();
 /*N*/         	}
-/*N*/ 
+/*N*/
 /*N*/ 			rDocInfo.SetChanged( aUserName );
 /*N*/ 			if ( !HasName() || pImp->bIsSaving )
 /*N*/ 				UpdateTime_Impl( rDocInfo );
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		if ( !pImp->bIsSaving )
 /*N*/ 			rDocInfo.SetPasswd( pImp->bPasswd );
-/*N*/ 
+/*N*/
 /*N*/ 		Broadcast( SfxDocumentInfoHint( &rDocInfo ) );
 /*N*/ 	}
 /*N*/ }
@@ -154,11 +154,11 @@ using namespace ::com::sun::star::uno;
 /*N*/ {
 /*N*/ 	//Demnaechst mal gemeinsame Teile zusammenfassen
 /*N*/ 	UpdateDocInfoForSave();
-/*N*/ 
+/*N*/
 /*N*/ #if !defined( SFX_KEY_MAXPREVIEWSIZE ) && defined( TFPLUGCOMM )
 /*N*/ #define SFX_KEY_MAXPREVIEWSIZE SFX_KEY_ISFREE
 /*N*/ #endif
-/*N*/ 
+/*N*/
 /*N*/ #ifdef MI_doch_wieder_die_alte_preview
 /*N*/ 	String aMaxSize = SFX_INIMANAGER()->Get( SFX_KEY_MAXPREVIEWSIZE );
 /*N*/ 	ULONG nMaxSize = aMaxSize.Len() ? ULONG( aMaxSize ) : 50000;
@@ -167,7 +167,7 @@ using namespace ::com::sun::star::uno;
 /*N*/ #endif
 /*N*/ 	if( nMaxSize && !GetDocInfo().IsPasswd() &&
 /*N*/ 		SFX_CREATE_MODE_STANDARD == eCreateMode )
-/*N*/ 	{DBG_BF_ASSERT(0, "STRIP"); //STRIP001 
+/*N*/ 	{DBG_BF_ASSERT(0, "STRIP"); //STRIP001
 /*N*/ 	}
 
 /*N*/ 	if( pImp->bIsSaving )
@@ -180,7 +180,7 @@ using namespace ::com::sun::star::uno;
 /*N*/ 		{
 /*N*/ 			SfxDocumentInfo& rDocInfo = GetDocInfo();
 /*N*/ 			rDocInfo.Save(pNewStg);
-/*N*/ 
+/*N*/
 /*N*/ 			// wenn es sich um ein Dokument lokales Basic handelt, dieses
 /*N*/ 			// schreiben
 /*N*/ 			if ( pImp->pBasicMgr )
@@ -207,11 +207,11 @@ using namespace ::com::sun::star::uno;
                         pNewStg );
 /*N*/ #endif
 /*N*/ 			}
-/*N*/ 
+/*N*/
 /*N*/ 			// Windows-merken
 /*N*/ 			if ( TRUE ) HACK(aus config)
 /*N*/ 				SaveWindows_Impl( *pNewStg );
-/*N*/ 
+/*N*/
 /*N*/ 			// Konfiguration schreiben
 /*N*/ 			if ( GetConfigManager() )
 /*N*/ 			{
@@ -229,13 +229,13 @@ using namespace ::com::sun::star::uno;
 /*N*/ 		//  return FALSE;
 /*N*/ 		/*SfxApplication *pSfxApp =*/ SFX_APP();
 /*N*/ 		/*SfxMedium *pActMed =*/ GetMedium();
-/*N*/ 
+/*N*/
 /*N*/ 		// alte DocInfo laden
 /*N*/ 		SfxDocumentInfo &rDocInfo = GetDocInfo();
-/*N*/ 
+/*N*/
 /*N*/ 		// DocInfo speichern
 /*N*/ 		rDocInfo.Save( pNewStg );
-/*N*/ 
+/*N*/
 /*N*/ 		// wenn es sich um ein Dokument lokales Basic handelt, dieses schreiben
 /*N*/ 		if ( pImp->pBasicMgr )
 /*N*/             pImp->pBasicMgr->Store(
@@ -264,7 +264,7 @@ using namespace ::com::sun::star::uno;
 /*N*/ 		// Windows-merken
 /*N*/ 		if ( TRUE ) HACK(aus config)
 /*N*/ 			SaveWindows_Impl( *pNewStg );
-/*N*/ 
+/*N*/
 /*N*/ 		// Konfiguration schreiben
 /*N*/ 		if (GetConfigManager())
 /*N*/ 		{
@@ -272,7 +272,7 @@ using namespace ::com::sun::star::uno;
 /*?*/                 GetConfigManager()->StoreConfiguration(pNewStg);
             }
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		return TRUE;
 /*N*/ 	}
 /*N*/ }
@@ -284,24 +284,24 @@ using namespace ::com::sun::star::uno;
 /*N*/ {
 /*N*/ 	// Get old time from documentinfo
 /*N*/ 	Time aOldTime(rInfo.GetTime());
-/*N*/ 
+/*N*/
 /*N*/ 	// Initialize some local member! Its neccessary for wollow operations!
 /*N*/ 	DateTime	aNow					;	// Date and time at current moment
 /*N*/ 	Time		n24Time		(24,0,0,0)	;	// Time-value for 24 hours - see follow calculation
 /*N*/ 	ULONG		nDays		= 0			;	// Count of days between now and last editing
 /*N*/ 	Time		nAddTime	(0)			;	// Value to add on aOldTime
-/*N*/ 
+/*N*/
 /*N*/ 	// Safe impossible cases!
 /*N*/ 	// User has changed time to the past between last editing and now ... its not possible!!!
 /*N*/ 	DBG_ASSERT( !(aNow.GetDate()<pImp->nTime.GetDate()), "Timestamp of last change is in the past ?!..." );
-/*N*/ 
+/*N*/
 /*N*/ 	// Do the follow only, if user has NOT changed time to the past.
 /*N*/ 	// Else add a time of 0 to aOldTime ... !!!
 /*N*/ 	if (aNow.GetDate()>=pImp->nTime.GetDate())
 /*N*/ 	{
 /*N*/ 		// Get count of days last editing.
 /*N*/ 		nDays = aNow.GetSecFromDateTime(pImp->nTime.GetDate())/86400 ;
-/*N*/ 
+/*N*/
 /*N*/ 		if (nDays==0)
 /*N*/ 		{
 /*N*/ 			// If no day between now and last editing - calculate time directly.
@@ -319,10 +319,10 @@ using namespace ::com::sun::star::uno;
 /*?*/ 			nAddTime	+=	n24Time-(const Time&)pImp->nTime		;
 /*?*/ 			nAddTime	+=	aNow					;
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		aOldTime += nAddTime;
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	rInfo.SetTime(aOldTime.GetTime());
 /*N*/ 	pImp->nTime = aNow;
 /*N*/ 	rInfo.IncDocumentNumber();
@@ -352,7 +352,7 @@ using namespace ::com::sun::star::uno;
 /*N*/             pImp->pCfgMgr = new SfxConfigManager( *this );
 /*N*/ 		}
 /*N*/     }
-/*N*/ 
+/*N*/
 /*N*/ 	return pImp->pCfgMgr;
 /*N*/ }
 
@@ -362,10 +362,10 @@ using namespace ::com::sun::star::uno;
 /*N*/ {
 /*N*/ //    if ( pImp->pCfgMgr == SFX_CFGMANAGER() && pMgr)
 /*N*/ //        pMgr->Activate(pImp->pCfgMgr);
-/*N*/ 
+/*N*/
 /*N*/     if ( pImp->pCfgMgr && pImp->pCfgMgr != pMgr )
 /*?*/ 		delete pImp->pCfgMgr;
-/*N*/ 
+/*N*/
 /*N*/ 	pImp->pCfgMgr = pMgr;
 /*N*/ }
 
@@ -435,7 +435,7 @@ using namespace ::com::sun::star::uno;
     rufen.
 */
 
-/*N*/ {DBG_BF_ASSERT(0, "STRIP"); //STRIP001 
+/*N*/ {DBG_BF_ASSERT(0, "STRIP"); //STRIP001
 /*N*/ }
 
 //--------------------------------------------------------------------
@@ -450,7 +450,7 @@ using namespace ::com::sun::star::uno;
 /*N*/ 			pImp->pEventConfig->Connect( pImp->pCfgMgr );
 /*N*/ 		pImp->pEventConfig->Initialize();
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	return pImp->pEventConfig;
 /*N*/ }
 
