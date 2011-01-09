@@ -2,7 +2,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -196,7 +196,7 @@ const ::com::sun::star::uno::Sequence< sal_Int8 > & SdGenericDrawPage::getUnoTun
         return *pSeq;
 }
 
-sal_Int64 SAL_CALL SdGenericDrawPage::getSomething( const ::com::sun::star::uno::Sequence< sal_Int8 >& rId ) throw(::com::sun::star::uno::RuntimeException) 
+sal_Int64 SAL_CALL SdGenericDrawPage::getSomething( const ::com::sun::star::uno::Sequence< sal_Int8 >& rId ) throw(::com::sun::star::uno::RuntimeException)
 {
         if( rId.getLength() == 16 && 0 == rtl_compareMemory( getUnoTunnelId().getConstArray(),
                                                                                                                  rId.getConstArray(), 16 ) )
@@ -352,7 +352,7 @@ void SAL_CALL SdGenericDrawPage::setPropertyValue( const OUString& aPropertyName
         case WID_PAGE_DURATION:
         case WID_PAGE_CHANGE:
         {
-            sal_Int32 nValue;
+            sal_Int32 nValue(0);
             if(!(aValue >>= nValue))
                 throw lang::IllegalArgumentException();
 
@@ -384,7 +384,7 @@ void SAL_CALL SdGenericDrawPage::setPropertyValue( const OUString& aPropertyName
         }
         case WID_PAGE_WIDTH:
         {
-            sal_Int32 nWidth;
+            sal_Int32 nWidth(0);
             if(!(aValue >>= nWidth))
                 throw lang::IllegalArgumentException();
 
@@ -393,7 +393,7 @@ void SAL_CALL SdGenericDrawPage::setPropertyValue( const OUString& aPropertyName
         }
         case WID_PAGE_HEIGHT:
         {
-            sal_Int32 nHeight;
+            sal_Int32 nHeight(0);
             if(!(aValue >>= nHeight))
                 throw lang::IllegalArgumentException();
 
@@ -402,7 +402,7 @@ void SAL_CALL SdGenericDrawPage::setPropertyValue( const OUString& aPropertyName
         }
         case WID_PAGE_ORIENT:
         {
-            sal_Int32 nEnum;
+            sal_Int32 nEnum(0);
             if(!::cppu::enum2int( nEnum, aValue ))
                 throw lang::IllegalArgumentException();
 
@@ -432,7 +432,7 @@ void SAL_CALL SdGenericDrawPage::setPropertyValue( const OUString& aPropertyName
         }
         case WID_PAGE_EFFECT:
         {
-            sal_Int32 nEnum;
+            sal_Int32 nEnum(0);
             if(!::cppu::enum2int( nEnum, aValue ))
                 throw lang::IllegalArgumentException();
 
@@ -444,7 +444,7 @@ void SAL_CALL SdGenericDrawPage::setPropertyValue( const OUString& aPropertyName
             break;
         case WID_PAGE_SPEED:
         {
-            sal_Int32 nEnum;
+            sal_Int32 nEnum(0);
             if(!::cppu::enum2int( nEnum, aValue ))
                 throw lang::IllegalArgumentException();
 
@@ -453,7 +453,7 @@ void SAL_CALL SdGenericDrawPage::setPropertyValue( const OUString& aPropertyName
         }
         case WID_PAGE_VISIBLE :
         {
-            sal_Bool	bVisible;
+            sal_Bool	bVisible(sal_False);
             if( ! ( aValue >>= bVisible ) )
                 throw lang::IllegalArgumentException();
             GetPage()->SetExcluded( bVisible == FALSE );
@@ -471,7 +471,7 @@ void SAL_CALL SdGenericDrawPage::setPropertyValue( const OUString& aPropertyName
         }
         case WID_PAGE_BACKFULL:
         {
-            sal_Bool	bFullSize;
+            sal_Bool	bFullSize(sal_False);
             if( ! ( aValue >>= bFullSize ) )
                 throw lang::IllegalArgumentException();
             GetPage()->SetBackgroundFullSize( bFullSize );
@@ -479,7 +479,7 @@ void SAL_CALL SdGenericDrawPage::setPropertyValue( const OUString& aPropertyName
         }
         case WID_PAGE_BACKVIS:
         {
-            sal_Bool bVisible;
+            sal_Bool bVisible(sal_False);
             if( ! ( aValue >>= bVisible ) )
                 throw lang::IllegalArgumentException();
 
@@ -499,7 +499,7 @@ void SAL_CALL SdGenericDrawPage::setPropertyValue( const OUString& aPropertyName
         }
         case WID_PAGE_BACKOBJVIS:
         {
-            sal_Bool bVisible;
+            sal_Bool bVisible(sal_False);
             if( ! ( aValue >>= bVisible ) )
                 throw lang::IllegalArgumentException();
 

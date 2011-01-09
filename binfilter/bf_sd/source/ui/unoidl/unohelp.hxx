@@ -2,7 +2,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -36,7 +36,7 @@ inline sal_Bool any2bool( const ::com::sun::star::uno::Any& rAny, sal_Bool& rBoo
     }
     else
     {
-        sal_Int32 nValue;
+        sal_Int32 nValue(0);
         if(!(rAny >>= nValue))
             return sal_False;
         rBool = nValue != 0;

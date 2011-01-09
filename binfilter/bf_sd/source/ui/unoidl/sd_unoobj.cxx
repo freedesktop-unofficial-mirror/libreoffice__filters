@@ -2,7 +2,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -70,7 +70,7 @@
 #include "helpids.h"
 #include "glob.hrc"
 #include "unolayer.hxx"
-#include "imapinfo.hxx" 
+#include "imapinfo.hxx"
 namespace binfilter {
 
 #ifndef SEQTYPE
@@ -361,7 +361,7 @@ uno::Any SAL_CALL SdXShape::getPropertyDefault( const OUString& aPropertyName ) 
     sal_uIntPtr nObjId = (sal_uIntPtr)mpShape->getPropertyMap();
     SfxExtItemPropertySetInfo* pInfo = NULL;
 
-    SdExtPropertySetInfoCache* pCache = (mpModel && mpModel->IsImpressDocument()) ? 
+    SdExtPropertySetInfoCache* pCache = (mpModel && mpModel->IsImpressDocument()) ?
         &gImplImpressPropertySetInfoCache : &gImplDrawPropertySetInfoCache;
 
     SdExtPropertySetInfoCache::iterator aIter( pCache->find( nObjId ) );
@@ -410,7 +410,7 @@ void SAL_CALL SdXShape::setPropertyValue( const ::rtl::OUString& aPropertyName, 
                     break;
                 case WID_ISANIMATION:
                 {
-                    sal_Bool bIsAnimation;
+                    sal_Bool bIsAnimation(sal_False);
                     if(!(aValue >>= bIsAnimation))
                         throw lang::IllegalArgumentException();
 
@@ -445,7 +445,7 @@ void SAL_CALL SdXShape::setPropertyValue( const ::rtl::OUString& aPropertyName, 
                     break;
                 case WID_BLUESCREEN:
                 {
-                    sal_Int32 nColor;
+                    sal_Int32 nColor(0);
                     if(!(aValue >>= nColor))
                         throw lang::IllegalArgumentException();
 
@@ -454,7 +454,7 @@ void SAL_CALL SdXShape::setPropertyValue( const ::rtl::OUString& aPropertyName, 
                 }
                 case WID_VERB:
                 {
-                    sal_Int32 nVerb;
+                    sal_Int32 nVerb(0);
                     if(!(aValue >>= nVerb))
                         throw lang::IllegalArgumentException();
 
@@ -463,7 +463,7 @@ void SAL_CALL SdXShape::setPropertyValue( const ::rtl::OUString& aPropertyName, 
                 }
                 case WID_DIMCOLOR:
                 {
-                    sal_Int32 nColor;
+                    sal_Int32 nColor(0);
                     if(!(aValue >>= nColor))
                         throw lang::IllegalArgumentException();
 
@@ -478,7 +478,7 @@ void SAL_CALL SdXShape::setPropertyValue( const ::rtl::OUString& aPropertyName, 
                     break;
                 case WID_PRESORDER:
                 {
-                    sal_Int32 nPos;
+                    sal_Int32 nPos(0);
                     if(!(aValue >>= nPos))
                         throw lang::IllegalArgumentException();
 
@@ -1098,10 +1098,10 @@ uno::Any SdXShape::GetStyleSheet() const throw( beans::UnknownPropertyException 
         {
             if( 0 == pPage->GetMasterPageCount() )
                 return aAny;
-            
+
             pPage = pPage->GetMasterPage(0);
         }
-        
+
         String aLayoutName( pPage->GetLayoutName() );
         aLayoutName = aLayoutName.Erase(aLayoutName.Search( String( RTL_CONSTASCII_USTRINGPARAM( SD_LT_SEPARATOR ) )));
 
@@ -1157,7 +1157,7 @@ public:
 
     // XNameReplace
     virtual void SAL_CALL replaceByName( const ::rtl::OUString& aName, const ::com::sun::star::uno::Any& aElement ) throw(::com::sun::star::lang::IllegalArgumentException, ::com::sun::star::container::NoSuchElementException, ::com::sun::star::lang::WrappedTargetException, ::com::sun::star::uno::RuntimeException);
-    
+
     // XNameAccess
     virtual ::com::sun::star::uno::Any SAL_CALL getByName( const ::rtl::OUString& aName ) throw(::com::sun::star::container::NoSuchElementException, ::com::sun::star::lang::WrappedTargetException, ::com::sun::star::uno::RuntimeException);
     virtual ::com::sun::star::uno::Sequence< ::rtl::OUString > SAL_CALL getElementNames(  ) throw(::com::sun::star::uno::RuntimeException);
@@ -1482,7 +1482,7 @@ void SAL_CALL SdUnoEventsAccess::replaceByName( const OUString& aName, const uno
             {
                 sBuffer.append( aStrLibrary );
             }
-            
+
             pInfo->aBookmark = sBuffer.makeStringAndClear();
             bOk = sal_True;
         }
@@ -1656,7 +1656,7 @@ uno::Any SAL_CALL SdUnoEventsAccess::getByName( const OUString& aName )
             pProperties->Value = aAny;
             pProperties->State = beans::PropertyState_DIRECT_VALUE;
             pProperties++;
-        
+
             // NOTE: no break here!!!
 
         case presentation::ClickAction_SOUND:
