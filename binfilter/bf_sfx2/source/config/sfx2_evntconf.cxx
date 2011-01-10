@@ -2,7 +2,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -42,9 +42,9 @@
 
 #include "sfxsids.hrc"
 #include "app.hxx"
+#include <vector>
 
-
-#include <legacysmgr/legacy_binfilters_smgr.hxx>	//STRIP002 
+#include <legacysmgr/legacy_binfilters_smgr.hxx>	//STRIP002
 namespace binfilter {
 
 // -----------------------------------------------------------------------
@@ -74,7 +74,7 @@ static const USHORT nVersion = 5;
 /*N*/     USHORT  mnId;
 /*N*/     String  maEventName;
 /*N*/     String  maUIName;
-/*N*/ 
+/*N*/
 /*N*/             EventNames_Impl( USHORT nId,
 /*N*/                              const String& rEventName,
 /*N*/                              const String& rUIName )
@@ -83,10 +83,9 @@ static const USHORT nVersion = 5;
 /*N*/                 , maUIName( rUIName ) {}
 /*N*/ };
 
-/*?*/ DECLARE_LIST( SfxEventList_Impl, EventNames_Impl* )//STRIP008 ;
-/*?*/ 
-/*?*/ SfxEventList_Impl   *gp_Id_SortList = NULL;
-/*?*/ SfxEventList_Impl   *gp_Name_SortList = NULL;
+typedef ::std::vector< EventNames_Impl* > SfxEventList_Impl;
+SfxEventList_Impl   *gp_Id_SortList = NULL;
+SfxEventList_Impl   *gp_Name_SortList = NULL;
 
 //==========================================================================
 
@@ -95,10 +94,10 @@ static const USHORT nVersion = 5;
 /*N*/  , pDocEventConfig( NULL )
 /*N*/ {
 /*N*/     bIgnoreConfigure = sal_False;
-/*N*/ 
+/*N*/
 /*N*/     // Array zum Ermitteln der Bindungen
 /*N*/     pEventArr = new SfxEventArr_Impl;
-/*N*/ 
+/*N*/
 /*N*/     // Einen default entry eingf"ugen
 /*N*/     const SfxEvent_Impl *pEvent = new SfxEvent_Impl(String(), 0);
 /*N*/     pEventArr->Insert(pEvent, 0);
@@ -106,37 +105,36 @@ static const USHORT nVersion = 5;
 
 //==========================================================================
 
-/*N*/ SfxEventConfiguration::~SfxEventConfiguration()
-/*N*/ {
-/*N*/     for (USHORT n=0; n<pEventArr->Count(); n++)
-/*N*/         delete (*pEventArr)[n];
-/*N*/     delete pEventArr;
-/*N*/     delete pAppEventConfig;
-/*N*/ 
-/*N*/     if ( gp_Id_SortList )
-/*N*/     {
-/*N*/         EventNames_Impl* pData = gp_Id_SortList->First();
-/*N*/         while ( pData )
-/*N*/         {
-/*N*/             delete pData;
-/*N*/             pData = gp_Id_SortList->Next();
-/*N*/         }
-/*N*/         delete gp_Id_SortList;
-/*N*/         delete gp_Name_SortList;
-/*N*/ 
-/*N*/         gp_Id_SortList = NULL;
-/*N*/         gp_Name_SortList = NULL;
-/*N*/     }
-/*N*/ }
+SfxEventConfiguration::~SfxEventConfiguration()
+{
+    for (USHORT n=0; n<pEventArr->Count(); n++)
+        delete (*pEventArr)[n];
+
+    delete pEventArr;
+    delete pAppEventConfig;
+
+    if ( gp_Id_SortList )
+    {
+        for ( size_t i = 0, n = gp_Id_SortList->size(); i < n; ++i )
+            delete (*gp_Id_SortList)[ i ];
+        gp_Id_SortList->clear();
+
+        delete gp_Id_SortList;
+        delete gp_Name_SortList;
+
+        gp_Id_SortList = NULL;
+        gp_Name_SortList = NULL;
+    }
+}
 
 //==========================================================================
 
-/*N*/ void SfxEventConfiguration::RegisterEvent(USHORT nId, const String& rName)
-/*N*/ {
-/*N*/     USHORT nCount = pEventArr->Count();
-/*N*/     const SfxEvent_Impl *pEvent = new SfxEvent_Impl(rName, nId);
-/*N*/     pEventArr->Insert(pEvent, nCount);
-/*N*/ }
+void SfxEventConfiguration::RegisterEvent(USHORT nId, const String& rName)
+{
+    USHORT nCount = pEventArr->Count();
+    const SfxEvent_Impl *pEvent = new SfxEvent_Impl(rName, nId);
+    pEventArr->Insert(pEvent, nCount);
+}
 
 //==========================================================================
 
@@ -152,16 +150,6 @@ static const USHORT nVersion = 5;
 /*N*/ 	bInitialized = TRUE;
 /*N*/ }
 
-/*
-void SfxEventConfigItem_Impl::Init( SfxConfigManager *pMgr )
-{
-    if ( GetConfigManager() == pMgr )
-        Initialize();
-    else
-        ReInitialize( pMgr );
-}
-*/
-
 //==========================================================================
 
 /*N*/ int SfxEventConfigItem_Impl::Load(SvStream& rStream)
@@ -170,7 +158,7 @@ void SfxEventConfigItem_Impl::Init( SfxConfigManager *pMgr )
 /*N*/     rStream >> nFileVersion;
 /*N*/     if ( nFileVersion < nCompatVersion || nFileVersion > nVersion )
 /*?*/         return SfxConfigItem::WARNING_VERSION;
-/*N*/ 
+/*N*/
 /*N*/     SvxMacroTableDtor aLocalMacroTable;
 /*N*/     if ( nFileVersion <= nOldVersion )
 /*N*/     {
@@ -183,17 +171,17 @@ void SfxEventConfigItem_Impl::Init( SfxConfigManager *pMgr )
 /*?*/         }
 /*?*/         else
 /*?*/             bWarning = bAlwaysWarning = FALSE;
-/*?*/ 
+/*?*/
 /*?*/         USHORT nCount, nEventCount = pEvConfig->GetEventCount();
 /*?*/         rStream >> nCount;
-/*?*/ 
+/*?*/
 /*?*/         USHORT i;
 /*?*/         for (i=0; i<nCount; i++)
 /*?*/         {
 /*?*/         	USHORT nId;
 /*?*/             SfxMacroInfo aInfo( pObjShell );
 /*?*/             rStream >> nId >> aInfo;
-/*?*/ 
+/*?*/
 /*?*/             for (USHORT n=0; n<nEventCount; n++)
 /*?*/             {
 /*?*/ 				USHORT nEventId = (*pEvConfig->pEventArr)[n+1]->nEventId;
@@ -214,10 +202,10 @@ void SfxEventConfigItem_Impl::Init( SfxConfigManager *pMgr )
 /*N*/         bAlwaysWarning = ( nWarn & 0x02 ) != 0;
 /*N*/         aLocalMacroTable.Read( rStream );
 /*N*/     }
-/*N*/ 
+/*N*/
 /*N*/     if ( pObjShell && pEvConfig )
 /*N*/         pEvConfig->PropagateEvents_Impl( pObjShell, aLocalMacroTable );
-/*N*/ 
+/*N*/
 /*N*/     return SfxConfigItem::ERR_OK;
 /*N*/ }
 
@@ -234,7 +222,7 @@ void SfxEventConfigItem_Impl::Init( SfxConfigManager *pMgr )
 /*N*/ {
 /*N*/     bWarning = TRUE;
 /*N*/     bAlwaysWarning = FALSE;
-/*N*/ 
+/*N*/
 /*N*/     aMacroTable.DelDtor();
 /*N*/     SetDefault( TRUE );
 /*N*/     pEvConfig->PropagateEvents_Impl( pObjShell, aMacroTable );
@@ -258,7 +246,7 @@ void SfxEventConfigItem_Impl::Init( SfxConfigManager *pMgr )
 //==========================================================================
 
 /*N*/ void SfxEventConfigItem_Impl::ConfigureEvent( USHORT nId, SvxMacro *pMacro )
-/*N*/ { 
+/*N*/ {
 /*N*/     if ( aMacroTable.Seek( nId ) )
 /*N*/     {
 /*?*/         if ( pMacro )
@@ -286,28 +274,28 @@ void SfxEventConfigItem_Impl::Init( SfxConfigManager *pMgr )
 /*N*/                 ( ::legacy_binfilters::getLegacyProcessServiceFactory()->createInstance(
 /*N*/                         ::rtl::OUString( RTL_CONSTASCII_USTRINGPARAM( "com.sun.star.frame.GlobalEventBroadcaster" ))), UNO_QUERY );
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/     if ( xSupplier.is() )
 /*N*/     {
 /*N*/         SvxMacro   *pMacro;
 /*N*/         ULONG       nCount;
 /*N*/         ULONG       nID, i;
-/*N*/ 
+/*N*/
 /*N*/         REFERENCE< XNAMEREPLACE > xEvents = xSupplier->getEvents();
-/*N*/ 
+/*N*/
 /*N*/         bIgnoreConfigure = sal_True;
-/*N*/ 
+/*N*/
 /*N*/         // Erase old values first, because we don't know anything about the
 /*N*/         // changes here
-/*N*/ 
+/*N*/
 /*N*/         SEQUENCE < PROPERTYVALUE > aProperties;
 /*N*/         SEQUENCE < OUSTRING > aEventNames = xEvents->getElementNames();
 /*N*/         OUSTRING*   pNames  = aEventNames.getArray();
 /*N*/         ANY aEmpty;
-/*N*/ 
+/*N*/
 /*N*/         aEmpty <<= aProperties;
 /*N*/         nCount  = aEventNames.getLength();
-/*N*/ 
+/*N*/
 /*N*/         for ( i=0; i<nCount; i++ )
 /*N*/         {
 /*N*/             try
@@ -319,17 +307,17 @@ void SfxEventConfigItem_Impl::Init( SfxConfigManager *pMgr )
 /*N*/             catch( ::com::sun::star::container::NoSuchElementException )
 /*N*/             { DBG_ERRORFILE( "PropagateEvents_Impl: caught NoSuchElementException" ); }
 /*N*/         }
-/*N*/ 
+/*N*/
 /*N*/         // now set the new values
-/*N*/ 
+/*N*/
 /*N*/         nCount = rTable.Count();
-/*N*/ 
+/*N*/
 /*N*/         for ( i=0; i<nCount; i++ )
 /*N*/         {
 /*N*/             pMacro = rTable.GetObject( i );
 /*N*/             nID = rTable.GetObjectKey( i );
 /*N*/             OUSTRING aEventName = GetEventName_Impl( nID );
-/*N*/ 
+/*N*/
 /*N*/             if ( aEventName.getLength() )
 /*N*/             {
 /*N*/                 ANY aEventData = CreateEventData_Impl( pMacro );
@@ -345,7 +333,7 @@ void SfxEventConfigItem_Impl::Init( SfxConfigManager *pMgr )
 /*N*/             else
 /*N*/                 DBG_WARNING( "PropagateEvents_Impl: Got unkown event" );
 /*N*/         }
-/*N*/ 
+/*N*/
 /*N*/         bIgnoreConfigure = sal_False;
 /*N*/     }
 /*N*/ }
@@ -362,58 +350,58 @@ void SfxEventConfigItem_Impl::Init( SfxConfigManager *pMgr )
     like "macro://./standard.module1.main()"
 */
 /*N*/     ANY aEventData;
-/*N*/ 
+/*N*/
 /*N*/     if ( pMacro )
 /*N*/     {
 /*N*/         if ( pMacro->GetScriptType() == STARBASIC )
 /*N*/         {
 /*N*/             SEQUENCE < PROPERTYVALUE > aProperties(3);
 /*N*/             PROPERTYVALUE  *pValues = aProperties.getArray();
-/*N*/ 
+/*N*/
 /*N*/             OUSTRING    aType   (RTL_CONSTASCII_USTRINGPARAM( STAR_BASIC ));
 /*N*/             OUSTRING    aLib    = pMacro->GetLibName();
 /*N*/             OUSTRING    aMacro  = pMacro->GetMacName();
-/*N*/ 
+/*N*/
 /*N*/             pValues[ 0 ].Name = ::rtl::OUString(RTL_CONSTASCII_USTRINGPARAM( PROP_EVENT_TYPE ));
 /*N*/             pValues[ 0 ].Value <<= aType;
-/*N*/ 
+/*N*/
 /*N*/             pValues[ 1 ].Name = ::rtl::OUString(RTL_CONSTASCII_USTRINGPARAM( PROP_LIBRARY ));
 /*N*/             pValues[ 1 ].Value <<= aLib;
-/*N*/ 
+/*N*/
 /*N*/             pValues[ 2 ].Name = ::rtl::OUString(RTL_CONSTASCII_USTRINGPARAM( PROP_MACRO_NAME ));
 /*N*/             pValues[ 2 ].Value <<= aMacro;
-/*N*/ 
+/*N*/
 /*N*/             aEventData <<= aProperties;
 /*N*/         }
 /*N*/         else if ( pMacro->GetScriptType() == EXTENDED_STYPE )
 /*N*/         {
 /*?*/             SEQUENCE < PROPERTYVALUE > aProperties(2);
 /*?*/             PROPERTYVALUE  *pValues = aProperties.getArray();
-/*?*/ 
+/*?*/
 /*?*/             OUSTRING    aLib    = pMacro->GetLibName();
 /*?*/             OUSTRING    aMacro  = pMacro->GetMacName();
-/*?*/ 
+/*?*/
 /*?*/             pValues[ 0 ].Name = ::rtl::OUString(RTL_CONSTASCII_USTRINGPARAM( PROP_EVENT_TYPE ));
 /*?*/             pValues[ 0 ].Value <<= aLib;
-/*?*/ 
+/*?*/
 /*?*/             pValues[ 1 ].Name = ::rtl::OUString(RTL_CONSTASCII_USTRINGPARAM( PROP_SCRIPT ));
 /*?*/             pValues[ 1 ].Value <<= aMacro;
-/*?*/ 
+/*?*/
 /*?*/             aEventData <<= aProperties;
 /*N*/ 		}
 /*N*/         else if ( pMacro->GetScriptType() == JAVASCRIPT )
 /*N*/         {
 /*?*/             SEQUENCE < PROPERTYVALUE > aProperties(2);
 /*?*/             PROPERTYVALUE  *pValues = aProperties.getArray();
-/*?*/ 
+/*?*/
 /*?*/             OUSTRING    aMacro  = pMacro->GetMacName();
-/*?*/ 
+/*?*/
 /*?*/             pValues[ 0 ].Name = ::rtl::OUString(RTL_CONSTASCII_USTRINGPARAM( PROP_EVENT_TYPE ));
 /*?*/             pValues[ 0 ].Value <<= ::rtl::OUString(RTL_CONSTASCII_USTRINGPARAM(SVX_MACRO_LANGUAGE_JAVASCRIPT));
-/*?*/ 
+/*?*/
 /*?*/             pValues[ 1 ].Name = ::rtl::OUString(RTL_CONSTASCII_USTRINGPARAM( PROP_MACRO_NAME ));
 /*?*/             pValues[ 1 ].Value <<= aMacro;
-/*?*/ 
+/*?*/
 /*?*/             aEventData <<= aProperties;
 /*N*/ 		}
 /*N*/         else
@@ -426,7 +414,7 @@ void SfxEventConfigItem_Impl::Init( SfxConfigManager *pMgr )
 /*N*/         SEQUENCE < PROPERTYVALUE > aProperties;
 /*N*/         aEventData <<= aProperties;
 /*N*/     }
-/*N*/ 
+/*N*/
 /*N*/     return aEventData;
 /*N*/ }
 
@@ -434,35 +422,35 @@ void SfxEventConfigItem_Impl::Init( SfxConfigManager *pMgr )
 /*N*/ ULONG SfxEventConfiguration::GetPos_Impl( USHORT nId, sal_Bool &rFound )
 /*N*/ {
 /*N*/     rFound = sal_False;
-/*N*/ 
-/*N*/     if ( ! gp_Id_SortList->Count() )
+/*N*/
+/*N*/     if ( gp_Id_SortList->empty() )
 /*N*/         return 0;
-/*N*/ 
+/*N*/
 /*N*/     // use binary search to find the correct position
 /*N*/     // in the list
-/*N*/ 
+/*N*/
 /*N*/     int     nCompVal = 1;
 /*N*/     long    nStart = 0;
-/*N*/     long    nEnd = gp_Id_SortList->Count() - 1;
+/*N*/     long    nEnd = gp_Id_SortList->size() - 1;
 /*N*/     long    nMid(0);
-/*N*/ 
+/*N*/
 /*N*/     EventNames_Impl* pMid;
-/*N*/ 
+/*N*/
 /*N*/     rFound = sal_False;
-/*N*/ 
+/*N*/
 /*N*/     while ( nCompVal && ( nStart <= nEnd ) )
 /*N*/     {
 /*N*/         nMid = ( nEnd - nStart ) / 2 + nStart;
-/*N*/         pMid = gp_Id_SortList->GetObject( (USHORT) nMid );
-/*N*/ 
+/*N*/         pMid = (*gp_Id_SortList)[ nMid ];
+/*N*/
 /*N*/         nCompVal = pMid->mnId - nId;
-/*N*/ 
+/*N*/
 /*N*/         if ( nCompVal < 0 )     // pMid < pData
 /*N*/             nStart = nMid + 1;
 /*N*/         else
 /*N*/             nEnd = nMid - 1;
 /*N*/     }
-/*N*/ 
+/*N*/
 /*N*/     if ( nCompVal == 0 )
 /*N*/     {
 /*N*/         rFound = sal_True;
@@ -472,43 +460,43 @@ void SfxEventConfigItem_Impl::Init( SfxConfigManager *pMgr )
 /*N*/         if ( nCompVal < 0 )     // pMid < pData
 /*N*/             nMid++;
 /*N*/     }
-/*N*/ 
-/*N*/     return (USHORT) nMid;
+/*N*/
+/*N*/     return (ULONG) nMid;
 /*N*/ }
 
 // -------------------------------------------------------------------------------------------------------
 /*N*/ ULONG SfxEventConfiguration::GetPos_Impl( const String& rName, sal_Bool &rFound )
 /*N*/ {
 /*N*/     rFound = sal_False;
-/*N*/ 
-/*N*/     if ( ! gp_Name_SortList->Count() )
+/*N*/
+/*N*/     if ( gp_Name_SortList->empty() )
 /*N*/         return 0;
-/*N*/ 
+/*N*/
 /*N*/     // use binary search to find the correct position
 /*N*/     // in the list
-/*N*/ 
+/*N*/
 /*N*/     int     nCompVal = 1;
 /*N*/     long    nStart = 0;
-/*N*/     long    nEnd = gp_Name_SortList->Count() - 1;
+/*N*/     long    nEnd = gp_Name_SortList->size() - 1;
 /*N*/     long    nMid(0);
-/*N*/ 
+/*N*/
 /*N*/     EventNames_Impl* pMid;
-/*N*/ 
+/*N*/
 /*N*/     rFound = sal_False;
-/*N*/ 
+/*N*/
 /*N*/     while ( nCompVal && ( nStart <= nEnd ) )
 /*N*/     {
 /*N*/         nMid = ( nEnd - nStart ) / 2 + nStart;
-/*N*/         pMid = gp_Name_SortList->GetObject( (USHORT) nMid );
-/*N*/ 
+/*N*/         pMid = (*gp_Name_SortList)[ nMid ];
+/*N*/
 /*N*/         nCompVal = rName.CompareTo( pMid->maEventName );
-/*N*/ 
+/*N*/
 /*N*/         if ( nCompVal < 0 )     // pMid < pData
 /*N*/             nStart = nMid + 1;
 /*N*/         else
 /*N*/             nEnd = nMid - 1;
 /*N*/     }
-/*N*/ 
+/*N*/
 /*N*/     if ( nCompVal == 0 )
 /*N*/     {
 /*N*/         rFound = sal_True;
@@ -518,27 +506,27 @@ void SfxEventConfigItem_Impl::Init( SfxConfigManager *pMgr )
 /*N*/         if ( nCompVal < 0 )     // pMid < pData
 /*N*/             nMid++;
 /*N*/     }
-/*N*/ 
-/*N*/     return (USHORT) nMid;
+/*N*/
+/*N*/     return (ULONG) nMid;
 /*N*/ }
 
 //--------------------------------------------------------------------------------------------------------
 /*N*/ OUSTRING SfxEventConfiguration::GetEventName_Impl( ULONG nID )
 /*N*/ {
 /*N*/     OUSTRING    aRet;
-/*N*/ 
+/*N*/
 /*N*/     if ( gp_Id_SortList )
 /*N*/     {
 /*N*/         sal_Bool    bFound;
 /*N*/         ULONG       nPos = GetPos_Impl( (USHORT) nID, bFound );
-/*N*/ 
+/*N*/
 /*N*/         if ( bFound )
 /*N*/         {
-/*N*/             EventNames_Impl *pData = gp_Id_SortList->GetObject( nPos );
+/*N*/             EventNames_Impl *pData = (*gp_Id_SortList)[  nPos ];
 /*N*/             aRet = pData->maEventName;
 /*N*/         }
 /*N*/     }
-/*N*/ 
+/*N*/
 /*N*/     return aRet;
 /*N*/ }
 
@@ -546,19 +534,19 @@ void SfxEventConfigItem_Impl::Init( SfxConfigManager *pMgr )
 /*N*/ ULONG SfxEventConfiguration::GetEventId_Impl( const OUSTRING& rEventName )
 /*N*/ {
 /*N*/     ULONG nRet = 0;
-/*N*/ 
+/*N*/
 /*N*/     if ( gp_Name_SortList )
 /*N*/     {
 /*N*/         sal_Bool    bFound;
 /*N*/         ULONG       nPos = GetPos_Impl( rEventName, bFound );
-/*N*/ 
+/*N*/
 /*N*/         if ( bFound )
 /*N*/         {
-/*N*/             EventNames_Impl *pData = gp_Name_SortList->GetObject( nPos );
+/*N*/             EventNames_Impl *pData = (*gp_Name_SortList)[ nPos ];
 /*N*/             nRet = pData->mnId;
 /*N*/         }
 /*N*/     }
-/*N*/ 
+/*N*/
 /*N*/     return nRet;
 /*N*/ }
 
@@ -572,26 +560,30 @@ void SfxEventConfigItem_Impl::Init( SfxConfigManager *pMgr )
 /*N*/         gp_Id_SortList = new SfxEventList_Impl;
 /*N*/         gp_Name_SortList = new SfxEventList_Impl;
 /*N*/     }
-/*N*/ 
+/*N*/
 /*N*/     sal_Bool    bFound = sal_False;
 /*N*/     ULONG       nPos = GetPos_Impl( nId, bFound );
-/*N*/ 
+/*N*/
 /*N*/     if ( bFound )
 /*N*/     {
 /*?*/         DBG_ERRORFILE( "RegisterEvent: Event already registered?" );
 /*?*/         return;
 /*N*/     }
-/*N*/ 
+/*N*/
 /*N*/     EventNames_Impl *pData;
-/*N*/ 
+/*N*/
 /*N*/     pData = new EventNames_Impl( nId, rMacroName, rUIName );
-/*N*/     gp_Id_SortList->Insert( pData, nPos );
-/*N*/ 
+          SfxEventList_Impl::iterator itId = gp_Id_SortList->begin();
+          ::std::advance( itId, nPos );
+          gp_Id_SortList->insert( itId, pData );
+/*N*/
 /*N*/     nPos = GetPos_Impl( rMacroName, bFound );
 /*N*/     DBG_ASSERT( !bFound, "RegisterEvent: Name in List, but ID not?" );
-/*N*/ 
-/*N*/     gp_Name_SortList->Insert( pData, nPos );
-/*N*/ 
+/*N*/
+          SfxEventList_Impl::iterator itName = gp_Name_SortList->begin();
+          ::std::advance( itName, nPos );
+          gp_Name_SortList->insert( itName, pData );
+/*N*/
 /*N*/     SFX_APP()->GetEventConfig()->RegisterEvent( nId, rUIName );
 /*N*/ }
 
@@ -608,7 +600,7 @@ void SfxEventConfigItem_Impl::Init( SfxConfigManager *pMgr )
 /*N*/ 		DBG_ERROR("Couldn't create EventConfiguration!");
 /*N*/ 		return FALSE;
 /*N*/     }
-/*?*/ 
+/*?*/
 /*?*/     DBG_ERROR( "No OutStream!" );
 /*?*/     return FALSE;
 /*N*/ }
