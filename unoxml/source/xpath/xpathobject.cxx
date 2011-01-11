@@ -85,9 +85,11 @@ namespace XPath
     */
     Reference< XNodeList > SAL_CALL CXPathObject::getNodeList() throw (RuntimeException)
     {
-        return Reference< XNodeList >(new CNodeList(m_pXPathObj));
+        Reference< XNodeList > const xRet(
+            new CNodeList(m_xContextNode, m_pXPathObj));
+        return xRet;
     }
-    
+
      /**
         get value of a boolean object
      */
