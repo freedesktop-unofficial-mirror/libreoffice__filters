@@ -2,7 +2,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -96,11 +96,11 @@ using namespace ::binfilter::svxform;
 /*N*/         SfxObjectShell* pObjShell = pDrawModel->GetObjectShell();
 /*N*/         if( pObjShell )
 /*N*/             xModel = pObjShell->GetModel();
-/*N*/ 
+/*N*/
 /*N*/         // get a unique page id from the model
 /*N*/         m_sPageId = pDrawModel->GetUniquePageId();
 /*N*/     }
-/*N*/ 
+/*N*/
 /*N*/     static const ::rtl::OUString sFormsCollectionServiceName( RTL_CONSTASCII_USTRINGPARAM( "com.sun.star.form.Forms" ));
 /*N*/     xForms = Reference< ::com::sun::star::container::XNameContainer > (
 /*N*/         ::legacy_binfilters::getLegacyProcessServiceFactory()->createInstance(
@@ -108,7 +108,7 @@ using namespace ::binfilter::svxform;
 /*N*/     DBG_ASSERT(xForms.is(), "FmFormPageImpl::Init : could not create a forms collection !");
 /*N*/     if (!xForms.is())
 /*?*/         ShowServiceNotAvailableError(NULL, sFormsCollectionServiceName, sal_True);
-/*N*/ 
+/*N*/
 /*N*/     Reference< ::com::sun::star::container::XChild >  xAsChild(xForms, UNO_QUERY);
 /*N*/     if (xAsChild.is())
 /*N*/         xAsChild->setParent( xModel );
@@ -118,7 +118,7 @@ using namespace ::binfilter::svxform;
 /*N*/ FmFormPageImpl::~FmFormPageImpl()
 /*N*/ {
 /*N*/     xCurrentForm = NULL;
-/*N*/ 
+/*N*/
 /*N*/     ::comphelper::disposeComponent(xForms);
 /*N*/     DBG_DTOR(FmFormPageImpl,NULL);
 /*N*/ }
@@ -146,12 +146,12 @@ using namespace ::binfilter::svxform;
 /*N*/     Reference< ::com::sun::star::io::XActiveDataSource >  xSource(::legacy_binfilters::getLegacyProcessServiceFactory()->createInstance(::rtl::OUString( RTL_CONSTASCII_USTRINGPARAM( "com.sun.star.io.ObjectOutputStream" ))), UNO_QUERY);
 /*N*/     Reference< ::com::sun::star::io::XOutputStream >  xMarkOut(::legacy_binfilters::getLegacyProcessServiceFactory()->createInstance(::rtl::OUString( RTL_CONSTASCII_USTRINGPARAM( "com.sun.star.io.MarkableOutputStream" ))), UNO_QUERY);
 /*N*/     Reference< ::com::sun::star::io::XActiveDataSource >  xMarkSource(xMarkOut, UNO_QUERY);
-/*N*/ 
+/*N*/
 /*N*/     if (xSource.is())
 /*N*/     {
 /*N*/         xMarkSource->setOutputStream(new ::utl::OOutputStreamWrapper(rOut));
 /*N*/         xSource->setOutputStream(xMarkOut);
-/*N*/ 
+/*N*/
 /*N*/         Reference< ::com::sun::star::io::XObjectOutputStream >  xOutStrm(xSource, UNO_QUERY);
 /*N*/         try
 /*N*/         {
@@ -161,7 +161,7 @@ using namespace ::binfilter::svxform;
 /*N*/         {
 /*?*/             rOut.SetError( ERRCODE_CLASS_WRITE | ERRCODE_SVX_FORMS_READWRITEFAILED | ERRCODE_WARNING_MASK );
 /*N*/         }
-/*N*/ 
+/*N*/
 /*N*/         xOutStrm->closeOutput();
 /*N*/     }
 /*N*/     else
@@ -184,26 +184,26 @@ using namespace ::binfilter::svxform;
 /*N*/ {
 /*N*/     // Abholen des InputStreams ueber uno
 /*N*/     Reference< ::com::sun::star::io::XActiveDataSink >  xSink(::legacy_binfilters::getLegacyProcessServiceFactory()->createInstance(::rtl::OUString( RTL_CONSTASCII_USTRINGPARAM( "com.sun.star.io.ObjectInputStream" ))), UNO_QUERY);
-/*N*/ 
+/*N*/
 /*N*/     // creating the mark streams
 /*N*/     Reference< ::com::sun::star::io::XInputStream >  xMarkIn(::legacy_binfilters::getLegacyProcessServiceFactory()->createInstance(::rtl::OUString( RTL_CONSTASCII_USTRINGPARAM( "com.sun.star.io.MarkableInputStream" ))), UNO_QUERY);
 /*N*/     Reference< ::com::sun::star::io::XActiveDataSink >  xMarkSink(xMarkIn, UNO_QUERY);
-/*N*/ 
+/*N*/
 /*N*/     if (xSink.is())
 /*N*/     {
 /*N*/         ::utl::OInputStreamWrapper* pUnoStream = new ::utl::OInputStreamWrapper(rIn);
 /*N*/         xMarkSink->setInputStream(Reference< ::com::sun::star::io::XInputStream > (pUnoStream));
 /*N*/         xSink->setInputStream(xMarkIn);
-/*N*/ 
+/*N*/
 /*N*/         // freigeben aller forms
 /*N*/         xCurrentForm = NULL;
-/*N*/ 
+/*N*/
 /*N*/         if (xForms->hasElements())
 /*N*/         {
 /*?*/             ::comphelper::disposeComponent(xForms);
 /*?*/             Init();
 /*N*/         }
-/*N*/ 
+/*N*/
 /*N*/         Reference< ::com::sun::star::io::XObjectInputStream >  xInStrm(xSink,UNO_QUERY);
 /*N*/         try
 /*N*/         {
@@ -213,8 +213,8 @@ using namespace ::binfilter::svxform;
 /*N*/         {
 /*?*/             rIn.SetError( ERRCODE_CLASS_READ | ERRCODE_SVX_FORMS_READWRITEFAILED | ERRCODE_WARNING_MASK );
 /*N*/         }
-/*N*/ 
-/*N*/ 
+/*N*/
+/*N*/
 /*N*/         xInStrm->closeInput();
 /*N*/     }
 /*N*/     else
@@ -227,28 +227,28 @@ using namespace ::binfilter::svxform;
 /*N*/     Reference< ::com::sun::star::io::XMarkableStream >  xMarkStrm(xOutStrm, UNO_QUERY);
 /*N*/     if (!xMarkStrm.is())
 /*N*/         return; // exception
-/*N*/ 
+/*N*/
 /*N*/     //  sortieren der objectlist nach der Reihenfolge
 /*N*/     FmObjectList aList;
 /*N*/     fillList(aList, *pPage, sal_True);
-/*N*/ 
+/*N*/
 /*N*/     // schreiben aller forms
 /*N*/     Reference< ::com::sun::star::io::XPersistObject >  xAsPersist(xForms, UNO_QUERY);
 /*N*/     if (xAsPersist.is())
 /*N*/         xAsPersist->write(xOutStrm);
 /*N*/         // don't use the writeObject of the stream, as this wouldn't be compatible with older documents
-/*N*/ 
+/*N*/
 /*N*/     // objectliste einfuegen
-/*N*/     sal_Int32 nLength = aList.Count();
-/*N*/ 
+/*N*/     sal_Int32 nLength = aList.size();
+/*N*/
 /*N*/     // schreiben der laenge
 /*N*/     xOutStrm->writeLong(nLength);
-/*N*/ 
+/*N*/
 /*N*/     for (sal_Int32 i = 0; i < nLength; i++)
 /*N*/     {
 /*N*/         // schreiben des Objects mit Marke
 /*N*/         // Marke um an den Anfang zu springen
-/*N*/         Reference< ::com::sun::star::io::XPersistObject >  xObj(aList.GetObject(i)->GetUnoControlModel(), UNO_QUERY);
+/*N*/         Reference< ::com::sun::star::io::XPersistObject >  xObj(aList[ i ]->GetUnoControlModel(), UNO_QUERY);
 /*N*/         if (xObj.is())
 /*N*/         {
 /*N*/             xOutStrm->writeObject(xObj);
@@ -264,25 +264,25 @@ using namespace ::binfilter::svxform;
 /*N*/     Reference< ::com::sun::star::io::XMarkableStream >  xMarkStrm(xInStrm, UNO_QUERY);
 /*N*/     if (!xMarkStrm.is())
 /*N*/         return; // exception
-/*N*/ 
+/*N*/
 /*N*/     //  sortieren der objectlist nach der Reihenfolge
 /*N*/     FmObjectList aList;
 /*N*/     fillList(aList, *pPage, sal_False);
-/*N*/ 
+/*N*/
 /*N*/     // lesen aller forms
 /*N*/     Reference< ::com::sun::star::io::XPersistObject >  xAsPersist(xForms, UNO_QUERY);
 /*N*/     if (xAsPersist.is())
 /*N*/         xAsPersist->read(xInStrm);
 /*N*/         // don't use the readObject of the stream, as this wouldn't be compatible with older documents
-/*N*/ 
+/*N*/
 /*N*/     // Zuordnung der Formobjekte zu den FormComponents
 /*N*/     sal_Int32 nLength = xInStrm->readLong();
 /*N*/     DBG_ASSERT(nLength == (sal_Int32) aList.Count(), "Fehler beim Lesen der UnoModels");
 /*N*/     for (sal_Int32 i = 0; i < nLength; i++)
 /*N*/     {
 /*N*/         Reference< ::com::sun::star::awt::XControlModel >  xRef(xInStrm->readObject(), UNO_QUERY);
-/*N*/         if (i < (sal_Int32)aList.Count())
-/*N*/             aList.GetObject(i)->SetUnoControlModel(xRef);
+/*N*/         if (i < (sal_Int32)aList.size())
+/*N*/             aList[ i ]->SetUnoControlModel(xRef);
 /*N*/     }
 /*N*/ }
 
@@ -298,8 +298,8 @@ using namespace ::binfilter::svxform;
 /*N*/             FmFormObj* pFormObj = PTR_CAST(FmFormObj, pObj);
 /*N*/             DBG_ASSERT(!bConnected || pFormObj->GetUnoControlModel().is(), "Controlshape ohne Control");
 /*N*/             if (!bConnected || pFormObj->GetUnoControlModel().is())
-/*N*/                 rList.Insert(pFormObj, LIST_APPEND);
-/*N*/ 
+/*N*/                 rList.push_back( pFormObj );
+/*N*/
 /*N*/         }
 /*N*/     }
 /*N*/ }
