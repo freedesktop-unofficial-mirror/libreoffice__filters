@@ -2,7 +2,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -257,7 +257,7 @@ SvObject* TryCreate( const SvGlobalName& rClassName )
             ::com::sun::star::uno::Sequence < sal_Int8 > aSeq( (sal_Int8*) SvGlobalName( SO3_GLOBAL_CLASSID ).GetBytes(), 16 );
             sal_Int64 nHandle = xObj->getSomething( aSeq );
             if ( nHandle )
-                return reinterpret_cast<SvObject*>(sal::static_int_cast<sal_IntPtr>(nHandle)); 
+                return reinterpret_cast<SvObject*>(sal::static_int_cast<sal_IntPtr>(nHandle));
                 // return (SvObject*) (sal_Int32*) nHandle;
         }
     }
