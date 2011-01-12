@@ -2,7 +2,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -41,8 +41,6 @@
 #include <bf_svtools/zforlist.hxx>
 #include <bf_svtools/zformat.hxx>
 #include <bf_svtools/pathoptions.hxx>
-#include <bf_sfx2/docinf.hxx>
-#include <bf_sfx2/docinf.hxx>
 #include <bf_sfx2/request.hxx>
 #include <bf_sfx2/printer.hxx>
 #include <bf_sfx2/evntconf.hxx>
@@ -138,7 +136,7 @@ using namespace ::rtl;
 /*N*/
 /*N*/ 	if( nAction )
 /*N*/ 	{
-/*N*/ 		BOOL bUnlockView;
+/*N*/ 		BOOL bUnlockView(false);
 /*N*/ 		if( pWrtShell )
 /*N*/ 		{
 /*N*/ 			bUnlockView = !pWrtShell->IsViewLocked();
@@ -232,7 +230,7 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 	if( pDocShell )
 /*N*/
 /*N*/ 		if( bSet )
 /*N*/ 		{
-/*N*/ 			BOOL bOld = pDoc->IsModified();
+/*N*/ 			pDoc->IsModified();
 /*N*/ 			pDoc->SetModified();
 /*N*/ 		}
 /*N*/ 		else
