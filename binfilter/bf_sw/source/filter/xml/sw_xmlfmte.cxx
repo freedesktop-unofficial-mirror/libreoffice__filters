@@ -2,7 +2,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -89,7 +89,7 @@ void SwXMLExport::ExportFmt( const SwFmt& rFmt, enum XMLTokenEnum eFamily )
 
     if( eFamily != XML_TOKEN_INVALID )
         AddAttribute( XML_NAMESPACE_STYLE, XML_FAMILY, eFamily );
-    
+
     // style:parent-style-name="..." (if its not the default only)
     const SwFmt* pParent = rFmt.DerivedFrom();
     // Parent-Namen nur uebernehmen, wenn kein Default
@@ -125,7 +125,7 @@ void SwXMLExport::ExportFmt( const SwFmt& rFmt, enum XMLTokenEnum eFamily )
         DBG_ASSERT(RES_FRMFMT == rFmt.Which(), "only frame format");
 
         const SfxPoolItem *pItem;
-        if( SFX_ITEM_SET == 
+        if( SFX_ITEM_SET ==
             rFmt.GetAttrSet().GetItemState( RES_BOXATR_FORMAT,
                                             sal_False, &pItem ) )
         {
@@ -140,7 +140,7 @@ void SwXMLExport::ExportFmt( const SwFmt& rFmt, enum XMLTokenEnum eFamily )
                 addDataStyle(nFormat);
                 OUString sDataStyleName = getDataStyleName(nFormat);
                 if( sDataStyleName.getLength() > 0 )
-                    AddAttribute( XML_NAMESPACE_STYLE, XML_DATA_STYLE_NAME, 
+                    AddAttribute( XML_NAMESPACE_STYLE, XML_DATA_STYLE_NAME,
                                   sDataStyleName );
             }
         }
@@ -278,7 +278,7 @@ protected:
 
     virtual void exportStyleAttributes(
             SvXMLAttributeList& rAttrList,
-            sal_Int32 nFamily, 
+            sal_Int32 nFamily,
             const ::std::vector< XMLPropertyState >& rProperties,
             const SvXMLExportPropertyMapper& rPropExp
             , const SvXMLUnitConverter& rUnitConverter,
@@ -292,7 +292,7 @@ public:
 
 void SwXMLAutoStylePoolP::exportStyleAttributes(
             SvXMLAttributeList& rAttrList,
-            sal_Int32 nFamily, 
+            sal_Int32 nFamily,
             const ::std::vector< XMLPropertyState >& rProperties,
             const SvXMLExportPropertyMapper& rPropExp
             , const SvXMLUnitConverter& rUnitConverter,
