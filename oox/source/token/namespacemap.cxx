@@ -25,47 +25,25 @@
  *
  ************************************************************************/
 
-#include "oox/helper/recordinputstream.hxx"
-#include <vector>
-#include <string.h>
-
-using ::rtl::OUString;
+#include "oox/token/namespacemap.hxx"
 
 namespace oox {
 
 // ============================================================================
 
-RecordInputStream::RecordInputStream( const StreamDataSequence& rData ) :
-    SequenceInputStream( rData )
+NamespaceMap::NamespaceMap()
 {
-}
-
-OUString RecordInputStream::readString( bool b32BitLen )
-{
-    OUString aString;
-    if( !isEof() )
+    static const struct NamespaceUrl { sal_Int32 mnId; const sal_Char* mpcUrl; } spNamespaceUrls[] =
     {
-        sal_Int32 nCharCount = b32BitLen ? readValue< sal_Int32 >() : readValue< sal_Int16 >();
-        // string length -1 is often used to indicate a missing string
-        OSL_ENSURE( !isEof() && (nCharCount >= -1), "RecordInputStream::readString - invalid string length" );
-        if( !isEof() && (nCharCount > 0) )
-        {
-            ::std::vector< sal_Unicode > aBuffer;
-            aBuffer.reserve( getLimitedValue< size_t, sal_Int32 >( nCharCount + 1, 0, 0xFFFF ) );
-            for( sal_Int32 nCharIdx = 0; !isEof() && (nCharIdx < nCharCount); ++nCharIdx )
-            {
-                sal_uInt16 nChar;
-                readValue( nChar );
-                aBuffer.push_back( static_cast< sal_Unicode >( nChar ) );
-            }
-            aBuffer.push_back( 0 );
-            aString = OUString( &aBuffer.front() );
-        }
-    }
-    return aString;
+// include auto-generated C array with namespace URLs as C strings
+#include "namespacenames.inc"
+        { -1, "" }
+    };
+
+    for( const NamespaceUrl* pNamespaceUrl = spNamespaceUrls; pNamespaceUrl->mnId != -1; ++pNamespaceUrl )
+        operator[]( pNamespaceUrl->mnId ) = ::rtl::OUString::createFromAscii( pNamespaceUrl->mpcUrl );
 }
 
 // ============================================================================
 
 } // namespace oox
-
