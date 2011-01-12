@@ -2,7 +2,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -36,7 +36,6 @@
 
 #include <bf_svtools/ctrltool.hxx>
 #include <bf_svtools/sfxecode.hxx>
-#include <bf_sfx2/docinf.hxx>
 #include <bf_sfx2/docfile.hxx>
 #include <bf_sfx2/docfilt.hxx>
 #include <bf_sfx2/sfx.hrc>
@@ -141,7 +140,7 @@ static const sal_Char pFilterRtf[]		= "Rich Text Format (StarCalc)";
 /*N*/ {
 /*N*/ 	SfxInPlaceObject::FillClass( pClassName, pFormat, pAppName,
 /*N*/ 								pFullTypeName, pShortTypeName, nFileFormat );
-/*N*/ 
+/*N*/
 /*N*/ 	if ( nFileFormat == SOFFICE_FILEFORMAT_31 )
 /*N*/ 	{
 /*N*/ 		*pClassName		= SvGlobalName( BF_SO3_SC_CLASSID_30 );
@@ -174,7 +173,7 @@ static const sal_Char pFilterRtf[]		= "Rich Text Format (StarCalc)";
 /*N*/ 	 	*pClassName		= SvGlobalName( BF_SO3_SC_CLASSID_60 );
 /*N*/ 		*pFormat        = SOT_FORMATSTR_ID_STARCALC_60;
 /*N*/ 	 	*pAppName		= String( ScResId( SCSTR_APPLICATION ) );
-/*N*/ 
+/*N*/
 /*N*/ 		*pFullTypeName	= String( ScResId( SCSTR_LONG_SCDOC_NAME ) );
 /*N*/ 		*pShortTypeName	= String( ScResId( SCSTR_SHORT_SCDOC_NAME ) );
 
@@ -187,14 +186,14 @@ static const sal_Char pFilterRtf[]		= "Rich Text Format (StarCalc)";
 /*N*/ BOOL ScDocShell::LoadCalc( SvStorage* pStor )		// StarCalc 3, 4 or 5 file
 /*N*/ {
 /*N*/ 	//	MacroCallMode is no longer needed, state is kept in SfxObjectShell now
-/*N*/ 
+/*N*/
 /*N*/ 	BOOL bRet = TRUE;
-/*N*/ 
+/*N*/
 /*N*/ 	SvStorageStreamRef aPoolStm = pStor->OpenStream( String::CreateFromAscii(pStyleName), STREAM_STD_READ );
 /*N*/ 	SvStorageStreamRef aDocStm  = pStor->OpenStream( String::CreateFromAscii(pStarCalcDoc), STREAM_STD_READ );
 /*N*/ 	ULONG nPoolErr = aPoolStm->GetError();
 /*N*/ 	ULONG nDocErr  = aDocStm->GetError();
-/*N*/ 
+/*N*/
 /*N*/ 	ScProgress* pProgress = NULL;
 /*N*/ 	SfxObjectCreateMode eShellMode = GetCreateMode();
 /*N*/ 	if ( eShellMode == SFX_CREATE_MODE_STANDARD && !nDocErr )
@@ -205,11 +204,11 @@ static const sal_Char pFilterRtf[]		= "Rich Text Format (StarCalc)";
 /*N*/ 		ULONG nRange = nEndPos - nCurPos;
 /*N*/ 		pProgress = new ScProgress( this, ScGlobal::GetRscString(STR_LOAD_DOC), nRange );
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	if ( nPoolErr == ERRCODE_IO_NOTEXISTS && nDocErr == ERRCODE_IO_NOTEXISTS )
 /*N*/ 	{
 /*?*/ 		//	leerer Storage = leeres Dokument -> wie InitNew
-/*?*/ 
+/*?*/
 /*?*/ 		aDocument.MakeTable(0);
 /*?*/ 		Size aSize( (long) ( STD_COL_WIDTH			 * HMM_PER_TWIPS * OLE_STD_CELLS_X ),
 /*?*/ 					(long) ( ScGlobal::nStdRowHeight * HMM_PER_TWIPS * OLE_STD_CELLS_Y ) );
@@ -222,9 +221,9 @@ static const sal_Char pFilterRtf[]		= "Rich Text Format (StarCalc)";
 /*N*/ 	{
 /*N*/ 		aPoolStm->SetVersion(pStor->GetVersion());
 /*N*/ 		aDocStm->SetVersion(pStor->GetVersion());
-/*N*/ 
+/*N*/
 /*N*/ 		aDocument.Clear();			// keine Referenzen auf Pool behalten!
-/*N*/ 
+/*N*/
 /*N*/ 		RemoveItem( SID_ATTR_CHAR_FONTLIST );
 /*N*/ 		RemoveItem( ITEMID_COLOR_TABLE );
 /*N*/ 		RemoveItem( ITEMID_GRADIENT_LIST );
@@ -232,10 +231,10 @@ static const sal_Char pFilterRtf[]		= "Rich Text Format (StarCalc)";
 /*N*/ 		RemoveItem( ITEMID_BITMAP_LIST );
 /*N*/ 		RemoveItem( ITEMID_DASH_LIST );
 /*N*/ 		RemoveItem( ITEMID_LINEEND_LIST );
-/*N*/ 
+/*N*/
 /*N*/ 		aDocument.LoadPool( *aPoolStm, FALSE );		// FALSE: RefCounts nicht laden
 /*N*/ 		bRet = (aPoolStm->GetError() == 0);
-/*N*/ 
+/*N*/
 /*N*/ 		if ( !bRet )
 /*N*/ 		{
 /*N*/ 			pStor->SetError( aPoolStm->GetError() );
@@ -246,24 +245,24 @@ static const sal_Char pFilterRtf[]		= "Rich Text Format (StarCalc)";
 /*N*/ 			//	ViewOptions are not completely stored (to avoid warnings),
 /*N*/ 			//	so must be initialized from global settings.
 /*N*/ 			//!	This can be removed if a new file format loads all ViewOptions !!!
-/*N*/ 
+/*N*/
 /*N*/ 			aDocument.SetViewOptions( SC_MOD()->GetViewOptions() );
-/*N*/ 
+/*N*/
 /*N*/ 			ULONG nErrCode = aPoolStm->GetErrorCode();
 /*N*/ 			const ByteString aStrKey = pStor->GetKey();
 /*N*/ 			const BOOL	 bKeySet = (aStrKey.Len() > 0);
-/*N*/ 
+/*N*/
 /*N*/ 			if ( bKeySet )
 /*?*/ 				aDocStm->SetKey( aStrKey );			// Passwort setzen
-/*N*/ 
+/*N*/
 /*N*/ 			bRet = aDocument.Load( *aDocStm, pProgress );
-/*N*/ 
+/*N*/
 /*N*/ 			if ( !bRet && bKeySet ) // Passwort falsch
 /*N*/ 			{
 /*?*/ 				SetError( ERRCODE_SFX_WRONGPASSWORD );
 /*?*/ 				pStor->SetError( ERRCODE_SFX_WRONGPASSWORD );
 /*N*/ 			}
-/*N*/ 
+/*N*/
 /*N*/ 			if ( aDocStm->GetError() )
 /*N*/ 			{
 /*?*/ 				//	Zeile-8192-Meldung braucht nur zu kommen, wenn die Zeilen
@@ -284,11 +283,11 @@ static const sal_Char pFilterRtf[]		= "Rich Text Format (StarCalc)";
 /*N*/ 				if ( nErrCode & ERRCODE_WARNING_MASK )
 /*?*/ 					SetError( nErrCode );
 /*N*/ 			}
-/*N*/ 
+/*N*/
 /*N*/ 			if (bRet)
 /*N*/ 			{
 /*N*/ 				aDocument.UpdateFontCharSet();
-/*N*/ 
+/*N*/
 /*N*/ 				UpdateLinks();				// verknuepfte Tabellen in Link-Manager
 /*N*/ 				RemoveUnknownObjects();		// unbekannte Ole-Objekte loeschen
 
@@ -341,7 +340,7 @@ static const sal_Char pFilterRtf[]		= "Rich Text Format (StarCalc)";
 /*?*/ 			if (pStylePool)
 /*?*/ 				pStylePool->UpdateStdNames();	// correct style names for different languages
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		if (bRet)
 /*N*/ 			aDocument.GetPool()->MyLoadCompleted();
 /*N*/ 	}
@@ -350,10 +349,10 @@ static const sal_Char pFilterRtf[]		= "Rich Text Format (StarCalc)";
 /*?*/ 		DBG_ERROR( "Stream-Fehler");
 /*?*/ 		bRet = FALSE;
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	if (!aDocument.HasTable(0))
 /*?*/ 		aDocument.MakeTable(0);
-/*N*/ 
+/*N*/
 /*N*/ 	if (eShellMode == SFX_CREATE_MODE_EMBEDDED)
 /*N*/ 	{
 /*N*/ 		USHORT nVisTab = aDocument.GetVisibleTab();
@@ -378,9 +377,9 @@ static const sal_Char pFilterRtf[]		= "Rich Text Format (StarCalc)";
 /*?*/ 								TRUE );
 /*N*/ 		}
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	delete pProgress;
-/*N*/ 
+/*N*/
 /*N*/ 	return bRet;
 /*N*/ }
 
@@ -388,7 +387,7 @@ static const sal_Char pFilterRtf[]		= "Rich Text Format (StarCalc)";
 /*N*/ BOOL ScDocShell::SaveCalc( SvStorage* pStor )			// Calc 3, 4 or 5 file
 /*N*/ {
 /*N*/ 	BOOL bRet = TRUE;
-/*N*/ 
+/*N*/
 /*N*/ 	ScProgress* pProgress = NULL;
 /*N*/ 	SfxObjectCreateMode eShellMode = GetCreateMode();
 /*N*/ 	if ( eShellMode == SFX_CREATE_MODE_STANDARD )
@@ -396,7 +395,7 @@ static const sal_Char pFilterRtf[]		= "Rich Text Format (StarCalc)";
 /*N*/ 		ULONG nRange = aDocument.GetWeightedCount() + 1;
 /*N*/ 		pProgress = new ScProgress( this, ScGlobal::GetRscString(STR_SAVE_DOC), nRange );
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	SvStorageStreamRef aPoolStm = pStor->OpenStream( String::CreateFromAscii(pStyleName) );
 /*N*/ 	if( !aPoolStm->GetError() )
 /*N*/ 	{
@@ -411,7 +410,7 @@ static const sal_Char pFilterRtf[]		= "Rich Text Format (StarCalc)";
 /*?*/ 		DBG_ERROR( "Stream Error" );
 /*?*/ 		bRet = FALSE;
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	if ( bRet && eShellMode != SFX_CREATE_MODE_ORGANIZER )
 /*N*/ 	{
 /*N*/ 		SvStorageStreamRef aDocStm  = pStor->OpenStream( String::CreateFromAscii(pStarCalcDoc) );
@@ -422,11 +421,11 @@ static const sal_Char pFilterRtf[]		= "Rich Text Format (StarCalc)";
 /*N*/ 			aDocStm->SetSize(0);
 /*N*/ 			bRet = aDocument.Save( *aDocStm, pProgress );
 /*N*/ 			DBG_ASSERT( bRet, "Error while saving" );
-/*N*/ 
+/*N*/
 /*N*/ 			if ( aDocument.HasLostData() )
 /*N*/ 			{
 /*?*/ 				//	Warnung, dass nicht alles gespeichert wurde
-/*?*/ 
+/*?*/
 /*?*/ 				if (!pStor->GetError())
 /*?*/ 					pStor->SetError(SCWARN_EXPORT_MAXROW);
 /*?*/ 			}
@@ -497,9 +496,9 @@ static const sal_Char pFilterRtf[]		= "Rich Text Format (StarCalc)";
                 }
             }
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	delete pProgress;
-/*N*/ 
+/*N*/
 /*N*/ 	return bRet;
 /*N*/ }
 
@@ -508,18 +507,18 @@ static const sal_Char pFilterRtf[]		= "Rich Text Format (StarCalc)";
 /*N*/ 	// prevent unnecessary broadcasts and updates
 /*N*/     DBG_ASSERT(pModificator == NULL, "The Modificator should not exist");
 /*N*/ 	pModificator = new ScDocShellModificator( *this );
-/*N*/ 	
+/*N*/
 /*N*/     aDocument.SetImportingXML( TRUE );
 /*N*/ 	// prevent unnecessary broadcasts and "half way listeners"
 /*N*/ 	aDocument.SetInsertingFromOtherDoc( TRUE );
-/*N*/ 
+/*N*/
 /*N*/ 	if (GetCreateMode() != SFX_CREATE_MODE_ORGANIZER)
 /*N*/ 		ScColumn::bDoubleAlloc = sal_True;
 /*N*/ }
 
 /*N*/ void ScDocShell::AfterXMLLoading(sal_Bool /*bRet*/)
 /*N*/ {
-           DBG_BF_ASSERT(0, "STRIP"); //STRIP001 
+           DBG_BF_ASSERT(0, "STRIP"); //STRIP001
             aDocument.SetInsertingFromOtherDoc( FALSE );
             aDocument.SetImportingXML( FALSE );
 
@@ -535,32 +534,32 @@ static const sal_Char pFilterRtf[]		= "Rich Text Format (StarCalc)";
 /*N*/ BOOL ScDocShell::LoadXML( SfxMedium* pInMedium, SvStorage* pStor )
 /*N*/ {
 /*N*/     RTL_LOGFILE_CONTEXT_AUTHOR ( aLog, "sc", "sb99857", "ScDocShell::LoadXML" );
-/*N*/ 
+/*N*/
 /*N*/ 	//	MacroCallMode is no longer needed, state is kept in SfxObjectShell now
-/*N*/ 
+/*N*/
 /*N*/ 	// no Seek(0) here - always loading from storage, GetInStream must not be called
-/*N*/ 
+/*N*/
 /*N*/     BeforeXMLLoading();
-/*N*/ 
+/*N*/
 /*N*/ 	ScXMLImportWrapper aImport( aDocument, pInMedium, pStor );
-/*N*/ 
+/*N*/
 /*N*/     sal_Bool bRet(sal_False);
 /*N*/ 	if (GetCreateMode() != SFX_CREATE_MODE_ORGANIZER)
 /*N*/ 		bRet = aImport.Import(sal_False);
 /*N*/ 	else
 /*N*/ 		bRet = aImport.Import(sal_True);
-/*N*/ 
+/*N*/
 /*N*/     AfterXMLLoading(bRet);
-/*N*/ 
+/*N*/
 /*N*/ 	//!	row heights...
-/*N*/ 
+/*N*/
 /*N*/ 	return bRet;
 /*N*/ }
 
 /*N*/ BOOL ScDocShell::SaveXML( SfxMedium* pInMedium, SvStorage* pStor )
 /*N*/ {
 /*N*/     RTL_LOGFILE_CONTEXT_AUTHOR ( aLog, "sc", "sb99857", "ScDocShell::SaveXML" );
-/*N*/ 
+/*N*/
 /*N*/ 	ScXMLImportWrapper aImport( aDocument, pInMedium, pStor );
 /*N*/ 	sal_Bool bRet(sal_False);
 /*N*/ 	if (GetCreateMode() != SFX_CREATE_MODE_ORGANIZER)
@@ -573,16 +572,16 @@ static const sal_Char pFilterRtf[]		= "Rich Text Format (StarCalc)";
 /*N*/ BOOL ScDocShell::Load( SvStorage* pStor )
 /*N*/ {
 /*N*/ 	RTL_LOGFILE_CONTEXT_AUTHOR ( aLog, "sc", "nn93723", "ScDocShell::Load" );
-/*N*/ 
+/*N*/
 /*N*/ 	ScRefreshTimerProtector( aDocument.GetRefreshTimerControlAddress() );
-/*N*/ 
+/*N*/
 /*N*/ 	DBG_ASSERT( pStor, "Load without storage?" );
 /*N*/ 	BOOL bXML = ( pStor->GetVersion() >= SOFFICE_FILEFORMAT_60 );
-/*N*/ 
+/*N*/
 /*N*/ 	//	only the latin script language is loaded
 /*N*/ 	//	-> initialize the others from options (before loading)
 /*N*/ 	InitOptions();
-/*N*/ 
+/*N*/
 /*N*/ 	BOOL bRet = SfxInPlaceObject::Load( pStor );
 /*N*/ 	if( bRet )
 /*N*/ 	{
@@ -591,7 +590,7 @@ static const sal_Char pFilterRtf[]		= "Rich Text Format (StarCalc)";
 /*N*/             SFX_ITEMSET_ARG( GetMedium()->GetItemSet(), pUpdateDocItem, SfxUInt16Item, SID_UPDATEDOCMODE, sal_False);
 /*N*/             nCanUpdate = pUpdateDocItem ? pUpdateDocItem->GetValue() : ::com::sun::star::document::UpdateDocMode::NO_UPDATE;
 /*N*/         }
-/*N*/ 
+/*N*/
 /*N*/         if (bXML)
 /*N*/ 		{
 /*N*/ 			//	prepare a valid document for XML filter
@@ -599,26 +598,26 @@ static const sal_Char pFilterRtf[]		= "Rich Text Format (StarCalc)";
 /*N*/ 			aDocument.MakeTable(0);
 /*N*/ 			aDocument.GetStyleSheetPool()->CreateStandardStyles();
 /*N*/ 			aDocument.UpdStlShtPtrsFrmNms();
-/*N*/ 
+/*N*/
 /*N*/ 			bRet = LoadXML( GetMedium(), pStor );
 /*N*/ 		}
 /*N*/ 		else
 /*N*/ 			bRet = LoadCalc( pStor );
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	if (!bRet && !pStor->GetError())
 /*?*/ 		pStor->SetError( SVSTREAM_FILEFORMAT_ERROR );
-/*N*/ 
+/*N*/
 /*N*/ 	if (pStor->GetError())
 /*?*/ 		SetError( pStor->GetError() );
-/*N*/ 
+/*N*/
 /*N*/ 	InitItems();
 /*N*/ 	CalcOutputFactor();
-/*N*/ 
+/*N*/
 /*N*/ 	// #73762# invalidate eventually temporary table areas
 /*N*/ 	if ( bRet )
 /*N*/ 		aDocument.InvalidateTableArea();
-/*N*/ 
+/*N*/
 /*N*/ 	bIsEmpty = FALSE;
 /*N*/ 	FinishedLoading( SFX_LOADED_MAINDOCUMENT | SFX_LOADED_IMAGES );
 /*N*/ 	return bRet;
@@ -645,11 +644,11 @@ static const sal_Char pFilterRtf[]		= "Rich Text Format (StarCalc)";
 /*N*/ 	else if (rHint.ISA(ScAutoStyleHint))
 /*N*/ 	{
 /*?*/ 		//!	direct call for AutoStyles
-/*?*/ 
+/*?*/
 /*?*/ 		//	this is called synchronously from ScInterpreter::ScStyle,
 /*?*/ 		//	modifying the document must be asynchronous
 /*?*/ 		//	(handled by AddInitial)
-/*?*/ 
+/*?*/
 /*?*/ 		DBG_BF_ASSERT(0, "STRIP"); //STRIP001 ScAutoStyleHint& rStlHint = (ScAutoStyleHint&)rHint;
 /*N*/ 	}
 /*N*/ }
@@ -662,12 +661,12 @@ static const sal_Char pFilterRtf[]		= "Rich Text Format (StarCalc)";
 /*N*/ BOOL ScDocShell::ConvertFrom( SfxMedium& rMedium )
 /*N*/ {
 /*N*/ 	RTL_LOGFILE_CONTEXT_AUTHOR ( aLog, "sc", "nn93723", "ScDocShell::ConvertFrom" );
-/*N*/ 
+/*N*/
 /*N*/ 	BOOL bRet = FALSE;				// FALSE heisst Benutzerabbruch !!
 /*N*/ 									// bei Fehler: Fehler am Stream setzen!!
-/*N*/ 
+/*N*/
 /*N*/ 	ScRefreshTimerProtector( aDocument.GetRefreshTimerControlAddress() );
-/*N*/ 
+/*N*/
 /*N*/ 	// ob nach dem Import optimale Spaltenbreiten gesetzt werden sollen
 /*N*/ 	BOOL bSetColWidths = FALSE;
 /*N*/ 	BOOL bSetSimpleTextColWidths = FALSE;
@@ -676,29 +675,29 @@ static const sal_Char pFilterRtf[]		= "Rich Text Format (StarCalc)";
 /*N*/ 	ScRange aColWidthRange;
 /*N*/ 	// ob nach dem Import optimale Zeilenhoehen gesetzt werden sollen
 /*N*/ 	BOOL bSetRowHeights = FALSE;
-/*N*/ 
+/*N*/
 /*N*/ 	aConvFilterName.Erase(); //@ #BugId 54198
-/*N*/ 
+/*N*/
 /*N*/ 	//	Alle Filter brauchen die komplette Datei am Stueck (nicht asynchron),
 /*N*/ 	//	darum vorher per CreateFileStream dafuer sorgen, dass die komplette
 /*N*/ 	//	Datei uebertragen wird.
 /*N*/ 	rMedium.GetPhysicalName();	//! CreateFileStream direkt rufen, wenn verfuegbar
-/*N*/ 
+/*N*/
 /*N*/     SFX_ITEMSET_ARG( rMedium.GetItemSet(), pUpdateDocItem, SfxUInt16Item, SID_UPDATEDOCMODE, sal_False);
 /*N*/     nCanUpdate = pUpdateDocItem ? pUpdateDocItem->GetValue() : ::com::sun::star::document::UpdateDocMode::NO_UPDATE;
-/*N*/ 
+/*N*/
 /*N*/     const SfxFilter* pFilter = rMedium.GetFilter();
 /*N*/ 	if (pFilter)
 /*N*/ 	{
 /*N*/ 		String aFltName = pFilter->GetFilterName();
-/*N*/ 
+/*N*/
 /*N*/ 		aConvFilterName=aFltName; //@ #BugId 54198
-/*N*/ 
+/*N*/
 /*N*/ 		BOOL bCalc3 = ( aFltName.EqualsAscii(pFilterSc30) );
 /*N*/ 		BOOL bCalc4 = ( aFltName.EqualsAscii(pFilterSc40) );
 /*N*/ 		if (!bCalc3 && !bCalc4)
 /*N*/ 			aDocument.SetInsertingFromOtherDoc( TRUE );
-/*N*/ 
+/*N*/
 /*N*/ 		if (bCalc3 || bCalc4)					// Calc3/4 - "Import"
 /*N*/ 		{
 /*?*/ 			//	wait cursor is handled with progress bar
@@ -737,32 +736,32 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 //STRIP001 /*N*/ //			SvStream* pStream = 
 /*N*/ 			const SfxPoolItem* pItem;
 /*N*/ 			ScAsciiOptions aOptions;
 /*N*/ 			BOOL bOptInit = FALSE;
-/*N*/ 
+/*N*/
 /*N*/ 			if ( pSet && SFX_ITEM_SET ==
 /*N*/ 				 pSet->GetItemState( SID_FILE_FILTEROPTIONS, TRUE, &pItem ) )
 /*N*/ 			{
 /*N*/ 				aOptions.ReadFromString( ((const SfxStringItem*)pItem)->GetValue() );
 /*N*/ 				bOptInit = TRUE;
 /*N*/ 			}
-/*N*/ 
+/*N*/
 /*N*/ 			if ( !bOptInit )
 /*N*/ 			{
 /*?*/ 				//	default for ascii import (from API without options):
 /*?*/ 				//	ISO8859-1/MS_1252 encoding, comma, double quotes
-/*?*/ 
+/*?*/
 /*?*/ 				aOptions.SetCharSet( RTL_TEXTENCODING_MS_1252 );
 /*?*/ 				aOptions.SetFieldSeps( (sal_Unicode) ',' );
 /*?*/ 				aOptions.SetTextSep( (sal_Unicode) '"' );
 /*N*/ 			}
-/*N*/ 
+/*N*/
 /*N*/ 			FltError eError = eERR_OK;
 /*N*/ 			BOOL bOverflow = FALSE;
-/*N*/ 
+/*N*/
 /*N*/ 			if( ! rMedium.IsStorage() )
 /*N*/ 			{
 /*N*/ 				ScImportExport	aImpEx( &aDocument );
 /*N*/ 				aImpEx.SetExtOptions( aOptions );
-/*N*/ 
+/*N*/
 /*N*/ 				SvStream* pInStream = rMedium.GetInStream();
 /*N*/ 				if (pInStream)
 /*N*/ 				{
@@ -777,7 +776,7 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 //STRIP001 /*N*/ //			SvStream* pStream = 
 /*N*/ 				else
 /*N*/ 					DBG_ERROR( "No Stream" );
 /*N*/ 			}
-/*N*/ 
+/*N*/
 /*N*/ 			if (eError != eERR_OK)
 /*N*/ 			{
 /*N*/ 				if (!GetError())
@@ -811,7 +810,7 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 //STRIP001 /*N*/ //			SvStream* pStream = 
 /*?*/ 			if( !rMedium.IsStorage() )
 /*?*/ 			{
 /*?*/ 				ScImportExport aImpEx( &aDocument );
-/*?*/ 
+/*?*/
 /*?*/ 				SvStream* pInStream = rMedium.GetInStream();
 /*?*/ 				if (pInStream)
 /*?*/ 				{
@@ -824,7 +823,7 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 //STRIP001 /*N*/ //			SvStream* pStream = 
 /*?*/ 				else
 /*?*/ 					DBG_ERROR( "No Stream" );
 /*?*/ 			}
-/*?*/ 
+/*?*/
 /*?*/ 			if ( eError != eERR_OK && !GetError() )
 /*?*/ 				SetError(eError);
 /*?*/ 			bSetColWidths = TRUE;
@@ -843,13 +842,13 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 //STRIP001 /*N*/ //			SvStream* pStream = 
 /*N*/ 			if (!GetError())
 /*N*/ 				SetError(SCERR_IMPORT_NI);
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		if (!bCalc3)
 /*N*/ 			aDocument.SetInsertingFromOtherDoc( FALSE );
 /*N*/ 	}
 /*N*/ 	else
 /*N*/ 		DBG_ERROR("Kein Filter bei ConvertFrom");
-/*N*/ 
+/*N*/
 /*N*/ 	InitItems();
 /*N*/ 	CalcOutputFactor();
 /*N*/ 	if ( bRet && (bSetColWidths || bSetRowHeights) )
@@ -887,13 +886,13 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 //STRIP001 /*N*/ //			SvStream* pStream = 
 /*?*/ 			DBG_BF_ASSERT(0, "STRIP"); //STRIP001 UpdateAllRowHeights();		// with vdev or printer, depending on configuration
 /*N*/ 	}
 /*N*/ 	FinishedLoading( SFX_LOADED_MAINDOCUMENT | SFX_LOADED_IMAGES );
-/*N*/ 
+/*N*/
 /*N*/ 	// #73762# invalidate eventually temporary table areas
 /*N*/ 	if ( bRet )
 /*N*/ 		aDocument.InvalidateTableArea();
-/*N*/ 
+/*N*/
 /*N*/ 	bIsEmpty = FALSE;
-/*N*/ 
+/*N*/
 /*N*/ 	return bRet;
 /*N*/ }
 
@@ -901,9 +900,9 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 //STRIP001 /*N*/ //			SvStream* pStream = 
 /*N*/ void ScDocShell::HandsOff()
 /*N*/ {
 /*N*/ 	ScDrawLayer* pDrawLayer = aDocument.GetDrawLayer();
-/*N*/ 
+/*N*/
 /*N*/ 	SfxInPlaceObject::HandsOff();
-/*N*/ 
+/*N*/
 /*N*/ 	if( pDrawLayer )
 /*N*/ 		pDrawLayer->ReleasePictureStorage();
 /*N*/ }
@@ -912,15 +911,15 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 //STRIP001 /*N*/ //			SvStream* pStream = 
 /*N*/ BOOL ScDocShell::Save()
 /*N*/ {
 /*N*/ 	RTL_LOGFILE_CONTEXT_AUTHOR ( aLog, "sc", "nn93723", "ScDocShell::Save" );
-/*N*/ 
+/*N*/
 /*N*/ 	ScRefreshTimerProtector( aDocument.GetRefreshTimerControlAddress() );
-/*N*/ 
+/*N*/
 /*N*/ 	SvStorage* pStor = GetStorage();
 /*N*/ 	DBG_ASSERT( pStor, "Save: no storage" );
 /*N*/ 	BOOL bXML = ( pStor->GetVersion() >= SOFFICE_FILEFORMAT_60 );
-/*N*/ 
+/*N*/
 /*N*/ 	//	DoEnterHandler hier nicht (wegen AutoSave), ist im ExecuteSave
-/*N*/ 
+/*N*/
 /*N*/ 	ScChartListenerCollection* pCharts = aDocument.GetChartListenerCollection();
 /*N*/ 	if (pCharts)
 /*N*/ 		pCharts->UpdateDirtyCharts();					// Charts, die noch upgedated werden muessen
@@ -928,11 +927,11 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 //STRIP001 /*N*/ //			SvStream* pStream = 
 /*?*/ 		{DBG_BF_ASSERT(0, "STRIP");} //STRIP001 pAutoStyleList->ExecuteAllNow();				// Vorlagen-Timeouts jetzt ausfuehren
 /*N*/ 	if (GetCreateMode()== SFX_CREATE_MODE_STANDARD)
 /*N*/ 		SvInPlaceObject::SetVisArea( Rectangle() );		// normal bearbeitet -> keine VisArea
-/*N*/ 
+/*N*/
 /*N*/ 	// #77577# save additionally XML in storage
 /*N*/ 	if ( GetCreateMode() != SFX_CREATE_MODE_EMBEDDED && !bXML )
 /*N*/ 		AddXMLAsZipToTheStorage( *pStor );
-/*N*/ 
+/*N*/
 /*N*/ 	//	wait cursor is handled with progress bar
 /*N*/ 	BOOL bRet = SfxInPlaceObject::Save();
 /*N*/ 	if( bRet )
@@ -949,14 +948,14 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 //STRIP001 /*N*/ //			SvStream* pStream = 
 /*N*/ BOOL ScDocShell::SaveAs( SvStorage* pStor )
 /*N*/ {
 /*N*/ 	RTL_LOGFILE_CONTEXT_AUTHOR ( aLog, "sc", "nn93723", "ScDocShell::SaveAs" );
-/*N*/ 
+/*N*/
 /*N*/ 	ScRefreshTimerProtector( aDocument.GetRefreshTimerControlAddress() );
-/*N*/ 
+/*N*/
 /*N*/ 	DBG_ASSERT( pStor, "SaveAs without storage?" );
 /*N*/ 	BOOL bXML = ( pStor->GetVersion() >= SOFFICE_FILEFORMAT_60 );
-/*N*/ 
+/*N*/
 /*N*/ 	//	DoEnterHandler hier nicht (wegen AutoSave), ist im ExecuteSave
-/*N*/ 
+/*N*/
 /*N*/ 	ScChartListenerCollection* pCharts = aDocument.GetChartListenerCollection();
 /*N*/ 	if (pCharts)
 /*N*/ 		pCharts->UpdateDirtyCharts();					// Charts, die noch upgedated werden muessen
@@ -964,11 +963,11 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 //STRIP001 /*N*/ //			SvStream* pStream = 
 /*?*/ 		{DBG_BF_ASSERT(0, "STRIP");} //STRIP001 pAutoStyleList->ExecuteAllNow();				// Vorlagen-Timeouts jetzt ausfuehren
 /*N*/ 	if (GetCreateMode()== SFX_CREATE_MODE_STANDARD)
 /*N*/ 		SvInPlaceObject::SetVisArea( Rectangle() );		// normal bearbeitet -> keine VisArea
-/*N*/ 
+/*N*/
 /*N*/ 	// #77577# save additionally XML in storage
 /*N*/ 	if ( GetCreateMode() != SFX_CREATE_MODE_EMBEDDED && !bXML )
 /*N*/ 		AddXMLAsZipToTheStorage( *pStor );
-/*N*/ 
+/*N*/
 /*N*/ 	//	wait cursor is handled with progress bar
 /*N*/ 	BOOL bRet = SfxInPlaceObject::SaveAs( pStor );
 /*N*/ 	if( bRet )
@@ -978,7 +977,7 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 //STRIP001 /*N*/ //			SvStream* pStream = 
 /*N*/ 		else
 /*N*/ 			bRet = SaveCalc( pStor );
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	return bRet;
 /*N*/ }
 
@@ -1005,7 +1004,7 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 //STRIP001 /*N*/ //			SvStream* pStream = 
 /*N*/ BOOL ScDocShell::DoSaveCompleted( SfxMedium * pNewStor )
 /*N*/ {
 /*N*/ 	BOOL bRet = SfxObjectShell::DoSaveCompleted( pNewStor );
-/*N*/ 
+/*N*/
 /*N*/ 	//	SC_HINT_DOC_SAVED fuer Wechsel ReadOnly -> Read/Write
 /*N*/ 	Broadcast( SfxSimpleHint( SC_HINT_DOC_SAVED ) );
 /*N*/ 	return bRet;
@@ -1049,7 +1048,7 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 //STRIP001 /*N*/ //			SvStream* pStream = 
 /*N*/ {
 /*N*/ 	//	TRUE for those filters that keep the default table name
 /*N*/ 	//	(which is language specific)
-/*N*/ 
+/*N*/
 /*N*/ 	return rFilter.EqualsAscii( pFilterAscii )
 /*N*/ 		|| rFilter.EqualsAscii( pFilterLotus )
 /*N*/ 		|| rFilter.EqualsAscii( pFilterExcel4 )
@@ -1104,18 +1103,18 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 //STRIP001 /*N*/ //			SvStream* pStream = 
 /*N*/ 		__SCDOCSHELL_INIT
 /*N*/ {
 /*N*/ 	RTL_LOGFILE_CONTEXT_AUTHOR ( aLog, "sc", "nn93723", "ScDocShell::ScDocShell" );
-/*N*/ 
+/*N*/
 /*N*/ 	SetPool( &SC_MOD()->GetPool() );
-/*N*/ 
+/*N*/
 /*N*/ 	SetShell(this);
 /*N*/ 	bIsInplace = (eMode == SFX_CREATE_MODE_EMBEDDED);
 /*N*/ 	//	wird zurueckgesetzt, wenn nicht inplace
-/*N*/ 
+/*N*/
 /*N*/ 	pDocFunc = new ScDocFunc(*this);
-/*N*/ 
+/*N*/
 /*N*/ 	//	SetBaseModel needs exception handling
 /*N*/ 	ScModelObj::CreateAndSet( this );
-/*N*/ 
+/*N*/
 /*N*/ 	StartListening(*this);
 /*N*/ 	SfxStyleSheetPool* pStlPool = aDocument.GetStyleSheetPool();
 /*N*/ 	if (pStlPool)
@@ -1123,7 +1122,7 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 //STRIP001 /*N*/ //			SvStream* pStream = 
 
 /*N*/ 	aDocument.GetDBCollection()->SetRefreshHandler(
 /*N*/ 		LINK( this, ScDocShell, RefreshDBDataHdl ) );
-/*N*/ 
+/*N*/
 /*N*/ 	//	InitItems und CalcOutputFactor werden jetzt nach bei Load/ConvertFrom/InitNew gerufen
 /*N*/ }
 
@@ -1132,23 +1131,23 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 //STRIP001 /*N*/ //			SvStream* pStream = 
 /*N*/ ScDocShell::~ScDocShell()
 /*N*/ {
 /*N*/ 	ResetDrawObjectShell();	// #55570# falls der Drawing-Layer noch versucht, darauf zuzugreifen
-/*N*/ 
+/*N*/
 /*N*/ 	SfxStyleSheetPool* pStlPool = aDocument.GetStyleSheetPool();
 /*N*/ 	if (pStlPool)
 /*N*/ 		EndListening(*pStlPool);
 /*N*/ 	EndListening(*this);
-/*N*/ 
+/*N*/
 /*N*/ 	delete pAutoStyleList;
-/*N*/ 
+/*N*/
 /*N*/ 	delete pDocFunc;
 /*N*/ 	delete pFontList;
-/*N*/ 
+/*N*/
 /*N*/ 	delete pPaintLockData;
-/*N*/ 
+/*N*/
 /*N*/ 	delete pOldJobSetup;		// gesetzt nur bei Fehler in StartJob()
-/*N*/ 
+/*N*/
 /*N*/ 	delete pVirtualDevice_100th_mm;
-/*N*/ 
+/*N*/
 /*N*/     if (pModificator)
 /*N*/     {
 /*N*/         DBG_ERROR("The Modificator should not exist");
@@ -1171,18 +1170,18 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 //STRIP001 /*N*/ //			SvStream* pStream = 
 /*N*/ 	//	BroadcastUno muss auch mit pPaintLockData sofort passieren
 /*N*/ 	//!	auch bei SetDrawModified, wenn Drawing angebunden ist
 /*N*/ 	//!	dann eigener Hint???
-/*N*/ 
+/*N*/
 /*N*/ 	if (bInIsModified)
 /*N*/ 		aDocument.BroadcastUno( SfxSimpleHint( SFX_HINT_DATACHANGED ) );
-/*N*/ 
+/*N*/
 /*N*/ 	if ( pPaintLockData && bInIsModified )
 /*N*/ 	{
 /*N*/ 		pPaintLockData->SetModified();			// spaeter...
 /*N*/ 		return;
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	SetDrawModified( bInIsModified );
-/*N*/ 
+/*N*/
 /*N*/ 	if ( bInIsModified )
 /*N*/ 	{
 /*N*/ 		if ( aDocument.IsAutoCalcShellDisabled() )
@@ -1197,12 +1196,12 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 //STRIP001 /*N*/ //			SvStream* pStream = 
 /*N*/ 			if ( aDocument.IsForcedFormulaPending() && aDocument.GetAutoCalc() )
 /*?*/ 			{	DBG_BF_ASSERT(0, "STRIP");} //STRIP001 aDocument.CalcFormulaTree( TRUE );
 /*N*/ 			PostDataChanged();
-/*N*/ 
+/*N*/
 /*N*/ 			//	Detective AutoUpdate:
 /*N*/ 			//	Update if formulas were modified (DetectiveDirty) or the list contains
 /*N*/ 			//	"Trace Error" entries (#75362# - Trace Error can look completely different
 /*N*/ 			//	after changes to non-formula cells).
-/*N*/ 
+/*N*/
 /*N*/ 			ScDetOpList* pList = aDocument.GetDetOpList();
 /*N*/ 			if ( pList && ( aDocument.IsDetectiveDirty() || pList->HasAddError() ) &&
 /*N*/ 				 pList->Count() && !IsInUndo() && SC_MOD()->GetAppOptions().GetDetectiveAuto() )
@@ -1220,9 +1219,9 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 //STRIP001 /*N*/ //			SvStream* pStream = 
 
 /*N*/ void ScDocShell::SetDrawModified( BOOL bInIsModified /* = TRUE */ )
 /*N*/ {
-/*N*/ 
+/*N*/
 /*N*/ 	SetModified( bInIsModified );
-/*N*/ 
+/*N*/
 /*N*/ 	if (bInIsModified)
 /*N*/ 	{
 /*N*/ 		if ( aDocument.IsChartListenerCollectionNeedsUpdate() )

@@ -2,7 +2,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -76,7 +76,6 @@
 #include "appdata.hxx"
 #include "cfgmgr.hxx"
 #include "docfile.hxx"
-#include "docinf.hxx"
 #include "fcontnr.hxx"
 #include "objitem.hxx"
 #include "objsh.hxx"

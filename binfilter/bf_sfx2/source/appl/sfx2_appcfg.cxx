@@ -2,7 +2,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -86,14 +86,13 @@
 #include "request.hxx"
 #include "evntconf.hxx"
 #include "cfgmgr.hxx"
-#include "docinf.hxx"
 #include "appdata.hxx"
 #include "misccfg.hxx"
 #include "appimp.hxx"
 #include "helper.hxx"	// SfxContentHelper::...
 #include "app.hxx"
 
-#include <legacysmgr/legacy_binfilters_smgr.hxx>	//STRIP002 
+#include <legacysmgr/legacy_binfilters_smgr.hxx>	//STRIP002
 namespace binfilter {
 
 using namespace ::com::sun::star::uno;
@@ -115,7 +114,7 @@ using namespace ::com::sun::star::beans;
 /*N*/ void SfxApplication::NotifyEvent( const SfxEventHint& rEventHint, bool bSynchron )
 /*N*/ {
 /*N*/     DBG_ASSERT(pAppData_Impl->pEventConfig,"Keine Events angemeldet!");
-/*N*/ 
+/*N*/
 /*N*/     SfxObjectShell *pDoc = rEventHint.GetObjShell();
 /*N*/     if ( pDoc )
 /*N*/ 	{
@@ -125,7 +124,7 @@ using namespace ::com::sun::star::beans;
 /*N*/ 		if ( pItem && pItem->GetValue() )
 /*N*/ 			bSynchron = TRUE;
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/     {
 /*N*/         Broadcast(rEventHint);
 /*N*/         if ( pDoc )
@@ -137,7 +136,7 @@ using namespace ::com::sun::star::beans;
 /*N*/ {
 /*N*/ 	if ( !pAppData_Impl->pMiscConfig )
 /*N*/ 		pAppData_Impl->pMiscConfig = new SfxMiscCfg;
-/*N*/ 
+/*N*/
 /*N*/ 	return pAppData_Impl->pMiscConfig;
 /*N*/ }
 

@@ -2,7 +2,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -82,7 +82,7 @@ namespace binfilter {
 /*N*/ 	: SwNoTxtNode( rWhere, ND_GRFNODE, pGrfColl, pAutoAttr )
 /*N*/ {
 /*N*/ 	aGrfObj.SetSwapStreamHdl( LINK( this, SwGrfNode, SwapGraphic ) );
-/*N*/ 	bInSwapIn = bChgTwipSize = bChgTwipSizeFromPixel = bLoadLowResGrf = 
+/*N*/ 	bInSwapIn = bChgTwipSize = bChgTwipSizeFromPixel = bLoadLowResGrf =
 /*N*/ 		bFrameInPaint = bScaleImageMap = FALSE;
 /*N*/ 	bGrafikArrived = TRUE;
 /*N*/ 	ReRead( rGrfName, rFltName, pGraphic, 0, FALSE );
@@ -97,7 +97,7 @@ namespace binfilter {
 /*N*/ 	aGrfObj.SetSwapStreamHdl( LINK( this, SwGrfNode, SwapGraphic ) );
 /*N*/ 	if( rGrfObj.HasUserData() && rGrfObj.IsSwappedOut() )
 /*?*/ 		aGrfObj.SetSwapState();
-/*N*/ 	bInSwapIn = bChgTwipSize = bChgTwipSizeFromPixel= bLoadLowResGrf = 
+/*N*/ 	bInSwapIn = bChgTwipSize = bChgTwipSizeFromPixel= bLoadLowResGrf =
 /*N*/ 		bFrameInPaint = bScaleImageMap = FALSE;
 /*N*/ 	bGrafikArrived = TRUE;
 /*N*/ }
@@ -113,14 +113,14 @@ namespace binfilter {
 /*N*/ 	: SwNoTxtNode( rWhere, ND_GRFNODE, pGrfColl, pAutoAttr )
 /*N*/ {
 /*N*/ 	aGrfObj.SetSwapStreamHdl( LINK( this, SwGrfNode, SwapGraphic ) );
-/*N*/ 
+/*N*/
 /*N*/ 	Graphic aGrf; aGrf.SetDefaultType();
 /*N*/ 	aGrfObj.SetGraphic( aGrf, rGrfName );
-/*N*/ 
-/*N*/ 	bInSwapIn = bChgTwipSize = bChgTwipSizeFromPixel = bLoadLowResGrf = 
+/*N*/
+/*N*/ 	bInSwapIn = bChgTwipSize = bChgTwipSizeFromPixel = bLoadLowResGrf =
 /*N*/ 		bFrameInPaint = bScaleImageMap = FALSE;
 /*N*/ 	bGrafikArrived = TRUE;
-/*N*/ 
+/*N*/
 /*N*/ 	InsertLink( rGrfName, rFltName );
 /*N*/ 	if( IsLinkedFile() )
 /*N*/ 	{
@@ -143,10 +143,10 @@ namespace binfilter {
 /*N*/ 						BOOL bNewGrf )
 /*N*/ {
 /*N*/ 	BOOL bReadGrf = FALSE, bSetTwipSize = TRUE;
-/*N*/ 
+/*N*/
 /*N*/ 	ASSERT( pGraphic || pGrfObj || rGrfName.Len(),
 /*N*/ 			"GraphicNode without a name, Graphic or GraphicObject" );
-/*N*/ 
+/*N*/
 /*N*/ 	// ReadRead mit Namen
 /*N*/ 	if( refLink.Is() )
 /*N*/ 	{
@@ -166,14 +166,14 @@ namespace binfilter {
 /*?*/                     ::binfilter::MakeLnkName( sCmd, 0, rGrfName, aEmptyStr, &rFltName );
 /*?*/ 					nNewType = OBJECT_CLIENT_GRF;
 /*?*/ 				}
-/*?*/ 
+/*?*/
 /*?*/ 				if( nNewType != refLink->GetObjType() )
 /*?*/ 				{
 /*?*/ 					refLink->Disconnect();
 /*?*/ 					((SwBaseLink*)&refLink)->SetObjType( nNewType );
 /*?*/ 				}
 /*?*/ 			}
-/*?*/ 
+/*?*/
 /*?*/ 			refLink->SetLinkSourceName( sCmd );
 /*?*/ 		}
 /*?*/ 		else		// kein Name mehr, Link aufheben
@@ -181,7 +181,7 @@ namespace binfilter {
 /*?*/ 			GetDoc()->GetLinkManager().Remove( refLink );
 /*?*/ 			refLink.Clear();
 /*?*/ 		}
-/*?*/ 
+/*?*/
 /*?*/ 		if( pGraphic )
 /*?*/ 		{
 /*?*/ 			aGrfObj.SetGraphic( *pGraphic, rGrfName );
@@ -202,7 +202,7 @@ namespace binfilter {
 /*?*/ 			// der neue Link nicht geladen werden konnte.
 /*?*/ 			Graphic aGrf; aGrf.SetDefaultType();
 /*?*/ 			aGrfObj.SetGraphic( aGrf, rGrfName );
-/*?*/ 
+/*?*/
 /*?*/ 			if( refLink.Is() )
 /*?*/ 			{
 /*?*/ 				if( GetFrm() )
@@ -221,7 +221,7 @@ namespace binfilter {
 /*N*/ 		// MIB 27.02.2001: Old stream must be deleted before the new one is set.
 /*N*/ 		if( HasStreamName() )
                 {DBG_BF_ASSERT(0, "STRIP");} //STRIP001 /*?*/ 			DelStreamName();
-/*N*/ 
+/*N*/
 /*N*/ 		aGrfObj.SetGraphic( *pGraphic );
 /*N*/ 		bReadGrf = TRUE;
 /*N*/ 	}
@@ -230,7 +230,7 @@ namespace binfilter {
 /*N*/ 		// MIB 27.02.2001: Old stream must be deleted before the new one is set.
 /*?*/ 		if( HasStreamName() )
                 {DBG_BF_ASSERT(0, "STRIP");} //STRIP001 /*?*/ 			DelStreamName();
-/*?*/ 
+/*?*/
 /*?*/ 		aGrfObj = *pGrfObj;
 /*?*/ 		if( pGrfObj->HasUserData() && pGrfObj->IsSwappedOut() )
 /*?*/ 			aGrfObj.SetSwapState();
@@ -240,15 +240,15 @@ namespace binfilter {
 /*N*/ 		// Ist die Grafik bereits geladen?
 /*N*/ 	else if( !bNewGrf && GRAPHIC_NONE != aGrfObj.GetType() )
 /*N*/ 		return TRUE;
-/*N*/ 
+/*N*/
 /*N*/ 	else
 /*N*/ 	{
 /*N*/ 		if( HasStreamName() )
                 {DBG_BF_ASSERT(0, "STRIP");} //STRIP001 /*?*/ 			DelStreamName();
-/*N*/ 
+/*N*/
 /*N*/ 		// einen neuen Grafik-Link anlegen
 /*N*/ 		InsertLink( rGrfName, rFltName );
-/*N*/ 
+/*N*/
 /*N*/ 		if( GetNodes().IsDocNodes() )
 /*N*/ 		{
 /*N*/ 			if( pGraphic )
@@ -277,19 +277,19 @@ namespace binfilter {
 /*N*/ 			}
 /*N*/ 		}
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	// Bug 39281: Size nicht sofort loeschen - Events auf ImageMaps
 /*N*/ 	//			  sollten nicht beim Austauschen nicht ins "leere greifen"
 /*N*/ 	if( bSetTwipSize )
 /*N*/ 		SetTwipSize( ::binfilter::GetGraphicSizeTwip( aGrfObj.GetGraphic(), 0 ) );
-/*N*/ 
+/*N*/
 /*N*/ 	// erzeuge noch einen Update auf die Frames
 /*N*/ 	if( bReadGrf && bNewGrf )
 /*N*/ 	{
 /*?*/ 		SwMsgPoolItem aMsgHint( RES_UPDATE_ATTR );
 /*?*/ 		Modify( &aMsgHint, &aMsgHint );
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	return bReadGrf;
 /*N*/ }
 
@@ -489,7 +489,7 @@ short SwGrfNode::SwapIn( BOOL bWaitForData )
 /*N*/ 			pRoot = pDocStg;
 /*N*/ 		ASSERT( SOFFICE_FILEFORMAT_60 > pRoot->GetVersion(),
 /*N*/ 				"SwGrfNode::StoreGraphic called for 6.0+ file format" );
-/*N*/ 
+/*N*/
 /*N*/ 		String aDstPicStgName(
 /*N*/ 				RTL_CONSTASCII_USTRINGPARAM( "EmbeddedPictures" ) );
 /*N*/ 		String aDstStrmName( aSrcStrmName );
@@ -507,9 +507,9 @@ short SwGrfNode::SwapIn( BOOL bWaitForData )
 /*N*/ 					? pDocStg->OpenStorage( aSrcPicStgName,
 /*N*/ 						STREAM_READ | STREAM_SHARE_DENYWRITE )
 /*N*/ 					: pDocStg;
-/*N*/ 
+/*N*/
 /*N*/ 				SvStorageStreamRef refStrm;
-/*N*/ 
+/*N*/
 /*N*/ 				BOOL bWriteNew = pDocStg->GetVersion() != pRoot->GetVersion() ||
 /*N*/ 								 !bGraphic;
 /*N*/ 				if( !bWriteNew &&
@@ -530,7 +530,7 @@ short SwGrfNode::SwapIn( BOOL bWaitForData )
 /*N*/ 						if( SOFFICE_FILEFORMAT_40 < pRoot->GetVersion() &&
 /*N*/ 							GetDoc()->GetInfo()->IsSaveOriginalGraphics() )
 /*N*/ 							nNewCmprsMode |= COMPRESSMODE_NATIVE;
-/*N*/ 
+/*N*/
 /*N*/ 						if( nCmprsMode != nNewCmprsMode )
 /*N*/ 						{
 /*N*/ 							// der Kompressedmode stimmt nicht, also muss
@@ -541,7 +541,7 @@ short SwGrfNode::SwapIn( BOOL bWaitForData )
 /*N*/ 						}
 /*N*/ 					}
 /*N*/ 				}
-/*N*/ 
+/*N*/
 /*N*/ 				if( bWriteNew )
 /*N*/ 				{
 /*N*/ 					if( aGrfObj.IsSwappedOut() &&
@@ -574,7 +574,7 @@ short SwGrfNode::SwapIn( BOOL bWaitForData )
 /*N*/ 					if( refDstPics->IsContained( aDstStrmName ) )
 /*N*/ 						// nur neu erzeugen, wenn Name schon vorhanden ist!
 /*?*/ 						aDstStrmName = Sw3Io::UniqueName( refDstPics, "Pic" );
-/*N*/ 
+/*N*/
 /*N*/ 					if( refSrcPics->CopyTo( aSrcStrmName, refDstPics,
 /*N*/ 											aDstStrmName )
 /*N*/ 						&& refDstPics->Commit() )
@@ -584,7 +584,7 @@ short SwGrfNode::SwapIn( BOOL bWaitForData )
 /*N*/ 				}
 /*N*/ 			}
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		if( !aDstStrmName.Len() )
 /*N*/ 		{
 /*N*/ 			ASSERT( pRoot, "Kein Storage gegeben" );
@@ -607,9 +607,9 @@ short SwGrfNode::SwapIn( BOOL bWaitForData )
 /*N*/ 						bool bIsSwapOut = aGrfObj.IsSwappedOut();
 /*N*/ 						if( bIsSwapOut && !aGrfObj.SwapIn() )
 /*N*/ 							return FALSE;
-/*N*/ 
+/*N*/
 /*N*/ 						refStrm->SetVersion( pRoot->GetVersion() );
-/*N*/ 
+/*N*/
 /*N*/ 						//JP 04.05.98: laut ChangesMail vom KA und Bug 49617
 /*N*/ 						//JP 21.06.98: laut ChangesMail vom KA, natives Save
 /*N*/ 						USHORT nComprMode = refStrm->GetCompressMode();
@@ -619,7 +619,7 @@ short SwGrfNode::SwapIn( BOOL bWaitForData )
 /*N*/ 							nComprMode |= COMPRESSMODE_ZBITMAP;
 /*N*/ 						else
 /*N*/ 							nComprMode &= ~COMPRESSMODE_ZBITMAP;
-/*N*/ 
+/*N*/
 /*N*/ 						//JP 21.06.98: laut ChangesMail vom KA, natives Save
 /*N*/ 						if( SOFFICE_FILEFORMAT_40 < refStrm->GetVersion() &&
 /*N*/ 							GetDoc()->GetInfo()->IsSaveOriginalGraphics() )
@@ -627,7 +627,7 @@ short SwGrfNode::SwapIn( BOOL bWaitForData )
 /*N*/ 						else
 /*N*/ 							nComprMode &= ~COMPRESSMODE_NATIVE;
 /*N*/ 						refStrm->SetCompressMode( nComprMode );
-/*N*/ 
+/*N*/
 /*N*/ 						BOOL bRes = FALSE;
 /*N*/ 						if( pRoot == pDocStg )
 /*N*/ 						{
@@ -725,7 +725,7 @@ short SwGrfNode::SwapIn( BOOL bWaitForData )
 /*N*/ 			BOOL bSync = rFltName.EqualsAscii( "SYNCHRON" );
 /*N*/ 			refLink->SetSynchron( bSync );
 /*N*/             refLink->SetContentType( SOT_FORMATSTR_ID_SVXB );
-/*N*/ 
+/*N*/
 /*N*/ 			pDoc->GetLinkManager().InsertFileLink( *refLink,
 /*N*/ 											OBJECT_CLIENT_GRF, rGrfName,
 /*N*/ 								(!bSync && rFltName.Len() ? &rFltName : 0) );
@@ -760,11 +760,11 @@ short SwGrfNode::SwapIn( BOOL bWaitForData )
 /*N*/ 	BOOL bGraphic = FALSE;
 /*N*/ 	rStorName.Erase();
 /*N*/ 	rStrmName.Erase();
-/*N*/ 
+/*N*/
 /*N*/ 	String aUserData( aGrfObj.GetUserData() );
 /*N*/ 	if( !aUserData.Len() )
 /*N*/ 		return FALSE;
-/*N*/ 
+/*N*/
 /*N*/ 	String aProt( RTL_CONSTASCII_USTRINGPARAM( "vnd.sun.star.Package:" ) );
 /*N*/ 	if( 0 == aUserData.CompareTo( aProt, aProt.Len() ) )
 /*N*/ 	{
@@ -789,7 +789,7 @@ short SwGrfNode::SwapIn( BOOL bWaitForData )
 /*N*/ 	}
 /*N*/ 	ASSERT( STRING_NOTFOUND == rStrmName.Search( '/' ),
 /*N*/ 			"invalid graphic stream name" );
-/*N*/ 
+/*N*/
 /*N*/ 	return bGraphic;
 /*N*/ }
 
@@ -797,9 +797,9 @@ short SwGrfNode::SwapIn( BOOL bWaitForData )
 /*N*/ {
 /*N*/ 	// kopiere die Formate in das andere Dokument:
 /*N*/ 	SwGrfFmtColl* pColl = pDoc->CopyGrfColl( *GetGrfColl() );
-/*N*/ 
+/*N*/
 /*N*/ 	SwGrfNode* pThis = (SwGrfNode*)this;
-/*N*/ 
+/*N*/
 /*N*/ 	Graphic aTmpGrf;
 /*N*/ 	SwBaseLink* pLink = (SwBaseLink*)(::binfilter::SvBaseLink*) refLink;
 /*N*/ 	if( !pLink && HasStreamName() )
@@ -836,7 +836,7 @@ short SwGrfNode::SwapIn( BOOL bWaitForData )
                 {DBG_BF_ASSERT(0, "STRIP");} //STRIP001 /*?*/ 			pThis->SwapIn();
 /*N*/ 		aTmpGrf = aGrfObj.GetGraphic();
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	const ::binfilter::SvLinkManager& rMgr = GetDoc()->GetLinkManager();
 /*N*/ 	String sFile, sFilter;
 /*N*/ 	if( IsLinkedFile() )
@@ -848,7 +848,7 @@ short SwGrfNode::SwapIn( BOOL bWaitForData )
 /*?*/         ::binfilter::MakeLnkName( sFile, &sTmp1, sTmp2, sFilter );
 /*?*/ 		sFilter.AssignAscii( RTL_CONSTASCII_STRINGPARAM( "DDE" ));
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	SwGrfNode* pGrfNd = pDoc->GetNodes().MakeGrfNode( rIdx, sFile, sFilter,
 /*N*/ 													&aTmpGrf, pColl,
 /*N*/ 											(SwAttrSet*)GetpSwAttrSet() );
@@ -860,19 +860,19 @@ short SwGrfNode::SwapIn( BOOL bWaitForData )
 /*M*/ IMPL_LINK( SwGrfNode, SwapGraphic, BfGraphicObject*, pGrfObj )
 /*M*/ {
 /*M*/ 	SvStream* pRet = NULL;
-/*M*/ 
+/*M*/
 /*M*/ 	// #101174#: Keep graphic while in swap in. That's at least important
 /*M*/ 	// when breaking links, because in this situation a reschedule call and
-/*M*/ 	// a DataChanged call lead to a paint of the graphic. 
+/*M*/ 	// a DataChanged call lead to a paint of the graphic.
 /*M*/ 	if( pGrfObj->IsInSwapOut() && (IsSelected() || bInSwapIn) )
 /*M*/ 		pRet = GRFMGR_AUTOSWAPSTREAM_NONE;
 /*M*/ 	else if( refLink.Is() )
-/*M*/ 	{DBG_BF_ASSERT(0, "STRIP"); //STRIP001 
+/*M*/ 	{DBG_BF_ASSERT(0, "STRIP"); //STRIP001
 /*M*/ 	}
 /*M*/ 	else
 /*M*/ 	{
 /*M*/ 		pRet = GRFMGR_AUTOSWAPSTREAM_TEMP;
-/*M*/ 
+/*M*/
 /*M*/ 		if( HasStreamName() )
 /*M*/ 		{
 /*M*/ 			SvStorageRef refRoot = GetDoc()->GetDocStorage();
@@ -915,7 +915,7 @@ short SwGrfNode::SwapIn( BOOL bWaitForData )
 /*M*/ 			}
 /*M*/ 		}
 /*M*/ 	}
-/*M*/ 
+/*M*/
 /*M*/ 	return (long)pRet;
 /*M*/ }
 
