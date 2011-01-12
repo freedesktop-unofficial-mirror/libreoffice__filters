@@ -2,7 +2,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -34,7 +34,6 @@
 #include <com/sun/star/lang/XUnoTunnel.hpp>
 
 #include <bf_svx/unoshprp.hxx>
-#include <bf_svx/unoipset.hxx>
 
 #include <comphelper/servicehelper.hxx>
 
@@ -47,7 +46,7 @@ const SfxItemPropertyMap* ImplGetPageBackgroundPropertyMap();
 class SdrObject;
 class SdDrawDocument;
 
-class SdUnoPageBackground : public ::cppu::WeakImplHelper4< 
+class SdUnoPageBackground : public ::cppu::WeakImplHelper4<
                                     ::com::sun::star::beans::XPropertySet,
                                     ::com::sun::star::lang::XServiceInfo,
                                     ::com::sun::star::beans::XPropertyState,

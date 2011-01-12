@@ -2,7 +2,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -214,7 +214,7 @@ void DocumentSettings::_setPropertyValues( const PropertyMapEntry** ppEntries, c
     if( NULL == pDoc || NULL == pDocSh )
         throw UnknownPropertyException();
 
-    sal_Bool bOk, bChanged = sal_False, bValue;
+    sal_Bool bOk, bChanged = sal_False, bValue = sal_False;
 
     SfxPrinter* pPrinter = NULL;
     SdOptionsPrintItem* pPrinterOptions = NULL;
@@ -242,9 +242,9 @@ void DocumentSettings::_setPropertyValues( const PropertyMapEntry** ppEntries, c
                     if( *pValues >>= aURLString )
                     {
                         INetURLObject aURL( aURLString );
-                        INetURLObject aPathURL( aURL ); 
-                    
-                        aPathURL.removeSegment(); 
+                        INetURLObject aPathURL( aURL );
+
+                        aPathURL.removeSegment();
                         aPathURL.removeFinalSlash();
 
                         XColorTable* pColTab = new XColorTable( aPathURL.GetMainURL( INetURLObject::NO_DECODE ), (XOutdevItemPool*)&pDoc->GetPool() );
@@ -264,9 +264,9 @@ void DocumentSettings::_setPropertyValues( const PropertyMapEntry** ppEntries, c
                     if( *pValues >>= aURLString )
                     {
                         INetURLObject aURL( aURLString );
-                        INetURLObject aPathURL( aURL ); 
-                    
-                        aPathURL.removeSegment(); 
+                        INetURLObject aPathURL( aURL );
+
+                        aPathURL.removeSegment();
                         aPathURL.removeFinalSlash();
 
                         XDashList* pDashTab = new XDashList( aPathURL.GetMainURL( INetURLObject::NO_DECODE ), (XOutdevItemPool*)&pDoc->GetPool() );
@@ -286,9 +286,9 @@ void DocumentSettings::_setPropertyValues( const PropertyMapEntry** ppEntries, c
                     if( *pValues >>= aURLString )
                     {
                         INetURLObject aURL( aURLString );
-                        INetURLObject aPathURL( aURL ); 
-                    
-                        aPathURL.removeSegment(); 
+                        INetURLObject aPathURL( aURL );
+
+                        aPathURL.removeSegment();
                         aPathURL.removeFinalSlash();
 
                         XLineEndList* pTab = new XLineEndList( aPathURL.GetMainURL( INetURLObject::NO_DECODE ), (XOutdevItemPool*)&pDoc->GetPool() );
@@ -308,9 +308,9 @@ void DocumentSettings::_setPropertyValues( const PropertyMapEntry** ppEntries, c
                     if( *pValues >>= aURLString )
                     {
                         INetURLObject aURL( aURLString );
-                        INetURLObject aPathURL( aURL ); 
-                    
-                        aPathURL.removeSegment(); 
+                        INetURLObject aPathURL( aURL );
+
+                        aPathURL.removeSegment();
                         aPathURL.removeFinalSlash();
 
                         XHatchList* pTab = new XHatchList( aPathURL.GetMainURL( INetURLObject::NO_DECODE ), (XOutdevItemPool*)&pDoc->GetPool() );
@@ -330,9 +330,9 @@ void DocumentSettings::_setPropertyValues( const PropertyMapEntry** ppEntries, c
                     if( *pValues >>= aURLString )
                     {
                         INetURLObject aURL( aURLString );
-                        INetURLObject aPathURL( aURL ); 
-                    
-                        aPathURL.removeSegment(); 
+                        INetURLObject aPathURL( aURL );
+
+                        aPathURL.removeSegment();
                         aPathURL.removeFinalSlash();
 
                         XGradientList* pTab = new XGradientList( aPathURL.GetMainURL( INetURLObject::NO_DECODE ), (XOutdevItemPool*)&pDoc->GetPool() );
@@ -352,9 +352,9 @@ void DocumentSettings::_setPropertyValues( const PropertyMapEntry** ppEntries, c
                     if( *pValues >>= aURLString )
                     {
                         INetURLObject aURL( aURLString );
-                        INetURLObject aPathURL( aURL ); 
-                    
-                        aPathURL.removeSegment(); 
+                        INetURLObject aPathURL( aURL );
+
+                        aPathURL.removeSegment();
                         aPathURL.removeFinalSlash();
 
                         XBitmapList* pTab = new XBitmapList( aPathURL.GetMainURL( INetURLObject::NO_DECODE ), (XOutdevItemPool*)&pDoc->GetPool() );
@@ -375,7 +375,7 @@ void DocumentSettings::_setPropertyValues( const PropertyMapEntry** ppEntries, c
                 break;
             case HANDLE_APPLYUSERDATA:
                 {
-                    sal_Bool bApplyUserData;
+                    sal_Bool bApplyUserData(sal_False);
                     if( *pValues >>= bApplyUserData )
                     {
                         SfxDocumentInfo& rInfo = pDocSh->GetDocInfo();
@@ -481,7 +481,7 @@ void DocumentSettings::_setPropertyValues( const PropertyMapEntry** ppEntries, c
                 break;
             case HANDLE_PRINTQUALITY:
                 {
-                    sal_Int32 nValue;
+                    sal_Int32 nValue(0);
                     if( *pValues >>= nValue )
                     {
                         pPrinterOptions->SetOutputQuality( (sal_uInt16)nValue );
@@ -491,7 +491,7 @@ void DocumentSettings::_setPropertyValues( const PropertyMapEntry** ppEntries, c
                 break;
             case HANDLE_MEASUREUNIT:
                 {
-                    sal_Int16 nValue;
+                    sal_Int16 nValue(0);
                     if( *pValues >>= nValue )
                     {
                         short nFieldUnit;
@@ -505,7 +505,7 @@ void DocumentSettings::_setPropertyValues( const PropertyMapEntry** ppEntries, c
                 break;
             case HANDLE_SCALE_NUM:
                 {
-                    sal_Int32 nValue;
+                    sal_Int32 nValue(0);
                     if( *pValues >>= nValue )
                     {
                         Fraction aFract( nValue, pDoc->GetUIScale().GetDenominator() );
@@ -517,7 +517,7 @@ void DocumentSettings::_setPropertyValues( const PropertyMapEntry** ppEntries, c
                 break;
             case HANDLE_SCALE_DOM:
                 {
-                    sal_Int32 nValue;
+                    sal_Int32 nValue(0);
                     if( *pValues >>= nValue )
                     {
                         Fraction aFract( pDoc->GetUIScale().GetNumerator(), nValue );
@@ -530,7 +530,7 @@ void DocumentSettings::_setPropertyValues( const PropertyMapEntry** ppEntries, c
 
             case HANDLE_TABSTOP:
                 {
-                    sal_Int32 nValue;
+                    sal_Int32 nValue(0);
                     if( (*pValues >>= nValue) && (nValue >= 0) )
                     {
                         pDoc->SetDefaultTabulator((sal_uInt16)nValue);
@@ -541,7 +541,7 @@ void DocumentSettings::_setPropertyValues( const PropertyMapEntry** ppEntries, c
                 break;
             case HANDLE_PAGENUMFMT:
                 {
-                    sal_Int32 nValue;
+                    sal_Int32 nValue(0);
                     if( (*pValues >>= nValue ) && (nValue >= SVX_CHARS_UPPER_LETTER ) && (nValue <= SVX_PAGEDESC) )
                     {
                         pDoc->SetPageNumType((SvxNumType)nValue);
@@ -575,7 +575,7 @@ void DocumentSettings::_setPropertyValues( const PropertyMapEntry** ppEntries, c
                         SvMemoryStream aStream (aSequence.getArray(), nSize, STREAM_READ );
                         aStream.Seek ( STREAM_SEEK_TO_BEGIN );
                         SfxItemSet* pItemSet;
-                        
+
                         if( pPrinter )
                         {
                             pItemSet = pPrinter->GetOptions().Clone();
@@ -601,10 +601,10 @@ void DocumentSettings::_setPropertyValues( const PropertyMapEntry** ppEntries, c
                     }
                 }
                 break;
-                
+
             case HANDLE_PARAGRAPHSUMMATION :
             {
-                sal_Bool bIsSummationOfParagraphs;
+                sal_Bool bIsSummationOfParagraphs(sal_False);
                 if ( *pValues >>= bIsSummationOfParagraphs )
                 {
                     bOk = sal_True;
@@ -638,7 +638,7 @@ void DocumentSettings::_setPropertyValues( const PropertyMapEntry** ppEntries, c
 
             case HANDLE_CHARCOMPRESS:
             {
-                sal_Int16 nCharCompressType;
+                sal_Int16 nCharCompressType(0);
                 if( *pValues >>= nCharCompressType )
                 {
                     bOk = sal_True;
@@ -663,7 +663,7 @@ void DocumentSettings::_setPropertyValues( const PropertyMapEntry** ppEntries, c
             }
             case HANDLE_ASIANPUNCT:
             {
-                sal_Bool bAsianPunct;
+                sal_Bool bAsianPunct(sal_False);
                 if( *pValues >>= bAsianPunct )
                 {
                     bOk = sal_True;
@@ -688,7 +688,7 @@ void DocumentSettings::_setPropertyValues( const PropertyMapEntry** ppEntries, c
             }
             case HANDLE_UPDATEFROMTEMPLATE:
             {
-                sal_Bool bLclValue;
+                sal_Bool bLclValue(sal_False);
                 if( *pValues >>= bLclValue )
                 {
                     SfxDocumentInfo& rInfo = pDocSh->GetDocInfo();
@@ -704,7 +704,7 @@ void DocumentSettings::_setPropertyValues( const PropertyMapEntry** ppEntries, c
                 // the document and determine it really differs from the old
                 // one.
                 sal_Int16 nOldValue = pDoc->GetPrinterIndependentLayout ();
-                sal_Int16 nValue;
+                sal_Int16 nValue(0);
                 if (*pValues >>= nValue)
                 {
                     pDoc->SetPrinterIndependentLayout (nValue);
