@@ -25,26 +25,27 @@
  *
  ************************************************************************/
 
-#ifndef OOX_TOKEN_PROPERTYLIST_HXX
-#define OOX_TOKEN_PROPERTYLIST_HXX
-
-#include <vector>
-#include <rtl/ustring.hxx>
+#include "oox/token/propertynames.hxx"
 
 namespace oox {
 
 // ============================================================================
 
-/** A vector that contains all predefined property names used in the filters. */
-struct PropertyList : public ::std::vector< ::rtl::OUString >
+PropertyNameVector::PropertyNameVector()
 {
-    explicit            PropertyList();
-                        ~PropertyList();
-};
+    static const sal_Char* sppcPropertyNames[] =
+    {
+        // include auto-generated C array with property names as C strings
+#include "propertynames.inc"
+        ""
+    };
+
+    size_t nArraySize = (sizeof( sppcPropertyNames ) / sizeof( *sppcPropertyNames )) - 1;
+    reserve( nArraySize );
+    for( size_t nIndex = 0; nIndex < nArraySize; ++nIndex )
+        push_back( ::rtl::OUString::createFromAscii( sppcPropertyNames[ nIndex ] ) );
+}
 
 // ============================================================================
 
 } // namespace oox
-
-#endif
-
