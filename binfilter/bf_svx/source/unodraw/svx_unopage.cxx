@@ -2,7 +2,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -71,8 +71,6 @@ using rtl::OUString;
     if( rType == ::getCppuType((const Reference< xint >*)0) ) \
         aAny <<= Reference< xint >(this)
 
-DECLARE_LIST( SvxDrawPageList, SvxDrawPage * )//STRIP008 ;
-
 extern SfxItemPropertyMap* ImplGetSvxOle2PropertyMap();
 extern SfxItemPropertyMap* ImplGetSvxPageShapePropertyMap();
 
@@ -133,6 +131,27 @@ void SvxDrawPage::Notify( SfxBroadcaster& rBC, const SfxHint& rHint )
                             bInvalid = sal_True;
                     }
                 }
+                break;
+            case HINT_UNKNOWN:
+            case HINT_LAYERCHG:
+            case HINT_LAYERORDERCHG:
+            case HINT_LAYERSETCHG:
+            case HINT_LAYERSETORDERCHG:
+            case HINT_PAGECHG:
+            case HINT_OBJCHG:
+            case HINT_OBJINSERTED:
+            case HINT_OBJREMOVED:
+            case HINT_OBJLISTCLEARED:
+            case HINT_REFDEVICECHG:
+            case HINT_DEFAULTTABCHG:
+            case HINT_DEFFONTHGTCHG:
+            case HINT_MODELSAVED:
+            case HINT_CONTROLINSERTED:
+            case HINT_CONTROLREMOVED:
+            case HINT_SWITCHTOPAGE:
+            case HINT_OBJLISTCLEAR:
+            case HINT_BEGEDIT:
+            case HINT_ENDEDIT:
                 break;
             }
         }
@@ -237,7 +256,7 @@ uno::Any SAL_CALL SvxDrawPage::getByIndex( sal_Int32 Index )
     if( pObj == NULL )
         throw uno::RuntimeException();
 
-    
+
     return makeAny(Reference< drawing::XShape >( pObj->getUnoShape(), uno::UNO_QUERY ));
 }
 
@@ -438,7 +457,7 @@ SdrObject *SvxDrawPage::_CreateSdrObject( const Reference< drawing::XShape > & x
                 // To avoid that CreateGeometry(...) sets the DoubleSided
                 // item at once, use a closed poylgon.
                 aNewP.SetClosed(TRUE);
-                
+
                 PolyPolygon3D aNewPP(aNewP);
                 pObj->SetExtrudePolygon(aNewPP);
 
@@ -452,12 +471,12 @@ SdrObject *SvxDrawPage::_CreateSdrObject( const Reference< drawing::XShape > & x
                 aNewP[0] = Vector3D(0,0,0);
                 aNewP[1] = Vector3D(0,1,0);
                 aNewP[2] = Vector3D(1,0,0);
-                
+
                 // #87922#
                 // To avoid that CreateGeometry(...) sets the DoubleSided
                 // item at once, use a closed poylgon.
                 aNewP.SetClosed(TRUE);
-                
+
                 PolyPolygon3D aNewPP(aNewP);
                 pObj->SetPolyPoly3D(aNewPP);
 
@@ -631,8 +650,8 @@ SvxShape* SvxDrawPage::CreateShapeByTypeAndInventor( sal_uInt16 nType, sal_uInt3
                                 {
 
                                     const SvGlobalName aClassId( pInfo->GetClassName() );
-                                    const SvGlobalName aAppletClassId( SO3_APPLET_CLASSID ); //STRIP003 
-                                    const SvGlobalName aPluginClassId( SO3_PLUGIN_CLASSID ); //STRIP003 
+                                    const SvGlobalName aAppletClassId( SO3_APPLET_CLASSID ); //STRIP003
+                                    const SvGlobalName aPluginClassId( SO3_PLUGIN_CLASSID ); //STRIP003
                                     const SvGlobalName aIFrameClassId( BF_SO3_IFRAME_CLASSID );
 
                                     if( aPluginClassId == aClassId )
