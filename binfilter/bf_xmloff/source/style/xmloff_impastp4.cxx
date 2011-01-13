@@ -2,7 +2,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -252,11 +252,11 @@ void SvXMLAutoStylePoolP_Impl::exportXML(
         {
             const SvXMLAutoStylePoolParentP_Impl* pParent =
                 pParents->GetObject( i );
-            sal_uInt32 nProperties = pParent->GetPropertiesList().Count();
-            for( sal_uInt32 j=0; j < nProperties; j++ )
+            size_t nProperties = pParent->GetPropertiesList().size();
+            for( size_t j=0; j < nProperties; j++ )
             {
                 const SvXMLAutoStylePoolPropertiesP_Impl *pProperties =
-                    pParent->GetPropertiesList().GetObject( j );
+                    pParent->GetPropertiesList()[ j ];
                 sal_uInt32 nPos = pProperties->GetPos();
                 DBG_ASSERT( nPos < nCount,
                         "SvXMLAutoStylePool_Impl::exportXML: wrong position" );
@@ -283,7 +283,7 @@ void SvXMLAutoStylePoolP_Impl::exportXML(
 
             if( aExpStyles[i].mpProperties )
             {
-                GetExport().AddAttribute( 
+                GetExport().AddAttribute(
                     XML_NAMESPACE_STYLE, XML_NAME,
                     aExpStyles[i].mpProperties->GetName() );
 
@@ -315,7 +315,7 @@ void SvXMLAutoStylePoolP_Impl::exportXML(
                         GetExport().GetNamespaceMap()
                     );
 
-                SvXMLElementExport aElem( GetExport(), 
+                SvXMLElementExport aElem( GetExport(),
                                           XML_NAMESPACE_STYLE, sName,
                                           sal_True, sal_True );
 
@@ -341,14 +341,14 @@ void SvXMLAutoStylePoolP_Impl::exportXML(
 
                 pFamily->mxMapper->exportXML(
                     GetExport(),
-                    aExpStyles[i].mpProperties->GetProperties(), 
+                    aExpStyles[i].mpProperties->GetProperties(),
                     nStart, nEnd, XML_EXPORT_FLAG_IGN_WS );
 
-                pAntiImpl->exportStyleContent( 
+                pAntiImpl->exportStyleContent(
                     GetExport().GetDocHandler(),
                     nFamily,
                     aExpStyles[i].mpProperties->GetProperties(),
-                    *pFamily->mxMapper.get(), 
+                    *pFamily->mxMapper.get(),
                     GetExport().GetMM100UnitConverter(),
                     GetExport().GetNamespaceMap()
                     );
