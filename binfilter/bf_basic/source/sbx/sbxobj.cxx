@@ -2,7 +2,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -29,7 +29,6 @@
 #include <tools/stream.hxx>
 #include <vcl/sound.hxx>
 #include "sbx.hxx"
-#include "sbxbase.hxx"
 #include "sbxres.hxx"
 
 #include <bf_svtools/brdcst.hxx>
@@ -308,7 +307,7 @@ BOOL SbxObject::Call( const XubString& rName, SbxArray* pParam )
     return FALSE;
 }
 
-SbxProperty* SbxObject::GetDfltProperty() 
+SbxProperty* SbxObject::GetDfltProperty()
 {
     if ( !pDfltProp && aDfltPropName.Len() )
     {
