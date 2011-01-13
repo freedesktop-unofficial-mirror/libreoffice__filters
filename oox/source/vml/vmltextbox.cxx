@@ -25,47 +25,57 @@
  *
  ************************************************************************/
 
-#include "oox/helper/recordinputstream.hxx"
-#include <vector>
-#include <string.h>
+#include "oox/vml/vmltextbox.hxx"
 
-using ::rtl::OUString;
+#include <rtl/ustrbuf.hxx>
 
 namespace oox {
+namespace vml {
 
 // ============================================================================
 
-RecordInputStream::RecordInputStream( const StreamDataSequence& rData ) :
-    SequenceInputStream( rData )
-{
-}
+using ::rtl::OUString;
+using ::rtl::OUStringBuffer;
 
-OUString RecordInputStream::readString( bool b32BitLen )
+// ============================================================================
+
+TextFontModel::TextFontModel()
 {
-    OUString aString;
-    if( !isEof() )
-    {
-        sal_Int32 nCharCount = b32BitLen ? readValue< sal_Int32 >() : readValue< sal_Int16 >();
-        // string length -1 is often used to indicate a missing string
-        OSL_ENSURE( !isEof() && (nCharCount >= -1), "RecordInputStream::readString - invalid string length" );
-        if( !isEof() && (nCharCount > 0) )
-        {
-            ::std::vector< sal_Unicode > aBuffer;
-            aBuffer.reserve( getLimitedValue< size_t, sal_Int32 >( nCharCount + 1, 0, 0xFFFF ) );
-            for( sal_Int32 nCharIdx = 0; !isEof() && (nCharIdx < nCharCount); ++nCharIdx )
-            {
-                sal_uInt16 nChar;
-                readValue( nChar );
-                aBuffer.push_back( static_cast< sal_Unicode >( nChar ) );
-            }
-            aBuffer.push_back( 0 );
-            aString = OUString( &aBuffer.front() );
-        }
-    }
-    return aString;
 }
 
 // ============================================================================
 
+TextPortionModel::TextPortionModel( const TextFontModel& rFont, const OUString& rText ) :
+    maFont( rFont ),
+    maText( rText )
+{
+}
+
+// ============================================================================
+
+TextBox::TextBox()
+{
+}
+
+void TextBox::appendPortion( const TextFontModel& rFont, const OUString& rText )
+{
+    maPortions.push_back( TextPortionModel( rFont, rText ) );
+}
+
+const TextFontModel* TextBox::getFirstFont() const
+{
+    return maPortions.empty() ? 0 : &maPortions.front().maFont;
+}
+
+OUString TextBox::getText() const
+{
+    OUStringBuffer aBuffer;
+    for( PortionVector::const_iterator aIt = maPortions.begin(), aEnd = maPortions.end(); aIt != aEnd; ++aIt )
+        aBuffer.append( aIt->maText );
+    return aBuffer.makeStringAndClear();
+}
+
+// ============================================================================
+
+} // namespace vml
 } // namespace oox
-
