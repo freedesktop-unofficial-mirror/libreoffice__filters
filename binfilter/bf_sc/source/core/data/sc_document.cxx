@@ -2,7 +2,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -1072,7 +1072,7 @@ DBG_BF_ASSERT(0, "STRIP");
 /*N*/ 									nXw, nYw, 0 );
 /*N*/ 			nXw -= pClipDoc->aClipRange.aEnd.Col();
 /*N*/ 			nYw -= pClipDoc->aClipRange.aEnd.Row();			// only extra value from ExtendMerge
-/*N*/ 			USHORT nDestAddX, nDestAddY;
+/*N*/ 			USHORT nDestAddX(0), nDestAddY(0);
 /*N*/ 			pClipDoc->GetClipArea( nDestAddX, nDestAddY, bIncludeFiltered );
 /*N*/ 			nXw += nDestAddX;
 /*N*/ 			nYw += nDestAddY;								// ClipArea, plus ExtendMerge value
