@@ -25,32 +25,57 @@
  *
  ************************************************************************/
 
-#include "oox/token/propertylist.hxx"
-#include "properties.hxx"
+#include "oox/vml/vmltextbox.hxx"
+
+#include <rtl/ustrbuf.hxx>
 
 namespace oox {
-
-namespace {
-
-// include auto-generated property name lists
-#include "propertywords.inc"
-
-} // namespace
+namespace vml {
 
 // ============================================================================
 
-PropertyList::PropertyList()
-{
-    reserve( static_cast< size_t >( PROP_COUNT ) );
-    for( sal_Int32 nIdx = 0; nIdx < PROP_COUNT; ++nIdx )
-        push_back( ::rtl::OUString::createFromAscii( propertywordlist[ nIdx ] ) );
-}
+using ::rtl::OUString;
+using ::rtl::OUStringBuffer;
 
-PropertyList::~PropertyList()
+// ============================================================================
+
+TextFontModel::TextFontModel()
 {
 }
 
 // ============================================================================
 
+TextPortionModel::TextPortionModel( const TextFontModel& rFont, const OUString& rText ) :
+    maFont( rFont ),
+    maText( rText )
+{
+}
+
+// ============================================================================
+
+TextBox::TextBox()
+{
+}
+
+void TextBox::appendPortion( const TextFontModel& rFont, const OUString& rText )
+{
+    maPortions.push_back( TextPortionModel( rFont, rText ) );
+}
+
+const TextFontModel* TextBox::getFirstFont() const
+{
+    return maPortions.empty() ? 0 : &maPortions.front().maFont;
+}
+
+OUString TextBox::getText() const
+{
+    OUStringBuffer aBuffer;
+    for( PortionVector::const_iterator aIt = maPortions.begin(), aEnd = maPortions.end(); aIt != aEnd; ++aIt )
+        aBuffer.append( aIt->maText );
+    return aBuffer.makeStringAndClear();
+}
+
+// ============================================================================
+
+} // namespace vml
 } // namespace oox
-
