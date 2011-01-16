@@ -2,7 +2,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -113,24 +113,24 @@ namespace binfilter {
 /*N*/ 		// unmark object in all views
 /*N*/ 		SdrViewIter aIter( pObj );
 /*N*/ 		SdrView* pView = aIter.FirstView();
-/*N*/ 
+/*N*/
 /*N*/ 		while( pView )
 /*N*/ 		{
 /*N*/ 			// important: leave group so that SdrPageView's object list is always
 /*N*/ 			// the same as the object list of the page
 /*N*/ 			pView->LeaveAllGroup();
 /*N*/ 			pView->UnmarkAll();
-/*N*/ 
+/*N*/
 /*N*/ 			pView = aIter.NextView();
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ #if OSL_DEBUG_LEVEL > 1
 /*N*/   		SdrObject* pDelObj = pObj->GetObjList()->RemoveObject( pObj->GetOrdNum());
 /*N*/   		DBG_ASSERT( pDelObj == pObj , "Wrong object removed!" );
 /*N*/ #else
 /*N*/   		pObj->GetObjList()->RemoveObject( pObj->GetOrdNum());
 /*N*/ #endif
-/*N*/ 
+/*N*/
 /*N*/   		delete pObj;
 /*N*/ 	}
 /*N*/ 	else
@@ -175,46 +175,46 @@ namespace binfilter {
 /*N*/ {
 /*N*/ 	const SfxPoolItem* pPoolItem = NULL;
 /*N*/ 	SvxChartTextOrient eOrient;
-/*N*/ 
+/*N*/
 /*N*/ 	if (rAttr.GetItemState(SCHATTR_TEXT_ORIENT, TRUE, &pPoolItem) == SFX_ITEM_SET)
 /*N*/ 		eOrient = ((const SvxChartTextOrientItem*)pPoolItem)->GetValue();
 /*N*/ 	else
 /*N*/ 		eOrient = CHTXTORIENT_STANDARD;
-/*N*/ 
+/*N*/
 /*N*/ 	SfxItemSet aTextAttr(*pItemPool, nTextWhichPairs);
 /*N*/ 	aTextAttr.Put(rAttr);
-/*N*/ 
+/*N*/
 /*N*/ 	if (bIsTitle)
 /*N*/ 		aTextAttr.Put(SvxAdjustItem(SVX_ADJUST_CENTER));
 /*N*/ 	else
 /*N*/ 		aTextAttr.Put(SvxAdjustItem((eOrient == CHTXTORIENT_BOTTOMTOP)
 /*N*/ 										 ? SVX_ADJUST_RIGHT
 /*N*/ 										 : SVX_ADJUST_LEFT));
-/*N*/ 
+/*N*/
 /*N*/     // clear old outliner content
 /*N*/ 	pOutliner->Clear();
-/*N*/ 
+/*N*/
 /*N*/ 	if (eOrient == CHTXTORIENT_STACKED)
 /*?*/ 		pOutliner->SetText(StackString(rText), pOutliner->GetParagraph( 0 ));
 /*N*/ 	else
 /*N*/ 		pOutliner->SetText(rText, pOutliner->GetParagraph( 0 ));
-/*N*/ 
+/*N*/
 /*N*/ 		// FG: Diese Routine berechnet nun wirklich ob der Text umgebrochen werden soll oder nicht.
 /*N*/ 	Size aSize = CalcTextSizeOfOneText (eOrient, aTextAttr, pOutliner, nMaximumWidth,FALSE);
-/*N*/ 
+/*N*/
 /*N*/ 		// FG: Was macht das?
 /*N*/ 	OutlinerParaObject* pPara =	pOutliner->CreateParaObject();
-/*N*/ 
+/*N*/
 /*N*/ 		// FG: Hier wird der Text der oben muehsam erzeugt und formatiert wurde, wieder weggeworfen.
 /*N*/ 	pOutliner->Clear();
-/*N*/ 
+/*N*/
 /*N*/ 	//rPos=Position im ChartRect, wird als arg uebergeben,
 /*N*/ 	//size ergibt sich aus CalcTextOf... (s.o.)
 /*N*/ 	Rectangle aRect(rPos, aSize);
 /*N*/ 	SdrRectObj* pObj;
-/*N*/ 
+/*N*/
 /*N*/ 	AdjustRect(aRect, eAdjust);
-/*N*/ 
+/*N*/
 /*N*/ 	switch(nId)
 /*N*/ 	{
 /*N*/ 		//Alle Titel sorgen selbst für ihre Attributierung:
@@ -228,9 +228,9 @@ namespace binfilter {
 /*N*/ 		default:
 /*N*/ 			pObj = new SdrRectObj(OBJ_TEXT, aRect);
 /*N*/ 			break;
-/*N*/ 
+/*N*/
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	//Seit 4/1998 koennen Texte frei gedreht werden: SCHATTR_TEXT_DEGREES
 /*N*/ 	long nDegrees=GetTextRotation((SfxItemSet&)rAttr,eOrient);
 /*N*/ 	if(nDegrees)
@@ -240,23 +240,23 @@ namespace binfilter {
 /*N*/ 	   pObj->Rotate(pObj->GetSnapRect().Center(), nDegrees, sin(fVal), cos(fVal));
 /*N*/ 	   pObj->NbcMove( AdjustRotatedRect(aOldBoundRect, eAdjust,pObj->GetBoundRect()));
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	//ToDo: anhängen der ,*(pItemPool->GetFrozenIdRanges()) ???, erstmal mit diesen Whichpairs
 /*N*/ 	SfxItemSet aAreaAttr(*pItemPool,nExchangeTitleWhichPairs);
-/*N*/ 
+/*N*/
 /*N*/ 	//Neu: #52009#
 /*N*/ 	aAreaAttr.Put(SdrTextAutoGrowHeightItem( bIsTitle ));
 /*N*/ 	aAreaAttr.Put(SdrTextAutoGrowWidthItem( bIsTitle ));
 /*N*/ 	aAreaAttr.Put(rAttr);
-/*N*/ 
-/*N*/ 
+/*N*/
+/*N*/
 /*N*/ //-/	pObj->NbcSetAttributes(aAreaAttr, FALSE);//#63904# 10%
 /*N*/ 	pObj->SetItemSet(aAreaAttr);//#63904# 10%
-/*N*/ 
+/*N*/
 /*N*/ 	pObj->InsertUserData(new SchObjectId(nId));
 /*N*/ 	pObj->InsertUserData(new SchObjectAdjust(eAdjust, eOrient));
 /*N*/ 	pObj->NbcSetOutlinerParaObject(pPara);
-/*N*/ 
+/*N*/
 /*N*/ 	return pObj;
 /*N*/ }
 
@@ -284,29 +284,29 @@ namespace binfilter {
 /*N*/ //	aObjAttr.Put(rAttr);
 /*N*/ //	rTextObj.SetItemSetAndBroadcast(aAreaAttr);
 /*N*/     rTextObj.SetItemSetAndBroadcast( rAttr );
-/*N*/ 
+/*N*/
 /*N*/ 	if ( rTextObj.GetOutlinerParaObject())
 /*N*/ 	{
 /*N*/ 		SfxItemSet aTextAttr(*pItemPool, nTextWhichPairs);
 /*N*/ 		aTextAttr.Put(rAttr);
 /*N*/ 		aTextAttr.Put(SvxAdjustItem());
-/*N*/ 
+/*N*/
 /*N*/ 		pOutliner->SetText(*rTextObj.GetOutlinerParaObject());
-/*N*/ 
+/*N*/
 /*N*/ 		SetTextAttributes (aTextAttr);
-/*N*/ 
+/*N*/
 /*N*/ 		if(IsAttrChangeNeedsBuildChart(rAttr))
 /*N*/ 		{
 /*N*/ 			//in diesem Fall koennte ein Textresize/reorg noetig sein
-/*N*/ 
+/*N*/
 /*N*/ 			Size aSize = pOutliner->CalcTextSize();
 /*N*/ 			aSize.Height() += TEXTHEIGHT_OFS;
 /*N*/ 			aSize.Width () = (aSize.Width () * 6) / 5;
-/*N*/ 
+/*N*/
 /*N*/ 			OutlinerParaObject* pPara =	pOutliner->CreateParaObject();
-/*N*/ 
+/*N*/
 /*N*/ 			pOutliner->Clear();
-/*N*/ 
+/*N*/
 /*N*/ 			rTextObj.SetOutlinerParaObject(pPara);
 /*N*/ 			AdjustTextSize(rTextObj, aSize);
 /*N*/ 		}
@@ -331,7 +331,7 @@ namespace binfilter {
 /*N*/ 								  Pair*				 pFirstAndLast )
 /*N*/ {
 /*N*/ 	ChartAxis *pCurrentXAxis = (nAxisUId == CHAXIS_AXIS_A)? pChartAAxis: pChartXAxis;
-/*N*/ 
+/*N*/
 /*N*/ 	BOOL bLogarithm = pCurrentXAxis->IsLogarithm();
 /*N*/ 	short nCnt;
 /*N*/ 	SfxItemSet* pLclAxisAttr;
@@ -345,11 +345,11 @@ namespace binfilter {
 /*N*/ 		nCnt			= GetColCount();
 /*N*/ 		pLclAxisAttr		= &GetAttr(CHOBJID_DIAGRAM_X_AXIS);
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	pOutliner->SetUpdateMode (FALSE);
-/*N*/ 
+/*N*/
 /*N*/ 	Size aMaxSize(0, 0);
-/*N*/ 
+/*N*/
 /*N*/ 	if (IsXYChart())
 /*N*/ 	{
         /**********************************************************************
@@ -361,54 +361,54 @@ namespace binfilter {
 /*N*/ 		}
 /*N*/ 		else
 /*N*/ 		{
-/*N*/ 
+/*N*/
 /*N*/ 			// #55400#
 /*N*/ 			// #67961#
 /*N*/ 			double fMinX  = pCurrentXAxis->GetMin();
 /*N*/ 			double fMaxX  = pCurrentXAxis->GetMax();
 /*N*/ 			double fStepX = pCurrentXAxis->GetStep();
-/*N*/ 
+/*N*/
 /*N*/ 			//	Collect the items which control the text appearence and set them to
 /*N*/ 			//	the outliner.
 /*N*/ 			SfxItemSet aTextAttr(*pItemPool, nTextOrientWhichPairs);
 /*N*/ 			aTextAttr.Put(GetAttr(CHOBJID_DIAGRAM_X_AXIS));
 /*N*/ //			SetTextAttributes (aTextAttr);
-/*N*/ 
+/*N*/
 /*N*/ 			double fAct = fMinX;
-/*N*/ 
+/*N*/
 /*N*/ 			while (fAct <= fMaxX)
 /*N*/ 			{
 /*N*/ 				String aNumStr;
 /*N*/ 				Color* pDummy = NULL;
-/*N*/ 
+/*N*/
 /*N*/                 pNumFormatter->GetOutputString(fAct, nNumberFormat, aNumStr, &pDummy);
-/*N*/ 
+/*N*/
 /*N*/ 				if (eOrient == CHTXTORIENT_STACKED)
 /*?*/ 					pOutliner->SetText(StackString(aNumStr), pOutliner->GetParagraph( 0 ));
 /*N*/ 				else
 /*N*/ 					pOutliner->SetText(aNumStr, pOutliner->GetParagraph( 0 ));
-/*N*/ 
+/*N*/
 /*N*/ 				// FG: Hier wird wirklich berechnet wie groß der Textbereich werden soll. Insbesondere
 /*N*/ 				//     wird hier entschieden, ob der Text umgebrochen werden soll oder nicht!
 /*N*/ 				SetTextAttributes (aTextAttr);
 /*N*/ 				Size aSize = CalcTextSizeOfOneText (eOrient, aTextAttr, pOutliner, MaximumWidth,
 /*N*/ 					TRUE, FALSE);
 /*N*/ 				pOutliner->SetUpdateMode (FALSE);
-/*N*/ 
+/*N*/
 /*N*/ 				pOutliner->Clear();
-/*N*/ 
+/*N*/
 /*N*/ 				if (aSize.Width() > aMaxSize.Width())
 /*N*/ 					aMaxSize.Width() = aSize.Width();
 /*N*/ 				if (aSize.Height() > aMaxSize.Height())
 /*N*/ 					aMaxSize.Height() = aSize.Height();
-/*N*/ 
+/*N*/
 /*N*/ 					// FG: Die Berechnung erfolgt hier, damit die Raender in Create2DBackplane
 /*N*/ 				if (fAct <= fMinX)
 /*N*/ 				{
 /*N*/ 					nWidthOfFirstXAxisText = aSize.Width();
 /*N*/ 					if(pFirstAndLast)
 /*N*/ 						pFirstAndLast->A()=nWidthOfFirstXAxisText;
-/*N*/ 
+/*N*/
 /*N*/ 				}
 /*N*/ 				IncValue(fAct, fStepX, bLogarithm);
 /*N*/ 					// FG: Die Berechnung erfolgt hier, damit die Raender in Create2DBackplane
@@ -418,7 +418,7 @@ namespace binfilter {
 /*N*/ 					if(pFirstAndLast)
 /*N*/ 						pFirstAndLast->B()=nWidthOfLastXAxisText;
 /*N*/ 				}
-/*N*/ 
+/*N*/
 /*N*/ 			}
 /*N*/ 		}
 /*N*/ 	}
@@ -429,16 +429,16 @@ namespace binfilter {
 /*N*/ 		SfxItemSet aTextAttr(*pItemPool, nTextOrientWhichPairs);
 /*N*/ 		aTextAttr.Put(*pLclAxisAttr);
 /*N*/ //		SetTextAttributes (aTextAttr);
-/*N*/ 
+/*N*/
 /*N*/ 		for (short i = 0; i < nCnt; i++)
 /*N*/ 		{
 /*N*/ 			String aDescrStr = bRowDescr ? RowText(i) : ColText(i);
-/*N*/ 
+/*N*/
 /*N*/ 			if (eOrient == CHTXTORIENT_STACKED)
 /*?*/ 				pOutliner->SetText(StackString(aDescrStr), pOutliner->GetParagraph( 0 ));
 /*N*/ 			else
 /*N*/ 				pOutliner->SetText(aDescrStr, pOutliner->GetParagraph( 0 ));
-/*N*/ 
+/*N*/
 /*N*/ 			// FG: Hier wird wirklich berechnet wie groß der Textbereich werden soll. Insbesondere wird
 /*N*/ 			//     hier entschieden, ob der Text umgebrochen werden soll oder nicht!
 /*N*/ 			SetTextAttributes (aTextAttr);
@@ -446,7 +446,7 @@ namespace binfilter {
 /*N*/ 				FALSE);
 /*N*/ 			pOutliner->SetUpdateMode (FALSE);
 /*N*/ 			pOutliner->Clear();
-/*N*/ 
+/*N*/
 /*N*/ 			if (aSize.Width() > aMaxSize.Width())
 /*N*/ 				aMaxSize.Width() = aSize.Width();
 /*N*/ 			if (aSize.Height() > aMaxSize.Height())
@@ -467,9 +467,9 @@ namespace binfilter {
 /*N*/ 			}
 /*N*/ 		}
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	pOutliner->SetUpdateMode (TRUE);
-/*N*/ 
+/*N*/
 /*N*/ 	return aMaxSize;
 /*N*/ }
 
@@ -493,9 +493,9 @@ namespace binfilter {
 /*N*/ void ChartModel::InitDataAttrs()
 /*N*/ {
 /*N*/ 	CHART_TRACE( "ChartModel::InitDataAttrs" );
-/*N*/ 
+/*N*/
 /*N*/ 	DBG_ASSERT( pChartData, "ChartModel::InitDataAttrs: No ChartData-Object available!" );
-/*N*/ 
+/*N*/
 /*N*/ 	short nDataColCnt	= pChartData->GetColCount();
 /*N*/ 	short nDataRowCnt	= pChartData->GetRowCount();
 
@@ -510,13 +510,13 @@ namespace binfilter {
 /*N*/     short nCnt          = IsPieChart()
 /*N*/         ? ::std::max( GetColCount(), GetRowCount())
 /*N*/         : GetRowCount();
-/*N*/ 
+/*N*/
 /*N*/     short i;
-/*N*/ 
+/*N*/
 /*N*/ 	if (nCnt != nPieSegCount)
 /*N*/ 	{
 /*N*/ 		long *pOfs = new long[nCnt];
-/*N*/ 
+/*N*/
 /*N*/ 		if (nPieSegCount > nCnt)
 /*N*/ 			for (i = 0; i < nCnt; i++)
 /*N*/ 				pOfs[i] = pPieSegOfs[i];
@@ -527,36 +527,40 @@ namespace binfilter {
 /*N*/ 			for (; i < nCnt; i++)
 /*N*/ 				pOfs[i] = 0;
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		delete[] pPieSegOfs;
 /*N*/ 		pPieSegOfs = pOfs;
 /*N*/ 		nPieSegCount = nCnt;
 /*N*/ 	}
-/*N*/ 
-/*N*/ 
+/*N*/
+/*N*/
 /*N*/ 	long nRowListCnt ;
 /*N*/ 	//regressattr
-/*N*/ 	nRowListCnt = (short)aRegressAttrList.Count();
-/*N*/ 
+/*N*/ 	nRowListCnt = aRegressAttrList.size();
+/*N*/
 /*N*/ 	DBG_ASSERT( pDefaultColors, "invalid default colors" );
 /*N*/ 	sal_Int32 nNumDefCol = pDefaultColors->Count();
 /*N*/ 	DBG_ASSERT( nNumDefCol, "Empty Default Color List" );
-/*N*/ 
+/*N*/
 /*N*/ 	if (nCnt != nRowListCnt)
 /*N*/ 	{
 /*N*/ 		if (nRowListCnt > nCnt)
 /*N*/ 		{
-/*N*/ 			aRegressAttrList.Seek((ULONG)nCnt);
-/*N*/ 			for (i = nCnt; i < nRowListCnt; i++)
-/*N*/ 				delete aRegressAttrList.Remove();
+                for ( i = nCnt; i < nRowListCnt; ++i )
+                {
+                    ItemSetList::iterator it = aRegressAttrList.begin();
+                    ::std::advance( it, nCnt );
+                    delete *it;
+                    aRegressAttrList.erase( it );
+                }
 /*N*/ 		}
 /*N*/ 		else
 /*N*/ 		{
 /*N*/ 			for (i = nRowListCnt; i < nCnt; i++)
 /*N*/ 			{
 /*N*/ 				SfxItemSet* pRegressAttr = new SfxItemSet(*pItemPool, nGridWhichPairs);
-/*N*/ 				aRegressAttrList.Insert(pRegressAttr, LIST_APPEND);
-/*N*/ 
+/*N*/ 				aRegressAttrList.push_back( pRegressAttr );
+/*N*/
 /*N*/ 				pRegressAttr->Put(XLineStyleItem(XLINE_SOLID));
 /*N*/ 				pRegressAttr->Put(XLineWidthItem(100));
 /*N*/ 				if( nNumDefCol != 0 )
@@ -577,24 +581,28 @@ namespace binfilter {
 /*N*/ 			}
 /*N*/ 		}
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	//average attr
-/*N*/ 	nRowListCnt = (short)aAverageAttrList.Count();
+/*N*/ 	nRowListCnt = aAverageAttrList.size();
 /*N*/ 	if (nCnt != nRowListCnt)
 /*N*/ 	{
 /*N*/ 		if (nRowListCnt > nCnt)
 /*N*/ 		{
-/*N*/ 			aAverageAttrList.Seek((ULONG)nCnt);
-/*N*/ 			for (i = nCnt; i < nRowListCnt; i++)
-/*N*/ 				delete aAverageAttrList.Remove();
+                for ( i = nCnt; i < nRowListCnt; ++i )
+                {
+                    ItemSetList::iterator it = aAverageAttrList.begin();
+                    ::std::advance( it, nCnt );
+                    delete *it;
+                    aAverageAttrList.erase( it );
+                }
 /*N*/ 		}
 /*N*/ 		else
 /*N*/ 		{
 /*N*/ 			for (i = nRowListCnt; i < nCnt; i++)
 /*N*/ 			{
 /*N*/ 				SfxItemSet* pAverageAttr = new SfxItemSet(*pItemPool, nGridWhichPairs);
-/*N*/ 				aAverageAttrList.Insert(pAverageAttr, LIST_APPEND);
-/*N*/ 
+/*N*/ 				aAverageAttrList.push_back( pAverageAttr );
+/*N*/
 /*N*/ 				pAverageAttr->Put(XLineStyleItem(XLINE_SOLID));
 /*N*/ 				pAverageAttr->Put(XLineWidthItem(0));
 /*N*/ 				if( nNumDefCol != 0 )
@@ -615,24 +623,28 @@ namespace binfilter {
 /*N*/ 			}
 /*N*/ 		}
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	//error attr
-/*N*/ 	nRowListCnt = (short)aErrorAttrList.Count();
+/*N*/ 	nRowListCnt = (short)aErrorAttrList.size();
 /*N*/ 	if (nCnt != nRowListCnt)
 /*N*/ 	{
 /*N*/ 		if (nRowListCnt > nCnt)
 /*N*/ 		{
-/*N*/ 			aErrorAttrList.Seek((ULONG)nCnt);
-/*N*/ 			for (i = nCnt; i < nRowListCnt; i++)
-/*N*/ 				delete aErrorAttrList.Remove();
+                for ( i = nCnt; i < nRowListCnt; ++i )
+                {
+                    ItemSetList::iterator it = aErrorAttrList.begin();
+                    ::std::advance( it, nCnt );
+                    delete *it;
+                    aErrorAttrList.erase( it );
+                }
 /*N*/ 		}
 /*N*/ 		else
 /*N*/ 		{
 /*N*/ 			for (i = nRowListCnt; i < nCnt; i++)
 /*N*/ 			{
 /*N*/ 				SfxItemSet* pErrorAttr = new SfxItemSet(*pItemPool, nGridWhichPairs);
-/*N*/ 				aErrorAttrList.Insert(pErrorAttr, LIST_APPEND);
-/*N*/ 
+/*N*/ 				aErrorAttrList.push_back( pErrorAttr );
+/*N*/
 /*N*/ 				pErrorAttr->Put(XLineStyleItem(XLINE_SOLID));
 /*N*/ 				pErrorAttr->Put(XLineWidthItem(0));
 /*N*/ 				pErrorAttr->Put(XLineColorItem(String(), RGBColor(COL_BLACK)));
@@ -647,78 +659,79 @@ namespace binfilter {
 /*N*/ 			}
 /*N*/ 		}
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	// Point-Attr
 /*N*/ 	long nPointCnt		= nDataColCnt * nDataRowCnt;
-/*N*/ 	long nPointListCnt	= aDataPointAttrList.Count();
+/*N*/ 	long nPointListCnt	= aDataPointAttrList.size();
 /*N*/ 	if (nPointCnt != nPointListCnt)
 /*N*/ 	{
 /*N*/ 		if (nPointListCnt > nPointCnt)
 /*N*/ 		{
 /*N*/ 			while (nPointListCnt-- > nPointCnt)
 /*N*/ 			{
-/*N*/ 				aDataPointAttrList.Seek((ULONG)nPointCnt);
-/*N*/ 				delete aDataPointAttrList.Remove();
+                    ItemSetList::iterator it = aDataPointAttrList.begin();
+                    ::std::advance( it, nPointCnt );
+                    delete *it;
+                    aDataPointAttrList.erase( it );
 /*N*/ 			}
 /*N*/ 		}
 /*N*/ 		else for (long ii = nPointListCnt; ii < nPointCnt; ii++)
-/*N*/ 			 aDataPointAttrList.Insert(NULL, LIST_APPEND);
+/*N*/ 			 aDataPointAttrList.push_back( NULL );
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	// Switch-Point-Attr
-/*N*/ 	nPointListCnt = aSwitchDataPointAttrList.Count();
+/*N*/ 	nPointListCnt = aSwitchDataPointAttrList.size();
 /*N*/ 	if (nPointCnt != nPointListCnt)
 /*N*/ 	{
 /*N*/ 		if (nPointListCnt > nPointCnt)
 /*N*/ 		{
-/*N*/ //			aSwitchDataPointAttrList.Seek((ULONG)nPointCnt);
-/*N*/ //			for (long i = nPointCnt; i < nPointListCnt; i++)
-/*N*/ //				delete aSwitchDataPointAttrList.Remove();
 /*N*/ 			while (nPointListCnt-- > nPointCnt)
 /*N*/ 			{
-/*N*/ 				aSwitchDataPointAttrList.Seek((ULONG)nPointCnt);
-/*N*/ 				delete aSwitchDataPointAttrList.Remove();
+                    ItemSetList::iterator it = aSwitchDataPointAttrList.begin();
+                    ::std::advance( it, nPointCnt );
+                    delete *it;
+                    aSwitchDataPointAttrList.erase( it );
 /*N*/ 			}
 /*N*/ 		}
 /*N*/ 		else for (long iii = nPointListCnt; iii < nPointCnt; iii++)
-/*N*/ 			aSwitchDataPointAttrList.Insert(NULL, LIST_APPEND);
-/*N*/ 			// Insert (new SfxItemSet(*pItemPool, nRowWhichPairs),...)
+/*N*/ 			aSwitchDataPointAttrList.push_back( NULL );
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	//row attr
-/*N*/ 	nRowListCnt = (short)aDataRowAttrList.Count();
+/*N*/ 	nRowListCnt = (short)aDataRowAttrList.size();
 /*N*/ 	if (nCnt != nRowListCnt)
 /*N*/ 	{
 /*N*/ 		if (nRowListCnt > nCnt)
 /*N*/ 		{
 /*N*/ 			//bevor attribute geloescht werden, wird reorganisiert
 /*N*/ 			LogBookAttrData();
-/*N*/ 
+/*N*/
 /*N*/ 			//Jetzt darf erst der Ueberhang geloescht werden:
-/*N*/ 			aDataRowAttrList.Seek((ULONG)nCnt);
-/*N*/ 			for (i = nCnt; i < nRowListCnt; i++)
-/*N*/ 				delete aDataRowAttrList.Remove();
+                for ( i = nCnt; i < nRowListCnt; ++i )
+                {
+                    ItemSetList::iterator it = aDataRowAttrList.begin();
+                    ::std::advance( it, nCnt );
+                    delete *it;
+                    aDataRowAttrList.erase( it );
+                }
 /*N*/ 		}
 /*N*/ 		else
 /*N*/ 		{
 /*N*/             bool bIsCombiChart =
 /*N*/                 ( CHSTYLE_2D_LINE_COLUMN         ==  eChartStyle ) ||
 /*N*/                 ( CHSTYLE_2D_LINE_STACKEDCOLUMN  ==  eChartStyle );
-/*N*/ 
+/*N*/
 /*N*/             for (i = nRowListCnt; i < nCnt; i++)
 /*N*/ 			{
 /*N*/ 				SfxItemSet* pDataRowAttr = new SfxItemSet(*pItemPool, nRowWhichPairs);
-/*N*/ 				aDataRowAttrList.Insert(pDataRowAttr, LIST_APPEND);
+/*N*/ 				aDataRowAttrList.push_back( pDataRowAttr );
 /*N*/ 				SetDefAttrRow(pDataRowAttr,i);
-/*N*/ 
+/*N*/
 /*N*/  				//	Change the defaults for lines in mixed line-column charts.
 /*N*/  				if( bIsCombiChart && IsLine( i ) )
 /*N*/                 {
 /*N*/                     pDataRowAttr->ClearItem (SCHATTR_STYLE_SYMBOL);
 /*N*/                     pDataRowAttr->Put (XLineStyleItem (XLINE_SOLID));
-/*N*/                     // #101164# as more than one line is possible via GUI, those
-/*N*/                     // should not all be black
-/*N*/ //                     pDataRowAttr->Put (XLineColorItem (String(), RGBColor (COL_BLACK)));
 /*N*/                     pDataRowAttr->Put (XLineWidthItem (0));
 /*N*/                 }
 /*N*/ 			}
@@ -738,7 +751,7 @@ namespace binfilter {
 /*N*/ void ChartModel::LogBookAttrData()
 /*N*/ {
 /*N*/ 	CHART_TRACE( "ChartModel::LogBookAttrData" );
-/*N*/ 
+/*N*/
 /*N*/ 	if(pLogBook)
 /*N*/ 	{
 /*?*/ 		DBG_BF_ASSERT(0, "STRIP"); //STRIP001 if(pLogBook->IsValid())
@@ -754,12 +767,12 @@ namespace binfilter {
 /*N*/ 	DBG_ASSERT( pDefaultColors, "Invalid default color list" );
 /*N*/ 	if( ! pDefaultColors )
 /*N*/ 		return;
-/*N*/ 
+/*N*/
 /*N*/ 	CHART_TRACE1( "ChartModel::SetDefAttrRow - Row #%ld", i );
-/*N*/ 
+/*N*/
 /*N*/ 	sal_Int32 nNumDefCol = pDefaultColors->Count();
 /*N*/ 	DBG_ASSERT( nNumDefCol, "invalid default colors" );
-/*N*/ 
+/*N*/
 /*N*/ 	pDataRowAttr->Put(*pDummyAttr);
 /*N*/ 	if( nNumDefCol != 0 )
 /*N*/ 	{
@@ -767,7 +780,7 @@ namespace binfilter {
 /*N*/ 			GetObject(i % nNumDefCol);
 /*N*/ 		pDataRowAttr->Put(XFillColorItem(pEntry->GetName(),
 /*N*/ 										 pEntry->GetColor()));
-/*N*/ 
+/*N*/
 /*N*/ 		if(IsLine(i)) //#54870# bei Linien defaultfarbe der Linie=FillColor
 /*N*/ 		{
 /*N*/ 			pDataRowAttr->Put(XLineColorItem(pEntry->GetName(),
@@ -790,24 +803,24 @@ namespace binfilter {
 /*N*/ 	if (!pChartData)
 /*N*/ 	{
 /*N*/ 		SchMemChart* pMemChart = new SchMemChart(DEFAULT_COLCNT, DEFAULT_ROWCNT);
-/*N*/ 
+/*N*/
 /*N*/ 		pMemChart->SetMainTitle(String(SchResId(STR_TITLE_MAIN)));
 /*N*/ 		pMemChart->SetSubTitle(String(SchResId(STR_TITLE_SUB)));
 /*N*/ 		pMemChart->SetXAxisTitle(String(SchResId(STR_DIAGRAM_TITLE_X_AXIS)));
 /*N*/ 		pMemChart->SetYAxisTitle(String(SchResId(STR_DIAGRAM_TITLE_Y_AXIS)));
 /*N*/ 		pMemChart->SetZAxisTitle(String(SchResId(STR_DIAGRAM_TITLE_Z_AXIS)));
-/*N*/ 
+/*N*/
 /*N*/ 		for( short nCol = 0; nCol < DEFAULT_COLCNT; nCol++ )
 /*N*/ 		{
 /*N*/ 			pMemChart->SetColText( nCol, pMemChart->GetDefaultColumnText( nCol ));
-/*N*/ 
+/*N*/
 /*N*/ 			for( short nRow = 0; nRow < DEFAULT_ROWCNT; nRow++ )
 /*N*/ 			{
 /*N*/  				pMemChart->SetData( nCol, nRow, fDefaultArr[ nRow ][ nCol ] );
 /*N*/ 				pMemChart->SetRowText( nRow, pMemChart->GetDefaultRowText( nRow ));
 /*N*/ 			}
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		SetChartData(*pMemChart, bNewTitles);
 /*N*/ 	}
 /*N*/ }
@@ -823,14 +836,14 @@ namespace binfilter {
 /*N*/ 	SchOptions* pOptions = SCH_MOD1()->GetSchOptions();
 /*N*/ 	long nCount;
 /*N*/ 	ColorData* pDefaultCol = NULL;
-/*N*/ 
+/*N*/
 /*N*/ 	if( pOptions )
 /*N*/ 	{
 /*N*/ 		const SchColorTable& aDefCols = pOptions->GetDefaultColors();
 /*N*/ 		nCount = aDefCols.Count();
 /*N*/ 		pDefaultCol = new ColorData[ nCount ];
 /*N*/  		DBG_ASSERT( nCount == ROW_COLOR_COUNT, "Chart: dynamic default color array size not supported yet" );
-/*N*/ 
+/*N*/
 /*N*/ 		for( int i=0; i<nCount; i++ )
 /*N*/ 		{
 /*N*/ 			pDefaultCol[ i ] = aDefCols.GetColorData( i );
@@ -840,7 +853,7 @@ namespace binfilter {
 /*N*/ 	{
 /*?*/ 		nCount = ROW_COLOR_COUNT;
 /*?*/ 		pDefaultCol = new ColorData[ nCount ];
-/*?*/ 
+/*?*/
 /*?*/ 		pDefaultCol[  0 ]  = RGB_COLORDATA( 0x99,  0x99, 0xff );
 /*?*/ 		pDefaultCol[  1 ]  = RGB_COLORDATA( 0x99,  0x33, 0x66 );
 /*?*/ 		pDefaultCol[  2 ]  = RGB_COLORDATA( 0xff,  0xff, 0xcc );
@@ -854,17 +867,17 @@ namespace binfilter {
 /*?*/ 		pDefaultCol[ 10 ]  = RGB_COLORDATA( 0x00,  0xff, 0xff );
 /*?*/ 		pDefaultCol[ 11 ]  = RGB_COLORDATA( 0xff,  0xff, 0x00 );
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	// create colors from table if they exist otherwise copy default colors
 /*N*/  	pDefaultColors = new List;
 /*N*/ 	Color aCol;
-/*N*/ 
+/*N*/
 /*N*/ 	for( int i=0; i<nCount; i++ )
 /*N*/ 	{
 /*N*/ 		aCol.SetColor( pDefaultCol[ i ] );
 /*N*/ 		pDefaultColors->Insert( new XColorEntry( aCol, String() ), LIST_APPEND );
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	delete[] pDefaultCol;
 /*N*/ }
 
@@ -889,7 +902,7 @@ namespace binfilter {
 /*N*/ 			delete (XColorEntry*)pDefaultColors->Remove(pDefaultColors->Count() - 1);
 /*N*/ 		delete pDefaultColors;
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	pDefaultColors = 0;
 /*N*/ }
 
@@ -934,17 +947,17 @@ namespace binfilter {
 /*N*/ 										BOOL	bUseTextAttributes)
 /*N*/ {
 /*N*/ 	long MaximumWidth=MaxW;
-/*N*/ 
+/*N*/
 /*N*/ 	pInOutliner->SetUpdateMode (FALSE);
 /*N*/ 	ULONG nParaCnt = pInOutliner->GetParagraphCount();
-/*N*/ 
+/*N*/
 /*N*/ 		// FG: Jeder Absatz muss die Text-Attribute einzeln zugewiesen bekommen. (jedenfalls scheint es so)
 /*N*/ 		//     Besser waere es dass fuer alle Absaetze auf einmal setzen zu koennen.
 /*N*/ 	if (bUseTextAttributes)
 /*N*/ 		SetTextAttributes (rTextAttr);
-/*N*/ 
+/*N*/
 /*N*/ 	Size OldPaperSize = pInOutliner->GetPaperSize();
-/*N*/ 
+/*N*/
 /*N*/ 	long nDegrees=GetTextRotation((SfxItemSet&)rTextAttr,eOrient);//#62531#
 /*N*/ 	double fDeg(0.0), fSin(0.0),
 /*N*/ 		fCos = 1;				// BM: Initialize Cos for if statement after if(nDegrees)-Block
@@ -961,17 +974,17 @@ namespace binfilter {
 /*N*/ 		//Im folgenden wird einfach die Mitte genommen -> 90% - Lösung
 /*N*/ 		bBreakOK =!(   ((nDegrees > 4500) && (nDegrees < 13500))
 /*N*/ 					|| ((nDegrees >22500) && (nDegrees < 31500)));
-/*N*/ 
+/*N*/
 /*N*/ 		fDeg=CDEG2RAD(nDegrees);
 /*N*/ 		fSin=fabs(sin(fDeg));
 /*N*/ 		fCos=fabs(cos(fDeg));
-/*N*/ 
+/*N*/
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	if( MaximumWidth > 0 && fCos!=0) //Kein Umbruch bei 90 und 270 Grad oder Max<=0
 /*N*/ 		pInOutliner->SetPaperSize( Size( MaximumWidth, 0 ) );
-/*N*/ 
-/*N*/ 
+/*N*/
+/*N*/
 /*N*/ 	pInOutliner->SetUpdateMode (TRUE);
 /*N*/ 	Size aSize = pInOutliner->CalcTextSize();
 /*N*/ 	pInOutliner->SetUpdateMode (FALSE);
@@ -981,12 +994,12 @@ namespace binfilter {
 /*N*/ 		aRot.Width() = (long)( (double)aSize.Width()*fCos + (double)aSize.Height()*fSin );
 /*N*/ 		aRot.Height()= (long)( (double)aSize.Width()*fSin + (double)aSize.Height()*fCos );
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 		// FG: Diese Groesse wird nun veraendert, falls MaximumWidth > 0 und
 /*N*/ 		//     aSize.Width() > MaximumWidth, dann wird umgebrochen, genau einmal.
 /*N*/ 		//     Es kommen also hoechstens 2 Zeilen raus, der Rest wird dann abgeschnitten.
 /*N*/ 		//     An dieser Stelle werden aber nur die Attribute berechnet.
-/*N*/ 
+/*N*/
 /*N*/ 	if ((MaximumWidth > 0) && (eOrient != CHTXTORIENT_STACKED))
 /*N*/ 	{
 /*N*/ #ifdef DBG_UTIL
@@ -998,7 +1011,7 @@ namespace binfilter {
 /*N*/ 		{
 /*N*/ 			nLines += pInOutliner->GetLineCount( n );
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		// Silbentrennung nur bei >MAXLEGENDLINES Zeilen oder einem zu langen wort...
 /*N*/ 		if ( bBreakOK
 /*N*/ 			&& (    ( nLines > MAXLEGENDLINES )
@@ -1014,9 +1027,9 @@ namespace binfilter {
 /*?*/ 			{
 /*?*/ 			DBG_BF_ASSERT(0, "STRIP"); //STRIP001 	long nHeightOfRows = GetHeightOfnRows (rTextAttr, MAXLEGENDLINES);//war mal 2 statt MAX...#50395#
 /*?*/ 			}
-/*?*/ 
+/*?*/
 /*?*/ 			ULONG nLclParaCnt = pInOutliner->GetParagraphCount();
-/*?*/ 
+/*?*/
 /*?*/ 			for (ULONG i = 0; i < nLclParaCnt; i++)
 /*?*/ 			{
 /*?*/ 				// Stets Silbentrennung
@@ -1024,7 +1037,7 @@ namespace binfilter {
 /*?*/ 				aAttr.Put( SfxBoolItem(EE_PARA_HYPHENATE, TRUE) );
 /*?*/ 				pInOutliner->SetParaAttribs(i, aAttr);
 /*?*/ 			}
-/*?*/ 
+/*?*/
 /*?*/ 			//#50395# durch Bindestriche vergrößert worden->
 /*?*/ 			//statt 2 werden jetzt 3 Zeilen benötigt
 /*?*/ 			ULONG nActLines = 0;
@@ -1036,13 +1049,13 @@ namespace binfilter {
 /*?*/ 			{
 /*?*/ 			DBG_BF_ASSERT(0, "STRIP"); //STRIP001 	nActLines=Min((ULONG)MAXLEGENDLINES,nActLines);
 /*N*/ 			}
-/*N*/ 
+/*N*/
 /*N*/ 		}
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	pInOutliner->SetPaperSize(OldPaperSize);
 /*N*/ 	pInOutliner->SetUpdateMode (TRUE);
-/*N*/ 
+/*N*/
 /*N*/ 	return (bGetRotated && nDegrees) ? aRot : aSize;
 /*N*/ }
 

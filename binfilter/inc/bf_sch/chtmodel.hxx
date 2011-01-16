@@ -2,7 +2,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -38,7 +38,7 @@
 //------------------------------------------------------------------
 //STRIP008 class SdrObjGroup;
 //STRIP008 class SdrRectObj;
-//STRIP008 
+//STRIP008
 //STRIP008 class SchModelData;
 
 #include <bf_svx/polygn3d.hxx>
@@ -69,6 +69,8 @@
 #include "chartbar.hxx"
 
 #include <com/sun/star/util/XRefreshable.hpp>
+#include <vector>
+
 class Vector3D;
 
 namespace binfilter {
@@ -95,8 +97,8 @@ class E3dLabelObj;
 struct DataDescription;
 class SchRectObj;
 
-DECLARE_LIST(ItemSetList, SfxItemSet*)//STRIP008 DECLARE_LIST(ItemSetList, SfxItemSet*);
-DECLARE_LIST(DescrList, E3dLabelObj*)//STRIP008 DECLARE_LIST(DescrList, E3dLabelObj*);
+typedef ::std::vector< SfxItemSet* > ItemSetList;
+DECLARE_LIST(DescrList, E3dLabelObj*)
 
 #define VERTICAL_LINE aLine[0].Y() = rRect.Bottom(); aLine[1].Y() = rRect.Top();
 #define HORIZONTAL_LINE aLine[0].X() = rRect.Left(); aLine[1].X() = rRect.Right();
@@ -694,7 +696,7 @@ public:
         are not required here.
 
         This method is used by SchAttribTabDlg::PageCreated (attrib.cxx)
-    
+
         @returns the chart internal number formatter
      */
 

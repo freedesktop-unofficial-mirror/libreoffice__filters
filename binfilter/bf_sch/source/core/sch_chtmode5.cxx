@@ -2,7 +2,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -84,7 +84,7 @@ namespace binfilter {
 /*N*/ 	double fData = IsDataSwitched()   //abhaengig vom Charttyp - statt bSwitchData
 /*N*/ 					   ? pChartData->GetTransData(nRow, nCol)
 /*N*/ 					   : pChartData->GetTransData(nCol, nRow);
-/*N*/ 
+/*N*/
 /*N*/ 	if ((fData == DBL_MIN) || !bPercent) return fData;
 /*N*/ 	else
 /*N*/ 	{
@@ -104,25 +104,25 @@ namespace binfilter {
 /*N*/ {
 /*?*/ 	SdrPage* pPage = GetPage(0);
 /*?*/ 	DBG_ASSERT(pPage, "ChartModel::GetDataPointObj:Keine Seite vorhanden!");
-/*?*/ 
+/*?*/
 /*?*/ 	SdrObjGroup* pDiagram =
 /*?*/ 		(SdrObjGroup*)GetObjWithId(CHOBJID_DIAGRAM, *pPage);
 /*?*/ 	DBG_ASSERT(pDiagram, "ChartModel::GetDataPointObj:Kein Diagramm-Objekt vorhanden!");
-/*?*/ 
+/*?*/
 /*?*/ 	SdrObject* pObj =
 /*?*/ 		GetObjWithColRow(nCol, nRow, *pDiagram->GetSubList());
-/*?*/ 
+/*?*/
 /*?*/ 	if (!pObj)
 /*?*/ 	{
 /*?*/ 		SdrObjGroup* pDataRow =
 /*?*/ 			(SdrObjGroup*)GetObjWithRow(nRow, *pDiagram->GetSubList());
-/*?*/ 
+/*?*/
 /*?*/ 		if(pDataRow)
 /*?*/ 			pObj = GetObjWithColRow(nCol, nRow, *pDataRow->GetSubList());
 /*?*/ 		else
 /*?*/ 			DBG_TRACE("ChartModel::GetDataPointObj:Datenreihen-Objekt nicht gefunden!");
 /*?*/ 	}
-/*?*/ 
+/*?*/
 /*?*/ 	return pObj;
 /*N*/ }
 /*************************************************************************
@@ -134,9 +134,9 @@ namespace binfilter {
 /*N*/ {
 /*N*/ 	if( pChartDataBuffered )
 /*N*/ 		delete pChartDataBuffered;
-/*N*/ 
+/*N*/
 /*N*/ 	pChartDataBuffered = NULL;
-/*N*/ 
+/*N*/
 /*N*/ 		SetChartData(*new SchMemChart(rData), bNewTitles);
 /*N*/ 		BuildChart (TRUE);
 /*N*/ }
@@ -156,48 +156,24 @@ namespace binfilter {
 /*N*/ 		BOOL bWasData;
 /*N*/ 		long nOldRowCount = 0;
 /*N*/ 		long nOldColumnCount = 0;
-/*N*/ 
+/*N*/
 /*N*/ 		if (pChartData)
 /*N*/ 		{
 /*N*/ 			nOldRowCount	= pChartData->GetRowCount();
 /*N*/ 			nOldColumnCount	= pChartData->GetColCount();
 /*N*/ 			if(pChartData->DecreaseRefCount())
 /*N*/ 				delete pChartData;
-/*N*/ 
+/*N*/
 /*N*/ 			bWasData = TRUE;
 /*N*/ 		}
 /*N*/ 		else
 /*N*/ 			bWasData = FALSE;
-/*N*/ 
+/*N*/
 /*N*/ 		pChartData  = &rData;
 /*N*/ 		pChartData->IncreaseRefCount();
 /*N*/ 		long nColCnt = GetColCount();
 /*N*/ 		long nRowCnt = GetRowCount();
-/*N*/ 
-/*N*/         // #102853# the adaption of min/max should be (and is) handled by the
-/*N*/         // axis themselves.  (It should at least check, if the min/max values
-/*N*/         // are 'auto')
-/*N*/ 
-/*N*/ // 		for (long nCol = 0; nCol < nColCnt; nCol++)
-/*N*/ // 		{
-/*N*/ // 			for (long nRow = 0; nRow < nRowCnt; nRow++)
-/*N*/ // 			{
-/*N*/ // 				double fData = GetData(nCol, nRow);
-/*N*/ 
-/*N*/ // 				if ((nCol == 0) && (nRow == 0))
-/*N*/ // 				{
-/*N*/ 					//ToDo: wozu das hier? klären!
-/*N*/ //					pChartYAxis->SetMin(fData);
-/*N*/ //					pChartYAxis->SetMax(fData);
-/*N*/ // 				}
-/*N*/ 
-/*N*/ // 				if (fData < pChartYAxis->GetMin())
-/*N*/ // 					pChartYAxis->SetMin(fData);
-/*N*/ // 				if (fData > pChartYAxis->GetMax())
-/*N*/ // 					pChartYAxis->SetMax(fData);
-/*N*/ // 			}
-/*N*/ // 		}
-/*N*/ 
+/*N*/
 /*N*/ 		if (!bWasData || bNewTitles)
 /*N*/ 		{
 /*N*/ 			aMainTitle  = pChartData->GetMainTitle();
@@ -206,9 +182,9 @@ namespace binfilter {
 /*N*/ 			aYAxisTitle = pChartData->GetYAxisTitle();
 /*N*/ 			aZAxisTitle = pChartData->GetZAxisTitle();
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		InitDataAttrs();
-/*N*/ 
+/*N*/
 /*N*/ 		if( rData.GetNumberFormatter() )
 /*N*/ 		{
 /*N*/ 			SvNumberFormatter* pNewFormatter = rData.GetNumberFormatter();
@@ -220,9 +196,9 @@ namespace binfilter {
 /*N*/ 				{
 /*N*/ 					SvNumberFormatterIndexTable* pTransTable =
 /*N*/ 						pNewFormatter->MergeFormatter( *pNumFormatter );
-/*N*/ 
+/*N*/
 /*N*/ 					SetNumberFormatter( pNewFormatter );
-/*N*/ 
+/*N*/
 /*N*/ 					if( pTransTable && pTransTable->Count() )
 /*N*/ 					{
 /*N*/ 						TranslateAllNumFormatIds( pTransTable );
@@ -235,7 +211,7 @@ namespace binfilter {
 /*N*/ 			}
 /*N*/ 			CheckForNewAxisNumFormat();
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		if( (nOldRowCount != nRowCnt) ||
 /*N*/ 			(nOldColumnCount != nColCnt ))
 /*N*/ 		{
@@ -258,10 +234,10 @@ namespace binfilter {
 /*N*/ {
 /*N*/ 	DBG_ASSERT (pTextDirection, "ChartModel::CreateTitle:Titel-Erzeugung ohne Text-Ausrichtungsinformation");
 /*N*/ 	if (pTextDirection == NULL) return NULL;  //FG: sonst Absturz
-/*N*/ 
+/*N*/
 /*N*/ 	SfxItemSet aTextAttr(*pItemPool, nTitleWhichPairs);
 /*N*/ 	SvxChartTextOrient eOrient = ((const SvxChartTextOrientItem&)pInTitleAttr->Get(SCHATTR_TEXT_ORIENT)).GetValue();
-/*N*/ 
+/*N*/
 /*N*/ 	if (bVert)
 /*N*/ 	{
 /*N*/ 		if (bSwitchColRow)
@@ -283,16 +259,16 @@ namespace binfilter {
 /*N*/ 			eOrient = bSwitchColRow ? CHTXTORIENT_BOTTOMTOP : CHTXTORIENT_STANDARD;
 /*N*/ 		}
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	aTextAttr.Put(*pInTitleAttr);
 /*N*/ 	aTextAttr.Put(SvxChartTextOrientItem(eOrient));
-/*N*/ 
+/*N*/
 /*N*/ 	// Seit 4/1998 koennen Texte frei gedreht werden: SCHATTR_TEXT_DEGREES
 /*N*/ 	// Hier wird ein Wert nachgetragen, falls CHTXTORIENT_AUTOMATIC
 /*N*/ 	// im Attribut stehen sollte und noch kein Winkel gesetzt wurde
 /*N*/ 	// ... bisher ohne auswirkung ...? ... evtl. an dieser Stelle unnoetig
 /*N*/ 	GetTextRotation(aTextAttr,eOrient);
-/*N*/ 
+/*N*/
 /*N*/ 	return CreateTextObj (nID, Point(), rText,
 /*N*/ 						  aTextAttr, TRUE, *pTextDirection);
 /*N*/ }
@@ -307,68 +283,68 @@ namespace binfilter {
 /*N*/     long nRowCnt = IsPieChart()
 /*N*/         ? GetColCount()
 /*N*/         : GetRowCount();
-/*N*/ 
+/*N*/
 /*N*/     for( long nRow = 0;
 /*N*/          nRow < nRowCnt;
 /*N*/          nRow++ )
 /*N*/         PutDataRowAttr( nRow, rInAttrs );
-/*N*/ 
+/*N*/
 /*N*/     const SfxPoolItem *pPoolItem = NULL;
 /*N*/ 	BOOL              bLclChanged   = FALSE;
-/*N*/ 
+/*N*/
 /*N*/ 	if (rInAttrs.GetItemState(SCHATTR_STAT_AVERAGE, TRUE, &pPoolItem) == SFX_ITEM_SET)
 /*N*/ 	{
 /*N*/ 		bShowAverage = ((const SfxBoolItem*) pPoolItem)->GetValue();
 /*N*/ 		bLclChanged     = TRUE;
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	if (rInAttrs.GetItemState(SCHATTR_STAT_KIND_ERROR, TRUE, &pPoolItem) == SFX_ITEM_SET)
 /*N*/ 	{
 /*N*/ 		eErrorKind = (SvxChartKindError) ((const SfxInt32Item*) pPoolItem)->GetValue();
 /*N*/ 		bLclChanged   = TRUE;
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	if (rInAttrs.GetItemState(SCHATTR_STAT_PERCENT, TRUE, &pPoolItem) == SFX_ITEM_SET)
 /*N*/ 	{
 /*N*/ 		fIndicatePercent = ((const SvxDoubleItem*) pPoolItem)->GetValue();
 /*N*/ 		bLclChanged         = TRUE;
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	if (rInAttrs.GetItemState(SCHATTR_STAT_BIGERROR, TRUE, &pPoolItem) == SFX_ITEM_SET)
 /*N*/ 	{
 /*N*/ 		fIndicateBigError = ((const SvxDoubleItem*) pPoolItem)->GetValue();
 /*N*/ 		bLclChanged          = TRUE;
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	if (rInAttrs.GetItemState(SCHATTR_STAT_CONSTPLUS, TRUE, &pPoolItem) == SFX_ITEM_SET)
 /*N*/ 	{
 /*N*/ 		fIndicatePlus = ((const SvxDoubleItem*) pPoolItem)->GetValue();
 /*N*/ 		bLclChanged      = TRUE;
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	if (rInAttrs.GetItemState(SCHATTR_STAT_CONSTMINUS, TRUE, &pPoolItem) == SFX_ITEM_SET)
 /*N*/ 	{
 /*N*/ 		fIndicateMinus = ((const SvxDoubleItem*) pPoolItem)->GetValue();
 /*N*/ 		bLclChanged       = TRUE;
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	if (rInAttrs.GetItemState(SCHATTR_STAT_INDICATE, TRUE, &pPoolItem) == SFX_ITEM_SET)
 /*N*/ 	{
 /*?*/ 		eIndicate = (SvxChartIndicate) ((const SfxInt32Item*) pPoolItem)->GetValue();
 /*?*/ 		bLclChanged  = TRUE;
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	if (rInAttrs.GetItemState(SCHATTR_STAT_REGRESSTYPE, TRUE, &pPoolItem) == SFX_ITEM_SET)
 /*N*/ 	{
 /*N*/ 		eRegression = (SvxChartRegress) ((const SfxInt32Item*) pPoolItem)->GetValue();
 /*N*/ 		bLclChanged    = TRUE;
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	if( bLclChanged )
 /*N*/     {
 /*N*/         BuildChart( FALSE );
 /*N*/     }
-/*N*/ 
+/*N*/
 /*N*/     return bLclChanged;
 /*N*/ }
 
@@ -377,25 +353,24 @@ namespace binfilter {
 /*N*/ 	if( Is3DChart() )
 /*N*/ 	{
 /*N*/ 		// delete depth-attributes for 3d charts
-/*N*/ 		long i, nCount = aDataRowAttrList.Count();
-/*N*/ 		SfxItemSet	*	pAttributes;
-/*N*/ 
+/*N*/ 		size_t i, nCount = aDataRowAttrList.size();
+/*N*/ 		SfxItemSet* pAttributes;
+/*N*/
 /*N*/ 		for( i=0; i<nCount; i++ )
-/*N*/ //-/			aDataRowAttrList.GetObject( i )->ClearItem( SID_ATTR_3D_DEPTH );
-/*N*/ 			aDataRowAttrList.GetObject( i )->ClearItem(SDRATTR_3DOBJ_DEPTH);
-/*N*/ 
-/*N*/ 		nCount = aDataPointAttrList.Count();
+/*N*/ 			aDataRowAttrList[ i ]->ClearItem(SDRATTR_3DOBJ_DEPTH);
+/*N*/
+/*N*/ 		nCount = aDataPointAttrList.size();
 /*N*/ 		for( i=0; i < nCount; i++ )
 /*N*/ 		{
-/*N*/ 			pAttributes = aDataPointAttrList.GetObject( i );
+/*N*/ 			pAttributes = aDataPointAttrList[ i ];
 /*N*/ 			if (pAttributes != NULL)
 /*?*/ 				pAttributes->ClearItem(SDRATTR_3DOBJ_DEPTH);
 /*N*/ 		}
-/*N*/ 		
-/*N*/ 		nCount = aSwitchDataPointAttrList.Count();
+/*N*/
+/*N*/ 		nCount = aSwitchDataPointAttrList.size();
 /*N*/ 		for( i=0; i < nCount; i++ )
 /*N*/ 		{
-/*N*/ 			pAttributes = aSwitchDataPointAttrList.GetObject( i );
+/*N*/ 			pAttributes = aSwitchDataPointAttrList[ i ];
 /*N*/ 			if (pAttributes != NULL)
 /*?*/ 				pAttributes->ClearItem(SDRATTR_3DOBJ_DEPTH);
 /*N*/ 		}

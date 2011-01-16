@@ -2,7 +2,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -119,29 +119,25 @@ namespace binfilter {
 /*N*/         // change setting globally
 /*N*/         eDataDescr = eDescr;
 /*N*/         bShowSym = bSym;
-/*N*/ 
+/*N*/
 /*N*/         // clear individual settings
 /*N*/         long nEndRow = GetRowCount();
 /*N*/         for( long nRow = 0; nRow < nEndRow; nRow++ )
 /*N*/         {
 /*N*/             SfxItemSet &rAttr = SAL_CONST_CAST( SfxItemSet&, GetDataRowAttr( (short)nRow ));
-/*N*/ 
+/*N*/
 /*N*/             rAttr.Put( SvxChartDataDescrItem( eDescr ));
 /*N*/             rAttr.Put( SfxBoolItem( SCHATTR_DATADESCR_SHOW_SYM, bSym ));
-/*N*/ 
-/*N*/             // the following is the preferred method, but the items are not evaluated appropriately
-/*N*/ //              rAttr.ClearItem( ITEMID_CHARTDATADESCR );
-/*N*/ //              rAttr.ClearItem( SCHATTR_DATADESCR_SHOW_SYM );
 /*N*/         }
 /*N*/     }
 /*N*/     else
 /*N*/     {
 /*N*/         SfxItemSet &rAttr = SAL_CONST_CAST( SfxItemSet&, GetDataRowAttr( (short)nRowToChange ));
-/*N*/ 
+/*N*/
 /*N*/  		rAttr.Put( SvxChartDataDescrItem( eDescr ));
 /*N*/  		rAttr.Put( SfxBoolItem( SCHATTR_DATADESCR_SHOW_SYM, bSym ));
 /*N*/     }
-/*N*/ 
+/*N*/
 /*N*/ 	if( bBuildChart )
 /*?*/ 		BuildChart( FALSE );
 /*N*/ }
@@ -156,18 +152,18 @@ namespace binfilter {
 /*N*/ BOOL ChartModel::ResizePage(const Size& rNewSize)
 /*N*/ {
 /*N*/ 	SdrPage* pPage = GetPage(0);
-/*N*/ 
+/*N*/
 /*N*/ 	if (!pPage || pPage->GetSize() == rNewSize) return FALSE;
 /*N*/ 	else
 /*N*/ 	{
 /*N*/ 		BOOL bWasChanged = IsChanged();
-/*N*/ 
+/*N*/
 /*N*/ 		pPage->SetSize(rNewSize);
 /*N*/ 		eOldChartStyle = eChartStyle;
 /*N*/ 		if (rNewSize.Width () != 0 && rNewSize.Height () != 0) BuildChart(FALSE);
-/*N*/ 
+/*N*/
 /*N*/ 		if (!bWasChanged) SetChanged(FALSE);
-/*N*/ 
+/*N*/
 /*N*/ 		return TRUE;
 /*N*/ 	}
 /*N*/ }
@@ -186,24 +182,24 @@ namespace binfilter {
 /*N*/ 		fRatio = (double)aPageSize.Height() / (double)aInitialSize.Height();
 /*N*/ 	else
 /*?*/ 		fRatio = (double)aDiagramRectangle.GetHeight() / (double)aLastDiagramRectangle.GetHeight();
-/*N*/ 
+/*N*/
 /*N*/ 	// resize all three fonts
 /*N*/ 	static const USHORT nWhichIds[ 3 ] = {
 /*N*/ 		EE_CHAR_FONTHEIGHT,
 /*N*/ 		EE_CHAR_FONTHEIGHT_CJK,
 /*N*/ 		EE_CHAR_FONTHEIGHT_CTL
 /*N*/ 	};
-/*N*/ 
+/*N*/
 /*N*/ 	for( int i=0; i < 3; i++ )
 /*N*/ 	{
 /*N*/ 		long nHeight = ((SvxFontHeightItem &)pTextAttr->Get( nWhichIds[ i ] )).GetHeight();
-/*N*/ 
+/*N*/
 /*N*/         //	Scale and round height.
 /*N*/ 		nHeight = (long)( fRatio * (double)nHeight + 0.5 );
-/*N*/ 
+/*N*/
 /*N*/ 		float fPoints = (float)CalcToPoint( nHeight, SFX_MAPUNIT_100TH_MM, 10 );
 /*N*/ 		if( fPoints < 2.0 ) fPoints = 2.0;
-/*N*/ 
+/*N*/
 /*N*/ 		pTextAttr->Put( SvxFontHeightItem( CalcToUnit( fPoints / (float)10.0, SFX_MAPUNIT_100TH_MM ),
 /*N*/ 										   100, nWhichIds[ i ] ));
 /*N*/ 	}
@@ -233,7 +229,7 @@ namespace binfilter {
 /*N*/ void ChartModel::GetAttr(SfxItemSet& rAttr)
 /*N*/ {
 /*N*/ 	CHART_TRACE( "ChartModel::GetAttr(SfxItemSet& rAttr)" );
-/*N*/ 
+/*N*/
 /*N*/ 	rAttr.Put(SvxChartStyleItem(ChartStyle()));
 /*N*/ 	rAttr.Put(SfxBoolItem(CHATTR_TITLE_SHOW_MAIN, ShowMainTitle()));
 /*N*/ 	rAttr.Put(SfxStringItem(CHATTR_TITLE_MAIN, MainTitle()));
@@ -257,23 +253,23 @@ namespace binfilter {
 /*N*/ 	rAttr.Put(SfxBoolItem(CHATTR_AXISGRID_SHOW_Z_MAIN, ShowZGridMain()));
 /*N*/ 	rAttr.Put(SfxBoolItem(CHATTR_AXISGRID_SHOW_Z_HELP, ShowZGridHelp()));
 /*N*/ 	rAttr.Put(SfxBoolItem(CHATTR_AXISGRID_SHOW_Z_DESCR, ShowZDescr()));
-/*N*/ 
+/*N*/
 /*N*/ 	rAttr.Put(SfxBoolItem(CHATTR_AXISGRID_SHOW_2Y_AXIS, GetAxisByUID(CHART_AXIS_SECONDARY_Y)->IsVisible()));
 /*N*/ 	rAttr.Put(SfxBoolItem(CHATTR_AXISGRID_SHOW_2Y_DESCR, GetAxisByUID(CHART_AXIS_SECONDARY_Y)->HasDescription()));
-/*N*/ 
+/*N*/
 /*N*/ 	rAttr.Put(SfxBoolItem(CHATTR_AXISGRID_SHOW_2X_AXIS, GetAxisByUID(CHART_AXIS_SECONDARY_X)->IsVisible()));
 /*N*/ 	rAttr.Put(SfxBoolItem(CHATTR_AXISGRID_SHOW_2X_DESCR, GetAxisByUID(CHART_AXIS_SECONDARY_X)->HasDescription()));
-/*N*/ 
+/*N*/
 /*N*/ 	const SfxPoolItem *pPoolItem = NULL;
 /*N*/ 	if (pLegendAttr->GetItemState(SCHATTR_LEGEND_POS, TRUE, &pPoolItem)
 /*N*/ 							== SFX_ITEM_SET)
 /*N*/ 		rAttr.Put(SvxChartLegendPosItem
 /*N*/ 					(((const SvxChartLegendPosItem*)pPoolItem)->GetValue(),
 /*N*/ 					pItemPool->GetSlotId(SCHATTR_LEGEND_POS)));
-/*N*/ 
+/*N*/
 /*N*/ 	rAttr.Put(SfxBoolItem(CHATTR_DATA_SWITCH, IsSwitchData()));
-/*N*/ 
-/*N*/ 
+/*N*/
+/*N*/
 /*N*/ 	rAttr.Put (SfxBoolItem (SCHATTR_STAT_AVERAGE,bShowAverage));
 /*N*/ 	rAttr.Put (SfxInt32Item (SCHATTR_STAT_KIND_ERROR, (INT32) eErrorKind));
 /*N*/ 	rAttr.Put (SfxInt32Item (SCHATTR_STAT_INDICATE, (INT32) eIndicate));
@@ -282,24 +278,24 @@ namespace binfilter {
 /*N*/ 	rAttr.Put (SvxDoubleItem (fIndicatePlus, SCHATTR_STAT_CONSTPLUS));
 /*N*/ 	rAttr.Put (SvxDoubleItem (fIndicateMinus, SCHATTR_STAT_CONSTMINUS));
 /*N*/ 	rAttr.Put (SfxInt32Item (SCHATTR_STAT_REGRESSTYPE, (INT32) eRegression));
-/*N*/ 
+/*N*/
 /*N*/ 	//Datenbeschriftung
 /*N*/ 	rAttr.Put(SfxBoolItem(SCHATTR_DATADESCR_SHOW_SYM,bShowSym));
 /*N*/ 	rAttr.Put(SvxChartDataDescrItem(eDataDescr));
-/*N*/ 
+/*N*/
 /*N*/ 	rAttr.Put(SfxInt32Item(CHATTR_BARWIDTH,GetBarPercentWidth()));
 /*N*/ 	rAttr.Put(SfxBoolItem(CHATTR_BARCONNECT, (BOOL)(m_nDefaultColorSet&CHSPECIAL_TRACELINES)));
-/*N*/ 
+/*N*/
 /*N*/ 	if (pChartAttr->GetItemState(SCHATTR_STYLE_SHAPE, TRUE, &pPoolItem)== SFX_ITEM_SET)
 /*N*/ 	{
 /*?*/ 		long nTmp= (long)((const SfxInt32Item*)pPoolItem)->GetValue();
 /*?*/ 		rAttr.Put(SfxInt32Item(SCHATTR_STYLE_SHAPE,nTmp));
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	ChartScene *pLclScene=GetScene();
 /*N*/ 	if(pLclScene)
 /*N*/ 		rAttr.Put(pLclScene->GetItemSet());
-/*N*/ 
+/*N*/
 /*N*/     if( pChartAttr->GetItemState( SCHATTR_USER_DEFINED_ATTR, TRUE, &pPoolItem ) == SFX_ITEM_SET )
 /*N*/     {
 /*?*/         rAttr.Put( *pPoolItem );
@@ -315,198 +311,198 @@ namespace binfilter {
 /*N*/ void ChartModel::PutAttr(const SfxItemSet& rAttr)
 /*N*/ {
 /*N*/ 	const SfxPoolItem *pPoolItem = NULL;
-/*N*/ 
+/*N*/
 /*N*/ 	if (rAttr.GetItemState(CHATTR_TITLE_SHOW_MAIN, TRUE, &pPoolItem)
 /*N*/ 					== SFX_ITEM_SET)
 /*N*/ 		ShowMainTitle () = ((const SfxBoolItem*)pPoolItem)->GetValue();
-/*N*/ 
+/*N*/
 /*N*/ 	if (rAttr.GetItemState(CHATTR_TITLE_MAIN, TRUE, &pPoolItem)
 /*N*/ 					== SFX_ITEM_SET)
 /*?*/ 		MainTitle () = ((const SfxStringItem*)pPoolItem)->GetValue();
-/*N*/ 
+/*N*/
 /*N*/ 	if (rAttr.GetItemState(CHATTR_TITLE_SHOW_SUB, TRUE, &pPoolItem)
 /*N*/ 					== SFX_ITEM_SET)
 /*N*/ 		ShowSubTitle () = ((const SfxBoolItem*)pPoolItem)->GetValue();
-/*N*/ 
+/*N*/
 /*N*/ 	if (rAttr.GetItemState(CHATTR_TITLE_SUB, TRUE, &pPoolItem)
 /*N*/ 					== SFX_ITEM_SET)
 /*?*/ 		SubTitle () = ((const SfxStringItem*)pPoolItem)->GetValue();
-/*N*/ 
+/*N*/
 /*N*/ 	if (rAttr.GetItemState(CHATTR_TITLE_SHOW_X_AXIS, TRUE, &pPoolItem)
 /*N*/ 					== SFX_ITEM_SET)
 /*N*/ 		ShowXAxisTitle () = ((const SfxBoolItem*)pPoolItem)->GetValue();
-/*N*/ 
+/*N*/
 /*N*/ 	if (rAttr.GetItemState(CHATTR_TITLE_X_AXIS, TRUE, &pPoolItem)
 /*N*/ 					== SFX_ITEM_SET)
 /*?*/ 		XAxisTitle () = ((const SfxStringItem*)pPoolItem)->GetValue();
-/*N*/ 
+/*N*/
 /*N*/ 	if (rAttr.GetItemState(CHATTR_TITLE_SHOW_Y_AXIS, TRUE, &pPoolItem)
 /*N*/ 					== SFX_ITEM_SET)
 /*N*/ 		ShowYAxisTitle () = ((const SfxBoolItem*)pPoolItem)->GetValue();
-/*N*/ 
+/*N*/
 /*N*/ 	if (rAttr.GetItemState(CHATTR_TITLE_Y_AXIS, TRUE, &pPoolItem)
 /*N*/ 					== SFX_ITEM_SET)
 /*?*/ 		YAxisTitle () = ((const SfxStringItem*)pPoolItem)->GetValue();
-/*N*/ 
+/*N*/
 /*N*/ 	if (rAttr.GetItemState(CHATTR_TITLE_SHOW_Z_AXIS, TRUE, &pPoolItem)
 /*N*/ 					== SFX_ITEM_SET)
 /*N*/ 		ShowZAxisTitle () = ((const SfxBoolItem*)pPoolItem)->GetValue();
-/*N*/ 
+/*N*/
 /*N*/ 	if (rAttr.GetItemState(CHATTR_TITLE_Z_AXIS, TRUE, &pPoolItem)
 /*N*/ 					== SFX_ITEM_SET)
 /*?*/ 		ZAxisTitle () = ((const SfxStringItem*)pPoolItem)->GetValue();
-/*N*/ 
+/*N*/
 /*N*/ 	if (rAttr.GetItemState(CHATTR_AXISGRID_SHOW_X_AXIS, TRUE, &pPoolItem)
 /*N*/ 					== SFX_ITEM_SET)
 /*N*/ 		ShowXAxis (((const SfxBoolItem*)pPoolItem)->GetValue());
-/*N*/ 
+/*N*/
 /*N*/ 	if (rAttr.GetItemState(CHATTR_AXISGRID_SHOW_X_MAIN, TRUE, &pPoolItem)
 /*N*/ 					== SFX_ITEM_SET)
 /*N*/ 		ShowXGridMain () = ((const SfxBoolItem*)pPoolItem)->GetValue();
-/*N*/ 
+/*N*/
 /*N*/ 	if (rAttr.GetItemState(CHATTR_AXISGRID_SHOW_X_HELP, TRUE, &pPoolItem)
 /*N*/ 					== SFX_ITEM_SET)
 /*?*/ 		ShowXGridHelp () = ((const SfxBoolItem*)pPoolItem)->GetValue();
-/*N*/ 
+/*N*/
 /*N*/ 	if (rAttr.GetItemState(CHATTR_AXISGRID_SHOW_X_DESCR, TRUE, &pPoolItem)
 /*N*/ 					== SFX_ITEM_SET)
 /*N*/ 		ShowXDescr (((const SfxBoolItem*)pPoolItem)->GetValue());
-/*N*/ 
+/*N*/
 /*N*/ 	if (rAttr.GetItemState(CHATTR_AXISGRID_SHOW_Y_AXIS, TRUE, &pPoolItem)
 /*N*/ 					== SFX_ITEM_SET)
 /*N*/ 		ShowYAxis (((const SfxBoolItem*)pPoolItem)->GetValue());
-/*N*/ 
+/*N*/
 /*N*/ 	if (rAttr.GetItemState(CHATTR_AXISGRID_SHOW_Y_MAIN, TRUE, &pPoolItem)
 /*N*/ 					== SFX_ITEM_SET)
 /*N*/ 		ShowYGridMain () = ((const SfxBoolItem*)pPoolItem)->GetValue();
-/*N*/ 
+/*N*/
 /*N*/ 	if (rAttr.GetItemState(CHATTR_AXISGRID_SHOW_Y_HELP, TRUE, &pPoolItem)
 /*N*/ 					== SFX_ITEM_SET)
 /*?*/ 		ShowYGridHelp () = ((const SfxBoolItem*)pPoolItem)->GetValue();
-/*N*/ 
+/*N*/
 /*N*/ 	if (rAttr.GetItemState(CHATTR_AXISGRID_SHOW_Y_DESCR, TRUE, &pPoolItem)
 /*N*/ 					== SFX_ITEM_SET)
 /*N*/ 		ShowYDescr (((const SfxBoolItem*)pPoolItem)->GetValue());
-/*N*/ 
+/*N*/
 /*N*/ 	if (rAttr.GetItemState(CHATTR_AXISGRID_SHOW_Z_AXIS, TRUE, &pPoolItem)
 /*N*/ 					== SFX_ITEM_SET)
 /*N*/ 		ShowZAxis (((const SfxBoolItem*)pPoolItem)->GetValue());
-/*N*/ 
+/*N*/
 /*N*/ 	if (rAttr.GetItemState(CHATTR_AXISGRID_SHOW_Z_MAIN, TRUE, &pPoolItem)
 /*N*/ 					== SFX_ITEM_SET)
 /*?*/ 		ShowZGridMain () = ((const SfxBoolItem*)pPoolItem)->GetValue();
-/*N*/ 
+/*N*/
 /*N*/ 	if (rAttr.GetItemState(CHATTR_AXISGRID_SHOW_Z_HELP, TRUE, &pPoolItem)
 /*N*/ 					== SFX_ITEM_SET)
 /*?*/ 		ShowZGridHelp () = ((const SfxBoolItem*)pPoolItem)->GetValue();
-/*N*/ 
+/*N*/
 /*N*/ 	if (rAttr.GetItemState(CHATTR_AXISGRID_SHOW_Z_DESCR, TRUE, &pPoolItem)
 /*N*/ 					== SFX_ITEM_SET)
 /*N*/ 		ShowZDescr (((const SfxBoolItem*)pPoolItem)->GetValue());
-/*N*/ 
-/*N*/ 
-/*N*/ 
+/*N*/
+/*N*/
+/*N*/
 /*N*/ 	if (rAttr.GetItemState(CHATTR_AXISGRID_SHOW_2Y_AXIS, TRUE, &pPoolItem)
 /*N*/ 					== SFX_ITEM_SET)
 /*N*/ 	{
 /*N*/ 		BOOL b = ((const SfxBoolItem*)pPoolItem)->GetValue();
 /*N*/ 		pChartBAxis->GetItemSet()->Put(SfxBoolItem(SCHATTR_AXIS_SHOWAXIS,b));
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	if (rAttr.GetItemState(CHATTR_AXISGRID_SHOW_2Y_DESCR, TRUE, &pPoolItem)
 /*N*/ 					== SFX_ITEM_SET)
 /*N*/ 	{
 /*N*/ 		BOOL b = ((const SfxBoolItem*)pPoolItem)->GetValue();
 /*N*/ 		pChartBAxis->GetItemSet()->Put(SfxBoolItem(SCHATTR_AXIS_SHOWDESCR,b));
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	if (rAttr.GetItemState(CHATTR_AXISGRID_SHOW_2X_AXIS, TRUE, &pPoolItem)
 /*N*/ 					== SFX_ITEM_SET)
 /*N*/ 	{
 /*N*/ 		BOOL b = ((const SfxBoolItem*)pPoolItem)->GetValue();
 /*N*/ 		pChartAAxis->GetItemSet()->Put(SfxBoolItem(SCHATTR_AXIS_SHOWAXIS,b));
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	if (rAttr.GetItemState(CHATTR_AXISGRID_SHOW_2X_DESCR, TRUE, &pPoolItem)
 /*N*/ 					== SFX_ITEM_SET)
 /*N*/ 	{
 /*N*/ 		BOOL b = ((const SfxBoolItem*)pPoolItem)->GetValue();
 /*N*/ 		pChartAAxis->GetItemSet()->Put(SfxBoolItem(SCHATTR_AXIS_SHOWDESCR,b));
 /*N*/ 	}
-/*N*/ 
-/*N*/ 
-/*N*/ 
-/*N*/ 
+/*N*/
+/*N*/
+/*N*/
+/*N*/
 /*N*/ 	if (rAttr.GetItemState(CHATTR_LEGEND_POS, TRUE, &pPoolItem)
 /*N*/ 					== SFX_ITEM_SET)
 /*N*/ 		pLegendAttr->Put(SvxChartLegendPosItem
 /*N*/ 			(((const SvxChartLegendPosItem*)pPoolItem)->GetValue(),
 /*?*/ 			 pItemPool->GetWhich(CHATTR_LEGEND_POS)));
-/*N*/ 
+/*N*/
 /*N*/ 	if (rAttr.GetItemState(CHATTR_DATA_SWITCH, TRUE, &pPoolItem)
 /*N*/ 					== SFX_ITEM_SET)
 /*?*/ 		ChangeSwitchData(((const SfxBoolItem*)pPoolItem)->GetValue());
-/*N*/ 
-/*N*/ 
-/*N*/ 
+/*N*/
+/*N*/
+/*N*/
 /*N*/ //Statistik
 /*N*/    if (rAttr.GetItemState(SCHATTR_STAT_CONSTPLUS, TRUE, &pPoolItem)
 /*N*/ 					== SFX_ITEM_SET)
 /*N*/ 		fIndicatePlus=((const SvxDoubleItem*)pPoolItem)->GetValue();
-/*N*/ 
+/*N*/
 /*N*/    if (rAttr.GetItemState(SCHATTR_STAT_BIGERROR, TRUE, &pPoolItem)
 /*N*/ 					== SFX_ITEM_SET)
 /*N*/ 		fIndicateBigError=((const SvxDoubleItem*)pPoolItem)->GetValue();
-/*N*/ 
+/*N*/
 /*N*/    if (rAttr.GetItemState(SCHATTR_STAT_PERCENT, TRUE, &pPoolItem)
 /*N*/ 					== SFX_ITEM_SET)
 /*N*/ 		fIndicatePercent=((const SvxDoubleItem*)pPoolItem)->GetValue();
-/*N*/ 
+/*N*/
 /*N*/    if (rAttr.GetItemState(SCHATTR_STAT_INDICATE, TRUE, &pPoolItem)
 /*N*/ 					== SFX_ITEM_SET)
 /*?*/ 		eIndicate=(SvxChartIndicate)((const SfxInt32Item*)pPoolItem)->GetValue();
-/*N*/ 
+/*N*/
 /*N*/    if (rAttr.GetItemState(SCHATTR_STAT_KIND_ERROR, TRUE, &pPoolItem)
 /*N*/ 					== SFX_ITEM_SET)
 /*N*/ 		eErrorKind=(SvxChartKindError)((const SfxInt32Item*)pPoolItem)->GetValue();
-/*N*/ 
+/*N*/
 /*N*/    if (rAttr.GetItemState(SCHATTR_STAT_AVERAGE, TRUE, &pPoolItem)
 /*N*/ 					== SFX_ITEM_SET)
 /*N*/ 		bShowAverage=((const SfxBoolItem*)pPoolItem)->GetValue();
-/*N*/ 
+/*N*/
 /*N*/    if (rAttr.GetItemState(SCHATTR_STAT_CONSTMINUS, TRUE, &pPoolItem)
 /*N*/ 					== SFX_ITEM_SET)
 /*N*/ 		fIndicateMinus=((const SvxDoubleItem*)pPoolItem)->GetValue();
 /*N*/    if (rAttr.GetItemState(SCHATTR_STAT_REGRESSTYPE, TRUE, &pPoolItem)
 /*N*/ 					== SFX_ITEM_SET)
 /*N*/ 		eRegression=(SvxChartRegress)((const SfxInt32Item*)pPoolItem)->GetValue();
-/*N*/ 
-/*N*/ 
+/*N*/
+/*N*/
 /*N*/ 	   //Datenbeschriftung
 /*N*/ 	   SvxChartDataDescr eNewDataDescr,eOldDataDescr;
 /*N*/ 	   BOOL bNewShowSym, bOldShowSym;
-/*N*/ 
+/*N*/
 /*N*/ 	   eNewDataDescr = eOldDataDescr = eDataDescr;
 /*N*/ 	   bNewShowSym = bOldShowSym = bShowSym;
-/*N*/ 
+/*N*/
 /*N*/ 	  if (rAttr.GetItemState(SCHATTR_DATADESCR_DESCR, TRUE, &pPoolItem)
 /*N*/ 					== SFX_ITEM_SET)
 /*N*/ 		eNewDataDescr=(SvxChartDataDescr)((const SvxChartDataDescrItem*)pPoolItem)->GetValue();
-/*N*/ 
+/*N*/
 /*N*/ 	  if (rAttr.GetItemState(SCHATTR_DATADESCR_SHOW_SYM, TRUE, &pPoolItem)
 /*N*/ 					== SFX_ITEM_SET)
 /*N*/ 		bNewShowSym=((const SfxBoolItem*)pPoolItem)->GetValue();
-/*N*/ 
+/*N*/
 /*N*/ 	  if( bOldShowSym != bNewShowSym || eOldDataDescr != eNewDataDescr )
 /*N*/ 	  {
 /*?*/ 		  ChangeDataDescr(eNewDataDescr,bNewShowSym);
 /*N*/ 	  }
-/*N*/ 
+/*N*/
 /*N*/ 	if (rAttr.GetItemState(CHATTR_BARWIDTH, TRUE, &pPoolItem)
 /*N*/ 				== SFX_ITEM_SET)
 /*?*/ 		SetBarPercentWidth((long)((const SfxInt32Item*)pPoolItem)->GetValue());
-/*N*/ 
-/*N*/ 
+/*N*/
+/*N*/
 /*N*/    if (rAttr.GetItemState(CHATTR_BARCONNECT, TRUE, &pPoolItem)
 /*N*/ 					== SFX_ITEM_SET)
 /*N*/    {
@@ -515,7 +511,7 @@ namespace binfilter {
 /*N*/ 		   ?(m_nDefaultColorSet|CHSPECIAL_TRACELINES)
 /*N*/ 		   :(m_nDefaultColorSet|CHSPECIAL_TRACELINES)-CHSPECIAL_TRACELINES;
 /*N*/    }
-/*N*/ 
+/*N*/
 /*N*/ 	if (rAttr.GetItemState(SCHATTR_STYLE_SHAPE, TRUE, &pPoolItem)== SFX_ITEM_SET)
 /*N*/ 	{
 /*N*/ 		long nTmp= (long)((const SfxInt32Item*)pPoolItem)->GetValue();
@@ -523,7 +519,7 @@ namespace binfilter {
 /*N*/ 		aS.Put(SfxInt32Item(SCHATTR_STYLE_SHAPE,nTmp));
 /*N*/ 		PutDataRowAttrAll(aS);
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	// Autopilot mit CHATTR_
 /*N*/ 	if (rAttr.GetItemState(CHATTR_STYLE_SHAPE, TRUE, &pPoolItem)== SFX_ITEM_SET)
 /*N*/ 	{
@@ -546,23 +542,23 @@ namespace binfilter {
 /*?*/ 			pChartBAxis->SetAttributes( aS );
 /*?*/ 		}
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	ChartScene *pLclScene=GetScene();
 /*N*/ 	if(pLclScene) //ToDo: Ist das hier nötig??? warum nicht direkt rAttr? #63904#
 /*N*/ 	{
 /*N*/ 		SfxItemSet aSceneSet(*pItemPool,nRowWhichPairs);
 /*N*/ 		aSceneSet.Put(rAttr);
-/*N*/ 
+/*N*/
 /*N*/ 		pLclScene->SetItemSet(aSceneSet);
-/*N*/ 
+/*N*/
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/     if( rAttr.GetItemState( SCHATTR_USER_DEFINED_ATTR, TRUE, &pPoolItem ) == SFX_ITEM_SET )
 /*N*/     {
 /*?*/         pChartAttr->Put( *pPoolItem );
 /*N*/     }
-/*N*/ 
-/*N*/ 
+/*N*/
+/*N*/
 /*N*/ 	if (rAttr.GetItemState(CHATTR_DIAGRAM_STYLE, TRUE, &pPoolItem)
 /*N*/ 				== SFX_ITEM_SET)
 /*?*/ 		ChangeChart( ((const SvxChartStyleItem*)pPoolItem)->GetValue());
@@ -592,24 +588,24 @@ namespace binfilter {
 /*N*/ void ChartModel::Initialize()
 /*N*/ {
 /*N*/ 	mbIsInitialized = TRUE;
-/*N*/ 
+/*N*/
 /*N*/ 	if (!(aInitialSize.Height () && aInitialSize.Width ()))
 /*N*/ 	{
 /*?*/ 		SdrPage* pPage = GetPage(0);
 /*?*/ 		if (pPage) aInitialSize = pPage->GetSize();
-/*?*/ 
+/*?*/
 /*?*/ 		if (!(aInitialSize.Height () && aInitialSize.Width ())) aInitialSize = Size (7000, 8000);
 /*?*/ //        13000, 8666
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	ScaleText( 0, aInitialSize );
-/*N*/ 
+/*N*/
 /*N*/ 	if( bShouldBuildChart )
 /*N*/ 	{
 /*N*/ 		//	Force build chart.  If it has been loaded from an XML file, than that is
 /*N*/ 		//	done by unlocking it.
 /*N*/ 		bNoBuildChart = FALSE;
-/*N*/ 
+/*N*/
 /*N*/ 		if( pDocShell &&
 /*N*/ 			pDocShell->IsEnableSetModified())
 /*N*/ 		{
@@ -626,7 +622,7 @@ namespace binfilter {
 /*N*/ 			else
 /*N*/ 				BuildChart( FALSE );
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	SetDiagramRectangle( GetChartRect() );
 /*N*/ }
 
@@ -655,9 +651,9 @@ namespace binfilter {
 /*?*/ 				ResizeText( &GetAttr(CHOBJID_DIAGRAM_B_AXIS), rPageSize, FALSE );
 /*?*/ 			if( nTitle != CHOBJID_DIAGRAM_Z_AXIS )
 /*?*/ 				ResizeText( &GetAttr(CHOBJID_DIAGRAM_Z_AXIS), rPageSize, FALSE );
-/*?*/ 
-/*?*/ 			for( ULONG i=0; i<aDataRowAttrList.Count(); i++ )
-/*?*/ 				ResizeText( aDataRowAttrList.GetObject(i), rPageSize, FALSE );
+/*?*/
+/*?*/ 			for( size_t i = 0; i < aDataRowAttrList.size(); i++ )
+/*?*/ 				ResizeText( aDataRowAttrList[ i ], rPageSize, FALSE );
 /*?*/ 			ResizeText(pDummyAttr,rPageSize);	// also resize crash test dummy to normal for next test ?
 /*N*/ 		}
 /*N*/ 	}
@@ -673,7 +669,7 @@ namespace binfilter {
 /*N*/ 			ResizeText (pYAxisTitleAttr,rPageSize);
 /*N*/ 		if(nTitle != CHOBJID_DIAGRAM_TITLE_Z_AXIS)
 /*N*/ 			ResizeText (pZAxisTitleAttr,rPageSize);
-/*N*/ 
+/*N*/
 /*N*/ 		if(nTitle != CHOBJID_DIAGRAM_X_AXIS)
 /*N*/ 			ResizeText(&GetAttr(CHOBJID_DIAGRAM_X_AXIS),rPageSize);
 /*N*/ 		if(nTitle != CHOBJID_DIAGRAM_Y_AXIS)
@@ -686,8 +682,8 @@ namespace binfilter {
 /*N*/ 			ResizeText(&GetAttr(CHOBJID_DIAGRAM_Z_AXIS),rPageSize);
 /*N*/ 		if(nTitle != CHOBJID_LEGEND)
 /*N*/ 			ResizeText(pLegendAttr, rPageSize);
-/*N*/ 		for( ULONG i=0; i<aDataRowAttrList.Count(); i++ )
-/*N*/ 			ResizeText(aDataRowAttrList.GetObject(i),rPageSize);
+/*N*/ 		for( size_t i = 0; i < aDataRowAttrList.size(); i++ )
+/*N*/ 			ResizeText( aDataRowAttrList[ i ], rPageSize );
 /*N*/ 		ResizeText(pDummyAttr,rPageSize);	// also resize crash test dummy to normal for next test ?
 /*N*/ 	}
 /*N*/ }
@@ -701,7 +697,7 @@ namespace binfilter {
 /*N*/ {
 /*N*/ 	SdrPage* pPage=GetPage(0);
 /*N*/ 	const Size& rPageSize=pPage->GetSize();
-/*N*/ 
+/*N*/
 /*N*/ 	Point aTitlePosition;
 /*N*/ 	if (bUseRelativePositionsForChartGroups && (aTitleTopCenter.X() >= 0) &&
 /*N*/ 	   (aTitleTopCenter.Y() >= 0) && GetMainTitleHasBeenMoved())
@@ -716,11 +712,11 @@ namespace binfilter {
 /*N*/ 		aTitlePosition.X() = aChartRect.Left() + aChartRect.GetWidth() / 2;
 /*N*/ 		aTitlePosition.Y() = aChartRect.Top();
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	SdrTextObj *pObj = CreateTextObj(CHOBJID_TITLE_MAIN, aTitlePosition,
 /*N*/ 									 aMainTitle,
 /*N*/ 									 *pMainTitleAttr, TRUE, CHADJUST_TOP_CENTER);
-/*N*/ 
+/*N*/
 /*N*/ 	aChartRect.Top() += GetOutputSize(*pObj).Height() + nYOfs;
 /*N*/ 	pObj->SetResizeProtect(TRUE);
 /*N*/ 	pPage->NbcInsertObject(pObj, rIndex++);
@@ -736,7 +732,7 @@ namespace binfilter {
 /*N*/ {
 /*N*/ 	SdrPage* pPage=GetPage(0);
 /*N*/ 	const Size& rPageSize=pPage->GetSize();
-/*N*/ 
+/*N*/
 /*N*/ 	Point aSubTitlePosition;
 /*N*/ 	if (bUseRelativePositionsForChartGroups && (aSubTitleTopCenter.X() >= 0) &&
 /*N*/ 	  (aSubTitleTopCenter.Y() >= 0) && GetSubTitleHasBeenMoved())
@@ -754,7 +750,7 @@ namespace binfilter {
 /*N*/ 	SdrTextObj *pObj = CreateTextObj(CHOBJID_TITLE_SUB, aSubTitlePosition,
 /*N*/ 									aSubTitle,
 /*N*/ 									*pSubTitleAttr, TRUE, CHADJUST_TOP_CENTER);
-/*N*/ 
+/*N*/
 /*N*/ 	aChartRect.Top() += GetOutputSize(*pObj).Height() + nYOfs;
 /*N*/ 	pObj->SetResizeProtect(TRUE);
 /*N*/ 	pPage->NbcInsertObject(pObj, rIndex++);
@@ -770,19 +766,19 @@ namespace binfilter {
 /*N*/ {
 /*N*/ 	SdrPage* pPage=GetPage(0);
 /*N*/ 	const Size& rPageSize=pPage->GetSize();
-/*N*/ 
+/*N*/
 /*N*/ 	SvxChartLegendPos eLegendPos = ((const SvxChartLegendPosItem&) pLegendAttr->Get(SCHATTR_LEGEND_POS)).
 /*N*/ 							   GetValue();
-/*N*/ 
+/*N*/
 /*N*/ 	if (eLegendPos != CHLEGEND_NONE)
 /*N*/ 	{
 /*N*/ 		SdrObject   *pObj = CreateLegend(rWholeRect);
-/*N*/ 
+/*N*/
 /*N*/ 		if (pObj)
 /*N*/ 		{
 /*N*/ 			Rectangle   aRect = pObj->GetLogicRect();
 /*N*/ 			ChartAdjust eAdjust(CHADJUST_TOP_LEFT);
-/*N*/ 
+/*N*/
 /*N*/ 			Point aLegendPosition;
 /*N*/ 			if (bUseRelativePositionsForChartGroups && (aLegendTopLeft.X() >= 0) &&
 /*N*/ 			   (aLegendTopLeft.Y() >= 0) && GetLegendHasBeenMoved())
@@ -793,12 +789,12 @@ namespace binfilter {
 /*N*/                 double fRatioY =
 /*N*/                     static_cast< double >( rPageSize.Height() ) /
 /*N*/                     static_cast< double >( aInitialSize.Height() );
-/*N*/ 
+/*N*/
 /*N*/ 				aLegendPosition.X() = static_cast< long >(
 /*N*/                     static_cast< double >( aLegendTopLeft.X() ) * fRatioX );
 /*N*/ 				aLegendPosition.Y() = static_cast< long >(
 /*N*/                     static_cast< double >( aLegendTopLeft.Y() ) * fRatioY );
-/*N*/ 
+/*N*/
 /*N*/ 				if( bAdjustMarginsForLegend )
 /*N*/ 				{
 /*N*/ 					switch (eLegendPos)
@@ -807,17 +803,17 @@ namespace binfilter {
 /*?*/ 							eAdjust = CHADJUST_TOP_LEFT;
 /*?*/ 							aChartRect.Left() += aRect.GetWidth() + nXOfs;
 /*?*/ 							break;
-/*?*/ 
+/*?*/
 /*?*/ 						case CHLEGEND_TOP:
 /*?*/ 							eAdjust = CHADJUST_TOP_LEFT;
 /*?*/ 							aChartRect.Top() += aRect.GetHeight() + nYOfs;
 /*?*/ 							break;
-/*N*/ 
+/*N*/
 /*N*/ 						case CHLEGEND_RIGHT:
 /*N*/ 							eAdjust = CHADJUST_TOP_LEFT;
 /*N*/ 							aChartRect.Right() -= aRect.GetWidth() + nXOfs;
 /*N*/ 							break;
-/*N*/ 
+/*N*/
 /*?*/ 						case CHLEGEND_BOTTOM:
 /*?*/ 							eAdjust = CHADJUST_TOP_LEFT;
 /*?*/ 							aChartRect.Bottom() -= aRect.GetHeight() + nYOfs;
@@ -850,21 +846,21 @@ namespace binfilter {
 /*?*/ 						eAdjust = CHADJUST_CENTER_LEFT;
 /*?*/ 						aChartRect.Left() += aRect.GetWidth() + nXOfs;
 /*?*/ 						break;
-/*?*/ 
+/*?*/
 /*?*/ 					case CHLEGEND_TOP:
 /*?*/ 						aLegendPosition.X() = rWholeRect.Left() + rWholeRect.GetWidth() / 2;
 /*?*/ 						aLegendPosition.Y() = aChartRect.Top();
 /*?*/ 						eAdjust = CHADJUST_TOP_CENTER;
 /*?*/ 						aChartRect.Top() += aRect.GetHeight() + nYOfs;
 /*?*/ 						break;
-/*N*/ 
+/*N*/
 /*N*/ 					case CHLEGEND_RIGHT:
 /*N*/ 						aLegendPosition.X() = rWholeRect.Right();
 /*N*/ 						aLegendPosition.Y() = rWholeRect.Top() + rWholeRect.GetHeight() / 2;
 /*N*/ 						eAdjust = CHADJUST_CENTER_RIGHT;
 /*N*/ 						aChartRect.Right() -= aRect.GetWidth() + nXOfs;
 /*N*/ 						break;
-/*N*/ 
+/*N*/
 /*N*/ 					case CHLEGEND_BOTTOM:
 /*?*/ 						aLegendPosition.X() = rWholeRect.Left() + rWholeRect.GetWidth() / 2;
 /*?*/ 						aLegendPosition.Y() = rWholeRect.Bottom();
@@ -875,9 +871,9 @@ namespace binfilter {
 /*?*/ 						break;
 /*N*/ 				}
 /*N*/ 			}
-/*N*/ 	
+/*N*/
 /*N*/ 			//	For 3D pie charts that whose position and size have not been altered
-/*N*/ 			//	manually, the calculated size in aChartRect is 
+/*N*/ 			//	manually, the calculated size in aChartRect is
 /*N*/ 			//	set to aDiagramRectangle after a possible adaption to half
 /*N*/ 			//	it's height.  This adaption mimics the behaviour from BuildChart
 /*N*/ 			//	and takes place only if the diagram is not more than twice as wide
@@ -893,7 +889,7 @@ namespace binfilter {
 /*N*/ 				}
 /*N*/ 				SetDiagramRectangle (aChartRect);
 /*N*/ 			}
-/*N*/ 
+/*N*/
 /*N*/ 			aRect.SetPos(aLegendPosition);
 /*N*/ 			AdjustRect(aRect, eAdjust);
 /*N*/ 			pObj->NbcSetLogicRect(aRect);
@@ -916,12 +912,11 @@ namespace binfilter {
 /*N*/ 	{
 /*N*/ 		SdrObject* pObj;
 /*N*/ 		long nRow, nCol;
-/*N*/ //-/		SfxItemSet aSet( *pItemPool, SID_ATTR_3D_START, SID_ATTR_3D_END );
 /*N*/ 		SfxItemSet aSet( *pItemPool, SDRATTR_3D_FIRST, SDRATTR_3D_LAST);
 /*N*/ 		aSet.ClearItem();
-/*N*/ 
+/*N*/
 /*N*/ 		SdrObjListIter aIterator( *pList, IM_DEEPWITHGROUPS );
-/*N*/ 
+/*N*/
 /*N*/ 		while( aIterator.IsMore() )
 /*N*/ 		{
 /*N*/ 			pObj = aIterator.Next();
@@ -930,20 +925,18 @@ namespace binfilter {
 /*N*/ 			if( pDataRow )
 /*N*/ 			{
 /*N*/ 				nRow = pDataRow->GetRow();
-/*N*/ //-/				pObj->TakeAttributes( aSet, FALSE, TRUE );
 /*N*/ 				aSet.Put(pObj->GetItemSet());
-/*N*/ 
+/*N*/
 /*N*/ 				aSet.ClearInvalidItems();
-/*N*/ 				aDataRowAttrList.GetObject( nRow )->Put( aSet );
+/*N*/ 				aDataRowAttrList[ nRow ]->Put( aSet );
 /*N*/ 				aSet.ClearItem();
 /*N*/ 			}
 /*N*/ 			else if( pDataPoint )
 /*N*/ 			{
 /*N*/ 				nCol = pDataPoint->GetCol();
 /*N*/ 				nRow = pDataPoint->GetRow();
-/*N*/ //-/				pObj->TakeAttributes( aSet, FALSE, TRUE );
 /*N*/ 				aSet.Put(pObj->GetItemSet());
-/*N*/ 
+/*N*/
 /*N*/ 				aSet.ClearInvalidItems();
 /*N*/ 				PutDataPointAttr( nCol, nRow, aSet );
 /*N*/ 				aSet.ClearItem();
@@ -954,7 +947,6 @@ namespace binfilter {
 /*N*/ 				if( pId )
 /*N*/ 				{
 /*N*/ 					long nId = pId->GetObjId();
-/*N*/ //-/					pObj->TakeAttributes( aSet, FALSE, TRUE );
 /*N*/ 					aSet.Put(pObj->GetItemSet());
 /*N*/ 					if( aSet.Count() )
 /*N*/ 					{
@@ -967,6 +959,7 @@ namespace binfilter {
 /*N*/ 		}
 /*N*/ 	}
 /*N*/ }
+
 /*************************************************************************
 |*
 |* Sub-Methode von BuildChart(), Loeschen aller Chartobjecte
@@ -976,31 +969,31 @@ namespace binfilter {
 /*N*/ {
 /*N*/ 	SdrPage* pPage=GetPage(0);
 /*N*/   /*BOOL bResize = (aInitialSize != */pPage->GetSize()/*)*/;
-/*N*/ 
+/*N*/
 /*N*/ 	// FG: Bevor die Objekte geloescht und neu aufgebaut werden, merkt man sich deren
 /*N*/ 	//     Position. Da in InitalSize die urspruengliche Seitengroesse steht, kann
 /*N*/ 	//     man nun die relative Position auf der Seite bestimmen.
 /*N*/ 	//     Diese relative Position bleibt bei einem Resize erhalten,
 /*N*/ 	//     falls der  Schalter "bUseRelativePositionsForChartGroups" auf TRUE steht.
-/*N*/ 
+/*N*/
 /*N*/ 	SdrObject* pGroupObject = GetObjWithId( CHOBJID_DIAGRAM_AREA, *pPage );
 /*N*/ 	if( pGroupObject != NULL )
 /*N*/ 		DeleteObject( pGroupObject );
-/*N*/ 
+/*N*/
 /*N*/ 	pGroupObject = GetObjWithId( CHOBJID_TITLE_MAIN, *pPage );
 /*N*/ 	if (pGroupObject != NULL)
 /*N*/ 	{
 /*N*/ 		aTitleTopCenter = pGroupObject->GetBoundRect().TopCenter();
 /*N*/ 		DeleteObject(pGroupObject);
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	pGroupObject = GetObjWithId(CHOBJID_TITLE_SUB, *pPage);
 /*N*/ 	if (pGroupObject != NULL)
 /*N*/ 	{
 /*N*/ 		aSubTitleTopCenter = pGroupObject->GetBoundRect().TopCenter();
 /*N*/ 		DeleteObject(pGroupObject);
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	pGroupObject = GetObjWithId(CHOBJID_DIAGRAM, *pPage);
 /*N*/ 	if (pGroupObject != NULL)
 /*N*/ 	{
@@ -1025,14 +1018,14 @@ namespace binfilter {
 /*N*/ 				// aDiagramRectangle = pGroupObject->GetLogicRect();
 /*N*/ 				SetDiagramRectangle( GetChartRect() );
 /*N*/ 			}
-/*N*/ 
-/*N*/ 
+/*N*/
+/*N*/
 /*N*/ 			if(	pGroupObject == pScene )
 /*N*/ 				pScene = NULL;
 /*N*/ 		}
 /*N*/ 		DeleteObject(pGroupObject);
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	pGroupObject = GetObjWithId(CHOBJID_LEGEND, *pPage);
 /*N*/ 	if (pGroupObject != NULL)
 /*N*/ 	{
@@ -1049,16 +1042,16 @@ namespace binfilter {
 /*N*/ 		}
 /*N*/ 		DeleteObject(pGroupObject);
 /*N*/ 	}
-/*N*/ 
-/*N*/ 
-/*N*/ 
+/*N*/
+/*N*/
+/*N*/
 /*N*/ 	pGroupObject = GetObjWithId(CHOBJID_DIAGRAM_TITLE_X_AXIS, *pPage);
 /*N*/ 	if (pGroupObject != NULL)
 /*N*/ 	{
 /*N*/ 		aTitleXAxisPosition = SetPointOfRectangle(pGroupObject->GetBoundRect(), eAdjustXAxesTitle);
 /*N*/ 		DeleteObject(pGroupObject);
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	pGroupObject = GetObjWithId(CHOBJID_DIAGRAM_TITLE_Y_AXIS, *pPage);
 /*N*/ 	if (pGroupObject != NULL)
 /*N*/ 	{
@@ -1067,7 +1060,7 @@ namespace binfilter {
 /*N*/ 		aTitleYAxisPosition = SetPointOfRectangle(pGroupObject->GetBoundRect(), eAdjustYAxesTitle);
 /*N*/ 		DeleteObject(pGroupObject);
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	pGroupObject = GetObjWithId(CHOBJID_DIAGRAM_TITLE_Z_AXIS, *pPage);
 /*N*/ 	if (pGroupObject != NULL)
 /*N*/ 	{
@@ -1107,20 +1100,6 @@ namespace binfilter {
 /*?*/ 				bOK=FALSE;
 /*N*/ 			}
 /*N*/ 	}
-    /*
-    if (bCheckAlways)
-        if ((pChartYAxis->GetMin() <= 0.0)
-            && ((const SfxBoolItem&)GetAttr(CHOBJID_DIAGRAM_Y_AXIS).Get(SCHATTR_AXIS_LOGARITHM)).GetValue())
-        {
-            // FG: Falls ein Pointer auf ein Fenster uebergeben wird ist die Dialogbox nicht-modal
-            //     Nutzt man dies fuer Veraenderungen am Chart aus, stuertzt das Programm ab.
-            // InfoBox aInfoBox(SFX_APP()->GetAppWindow(), String(SchResId(STR_NO_LOGARITHMIC_MIN_VALUES)));
-            InfoBox aInfoBox(NULL, String(SchResId(STR_NO_LOGARITHMIC_MIN_VALUES)));
-            aInfoBox.Execute();
-            eOldChartStyle = eChartStyle;
-            bOK=FALSE;
-        }
-*/
 /*N*/ 	return bOK;
 /*N*/ }
 /*************************************************************************
@@ -1149,27 +1128,19 @@ namespace binfilter {
             //	paragraph and the commented code below.
 /*N*/ 			if (	(aDiagramRectangle.nLeft < aDiagramRectangle.nRight)
 /*N*/ 				&&	(aDiagramRectangle.nTop < aDiagramRectangle.nBottom) )
-//              if ((aDiagramRectangle.nLeft >= 0) && (aDiagramRectangle.nTop >= 0) &&
-//                  (aDiagramRectangle.nRight >= 0) && (aDiagramRectangle.nBottom >= 0))
 /*N*/ 			{
 /*?*/ 				double fRelativeXPosition = ((double) aDiagramRectangle.Left()) / aInitialSize.Width();
 /*?*/ 				double fRelativeYPosition = ((double) aDiagramRectangle.Top()) / aInitialSize.Height();
-//				if ((fRelativeXPosition <= 1.0) && (fRelativeYPosition <= 1.0))
-//				{
-/*?*/ 					aChartRect.nLeft = (long)((double)rPageSize.Width() *  fRelativeXPosition );
-/*?*/ 					aChartRect.nTop =  (long)((double)rPageSize.Height() * fRelativeYPosition );
-//				}
+/*?*/ 				aChartRect.nLeft = (long)((double)rPageSize.Width() *  fRelativeXPosition );
+/*?*/ 				aChartRect.nTop =  (long)((double)rPageSize.Height() * fRelativeYPosition );
 /*?*/ 				fRelativeXPosition = ((double) aDiagramRectangle.Right()) / aInitialSize.Width();
 /*?*/ 				fRelativeYPosition = ((double) aDiagramRectangle.Bottom()) / aInitialSize.Height();
-//				if ((fRelativeXPosition <= 1.0) && (fRelativeYPosition <= 1.0))
-//				{
-/*?*/ 					aChartRect.nRight =  (long)((double)rPageSize.Width() *  fRelativeXPosition );
-/*?*/ 					aChartRect.nBottom = (long)((double)rPageSize.Height() * fRelativeYPosition );
-//				}
+/*?*/ 				aChartRect.nRight =  (long)((double)rPageSize.Width() *  fRelativeXPosition );
+/*?*/ 				aChartRect.nBottom = (long)((double)rPageSize.Height() * fRelativeYPosition );
 /*?*/ 			}
 /*N*/ 		}
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ }
 /*************************************************************************
 |*
@@ -1190,15 +1161,15 @@ namespace binfilter {
 /*N*/ 							 eChartStyle == CHSTYLE_3D_FLATBAR ||
 /*N*/ 							 eChartStyle == CHSTYLE_3D_STACKEDFLATBAR ||
 /*N*/ 							 eChartStyle == CHSTYLE_3D_PERCENTFLATBAR;
-/*N*/ 
+/*N*/
 /*N*/ 		SfxItemSet aTextAttr((const SfxItemSet &)GetAttr(
 /*N*/ 					bSwitchColRow ?
 /*N*/ 						CHOBJID_DIAGRAM_X_AXIS
 /*N*/ 					  : CHOBJID_DIAGRAM_Y_AXIS));
-/*N*/ 
+/*N*/
 /*N*/ 		Size aTextSize (((SvxFontWidthItem &) aTextAttr.Get (EE_CHAR_FONTWIDTH)).GetWidth (),
 /*N*/ 						((SvxFontHeightItem &) aTextAttr.Get (EE_CHAR_FONTHEIGHT)).GetHeight ());
-/*N*/ 
+/*N*/
 /*N*/ 		aChartRect.Top () += aTextSize.Height () / 2;
 /*N*/ 	}
 /*N*/ }
@@ -1217,46 +1188,46 @@ namespace binfilter {
 /*N*/ 		// Im Moment ist es nur moeglich den linken Rand nachzuregeln.
 /*N*/ 		SdrPage* pPage=GetPage(0);
 /*N*/ 		const Size& rPageSize=pPage->GetSize();
-/*N*/ 
+/*N*/
 /*N*/ 		long nYOfs = (rPageSize.Height() / 100) * 2;
 /*N*/ 		long nXOfs = (rPageSize.Width() /100) * 2;
 /*N*/ 		USHORT nIndex = 0;
-/*N*/ 
+/*N*/
 /*N*/         // #97159# the chart rect was set one unit too large in either direction
 /*N*/         aChartRect.SetPos( Point( 0, 0 ) );
 /*N*/         aChartRect.SetSize( rPageSize );
-/*N*/ 
+/*N*/
 /*N*/  		SchRectObj* pRect = new SchRectObj(aChartRect);
 /*N*/ 		pRect->SetModel( this );
 /*N*/ 		pPage->InsertObject(SetObjectAttr( pRect, CHOBJID_DIAGRAM_AREA,
 /*N*/ 											  FALSE, TRUE, pDiagramAreaAttr), nIndex++);
-/*N*/ 
+/*N*/
 /*N*/ 		aChartRect.Left()   += nXOfs;  // FG: Dies ist das Rechteck in das das Chart (also die Balken ...)
 /*N*/ 		aChartRect.Top()    += nYOfs;  //     rein muss. Erst ist es maximal gross und dann wird immer
 /*N*/ 		aChartRect.Right()  -= nXOfs;  //     mehr abgezwackt.
 /*N*/ 		aChartRect.Bottom() -= nYOfs;
-/*N*/ 
+/*N*/
 /*N*/ 		Rectangle aWholeRect (aChartRect);
-/*N*/ 
+/*N*/
 /*N*/ 			// Falls aInitialSize Null ist dann wird es auf die Seitengroesse gesetzt
 /*N*/ 		if( !aInitialSize.Width ()) aInitialSize.Width () = rPageSize.Width ();
 /*N*/ 		if( !aInitialSize.Height ()) aInitialSize.Height () = rPageSize.Height ();
-/*N*/ 
+/*N*/
 /*N*/ 			// FG: Dieser Offset wird bei der Legende und den Diagrammtiteln gebraucht.
 /*N*/ 			// Er wird aus aesthetischen Gruenden verdoppelt.
 /*N*/ 			// Also ab jetzt oberer Rand nYOfs + Titel + 2*nYOfs + Unteritel + 2*nYOfs + Diagramm
 /*N*/ 			// Fuer die Legende gilt das fuer den X-Abstand.
 /*N*/ 		nXOfs *= 2; nYOfs *=2;
-/*N*/ 
+/*N*/
 /*N*/ 	   if (bTextScalable)
 /*N*/ 		  ScaleText(whatTitle,rPageSize);
-/*N*/ 
+/*N*/
 /*N*/ 	   if (bShowMainTitle)
 /*N*/ 		   DoShowMainTitle(nIndex,nYOfs);
-/*N*/ 
+/*N*/
 /*N*/ 	   if (bShowSubTitle)
 /*N*/ 		   DoShowSubTitle(nIndex,nYOfs);
-/*N*/ 
+/*N*/
 /*N*/ 		CalculateUpperBorder();
 /*N*/ 		DoShowLegend(aWholeRect,nXOfs,nYOfs,nIndex);
 /*N*/ 		ResizeChart(rPageSize);
@@ -1293,15 +1264,15 @@ private:
 /*N*/ void ChartModel::BuildChart(BOOL bCheckRanges,long whatTitle)
 /*N*/ {
 /*N*/ 	RTL_LOGFILE_CONTEXT_AUTHOR (context, "sch", "af119097", "::ChartModel::BuildChart");
-/*N*/ 	
+/*N*/
 /*N*/ #ifdef DBG_UTIL
 /*N*/ 	ByteString aBStr( aMainTitle, RTL_TEXTENCODING_ASCII_US );
 /*N*/ 	CHART_TRACE1( "ChartModel::BuildChart (%s)", aBStr.GetBuffer());
 /*N*/ #endif
-/*N*/ 
+/*N*/
 /*N*/ 	//kein setzen der p*Attr durch die Objekte
 /*N*/ 	SetAttrAutoStorage(FALSE);
-/*N*/ 
+/*N*/
 /*N*/ 	if (bNoBuildChart)
 /*N*/ 	{
 /*N*/ 		bShouldBuildChart = TRUE;
@@ -1329,7 +1300,7 @@ private:
 /*N*/ 				if( GetRowCount() > 0 )
 /*N*/ 					pDummyAttr->Put( GetDataRowAttr( 0 ));
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		//Hotfix für OLE-Charts #54884# Die Wurzel des Übels liegt möglicherweise irgendwo anders!
 /*N*/ 		if(!pRefOutDev)
 /*N*/ 		{
@@ -1363,42 +1334,40 @@ private:
 /*?*/ 				}
 /*N*/ 			}
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		CheckRanges(bCheckRanges);
-/*N*/ 
+/*N*/
 /*N*/ 		if( !pChartData )		// create default chart if no chart exists so far
 /*N*/ 			InitChartData();
-/*N*/ 
+/*N*/
 /*N*/ 		if (GetColCount() && GetRowCount())
 /*N*/ 		{
 /*N*/ 			SdrPage* pPage = GetPage(0);
 /*N*/ 			if (pPage)
 /*N*/ 			{
 /*N*/                 //#61431# MapMode speichern, am Ende BuildCharts restaurieren
-/*N*/ 
+/*N*/
 /*N*/                 // remember the MapMode of the Printer and restore it at the end
 /*N*/                 // of the current block, because it may be changed later in this
 /*N*/                 // method (AdjustPrinter)
 /*N*/                 lcl_MapModeResetGuard aPrinterMapModeGuard(
 /*N*/                     static_cast< SchChartDocShell * >( GetObjectShell() )->GetPrinter() );
-/*N*/ 
+/*N*/
 /*N*/                 AdjustPrinter();
-/*N*/ 
+/*N*/
 /*N*/ 				// FG : DAs hier braucht es weil bei 3D-Charts der Bildchsimraufbau von der ChartScene
 /*N*/ 				//      erst beim ersten Paint initiiert wird. Erst dann werden die Achsentitel ausgegeben
 /*N*/ 				//      da ist aber BuildChart, aInitialSize=aPageSize setzt schon gelaufen. Deshalb diese
 /*N*/ 				//      "Chart-Globale" Variable;
 /*N*/ 				aInitialSizefor3d = aInitialSize;
-/*N*/ 
+/*N*/
 /*N*/ 				// ItemSet mit entspr. Bereich anlegen
-/*N*/ //-/				SfxItemSet aSet( GetItemPool(), SID_ATTR_3D_RANGE_SCENE, 0);
-/*N*/ 				SfxItemSet aSet( GetItemPool(), 
+/*N*/ 				SfxItemSet aSet( GetItemPool(),
 /*N*/ 					SDRATTR_3DSCENE_FIRST, SDRATTR_3DSCENE_LAST);
 /*N*/ 				BOOL bItemSetUsed = FALSE;
-/*N*/ 
+/*N*/
 /*N*/ 				if( pScene )
 /*N*/ 				{
-/*N*/ //-/					pScene->TakeAttributes(aSet, TRUE, TRUE);
 /*N*/ 					aSet.Put(pScene->GetItemSet());
 /*N*/ 					bItemSetUsed = TRUE;
 /*N*/ 					aSceneMatrix = pScene->GetTransform();
@@ -1408,21 +1377,19 @@ private:
 /*N*/ 					SdrObject* pLoadedScene = GetObjWithId(CHOBJID_DIAGRAM, *pPage);
 /*N*/ 					if (pLoadedScene && pLoadedScene->ISA(E3dPolyScene))
 /*N*/ 					{
-/*N*/ //-/						((E3dObject*)pLoadedScene)->SetAttrUseSubObjects(FALSE);
-/*N*/ //-/						pLoadedScene->TakeAttributes(aSet, TRUE, TRUE);
 /*N*/ 						aSet.Put(pLoadedScene->GetItemSet());
 /*N*/ 						bItemSetUsed = TRUE;
 /*N*/ 						aSceneMatrix = ((E3dPolyScene*) pLoadedScene)->GetTransform();
 /*N*/ 						Rescue3DObjAttr(pLoadedScene->GetSubList()); //#52277#
 /*N*/ 					}
 /*N*/ 				}
-/*N*/ 
+/*N*/
 /*N*/ 				DeleteChartObjects();
 /*N*/ 				Size aPageSize = pPage->GetSize();
-/*N*/ 
+/*N*/
 /*N*/ 				SdrObjGroup *pObj = NULL;
 /*N*/ 				BOOL bNeedSetDiagram=FALSE;
-/*N*/ 
+/*N*/
 /*N*/ 				// if type addin is set the core CreateChart shoudln't be called
 /*N*/ 				// if an addin is used together with a base diagram type the base
 /*N*/ 				// type should be set as chart type here (!= CHSTYLE_ADDIN)
@@ -1430,7 +1397,7 @@ private:
 /*N*/ 				{
 /*N*/ 					// core CreateChart
 /*N*/ 					CreateRectsAndTitles(whatTitle);
-/*N*/ 
+/*N*/
 /*N*/ 					if(bResizePie && IsPieChart() && IsReal3D())
 /*N*/ 					{
 /*N*/ 						long nWidth=aChartRect.GetWidth();
@@ -1445,19 +1412,19 @@ private:
 /*?*/ 							bResizePie=FALSE;
 /*N*/ 						}
 /*N*/ 					}
-/*N*/ 
+/*N*/
 /*N*/ 					pObj = CreateChart(aChartRect);
-/*N*/ 
+/*N*/
 /*N*/ 					if (pObj->ISA(SchObjGroup))
 /*N*/ 					{
 /*N*/ 						((SchObjGroup *)pObj)->SetModel(this);
 /*N*/ 						((SchObjGroup *)pObj)->SetGroupIsChart();
 /*N*/ 					}
-/*N*/ 
+/*N*/
 /*N*/ 					pPage->NbcInsertObject(pObj, 1);
-/*N*/ 
+/*N*/
 /*N*/ 				}
-/*N*/ 
+/*N*/
 /*N*/ 				// ====================
 /*N*/ 				// call AddIn if required
 /*N*/ 				// ====================
@@ -1484,27 +1451,24 @@ private:
 /*?*/ 						ResetChartStatusFlag( CHS_NO_ADDIN_REFRESH );
 /*N*/ 					}
 /*N*/ 				}
-/*N*/ 
+/*N*/
 /*N*/ 				aInitialSize = aPageSize;
-/*N*/ 
+/*N*/
 /*N*/ 				if(pScene && IsReal3D() )
 /*N*/ 				{
-/*N*/ 
+/*N*/
 /*N*/ #ifndef NO_56798_FIX //#56798# QuickFix 5.0-Final
-/*N*/ 
+/*N*/
 /*N*/ 					if(bClearDepth)
 /*N*/ 					{
-/*N*/ //-/						aSet.ClearItem(SID_ATTR_3D_DEPTH);
 /*N*/ 						aSet.ClearItem(SDRATTR_3DOBJ_DEPTH);
 /*N*/ 						bClearDepth=FALSE;
 /*N*/ 					}
 /*N*/ #endif
-/*N*/ 
-/*N*/ //-/					aSet.ClearItem(SID_ATTR_3D_DOUBLE_SIDED);	//#56941#
-/*N*/ //-/					aSet.ClearItem(SID_ATTR_3D_HORZ_SEGS);
+/*N*/
 /*?*/ 					aSet.ClearItem(SDRATTR_3DOBJ_DOUBLE_SIDED);	//#56941#
 /*?*/ 					aSet.ClearItem(SDRATTR_3DOBJ_HORZ_SEGS);
-/*N*/ 
+/*N*/
 /*N*/ 					if(bItemSetUsed)
 /*N*/ 					{
 /*N*/ 						//funktioniert nur, wenn nicht durch vorherigen Aufruf (CheckRanges) eine MsgBox entstand
@@ -1513,26 +1477,22 @@ private:
 /*N*/ 							// Falls sich der ChartStyle aendert, die Extrude-Tiefe
 /*N*/ 							// auf unfueltig setzen
 /*N*/ 							const SfxPoolItem* pPoolItem = NULL;
-/*N*/ //-/							SfxItemState eState = aSet.GetItemState(SID_ATTR_3D_DEPTH, FALSE, &pPoolItem);
 /*N*/ 							SfxItemState eState = aSet.GetItemState(SDRATTR_3DOBJ_DEPTH, FALSE, &pPoolItem);
 /*N*/ 							if(eState == SFX_ITEM_SET)
 /*N*/ 							{
 /*N*/ 								// Ist gesetzt, invalidiere
-/*N*/ //-/								aSet.InvalidateItem(SID_ATTR_3D_DEPTH);
 /*N*/ 								aSet.InvalidateItem(SDRATTR_3DOBJ_DEPTH);
 /*N*/ 								CHART_TRACE( "Chart: Invalidating saveable item ..." );
 /*N*/ 							}
 /*N*/ 						}
-/*N*/ 
+/*N*/
 /*N*/ 						// Attribute an neuer Szene setzen
-/*N*/ 
-/*N*/ //-/						pScene->NbcSetAttributes(aSet, TRUE);
 /*N*/ 						pScene->SetItemSet(aSet);
-/*N*/ 
+/*N*/
 /*N*/ 					}
-/*N*/ 
+/*N*/
 /*N*/ 					pScene->NbcSetTransform(aSceneMatrix);
-/*N*/ 
+/*N*/
 /*N*/ 					const SfxPoolItem *pPoolItem = NULL;
 /*N*/ 					if(!IsPieChart())
 /*N*/ 					{
@@ -1544,7 +1504,7 @@ private:
 /*N*/ 									pScene->ReduceDescrList(aXDescrList);
 /*N*/ 							}
 /*N*/ 						}
-/*N*/ 
+/*N*/
 /*N*/ 						if(pChartYAxis->HasDescription())
 /*N*/ 						{
 /*N*/ 							if(GetAttr(CHOBJID_DIAGRAM_Y_AXIS).GetItemState( SCHATTR_TEXT_OVERLAP, FALSE, &pPoolItem ) >= SFX_ITEM_AVAILABLE )
@@ -1553,7 +1513,7 @@ private:
 /*N*/ 									pScene->ReduceDescrList(aYDescrList);
 /*N*/ 							}
 /*N*/ 						}
-/*N*/ 
+/*N*/
 /*N*/ 						if(pChartZAxis->HasDescription())
 /*N*/ 						{
 /*N*/ 							if(GetAttr(CHOBJID_DIAGRAM_Z_AXIS).GetItemState( SCHATTR_TEXT_OVERLAP, FALSE, &pPoolItem ) >= SFX_ITEM_AVAILABLE )
@@ -1564,8 +1524,8 @@ private:
 /*N*/ 						}
 /*N*/ 					}
 /*N*/ 				}
-/*N*/ 
-/*N*/ 
+/*N*/
+/*N*/
 /*N*/ 				if(bNeedSetDiagram && pScene)
 /*N*/ 				{
 /*?*/ 					Rectangle aRectangle;
@@ -1574,9 +1534,9 @@ private:
 /*?*/ 					SetDiagramRectangle(aRectangle);
 /*?*/ 					SetDiagramHasBeenMovedOrResized(TRUE);
 /*N*/ 				}
-/*N*/ 
+/*N*/
 /*N*/ 				//#61431# MapMode speichern, am Ende BuildCharts restaurieren
-/*N*/ 
+/*N*/
 /*N*/                 // the MapMode of the RefDevice is restored by the
 /*N*/                 // lcl_MapModeResetGuard
 /*N*/             }
@@ -1586,7 +1546,7 @@ private:
 /*N*/ 	SetAttrAutoStorage(TRUE);
 /*N*/ 	SetDiagramRectangle( aChartRect );
 /*N*/ 	eOldChartStyle = eChartStyle;
-/*N*/ 
+/*N*/
 /*N*/     // notify build to listeners
 /*N*/     Broadcast( SchReBuildHint());
 /*N*/ }
@@ -1643,19 +1603,19 @@ private:
 /*N*/ double ChartModel::GetVariantY (long nRow)
 /*N*/ {
 /*N*/ 	long nColCnt = GetColCount();
-/*N*/ 
+/*N*/
 /*N*/ 	if (nColCnt)
 /*N*/ 	{
 /*N*/ 		double fSum     = 0.0;
 /*N*/ 		double fQuadSum = 0.0;
 /*N*/ 		long nValidCols = nColCnt;
-/*N*/ 
+/*N*/
 /*N*/ 		for (long nCol = 0;
 /*N*/ 				  nCol < nColCnt;
 /*N*/ 				  nCol ++)
 /*N*/ 		{
 /*N*/ 			double fData = GetData ((short) nCol, (short) nRow, FALSE);
-/*N*/ 
+/*N*/
 /*N*/ 			if( fData == DBL_MIN )
 /*N*/ 			{
 /*N*/ 				nValidCols--;
@@ -1666,7 +1626,7 @@ private:
 /*N*/ 				fQuadSum += fData * fData;
 /*N*/ 			}
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		return nValidCols? (fQuadSum - fSum*fSum / (double)nValidCols) / (double)nValidCols: DBL_MIN;
 /*N*/ 	}
 /*N*/ 	else return 0;
@@ -1696,17 +1656,17 @@ private:
 /*N*/ {
 /*N*/ 	double     fMax    = 0.0;
 /*N*/ 	long       nColCnt = GetColCount();
-/*N*/ 
+/*N*/
 /*N*/ 	for (long nCol = 0;
 /*N*/ 			  nCol < nColCnt;
 /*N*/ 			  nCol ++)
 /*N*/ 	{
 /*N*/ 		double fData = GetData ((short) nCol, (short) nRow, FALSE);
-/*N*/ 
+/*N*/
 /*N*/ 		if (fData != DBL_MIN)
 /*N*/ 			if (fData > fMax) fMax = fData;
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	return fMax * fError / 100.0;
 /*N*/ }
 
