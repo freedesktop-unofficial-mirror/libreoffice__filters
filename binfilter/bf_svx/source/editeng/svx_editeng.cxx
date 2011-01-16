@@ -2,7 +2,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -26,8 +26,6 @@
  *
  ************************************************************************/
 
-
-// #define _SOLAR__PRIVATE 1
 #ifdef _MSC_VER
 #pragma hdrstop
 #endif
@@ -35,8 +33,7 @@
 #define USE_SVXFONT
 
 #define _SVSTDARR_USHORTS
-#include <bf_svtools/svstdarr.hxx> 
-
+#include <bf_svtools/svstdarr.hxx>
 
 #include <vcl/window.hxx>
 
@@ -47,41 +44,20 @@
 #include <eerdll.hxx>
 #include <editeng.hrc>
 
-
-
 #include "itemdata.hxx"
-
-
 
 #include <flditem.hxx>
 
 #include "lrspitem.hxx"
 
-
 #include <numitem.hxx>
 #include <bulitem.hxx>
 
-
-
-
-
-#if OSL_DEBUG_LEVEL > 1
-#endif
 namespace binfilter {
 
-// Spaeter -> TOOLS\STRING.H (fuer Grep: WS_TARGET)
-
-//using namespace ::rtl;
-//using namespace ::utl;
 using namespace ::com::sun::star;
-//using namespace ::com::sun::star::util;
 using namespace ::com::sun::star::uno;
-//using namespace ::com::sun::star::lang;
-//using namespace ::com::sun::star::beans;
-//using namespace ::com::sun::star::frame;
 using namespace ::com::sun::star::linguistic2;
-
-
 
 /*N*/ DBG_NAME( EditEngine )
 /*N*/ DBG_NAMEEX( EditView )//STRIP008 ;
@@ -212,7 +188,7 @@ SV_IMPL_VARARR( EECharAttribArray, EECharAttrib );
 /*N*/ {
 /*N*/ 	DBG_CHKTHIS( EditEngine, 0 );
 /*N*/ 	DBG_CHKOBJ( pView, EditView, 0 );
-/*N*/ 
+/*N*/
 /*N*/ 	pView->HideCursor();
 /*N*/ 	EditView* pRemoved = 0;
 /*N*/ 	sal_uInt16 nPos = pImpEditEngine->GetEditViews().GetPos( pView );
@@ -255,11 +231,11 @@ SV_IMPL_VARARR( EECharAttribArray, EECharAttrib );
 /*N*/ void EditEngine::SetPaperSize( const Size& rNewSize )
 /*N*/ {
 /*N*/ 	DBG_CHKTHIS( EditEngine, 0 );
-/*N*/ 
+/*N*/
 /*N*/ 	Size aOldSize( pImpEditEngine->GetPaperSize() );
 /*N*/ 	pImpEditEngine->SetValidPaperSize( rNewSize );
 /*N*/ 	Size aNewSize( pImpEditEngine->GetPaperSize() );
-/*N*/ 
+/*N*/
 /*N*/ 	sal_Bool bAutoPageSize = pImpEditEngine->GetStatus().AutoPageSize();
 /*N*/ 	if ( bAutoPageSize || ( aNewSize.Width() != aOldSize.Width() ) )
 /*N*/ 	{
@@ -267,22 +243,16 @@ SV_IMPL_VARARR( EECharAttribArray, EECharAttrib );
 /*N*/ 		{
 /*?*/ 			DBG_BF_ASSERT(0, "STRIP"); //STRIP001 EditView* pView = pImpEditEngine->aEditViews[nView];
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		if ( bAutoPageSize || pImpEditEngine->IsFormatted() )
 /*N*/ 		{
 /*N*/ 			// Aendern der Breite hat bei AutoPageSize keine Wirkung, da durch
 /*N*/ 			// Textbreite bestimmt.
 /*N*/ 			// Optimierung erst nach Vobis-Auslieferung aktivieren...
-/*N*/ //			if ( !bAutoPageSize )
-/*N*/ 				pImpEditEngine->FormatFullDoc();
-/*N*/ //			else
-/*N*/ //			{
-/*N*/ //				pImpEditEngine->FormatDoc();			// PageSize, falls Aenderung
-/*N*/ //				pImpEditEngine->CheckAutoPageSize();	// Falls nichts formatiert wurde
-/*N*/ //			}
-/*N*/ 
+/*N*/ 	        pImpEditEngine->FormatFullDoc();
+/*N*/
 /*N*/ 			pImpEditEngine->UpdateViews( pImpEditEngine->GetActiveView() );
-/*N*/ 
+/*N*/
 /*N*/ 			if ( pImpEditEngine->GetUpdateMode() && pImpEditEngine->GetActiveView() )
 /*?*/ 				pImpEditEngine->pActiveView->ShowCursor( sal_False, sal_False );
 /*N*/ 		}
@@ -414,7 +384,7 @@ SV_IMPL_VARARR( EECharAttribArray, EECharAttrib );
 /*N*/ {
 /*N*/     // ImpEditEngine-Iteration-Methods should be const!
 /*N*/     EditEngine* pE = (EditEngine*)this;
-/*N*/ 
+/*N*/
 /*N*/ 	EditSelection aSel( pE->pImpEditEngine->CreateSel( rSelection ) );
 /*N*/ 	aSel = pE->pImpEditEngine->SelectWord( aSel, nWordType );
 /*N*/ 	return pE->pImpEditEngine->CreateESel( aSel );
@@ -423,10 +393,10 @@ SV_IMPL_VARARR( EECharAttribArray, EECharAttrib );
 /*N*/ sal_uInt32 EditEngine::GetTextHeight() const
 /*N*/ {
 /*N*/ 	DBG_CHKTHIS( EditEngine, 0 );
-/*N*/ 
+/*N*/
 /*N*/ 	if ( !pImpEditEngine->IsFormatted() )
 /*?*/ 		pImpEditEngine->FormatDoc();
-/*N*/ 
+/*N*/
 /*N*/ 	sal_uInt32 nHeight = !IsVertical() ? pImpEditEngine->GetTextHeight() : pImpEditEngine->CalcTextWidth( TRUE );
 /*N*/ 	return nHeight;
 /*N*/ }
@@ -434,10 +404,10 @@ SV_IMPL_VARARR( EECharAttribArray, EECharAttrib );
 /*N*/ sal_uInt32 EditEngine::CalcTextWidth()
 /*N*/ {
 /*N*/ 	DBG_CHKTHIS( EditEngine, 0 );
-/*N*/ 
+/*N*/
 /*N*/ 	if ( !pImpEditEngine->IsFormatted() )
 /*?*/ 		pImpEditEngine->FormatDoc();
-/*N*/ 
+/*N*/
 /*N*/ 	sal_uInt32 nWidth = !IsVertical() ? pImpEditEngine->CalcTextWidth( TRUE ) : pImpEditEngine->GetTextHeight();
 /*N*/  	return nWidth;
 /*N*/ }
@@ -529,12 +499,12 @@ SV_IMPL_VARARR( EECharAttribArray, EECharAttrib );
 /*N*/ 	DBG_CHKTHIS( EditEngine, 0 );
 /*N*/ 	DBG_ASSERT( nPara < pImpEditEngine->GetEditDoc().Count(), "CreateTextObject: Startpara out of Range" );
 /*N*/ 	DBG_ASSERT( nPara+nParas-1 < pImpEditEngine->GetEditDoc().Count(), "CreateTextObject: Endpara out of Range" );
-/*N*/ 
+/*N*/
 /*N*/ 	ContentNode* pStartNode = pImpEditEngine->GetEditDoc().SaveGetObject( nPara );
 /*N*/ 	ContentNode* pEndNode = pImpEditEngine->GetEditDoc().SaveGetObject( nPara+nParas-1 );
 /*N*/ 	DBG_ASSERT( pStartNode, "Start-Absatz existiert nicht: CreateTextObject" );
 /*N*/ 	DBG_ASSERT( pEndNode, "End-Absatz existiert nicht: CreateTextObject" );
-/*N*/ 
+/*N*/
 /*N*/ 	if ( pStartNode && pEndNode )
 /*N*/ 	{
 /*N*/ 		EditSelection aTmpSel;
@@ -582,7 +552,7 @@ SV_IMPL_VARARR( EECharAttribArray, EECharAttrib );
 /*?*/ 		DBG_ASSERTWARNING( nPara == USHRT_MAX, "AbsatzNr zu Gro? aber nicht LIST_APPEND! " );
 /*?*/ 		nPara = GetParagraphCount();
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	pImpEditEngine->UndoActionStart( EDITUNDO_INSERT );
 /*N*/ 	EditPaM aPaM( pImpEditEngine->InsertParagraph( nPara ) );
 /*N*/ 	// Bei einem InsertParagraph von aussen sollen keine Harten
@@ -673,7 +643,7 @@ SV_IMPL_VARARR( EECharAttribArray, EECharAttrib );
 /*N*/ {
 /*N*/ 	if ( !pImpEditEngine->IsFormatted() )
 /*N*/ 		pImpEditEngine->FormatFullDoc();
-/*N*/ 
+/*N*/
 /*N*/ 	ParaPortion* pParaPortion = pImpEditEngine->GetParaPortions().SaveGetObject( nPara );
 /*N*/ 	if ( pParaPortion )
 /*N*/ 	{
@@ -697,12 +667,12 @@ SV_IMPL_VARARR( EECharAttribArray, EECharAttrib );
 /*N*/ void EditEngine::SetControlWord( sal_uInt32 nWord )
 /*N*/ {
 /*N*/ 	DBG_CHKTHIS( EditEngine, 0 );
-/*N*/ 
+/*N*/
 /*N*/ 	if ( nWord != pImpEditEngine->aStatus.GetControlWord() )
 /*N*/ 	{
 /*N*/ 		sal_uInt32 nPrev = pImpEditEngine->aStatus.GetControlWord();
 /*N*/ 		pImpEditEngine->aStatus.GetControlWord() = nWord;
-/*N*/ 
+/*N*/
 /*N*/ 		sal_uInt32 nChanges = nPrev ^ nWord;
 /*N*/ 		if ( pImpEditEngine->IsFormatted() )
 /*N*/ 		{
@@ -721,7 +691,7 @@ SV_IMPL_VARARR( EECharAttribArray, EECharAttrib );
 /*?*/ 					sal_Bool bUseCharAttribs = ( nWord & EE_CNTRL_USECHARATTRIBS ) ? sal_True : sal_False;
 /*?*/ 					pImpEditEngine->GetEditDoc().CreateDefFont( bUseCharAttribs );
 /*N*/ 				}
-/*N*/ 
+/*N*/
 /*N*/ 				pImpEditEngine->FormatFullDoc();
 /*N*/ 				pImpEditEngine->UpdateViews( pImpEditEngine->GetActiveView() );
 /*N*/ 			}
@@ -779,14 +749,14 @@ SV_IMPL_VARARR( EECharAttribArray, EECharAttrib );
 /*N*/ sal_Bool EditEngine::IsTextPos( const Point& rPaperPos, sal_uInt16 nBorder )
 /*N*/ {
 /*N*/ 	DBG_CHKTHIS( EditEngine, 0 );
-/*N*/ 
+/*N*/
 /*N*/ 	if ( !pImpEditEngine->IsFormatted() )
 /*?*/ 		pImpEditEngine->FormatDoc();
-/*N*/ 
+/*N*/
 /*N*/ 	sal_Bool bTextPos = sal_False;
 /*N*/ 	// #90780# take unrotated positions for calculation here
 /*N*/ 	Point aDocPos = GetDocPos( rPaperPos );
-/*N*/ 
+/*N*/
 /*N*/ 	if ( ( aDocPos.Y() > 0  ) && ( aDocPos.Y() < (long)pImpEditEngine->GetTextHeight() ) )
 /*N*/ 	{
 /*N*/ 		EditPaM aPaM = pImpEditEngine->GetPaM( aDocPos, sal_False );
@@ -794,7 +764,7 @@ SV_IMPL_VARARR( EECharAttribArray, EECharAttrib );
 /*N*/ 		{
 /*N*/ 			ParaPortion* pParaPortion = pImpEditEngine->FindParaPortion( aPaM.GetNode() );
 /*N*/ 			DBG_ASSERT( pParaPortion, "ParaPortion?" );
-/*N*/ 
+/*N*/
 /*N*/             sal_uInt16 nLine = pParaPortion->GetLineNumber( aPaM.GetIndex() );
 /*N*/             EditLine* pLine = pParaPortion->GetLines().GetObject( nLine );
 /*N*/             Range aLineXPosStartEnd = pImpEditEngine->GetLineXPosStartEnd( pParaPortion, pLine );
@@ -823,10 +793,10 @@ SV_IMPL_VARARR( EECharAttribArray, EECharAttrib );
 /*N*/ void EditEngine::QuickSetAttribs( const SfxItemSet& rSet, const ESelection& rSel )
 /*N*/ {
 /*N*/ 	DBG_CHKTHIS( EditEngine, 0 );
-/*N*/ 
+/*N*/
 /*N*/ 	EditSelection aSel( pImpEditEngine->
 /*N*/ 		ConvertSelection( rSel.nStartPara, rSel.nStartPos, rSel.nEndPara, rSel.nEndPos ) );
-/*N*/ 
+/*N*/
 /*N*/ 	pImpEditEngine->SetAttribs( aSel, rSet );
 /*N*/ }
 
@@ -834,20 +804,20 @@ SV_IMPL_VARARR( EECharAttribArray, EECharAttrib );
 /*N*/ void EditEngine::QuickInsertText( const XubString& rText, const ESelection& rSel )
 /*N*/ {
 /*N*/ 	DBG_CHKTHIS( EditEngine, 0 );
-/*N*/ 
+/*N*/
 /*N*/ 	EditSelection aSel( pImpEditEngine->
 /*N*/ 		ConvertSelection( rSel.nStartPara, rSel.nStartPos, rSel.nEndPara, rSel.nEndPos ) );
-/*N*/ 
+/*N*/
 /*N*/ 	pImpEditEngine->ImpInsertText( aSel, rText );
 /*N*/ }
 
 /*N*/ void EditEngine::QuickDelete( const ESelection& rSel )
 /*N*/ {
 /*N*/ 	DBG_CHKTHIS( EditEngine, 0 );
-/*N*/ 
+/*N*/
 /*N*/ 	EditSelection aSel( pImpEditEngine->
 /*N*/ 		ConvertSelection( rSel.nStartPara, rSel.nStartPos, rSel.nEndPara, rSel.nEndPos ) );
-/*N*/ 
+/*N*/
 /*N*/ 	pImpEditEngine->ImpDeleteSelection( aSel );
 /*N*/ }
 
@@ -855,20 +825,20 @@ SV_IMPL_VARARR( EECharAttribArray, EECharAttrib );
 /*N*/ void EditEngine::QuickInsertLineBreak( const ESelection& rSel )
 /*N*/ {
 /*N*/ 	DBG_CHKTHIS( EditEngine, 0 );
-/*N*/ 
+/*N*/
 /*N*/ 	EditSelection aSel( pImpEditEngine->
 /*N*/ 		ConvertSelection( rSel.nStartPara, rSel.nStartPos, rSel.nEndPara, rSel.nEndPos ) );
-/*N*/ 
+/*N*/
 /*N*/ 	pImpEditEngine->InsertLineBreak( aSel );
 /*N*/ }
 
 /*N*/ void EditEngine::QuickInsertField( const SvxFieldItem& rFld, const ESelection& rSel )
 /*N*/ {
 /*N*/ 	DBG_CHKTHIS( EditEngine, 0 );
-/*N*/ 
+/*N*/
 /*N*/ 	EditSelection aSel( pImpEditEngine->
 /*N*/ 		ConvertSelection( rSel.nStartPara, rSel.nStartPos, rSel.nEndPara, rSel.nEndPos ) );
-/*N*/ 
+/*N*/
 /*N*/ 	pImpEditEngine->ImpInsertFeature( aSel, rFld );
 /*N*/ }
 
@@ -927,11 +897,6 @@ SV_IMPL_VARARR( EECharAttribArray, EECharAttrib );
 /*N*/ }
 
 
-
-
-
-
-
 /*N*/ void EditEngine::EraseVirtualDevice()
 /*N*/ {
 /*N*/ 	DBG_CHKTHIS( EditEngine, 0 );
@@ -945,16 +910,11 @@ SV_IMPL_VARARR( EECharAttribArray, EECharAttrib );
 /*N*/ }
 
 
-
 /*N*/ void EditEngine::SetDefaultLanguage( LanguageType eLang )
 /*N*/ {
 /*N*/ 	DBG_CHKTHIS( EditEngine, 0 );
 /*N*/ 	pImpEditEngine->SetDefaultLanguage( eLang );
 /*N*/ }
-
-
-
-
 
 
 /*N*/ void EditEngine::SetGlobalCharStretching( sal_uInt16 nX, sal_uInt16 nY )
@@ -991,7 +951,7 @@ SV_IMPL_VARARR( EECharAttribArray, EECharAttrib );
 /*N*/                 nFields++;
 /*N*/ 	    }
 /*N*/     }
-/*N*/ 
+/*N*/
 /*N*/     return nFields;
 /*N*/ }
 
@@ -1013,7 +973,7 @@ SV_IMPL_VARARR( EECharAttribArray, EECharAttrib );
 /*N*/                     aInfo.aCurrentText = ((EditCharAttribField*)pAttr)->GetFieldValue();
 /*N*/                     return aInfo;
 /*N*/                 }
-/*N*/ 
+/*N*/
 /*N*/                 nCurrentField++;
 /*N*/             }
 /*N*/ 	    }
@@ -1053,10 +1013,10 @@ SV_IMPL_VARARR( EECharAttribArray, EECharAttrib );
 /*N*/ {
 /*N*/     Rectangle aBounds;
 /*N*/     ContentNode* pNode = pImpEditEngine->GetEditDoc().SaveGetObject( rPos.nPara );
-/*N*/ 
+/*N*/
 /*N*/ 	// #109151# Check against index, not paragraph
 /*N*/     if ( pNode && ( rPos.nIndex < pNode->Len() ) )
-/*N*/     {DBG_BF_ASSERT(0, "STRIP"); //STRIP001 
+/*N*/     {DBG_BF_ASSERT(0, "STRIP"); //STRIP001
 /*N*/     }
 /*N*/     return aBounds;
 /*N*/ }
@@ -1064,11 +1024,11 @@ SV_IMPL_VARARR( EECharAttribArray, EECharAttrib );
 /*N*/ ParagraphInfos EditEngine::GetParagraphInfos( sal_uInt16 nPara )
 /*N*/ {
 /*N*/ 	DBG_CHKTHIS( EditEngine, 0 );
-/*N*/ 
+/*N*/
 /*N*/ 	// Funktioniert nur, wenn nicht bereits in der Formatierung...
 /*N*/ 	if ( !pImpEditEngine->IsFormatted() )
 /*N*/ 		pImpEditEngine->FormatDoc();
-/*N*/ 
+/*N*/
 /*N*/ 	ParagraphInfos aInfos;
 /*N*/ 	aInfos.bValid = pImpEditEngine->IsFormatted();
 /*N*/ 	if ( pImpEditEngine->IsFormatted() )
@@ -1107,7 +1067,7 @@ SV_IMPL_VARARR( EECharAttribArray, EECharAttrib );
 /*N*/ void EditEngine::ParagraphInserted( sal_uInt16 )
 /*N*/ {
 /*N*/ 	DBG_CHKTHIS( EditEngine, 0 );
-/*N*/ 
+/*N*/
 /*N*/     if ( GetNotifyHdl().IsSet() )
 /*N*/     {
 /*?*/         DBG_BF_ASSERT(0, "STRIP");
@@ -1117,7 +1077,7 @@ SV_IMPL_VARARR( EECharAttribArray, EECharAttrib );
 /*N*/ void EditEngine::ParagraphDeleted( sal_uInt16 )
 /*N*/ {
 /*N*/ 	DBG_CHKTHIS( EditEngine, 0 );
-/*N*/ 
+/*N*/
 /*N*/     if ( GetNotifyHdl().IsSet() )
 /*N*/     {
 /*?*/         DBG_BF_ASSERT(0, "STRIP");
@@ -1140,7 +1100,7 @@ SV_IMPL_VARARR( EECharAttribArray, EECharAttrib );
 /*N*/ void EditEngine::ParagraphHeightChanged( sal_uInt16 )
 /*N*/ {
 /*N*/ 	DBG_CHKTHIS( EditEngine, 0 );
-/*N*/ 
+/*N*/
 /*N*/     if ( GetNotifyHdl().IsSet() )
 /*N*/     {
 /*?*/         DBG_BF_ASSERT(0, "STRIP");
@@ -1247,7 +1207,7 @@ SV_IMPL_VARARR( EECharAttribArray, EECharAttrib );
 /*N*/ 	if ( pOldBullet || pOldLRSpace )
 /*N*/ 	{
 /*N*/ 		// Numberformat dynamisch, weil Zuweisungsoperator nicht implementiert.
-/*N*/ 
+/*N*/
 /*N*/ 		// Altes NumBulletItem nur uebernehmen, wenn kein altes BulletItem
 /*N*/ 		const SvxNumberFormat* pFmt = ( !pOldBullet && ( rNumBullet.GetNumRule()->GetLevelCount() > nLevel ) ) ?
 /*N*/ 										rNumBullet.GetNumRule()->Get( nLevel ) : NULL;
@@ -1270,7 +1230,7 @@ SV_IMPL_VARARR( EECharAttribArray, EECharAttrib );
 /*N*/ 				default:				eNumType = SVX_NUM_NUMBER_NONE;			break;
 /*N*/ 			}
 /*N*/ 			pNumberFormat->SetNumberingType( eNumType );
-/*N*/ 
+/*N*/
 /*N*/ 			// Justification
 /*N*/ 			SvxAdjust eAdjust;
 /*N*/ 			switch( pOldBullet->GetJustification() & (BJ_HRIGHT|BJ_HCENTER|BJ_HLEFT) )
@@ -1280,27 +1240,27 @@ SV_IMPL_VARARR( EECharAttribArray, EECharAttrib );
 /*N*/ 				default:			eAdjust = SVX_ADJUST_LEFT;		break;
 /*N*/ 			}
 /*N*/ 			pNumberFormat->SetNumAdjust(eAdjust);
-/*N*/ 
+/*N*/
 /*N*/ 			// Prefix/Suffix
 /*N*/ 			pNumberFormat->SetPrefix( pOldBullet->GetPrevText() );
 /*N*/ 			pNumberFormat->SetSuffix( pOldBullet->GetFollowText() );
-/*N*/ 
+/*N*/
 /*N*/ 			//Font
 /*N*/ 			if ( eNumType != SVX_NUM_BITMAP )
 /*N*/ 			{
 /*N*/ 				Font aTmpFont = pOldBullet->GetFont();
 /*N*/ 				pNumberFormat->SetBulletFont( &aTmpFont );
 /*N*/ 			}
-/*N*/ 
+/*N*/
 /*N*/ 			// Color
 /*N*/ 			pNumberFormat->SetBulletColor( pOldBullet->GetFont().GetColor() );
-/*N*/ 
+/*N*/
 /*N*/ 			// Start
 /*N*/ 			pNumberFormat->SetStart( pOldBullet->GetStart() );
-/*N*/ 
+/*N*/
 /*N*/ 			// Scale
 /*N*/ 			pNumberFormat->SetBulletRelSize( pOldBullet->GetScale() );
-/*N*/ 
+/*N*/
 /*N*/ 			// Bullet/Bitmap
 /*N*/ 			if( eNumType == SVX_NUM_CHAR_SPECIAL )
 /*N*/ 			{
@@ -1311,7 +1271,7 @@ SV_IMPL_VARARR( EECharAttribArray, EECharAttrib );
 /*?*/ 				DBG_BF_ASSERT(0, "STRIP"); //STRIP001 SvxBrushItem aBItem( Graphic( pOldBullet->GetBitmap() ), GPOS_NONE );
 /*N*/ 			}
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		// Einzug und Erstzeileneinzug
 /*N*/ 		if ( pOldLRSpace )
 /*N*/ 		{
@@ -1320,7 +1280,7 @@ SV_IMPL_VARARR( EECharAttribArray, EECharAttrib );
 /*N*/ 			pNumberFormat->SetAbsLSpace( nLSpace );
 /*N*/ 			pNumberFormat->SetFirstLineOffset( pOldLRSpace->GetTxtFirstLineOfst() );
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		rNumBullet.GetNumRule()->SetLevel( nLevel, *pNumberFormat );
 /*N*/ 		delete pNumberFormat;
 /*N*/ 	}
