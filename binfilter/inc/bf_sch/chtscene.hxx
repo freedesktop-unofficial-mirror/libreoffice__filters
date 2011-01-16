@@ -2,7 +2,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -40,8 +40,6 @@ namespace binfilter {
 |* werden kann. Die Komponenten von 2d-Charts sind auch SchObjGroups
 |*
 \************************************************************************/
-
-//DECLARE_LIST(DescrList, E3dLabelObj*)//STRIP008 //DECLARE_LIST(DescrList, E3dLabelObj*);
 
 class ChartScene : public E3dPolyScene
 {
