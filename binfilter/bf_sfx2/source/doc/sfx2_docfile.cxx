@@ -2,7 +2,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -1066,7 +1066,7 @@ namespace binfilter {
 /*?*/                 try
 /*?*/                 {
 /*?*/                     Any aAny = pImp->aContent.getPropertyValue( ::rtl::OUString(RTL_CONSTASCII_USTRINGPARAM("IsReadOnly" )) );
-/*?*/                     BOOL bReadonly;
+/*?*/                     BOOL bReadonly( false );
 /*?*/                     if ( ( aAny >>= bReadonly ) && bReadonly )
 /*?*/                     {
 /*?*/                         GetItemSet()->Put( SfxBoolItem(SID_DOC_READONLY, sal_True));
@@ -1811,7 +1811,7 @@ namespace binfilter {
 /*N*/     BOOL bCopy = ( nStorOpenMode == nOpenMode && ! ( nOpenMode & STREAM_TRUNC ) );
 /*N*/     nStorOpenMode = nOpenMode;
 /*N*/     ResetError();
-/*N*/ 
+/*N*/
 /*N*/     pImp->pTempFile = new ::utl::TempFile();
 /*N*/     pImp->pTempFile->EnableKillingFile( sal_True );
 /*N*/     aName = pImp->pTempFile->GetFileName();
@@ -1820,7 +1820,7 @@ namespace binfilter {
 /*N*/         SetError( ERRCODE_IO_CANTWRITE );
 /*N*/         return;
 /*N*/     }
-/*N*/ 
+/*N*/
 /*N*/     if ( bCopy )
 /*N*/     {
 /*N*/         GetOutStream();
@@ -1828,17 +1828,17 @@ namespace binfilter {
 /*N*/         {
 /*N*/             char        *pBuf = new char [8192];
 /*N*/             sal_uInt32   nErr = ERRCODE_NONE;
-/*N*/ 
+/*N*/
 /*N*/             pInStream->Seek(0);
 /*N*/             pOutStream->Seek(0);
-/*N*/ 
+/*N*/
 /*N*/             while( !pInStream->IsEof() && nErr == ERRCODE_NONE )
 /*N*/             {
 /*N*/                 sal_uInt32 nRead = pInStream->Read( pBuf, 8192 );
 /*N*/                 nErr = pInStream->GetError();
 /*N*/                 pOutStream->Write( pBuf, nRead );
 /*N*/             }
-/*N*/ 
+/*N*/
 /*N*/             delete[] pBuf;
 /*N*/             CloseInStream();
 /*N*/         }
@@ -1846,7 +1846,7 @@ namespace binfilter {
 /*N*/     }
 /*N*/     else
 /*?*/         CloseInStream();
-/*N*/ 
+/*N*/
 /*N*/     CloseStorage();
 /*N*/ }
 
@@ -1855,7 +1855,7 @@ namespace binfilter {
 /*N*/ {
 /*N*/     if ( pImp->pTempFile )
 /*N*/         delete pImp->pTempFile;
-/*N*/ 
+/*N*/
 /*N*/     pImp->pTempFile = new ::utl::TempFile();
 /*N*/     pImp->pTempFile->EnableKillingFile( sal_True );
 /*N*/     aName = pImp->pTempFile->GetFileName();
@@ -1864,7 +1864,7 @@ namespace binfilter {
 /*?*/         SetError( ERRCODE_IO_CANTWRITE );
 /*?*/         return;
 /*N*/     }
-/*N*/ 
+/*N*/
 /*N*/     CloseOutStream_Impl();
 /*N*/     CloseStorage();
 /*N*/ }
@@ -1875,40 +1875,36 @@ namespace binfilter {
 /*?*/ SvStream& SfxVersionTableDtor::Read( SvStream& rStrm )
 /*?*/ {
 /*?*/     sal_uInt16 nLclCount = 0, nVersion = 0;
-/*?*/ 
+/*?*/
 /*?*/     rStrm >> nVersion;
 /*?*/     rStrm >> nLclCount;
-/*?*/ 
+/*?*/
 /*?*/     for( sal_uInt16 i=0; i<nLclCount; ++i )
 /*?*/     {
 /*?*/         SfxVersionInfo *pNew = new SfxVersionInfo;
 /*?*/         rStrm.ReadByteString( pNew->aComment, RTL_TEXTENCODING_UTF8 );
 /*?*/         rStrm.ReadByteString( pNew->aName, RTL_TEXTENCODING_UTF8 );
 /*?*/         pNew->aCreateStamp.Load( rStrm );
-/*?*/         Insert( pNew, LIST_APPEND );
+/*?*/         maList.push_back( pNew );
 /*?*/     }
-/*?*/ 
+/*?*/
 /*?*/     return rStrm;
 /*?*/ }
 
-/*N*/ void SfxVersionTableDtor::DelDtor()
-/*N*/ {
-/*N*/     SfxVersionInfo* pTmp = First();
-/*N*/     while( pTmp )
-/*N*/     {
-/*?*/         delete pTmp;
-/*?*/         pTmp = Next();
-/*N*/     }
-/*N*/     Clear();
-/*N*/ }
+void SfxVersionTableDtor::DelDtor()
+{
+    for ( size_t i = 0, n = maList.size(); i < n; ++i )
+        delete maList[ i ];
+    maList.clear();
+}
 
 
 //----------------------------------------------------------------
 //----------------------------------------------------------------
 //----------------------------------------------------------------
-/*?*/ SfxVersionInfo::SfxVersionInfo()
-/*?*/ {
-/*?*/ }
+SfxVersionInfo::SfxVersionInfo()
+{
+}
 
 
 }
