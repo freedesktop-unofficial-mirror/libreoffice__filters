@@ -2,7 +2,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -309,13 +309,6 @@ public:
 #if defined (_INC_WINDOWS) || defined (_WINDOWS_)
 RECT GetSysRect( const Rectangle & rRect );
 Rectangle GetSvRect( const RECT & rRect );
-#endif
-
-#ifdef DBG_UTIL
-ByteString  SvPrint( const SvBorder & );
-ByteString  SvPrint( const Rectangle & );
-ByteString  SvPrint( const Point & );
-ByteString  SvPrint( const Size & );
 #endif
 
 //=========================================================================
