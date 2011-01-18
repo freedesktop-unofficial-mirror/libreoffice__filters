@@ -2,7 +2,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -28,8 +28,6 @@
 
 #include <ctype.h>
 #include <stdio.h>
-
-//#define REMOTE_VERSION
 
 #include "bf_so3/applet.hxx"
 #include <tools/list.hxx>
@@ -194,7 +192,6 @@ SvAppletEnvironment::~SvAppletEnvironment()
     SetEditWin( NULL );
     delete pAppletWin;
     DeleteWindows();
-    DeleteObjMenu();
 }
 
 //=========================================================================
@@ -433,13 +430,13 @@ static sal_Bool isAppletEnabled()
     Reference<XInterface> xConfRegistry = ::comphelper::getProcessServiceFactory()->createInstance(
         OUString(RTL_CONSTASCII_USTRINGPARAM("com.sun.star.configuration.ConfigurationRegistry")));
     if(!xConfRegistry.is()) throw RuntimeException(OUString(RTL_CONSTASCII_USTRINGPARAM("javavm.cxx: couldn't get ConfigurationRegistry")), Reference<XInterface>());
-    
+
     Reference<XSimpleRegistry> xConfRegistry_simple(xConfRegistry, UNO_QUERY);
     if(!xConfRegistry_simple.is()) throw RuntimeException(OUString(RTL_CONSTASCII_USTRINGPARAM("javavm.cxx: couldn't get ConfigurationRegistry")), Reference<XInterface>());
-    
+
     xConfRegistry_simple->open(OUString(RTL_CONSTASCII_USTRINGPARAM("org.openoffice.Office.Common")), sal_True, sal_False);
     Reference<XRegistryKey> xRegistryRootKey = xConfRegistry_simple->getRootKey();
-    
+
     if (xRegistryRootKey.is())
     {
         Reference<XRegistryKey> key_Enable = xRegistryRootKey->openKey(OUString(
@@ -485,38 +482,30 @@ ErrCode SvAppletObject::Verb
 
     ErrCode nRet = ERRCODE_SO_GENERALERROR;
 
-/*
-    nRet = SjWrapper::CheckJavaEnvironment();
-    BOOL bJavaOk = TRUE;
-    bJavaOk = SjWrapper::IsJavaRuntimeOk();
-    if( !ERRCODE_TOERROR( nRet ) && bJavaOk )
-*/
+    switch( nVerb )
     {
-        switch( nVerb )
+        case SVVERB_PROPS:
         {
-            case SVVERB_PROPS:
-            {
-                DBG_ERROR( "non-working code!" );
-                // TODO: dead corpses
-                nRet = 0;
-                break;
-            }
-            case SVVERB_SHOW:
-                break;
-
-            case SVVERB_IPACTIVATE:
-                break;
-
-            case 0L:
-                nRet = GetProtocol().IPProtocol();
-                break;
-            case SVVERB_HIDE:
-                nRet = DoInPlaceActivate( FALSE );
-                break;
-            default:
-                nRet = ERRCODE_SO_GENERALERROR;
-                break;
+            DBG_ERROR( "non-working code!" );
+            // TODO: dead corpses
+            nRet = 0;
+            break;
         }
+        case SVVERB_SHOW:
+            break;
+
+        case SVVERB_IPACTIVATE:
+            break;
+
+        case 0L:
+            nRet = GetProtocol().IPProtocol();
+            break;
+        case SVVERB_HIDE:
+            nRet = DoInPlaceActivate( FALSE );
+            break;
+        default:
+            nRet = ERRCODE_SO_GENERALERROR;
+            break;
     }
     return nRet;
 }
@@ -817,7 +806,6 @@ BOOL SvAppletObject::IsLink() const
     <SvPseudoObject::IsLink()>
 */
 {
-    //return TRUE;
     return FALSE;
 }
 
