@@ -2,7 +2,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -705,9 +705,9 @@ sal_Char const SW_CONSTASCII_DEF( sHTML_listing, "LISTING" );
 /*N*/ {
 /*N*/ 	SwFmt* pFmt;
         SwStyleSheet* p;
-/*N*/ 	for( p = (SwStyleSheet*) aStyles.First(); p;
-/*N*/ 		 p = (SwStyleSheet*) aStyles.Next() )
-/*N*/ 	{
+        for( size_t i = 0; i < aStyles.size(); ++i )
+        {
+            p = (SwStyleSheet*)aStyles[ i ];
 /*N*/ 		if( !p->pFmt &&	(eMask & p->nFamily) )
 /*N*/ 		{
 /*N*/ 			BOOL bNewFmt = FALSE;
@@ -729,7 +729,7 @@ sal_Char const SW_CONSTASCII_DEF( sHTML_listing, "LISTING" );
 /*?*/ 				// mit dem neuen Namen existiert, damit die abgeleiteten
 /*?*/ 				// und Folgevorlagen umgehaengt wenrden.
 /*?*/ 				Rename( p->GetName(), aNewName, p->nFamily );
-/*?*/ 				aStyles.First();
+                    i = 0;
 /*?*/
 /*?*/ 				if( bPresent )
 /*?*/ 				{
@@ -889,7 +889,7 @@ sal_Char const SW_CONSTASCII_DEF( sHTML_listing, "LISTING" );
 /*N*/ 						Rename( p->GetName(), pFmt->GetName(), p->GetFamily() );
 /*N*/ 						// Da Rename() selbst eine Schleife hat, muss von
 /*N*/ 						// vorne gearbeitet werden.
-/*N*/ 						aStyles.First();
+                            i = 0;
 /*N*/ 					}
 /*N*/ 				}
 /*N*/ 			}
@@ -976,9 +976,9 @@ sal_Char const SW_CONSTASCII_DEF( sHTML_listing, "LISTING" );
 /*N*/ 		}
 /*N*/ 	}
 /*N*/ 	// Nun sind alle Vorlagen drin, sie koennen also verbunden werden
-/*N*/ 	for( p = (SwStyleSheet*) aStyles.First(); p;
-/*N*/ 		 p = (SwStyleSheet*) aStyles.Next() )
-/*N*/ 	{
+        for ( size_t i = 0; i < aStyles.size(); ++i )
+        {
+            p = (SwStyleSheet*)aStyles[ i ];
 /*N*/ 		if( p->bNew )
 /*N*/ 		{
 /*N*/ 			p->ConnectParent( p->GetParent() );
@@ -991,9 +991,9 @@ sal_Char const SW_CONSTASCII_DEF( sHTML_listing, "LISTING" );
 /*N*/
 /*N*/ //FEATURE::CONDCOLL
 /*N*/ 	// dann koennen auch alle bedingten Vorlagen verbunden werden
-/*N*/ 	for( p = (SwStyleSheet*) aStyles.First(); p;
-/*N*/ 		 p = (SwStyleSheet*) aStyles.Next() )
-/*N*/ 	{
+        for ( size_t i = 0; i < aStyles.size(); ++i )
+        {
+            p = (SwStyleSheet*)aStyles[ i ];
 /*N*/ 		if( p->bNew && p->pCondColls )
 /*N*/ 			for( USHORT n = 0; n < p->pCondColls->Count(); ++n )
 /*N*/ 			{
@@ -1031,9 +1031,9 @@ sal_Char const SW_CONSTASCII_DEF( sHTML_listing, "LISTING" );
 /*N*/ 	// da mit Referenzen gearbeitet wird, muss der Name zwischen-
 /*N*/ 	// gelagert werden!
 /*N*/ 	String aOld( rOld );
-/*N*/ 	for( SwStyleSheet* p = (SwStyleSheet*) aStyles.First(); p;
-/*N*/ 		 p = (SwStyleSheet*) aStyles.Next() )
-/*N*/ 	{
+        for( size_t i = 0; i < aStyles.size(); ++i )
+        {
+            SwStyleSheet* p = (SwStyleSheet*)aStyles[ i ];
 /*N*/ 		if( p->GetFamily() == eFam )
 /*N*/ 		{
 /*N*/ 			if( p->GetName() == aOld )
@@ -1059,10 +1059,10 @@ sal_Char const SW_CONSTASCII_DEF( sHTML_listing, "LISTING" );
 /*N*/ SwStyleSheet *SwStyleSheetPool::FindByPoolId( USHORT nPoolId )
 /*N*/ {
 /*N*/ 	SwStyleSheet *pS = 0;
-/*N*/ 	ULONG nCount = aStyles.Count();
-/*N*/ 	for( ULONG i=0; i<nCount; i++ )
+/*N*/ 	size_t nCount = aStyles.size();
+/*N*/ 	for( size_t i = 0; i < nCount; i++ )
 /*N*/ 	{
-/*N*/ 		SwStyleSheet *p = (SwStyleSheet *)aStyles.GetObject( i );
+/*N*/ 		SwStyleSheet *p = (SwStyleSheet *)aStyles[ i ];
 /*N*/ 		if( p->nId == nPoolId )
 /*N*/ 		{
 /*?*/ 			pS = p;
@@ -1205,26 +1205,26 @@ sal_Char const SW_CONSTASCII_DEF( sHTML_listing, "LISTING" );
 /*?*/ 				const SvxLRSpaceItem& rLR = pColl->GetLRSpace();
 /*?*/ 				const SwNumFmt& rNFmt = pOutlRule->Get( nLevel );
 /*?*/ 				SwNumFmt aTmp( rNFmt );
-/*?*/ 
+/*?*/
 /*?*/ 				// ohne Nummer immer ohne FirstLineOffset!!!!
 /*?*/ 				if( pColl->GetOutlineLevel() & NO_NUMLEVEL )
 /*?*/ 					aTmp.SetFirstLineOffset( 0 );
 /*?*/ 				else
 /*?*/ 					aTmp.SetFirstLineOffset( rLR.GetTxtFirstLineOfst() );
-/*?*/ 
+/*?*/
 /*?*/ 				aTmp.SetAbsLSpace( rLR.GetTxtLeft() );
 /*?*/ 				if( aTmp != rNFmt )
 /*?*/ 					pOutlRule->Set( nLevel, aTmp );
 /*?*/ 			}
 /*?*/ 	}
-/*?*/ 
+/*?*/
 /*?*/ 	//JP 21.07.98: Bug 53390
 /*?*/ 	if( !bNormal && !bAdditive && bTxtColls )
 /*?*/ 	{
 /*?*/ 		pDoc->SetOutlineNumRule( *pDoc->GetOutlineNumRule() );
 /*?*/ 	}
 /*N*/ #endif
-/*N*/ 
+/*N*/
 /*N*/ 	delete p;
 /*N*/ 	delete pPool;
 /*N*/ 	if( !pConvToSymbolFmts->Count() )
@@ -1241,12 +1241,12 @@ sal_Char const SW_CONSTASCII_DEF( sHTML_listing, "LISTING" );
 /*N*/ 	// kann es hier noch gar keine RecSizes geben. Besser ist aber besser ...
 /*N*/ 	if( HasRecSizes() )
             {DBG_BF_ASSERT(0, "STRIP");} //STRIP001 /*?*/ 		FlushRecSizes();
-/*N*/ 
+/*N*/
 /*N*/ 	SfxItemPool *pTmp = pDoc->GetAttrPool().GetSecondaryPool();
 /*N*/ 	pDoc->GetAttrPool().SetSecondaryPool( 0 );
 /*N*/ 	SfxItemPool* pPool = pDoc->GetAttrPool().Clone();
 /*N*/ 	pDoc->GetAttrPool().SetSecondaryPool( pTmp );
-/*N*/ 
+/*N*/
 /*N*/ 	pStyles->Seek( 0L );
 /*N*/ 	pStyles->SetSize( 0L );
 /*N*/ 	pStyles->SetBufferSize( SW3_BSW_STYLES );
