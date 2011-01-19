@@ -2,7 +2,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -31,6 +31,7 @@
 
 #include <vcl/svapp.hxx>
 #include <tools/stack.hxx>
+#include <vector>
 
 namespace binfilter {
 
@@ -152,7 +153,7 @@ struct SmErrorDesc
 };
 
 DECLARE_STACK(SmNodeStack,  SmNode *)
-DECLARE_LIST(SmErrDescList, SmErrorDesc *)
+typedef ::std::vector< SmErrorDesc* > SmErrDescList;
 
 /**************************************************************************/
 
@@ -225,13 +226,13 @@ protected:
     void	Brace();
     void	Bracebody(BOOL bIsLeftRight);
     void	Function();
-/*N*/ 	void	Binom(); // matrixfett.smf
-/*N*/ 	void	Stack(); // matrixfett.smf
+    void	Binom(); // matrixfett.smf
+    void	Stack(); // matrixfett.smf
     void	Matrix();
     void	Special();
     void	GlyphSpecial();
     // end of grammar
-    
+
     LanguageType    GetLanguage() const { return nLang; }
     void            SetLanguage( LanguageType nNewLang ) { nLang = nNewLang; }
 
@@ -252,7 +253,7 @@ public:
     BOOL         IsExportSymbolNames() const        { return bExportSymNames; }
     void         SetExportSymbolNames(BOOL bVal)    { bExportSymNames = bVal; }
 
-    USHORT		 AddError(SmParseError Type, SmNode *pNode);
+    void        AddError(SmParseError Type, SmNode *pNode);
 
 };
 
