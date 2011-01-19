@@ -2,7 +2,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -30,14 +30,11 @@
 #pragma hdrstop
 #endif
 
-
-
 #include <bf_sfx2/docfile.hxx>
-
 #include "config.hxx"
 #include "starmath.hrc"
-namespace binfilter {
 
+namespace binfilter {
 
 using namespace ::com::sun::star;
 using namespace ::com::sun::star::ucb;
@@ -103,18 +100,18 @@ long				SF_Ident = SF_IDENT;
 /*N*/ 			 const String& rSet, BOOL bIsPredefined)
 /*N*/ {
 /*N*/ 	Name		= aExportName	= rName;
-/*N*/ 
+/*N*/
 /*N*/     Face        = rFont;
 /*N*/ 	Face.SetTransparent(TRUE);
 /*N*/     Face.SetAlign(ALIGN_BASELINE);
-/*N*/ 
+/*N*/
 /*N*/     Character   = aChar;
 /*N*/     if (RTL_TEXTENCODING_SYMBOL == rFont.GetCharSet())
 /*?*/         Character |= 0xF000;
 /*N*/ 	aSetName	= rSet;
 /*N*/ 	bPredefined	= bIsPredefined;
 /*N*/     bDocSymbol  = FALSE;
-/*N*/ 
+/*N*/
 /*N*/ 	pHashNext	   = 0;
 /*N*/ 	pSymSetManager = 0;
 /*N*/ }
@@ -129,12 +126,12 @@ long				SF_Ident = SF_IDENT;
 /*N*/ 	bPredefined	= rSymbol.bPredefined;
 /*N*/     bDocSymbol  = rSymbol.bDocSymbol;
 /*N*/ 	aExportName	= rSymbol.aExportName;
-/*N*/ 
+/*N*/
 /*N*/ 	pHashNext = 0;
-/*N*/ 
+/*N*/
 /*N*/     if (pSymSetManager)
 /*?*/ 		pSymSetManager->SetModified(TRUE);
-/*N*/ 
+/*N*/
 /*N*/ 	return *this;
 /*N*/ }
 
@@ -148,8 +145,8 @@ long				SF_Ident = SF_IDENT;
 /*N*/ SmSymSet::SmSymSet(const String& rName)
 /*N*/ {
 /*N*/ 	Name = rName;
-/*N*/ 	SymbolList.Clear();
-/*N*/ 
+/*N*/ 	SymbolList.clear();
+/*N*/
 /*N*/ 	pSymSetManager = 0;
 /*N*/ }
 
@@ -159,17 +156,15 @@ long				SF_Ident = SF_IDENT;
 /*N*/ USHORT SmSymSet::AddSymbol(SmSym* pSymbol)
 /*N*/ {
 /*N*/ 	DBG_ASSERT(pSymbol, "Kein Symbol");
-/*N*/ 
+/*N*/
 /*N*/     if (pSymbol)
 /*N*/         pSymbol->SetSetName( GetName() );
-/*N*/ 	SymbolList.Insert(pSymbol, LIST_APPEND);
-/*N*/ 	DBG_ASSERT(SymbolList.GetPos(pSymbol) == SymbolList.Count() - 1,
-/*N*/ 		"Sm : ... ergibt falschen return Wert");
-/*N*/ 
+/*N*/ 	SymbolList.push_back( pSymbol );
+/*N*/
 /*N*/ 	if (pSymSetManager)
 /*N*/ 		pSymSetManager->SetModified(TRUE);
-/*N*/ 
-/*N*/ 	return (USHORT) SymbolList.Count() - 1;
+/*N*/
+/*N*/ 	return (USHORT) SymbolList.size() - 1;
 /*N*/ }
 
 
@@ -182,7 +177,7 @@ long				SF_Ident = SF_IDENT;
 
 /*N*/ SmSymSetManager_Impl::SmSymSetManager_Impl(
 /*N*/         SmSymSetManager &rMgr, USHORT HashTableSize ) :
-/*N*/ 
+/*N*/
 /*N*/     rSymSetMgr    (rMgr)
 /*N*/ {
 /*N*/     NoSymbolSets    = 0;
@@ -207,7 +202,7 @@ long				SF_Ident = SF_IDENT;
 /*N*/     UINT32 x = 1;
 /*N*/ 	for (xub_StrLen i = 0; i < rSymbolName.Len(); i++)
 /*N*/         x += x * rSymbolName.GetChar(i) + i;
-/*N*/ 
+/*N*/
 /*N*/ 	return x % pImpl->NoHashEntries;
 /*N*/ }
 
@@ -230,8 +225,8 @@ long				SF_Ident = SF_IDENT;
 
 /*N*/ void SmSymSetManager::EnterHashTable(SmSymSet& rSymbolSet)
 /*N*/ {
-/*N*/ 	for (int i = 0; i < rSymbolSet.GetCount(); i++)
-/*N*/         EnterHashTable( *rSymbolSet.SymbolList.GetObject(i) );
+/*N*/ 	for ( size_t i = 0; i < rSymbolSet.GetCount(); i++ )
+/*N*/         EnterHashTable( *rSymbolSet.SymbolList[ i ] );
 /*N*/ }
 
 /*N*/ void SmSymSetManager::FillHashTable()
@@ -239,14 +234,11 @@ long				SF_Ident = SF_IDENT;
 /*N*/ 	if (pImpl->HashEntries)
 /*N*/ 	{
 /*N*/ 		memset( pImpl->HashEntries, 0, pImpl->NoHashEntries * sizeof(SmSym *) );
-/*N*/ 
+/*N*/
 /*N*/ 		for (UINT32 i = 0; i < pImpl->NoSymbolSets; i++)
 /*N*/ 			EnterHashTable( *GetSymbolSet( (USHORT) i ) );
 /*N*/ 	}
 /*N*/ }
-
-
-
 
 
 /*N*/ SmSymSetManager::SmSymSetManager(USHORT HashTableSize)
@@ -255,25 +247,21 @@ long				SF_Ident = SF_IDENT;
 /*N*/ }
 
 
-
-
-
-
 /*N*/ USHORT SmSymSetManager::AddSymbolSet(SmSymSet* pSymbolSet)
 /*N*/ {
 /*N*/ 	if (pImpl->NoSymbolSets >= pImpl->SymbolSets.GetSize())
 /*?*/ 		pImpl->SymbolSets.SetSize(pImpl->NoSymbolSets + 1);
-/*N*/ 
+/*N*/
 /*N*/ 	pImpl->SymbolSets.Put(pImpl->NoSymbolSets++, pSymbolSet);
-/*N*/ 
+/*N*/
 /*N*/ 	pSymbolSet->pSymSetManager = this;
-/*N*/ 
-/*N*/ 	for (int i = 0; i < pSymbolSet->GetCount(); i++)
-/*?*/ 		pSymbolSet->SymbolList.GetObject(i)->pSymSetManager = this;
-/*N*/ 
+/*N*/
+/*N*/ 	for ( size_t i = 0; i < pSymbolSet->GetCount(); i++ )
+/*?*/ 		pSymbolSet->SymbolList[ i ]->pSymSetManager = this;
+/*N*/
 /*N*/ 	FillHashTable();
 /*N*/ 	pImpl->Modified = TRUE;
-/*N*/ 
+/*N*/
 /*N*/ 	return (USHORT) (pImpl->NoSymbolSets - 1);
 /*N*/ }
 
@@ -293,7 +281,7 @@ long				SF_Ident = SF_IDENT;
 /*N*/ 	for (USHORT i = 0; i < pImpl->NoSymbolSets; i++)
 /*N*/ 		if (pImpl->SymbolSets.Get(i)->GetName() == rSymbolSetName)
 /*N*/ 			return (i);
-/*N*/ 
+/*N*/
 /*N*/ 	return SYMBOLSET_NONE;
 /*N*/ }
 
@@ -306,13 +294,13 @@ long				SF_Ident = SF_IDENT;
 /*N*/             break;
 /*N*/         pSym = pSym->pHashNext;
 /*N*/     }
-/*N*/ 
+/*N*/
 /*N*/ 	return pSym;
 /*N*/ }
 
 
 /*N*/ USHORT SmSymSetManager::GetSymbolCount() const
-/*N*/ { 
+/*N*/ {
 /*N*/     USHORT nRes = 0;
 /*N*/     USHORT nSets = GetSymbolSetCount();
 /*N*/     for (USHORT i = 0;  i < nSets;  ++i)
@@ -324,7 +312,7 @@ long				SF_Ident = SF_IDENT;
 /*N*/ const SmSym * SmSymSetManager::GetSymbolByPos( USHORT nPos ) const
 /*N*/ {
 /*N*/     const SmSym *pRes = 0;
-/*N*/ 
+/*N*/
 /*N*/     INT16 nIdx = 0;
 /*N*/     USHORT nSets = GetSymbolSetCount();
 /*N*/     USHORT i = 0;
@@ -337,7 +325,7 @@ long				SF_Ident = SF_IDENT;
 /*N*/             nIdx += nEntries;
 /*N*/         ++i;
 /*N*/     }
-/*N*/ 
+/*N*/
 /*N*/     return pRes;
 /*N*/ }
 
@@ -345,7 +333,7 @@ long				SF_Ident = SF_IDENT;
 /*N*/ void SmSymSetManager::Load()
 /*N*/ {
 /*N*/     SmMathConfig &rCfg = *SM_MOD1()->GetConfig();
-/*N*/ 
+/*N*/
 /*N*/     USHORT nCount = rCfg.GetSymbolCount();
 /*N*/     USHORT i;
 /*N*/     for (i = 0;  i < nCount;  ++i)
@@ -363,7 +351,7 @@ long				SF_Ident = SF_IDENT;
 /*N*/                 pSymSet = new SmSymSet( rSetName );
 /*N*/                 AddSymbolSet( pSymSet );
 /*N*/             }
-/*N*/ 
+/*N*/
 /*N*/             pSymSet->AddSymbol( new SmSym( *pSym ) );
 /*N*/         }
 /*N*/     }
@@ -371,7 +359,7 @@ long				SF_Ident = SF_IDENT;
 /*N*/     nCount = GetSymbolSetCount();
 /*N*/     for (i = 0;  i < nCount;  ++i)
 /*N*/         ChangeSymbolSet( GetSymbolSet( i ) );
-/*N*/ 
+/*N*/
 /*N*/     if (0 == nCount)
 /*N*/     {
 /*N*/         DBG_ERROR( "no symbol set found" );
