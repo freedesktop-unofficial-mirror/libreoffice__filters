@@ -52,8 +52,7 @@ namespace binfilter {
 /*N*/ {
 /*N*/ 	Fraction xFact(rxFact);
 /*N*/ 	Fraction yFact(ryFact);
-/*N*/ 	long nHgt=rRect.Bottom()-rRect.Top();
-/*N*/
+/*N*/ 
 /*N*/ 	{
 /*N*/ 		if (xFact.GetDenominator()==0) {
 /*?*/ 			long nWdt=rRect.Right()-rRect.Left();
