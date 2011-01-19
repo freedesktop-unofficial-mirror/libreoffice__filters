@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -91,8 +91,8 @@ namespace DOM
         };
 
         typedef std::vector< std::vector<Namespace> > NamespaceVectorType;
-        typedef std::hash_map< OUString, 
-                               sal_Int32, 
+        typedef std::hash_map< OUString,
+                               sal_Int32,
                                rtl::OUStringHash > NamespaceMapType;
 
         /// outer vector: xml context; inner vector: current NS
@@ -171,15 +171,15 @@ namespace DOM
             throw (RuntimeException, DOMException);
 
         /**
-        Returns a duplicate of this node, i.e., serves as a generic copy 
+        Returns a duplicate of this node, i.e., serves as a generic copy
         constructor for nodes.
         */
         virtual Reference< XNode > SAL_CALL cloneNode(sal_Bool deep)
             throw (RuntimeException);
 
         /**
-        A NamedNodeMap containing the attributes of this node (if it is an Element) 
-        or null otherwise.
+        A NamedNodeMap containing the attributes of this node
+        (if it is an Element) or null otherwise.
         */
         virtual Reference< XNamedNodeMap > SAL_CALL getAttributes()
             throw (RuntimeException);
@@ -203,7 +203,7 @@ namespace DOM
             throw (RuntimeException);
 
         /**
-        Returns the local part of the qualified name of this node.    
+        Returns the local part of the qualified name of this node.
         */
         virtual OUString SAL_CALL getLocalName()
             throw (RuntimeException);
@@ -291,9 +291,9 @@ namespace DOM
             throw (RuntimeException);
 
         /**
-        Puts all Text nodes in the full depth of the sub-tree underneath this 
+        Puts all Text nodes in the full depth of the sub-tree underneath this
         Node, including attribute nodes, into a "normal" form where only structure
-        (e.g., elements, comments, processing instructions, CDATA sections, and 
+        (e.g., elements, comments, processing instructions, CDATA sections, and
         entity references) separates Text nodes, i.e., there are neither adjacent
         Text nodes nor empty Text nodes.
         */
