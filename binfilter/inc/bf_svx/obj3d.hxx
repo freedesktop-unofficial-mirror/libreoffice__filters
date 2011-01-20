@@ -2,7 +2,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -60,14 +60,13 @@
 #include <bf_svx/xflclit.hxx>
 class Base3D;
 namespace binfilter {
-class SfxPoolItem; 
+class SfxPoolItem;
 
 //************************************************************
 //   Vorausdeklarationen
 //************************************************************
 
 class Viewport3D;
-class E3dLightList;
 class E3dScene;
 class E3dPolyScene;
 class PolyPolygon3D;
