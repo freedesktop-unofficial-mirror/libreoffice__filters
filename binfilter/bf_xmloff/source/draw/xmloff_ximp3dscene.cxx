@@ -2,7 +2,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -34,10 +34,7 @@
 
 #include "xmluconv.hxx"
 
-
-
 #include "xmlnmspe.hxx"
-
 
 #include <com/sun/star/drawing/CameraGeometry.hpp>
 
@@ -51,10 +48,10 @@ using namespace ::binfilter::xmloff::token;
 //////////////////////////////////////////////////////////////////////////////
 // dr3d:3dlight context
 
-SdXML3DLightContext::SdXML3DLightContext( 
-    SvXMLImport& rImport, 
+SdXML3DLightContext::SdXML3DLightContext(
+    SvXMLImport& rImport,
     sal_uInt16 nPrfx,
-    const ::rtl::OUString& rLName, 
+    const ::rtl::OUString& rLName,
     const ::com::sun::star::uno::Reference< ::com::sun::star::xml::sax::XAttributeList >& xAttrList)
 :	SvXMLImportContext( rImport, nPrfx, rLName),
     maDiffuseColor(0x00000000),
@@ -106,12 +103,12 @@ SdXML3DLightContext::~SdXML3DLightContext()
 
 TYPEINIT1( SdXML3DSceneShapeContext, SdXMLShapeContext );
 
-SdXML3DSceneShapeContext::SdXML3DSceneShapeContext( 
+SdXML3DSceneShapeContext::SdXML3DSceneShapeContext(
     SvXMLImport& rImport,
-    USHORT nPrfx, 
+    USHORT nPrfx,
     const OUString& rLocalName,
     const ::com::sun::star::uno::Reference< ::com::sun::star::xml::sax::XAttributeList>& xAttrList,
-    uno::Reference< drawing::XShapes >& rShapes) 
+    uno::Reference< drawing::XShapes >& rShapes)
 :	SdXMLShapeContext( rImport, nPrfx, rLocalName, xAttrList, rShapes ), SdXML3DSceneAttributesHelper( rImport )
 {
 }
@@ -128,7 +125,7 @@ void SdXML3DSceneShapeContext::StartElement(const uno::Reference< xml::sax::XAtt
 {
     // create new 3DScene shape and add it to rShapes, use it
     // as base for the new 3DScene import
-    AddShape( "com.sun.star.drawing.Shape3DSceneObject" );		
+    AddShape( "com.sun.star.drawing.Shape3DSceneObject" );
     if( mxShape.is() )
     {
         SetStyle();
@@ -242,8 +239,9 @@ SdXML3DSceneAttributesHelper::SdXML3DSceneAttributesHelper( SvXMLImport& rImport
 SdXML3DSceneAttributesHelper::~SdXML3DSceneAttributesHelper()
 {
     // release remembered light contexts, they are no longer needed
-    while(maList.Count())
-        maList.Remove(maList.Count() - 1)->ReleaseRef();
+    for ( size_t i = maList.size(); i > 0; )
+        maList[ --i ]->ReleaseRef();
+    maList.clear();
 }
 
 /** creates a 3d ligth context and adds it to the internal list for later processing */
@@ -255,7 +253,7 @@ SvXMLImportContext * SdXML3DSceneAttributesHelper::create3DLightContext( sal_uIn
     if(pContext)
     {
         pContext->AddRef();
-        maList.Insert((SdXML3DLightContext*)pContext, LIST_APPEND);
+        maList.push_back( (SdXML3DLightContext*)pContext );
     }
 
     return pContext;
@@ -289,7 +287,7 @@ void SdXML3DSceneAttributesHelper::processSceneAttribute( sal_uInt16 nPrefix, co
         {
             Vector3D aNewVec;
             mrImport.GetMM100UnitConverter().convertVector3D(aNewVec, rValue);
-            
+
             if(aNewVec != maVPN)
             {
                 maVPN = aNewVec;
@@ -301,7 +299,7 @@ void SdXML3DSceneAttributesHelper::processSceneAttribute( sal_uInt16 nPrefix, co
         {
             Vector3D aNewVec;
             mrImport.GetMM100UnitConverter().convertVector3D(aNewVec, rValue);
-            
+
             if(aNewVec != maVUP)
             {
                 maVUP = aNewVec;
@@ -393,15 +391,15 @@ void SdXML3DSceneAttributesHelper::setSceneAttributes( const ::com::sun::star::u
     aAny <<= mbLightingMode;
     xPropSet->setPropertyValue(OUString(RTL_CONSTASCII_USTRINGPARAM("D3DSceneTwoSidedLighting")), aAny);
 
-    if(maList.Count())
+    if( !maList.empty() )
     {
         uno::Any aAny2;
         uno::Any aAny3;
 
         // set lights
-        for(sal_uInt32 a(0L); a < maList.Count(); a++)
+        for( size_t a = 0; a < maList.size(); a++)
         {
-            SdXML3DLightContext* pCtx = (SdXML3DLightContext*)maList.GetObject(a);
+            SdXML3DLightContext* pCtx = (SdXML3DLightContext*)maList[ a ];
 
             // set anys
             aAny <<= pCtx->GetDiffuseColor().GetColor();

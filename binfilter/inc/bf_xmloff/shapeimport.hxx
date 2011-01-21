@@ -2,7 +2,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -50,6 +50,9 @@
 #include <bf_xmloff/uniref.hxx>
 
 #include <bf_xmloff/xmlictxt.hxx>
+
+#include <vector>
+
 namespace binfilter {
 
 class SvXMLImport;
@@ -187,10 +190,10 @@ class SdXML3DLightContext: public SvXMLImportContext
     BOOL						mbSpecular;
 
 public:
-    SdXML3DLightContext( 
-        SvXMLImport& rImport, 
+    SdXML3DLightContext(
+        SvXMLImport& rImport,
         sal_uInt16 nPrfx,
-        const ::rtl::OUString& rLName, 
+        const ::rtl::OUString& rLName,
         const ::com::sun::star::uno::Reference< ::com::sun::star::xml::sax::XAttributeList >& xAttrList);
     virtual ~SdXML3DLightContext();
 
@@ -202,7 +205,7 @@ public:
 
 //////////////////////////////////////////////////////////////////////////////
 
-DECLARE_LIST(Imp3DLightList, SdXML3DLightContext*)//STRIP007 ;
+typedef ::std::vector< SdXML3DLightContext* > Imp3DLightList;
 
 class SdXML3DSceneAttributesHelper
 {
