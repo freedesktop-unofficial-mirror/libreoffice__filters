@@ -2,7 +2,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -347,9 +347,6 @@ enum XMLTextType
 #define XML_TEXT_RENAME_TYPE_FRAME 10
 #define XML_TEXT_RENAME_TYPE_TABLE 20
 
-// create type for section list, XMLSectionList_Impl
-DECLARE_LIST( XMLSectionList_Impl, XMLSectionImportContext* )
-
 class XMLTextImportHelper : public UniRefBase
 {
     SvXMLTokenMap *pTextElemTokenMap;
@@ -369,8 +366,6 @@ class XMLTextImportHelper : public UniRefBase
     SvXMLImportContextRef xFontDecls;
     SvXMLImportContextRef xListBlock;
     SvXMLImportContextRef xListItem;
-
-    XMLSectionList_Impl aSectionList;
 
     UniReference < SvXMLImportPropertyMapper > xParaImpPrMap;
     UniReference < SvXMLImportPropertyMapper > xTextImpPrMap;
@@ -563,8 +558,6 @@ public:
     sal_Bool HasListItem() const { return xListItem.Is(); }
     void SetListItem( XMLTextListItemContext *pListItem );
     void _SetListItem( SvXMLImportContext *pListItem );
-
-    XMLSectionList_Impl& GetSectionList() { return aSectionList; }
 
 #ifdef CONV_STAR_FONTS
     ::rtl::OUString ConvertStarFonts( const ::rtl::OUString& rChars,
@@ -768,7 +761,7 @@ public:
 
     virtual void endAppletOrPlugin(
         ::com::sun::star::uno::Reference<
-        ::com::sun::star::beans::XPropertySet> &rPropSet, 
+        ::com::sun::star::beans::XPropertySet> &rPropSet,
         ::std::map < const ::rtl::OUString, ::rtl::OUString, ::comphelper::UStringLess > &rParamMap );
 
     // applet helper methods
@@ -777,14 +770,14 @@ public:
     // redlining helper methods
     // (to be implemented in sw/filter/xml/txtparai.hxx)
 
-    virtual void RedlineAdd( 
+    virtual void RedlineAdd(
         const ::rtl::OUString& rType,		/// redline type (insert, del,... )
         const ::rtl::OUString& rId,			/// use to identify this redline
         const ::rtl::OUString& rAuthor,		/// name of the author
         const ::rtl::OUString& rComment,	/// redline comment
         const ::com::sun::star::util::DateTime& rDateTime,	/// date+time
         sal_Bool bMergeLastParagraph);      /// merge last paras
-    virtual ::com::sun::star::uno::Reference< 
+    virtual ::com::sun::star::uno::Reference<
         ::com::sun::star::text::XTextCursor> RedlineCreateText(
             ::com::sun::star::uno::Reference< 	/// needed to get the document
                     ::com::sun::star::text::XTextCursor> & rOldCursor,
@@ -797,7 +790,7 @@ public:
         sal_Bool bStart);
     virtual void SetShowChanges( sal_Bool bShowChanges );
     virtual void SetRecordChanges( sal_Bool bRecordChanges );
-    virtual void SetChangesProtectionKey( 
+    virtual void SetChangesProtectionKey(
         const ::com::sun::star::uno::Sequence<sal_Int8> & rProtectionKey );
 
     // access to the last open redline ID:
