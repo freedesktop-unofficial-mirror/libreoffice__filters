@@ -2,7 +2,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -45,6 +45,8 @@
 
 #include <com/sun/star/drawing/HomogenMatrix.hpp>
 
+#include <vector>
+
 namespace binfilter {
 class Vector3D;
 class Matrix4D;
@@ -58,7 +60,7 @@ class SvXMLUnitConverter;
 
 //////////////////////////////////////////////////////////////////////////////
 
-DECLARE_LIST(ImpSdXMLExpTransObj2DBaseList, ImpSdXMLExpTransObj2DBase*)//STRIP007 ;
+typedef ::std::vector< ImpSdXMLExpTransObj2DBase* > ImpSdXMLExpTransObj2DBaseList;
 DECLARE_LIST(ImpSdXMLExpTransObj3DBaseList, ImpSdXMLExpTransObj3DBase*)//STRIP007 ;
 
 //////////////////////////////////////////////////////////////////////////////
@@ -78,7 +80,7 @@ public:
     void AddTranslate(const Vector2D& rNew);
     void AddSkewX(double fNew);
 
-    sal_Bool NeedsAction() const { return (sal_Bool)(maList.Count() > 0L); }
+    sal_Bool NeedsAction() const { return (sal_Bool)!maList.empty(); }
     void GetFullTransform(Matrix3D& rFullTrans);
     const ::rtl::OUString& GetExportString(const SvXMLUnitConverter& rConv);
     void SetString(const ::rtl::OUString& rNew, const SvXMLUnitConverter& rConv);
@@ -137,14 +139,14 @@ class SdXMLImExPointsElement
     ::com::sun::star::drawing::PointSequenceSequence	maPoly;
 
 public:
-    SdXMLImExPointsElement( ::com::sun::star::drawing::PointSequence* pPoints, 
+    SdXMLImExPointsElement( ::com::sun::star::drawing::PointSequence* pPoints,
         const SdXMLImExViewBox& rViewBox,
         const ::com::sun::star::awt::Point& rObjectPos,
         const ::com::sun::star::awt::Size& rObjectSize,
         const SvXMLUnitConverter& rConv,
         // #96328#
         const sal_Bool bClosed = sal_True);
-    SdXMLImExPointsElement(const ::rtl::OUString& rNew, 
+    SdXMLImExPointsElement(const ::rtl::OUString& rNew,
         const SdXMLImExViewBox& rViewBox,
         const ::com::sun::star::awt::Point& rObjectPos,
         const ::com::sun::star::awt::Size& rObjectSize,
@@ -171,18 +173,18 @@ class SdXMLImExSvgDElement
 
 public:
     SdXMLImExSvgDElement(const SdXMLImExViewBox& rViewBox);
-    SdXMLImExSvgDElement(const ::rtl::OUString& rNew, 
+    SdXMLImExSvgDElement(const ::rtl::OUString& rNew,
         const SdXMLImExViewBox& rViewBox,
         const ::com::sun::star::awt::Point& rObjectPos,
         const ::com::sun::star::awt::Size& rObjectSize,
         const SvXMLUnitConverter& rConv);
 
     void AddPolygon(
-        ::com::sun::star::drawing::PointSequence* pPoints, 
+        ::com::sun::star::drawing::PointSequence* pPoints,
         ::com::sun::star::drawing::FlagSequence* pFlags,
         const ::com::sun::star::awt::Point& rObjectPos,
         const ::com::sun::star::awt::Size& rObjectSize,
-        const SvXMLUnitConverter& rConv, 
+        const SvXMLUnitConverter& rConv,
         sal_Bool bClosed = FALSE, sal_Bool bRelative = TRUE);
 
     const ::rtl::OUString& GetExportString() const { return msString; }
