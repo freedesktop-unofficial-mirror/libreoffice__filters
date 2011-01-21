@@ -2,7 +2,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -51,31 +51,31 @@ namespace binfilter {
 
 using namespace ::std;
 
-    
+
 /*N*/ void SchCalculationHelper::IntersectPolygonWithRectangle( const XPolygon& rPolygon, const Rectangle& rRectangle, XPolyPolygon& aResult )
 /*N*/ {
 /*N*/ 	RTL_LOGFILE_CONTEXT_AUTHOR( context, "sch", "bm93744", "SchCalculationHelper::IntersectPolygonWithRectangle");
-/*N*/ 
+/*N*/
 /*N*/ 	aResult.Clear();
-/*N*/ 
+/*N*/
 /*N*/  	if( rRectangle.IsInside( rPolygon.GetBoundRect() ) )
 /*N*/ 	{
 /*N*/ 		aResult.Insert( rPolygon );
 /*N*/         OSL_TRACE( "IntersectPolygonWithRectangle: result has %d polygons", aResult.Count() );
 /*N*/ 		return;
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/     Point aFrom;
 /*N*/     Point aTo;
 /*N*/ 	USHORT nCount = rPolygon.GetPointCount();
-/*N*/ 
+/*N*/
 /*N*/     // set last point to a position outside the rectangle, such that the first
 /*N*/     // time clip2d returns true, the comparison to last will always yield false
 /*N*/     Point aLast (rRectangle.TopLeft());
 /*N*/     aLast.Move (-1, -1);
 /*N*/     XPolygon aCurrentPoly;
 /*N*/     USHORT nIdx = 0;
-/*N*/ 
+/*N*/
 /*N*/ 	for (USHORT i=1; i<nCount; i++)
 /*N*/ 	{
 /*N*/ 		aFrom = rPolygon[i-1];
@@ -93,7 +93,7 @@ using namespace ::std;
 /*N*/                 // create an XPolygon and put it into the XPolyPolygon
 /*N*/                 if (aCurrentPoly.GetPointCount() > 0)
 /*N*/                     aResult.Insert (aCurrentPoly, XPOLYPOLY_APPEND);
-/*N*/ 
+/*N*/
 /*N*/                 // start new sequence
 /*N*/ 				aCurrentPoly.SetPointCount (0);
 /*N*/                 aCurrentPoly.Insert (0, aFrom, XPOLY_NORMAL);
@@ -101,13 +101,13 @@ using namespace ::std;
 /*N*/                 if (aTo != aFrom)
 /*N*/                     aCurrentPoly.Insert (nIdx++, aTo, XPOLY_NORMAL);
 /*N*/             }
-/*N*/ 
+/*N*/
 /*N*/             aLast = aTo;
 /*N*/         }
 /*N*/     }
 /*N*/     if (aCurrentPoly.GetPointCount() > 0)
 /*N*/         aResult.Insert (aCurrentPoly, XPOLYPOLY_APPEND);
-/*N*/ 
+/*N*/
 /*N*/     OSL_TRACE( "IntersectPolygonWithRectangle: result has %d polygons", aResult.Count() );
 /*N*/ }
 
@@ -115,13 +115,13 @@ using namespace ::std;
 
 
 
-/*N*/ BOOL	SchCalculationHelper::clip2d	(Point & rPoint0, 
+/*N*/ BOOL	SchCalculationHelper::clip2d	(Point & rPoint0,
 /*N*/ 										Point & rPoint1,
 /*N*/ 										const Rectangle & rRectangle)
 /*N*/ {
-/*N*/ 	//	Direction vector of the line.						
+/*N*/ 	//	Direction vector of the line.
 /*N*/ 	Point	aD = rPoint1 - rPoint0;
-/*N*/ 
+/*N*/
 /*N*/ 	if (aD.X()==0 && aD.Y()==0 && rRectangle.IsInside (rPoint0))
 /*N*/ 	{
 /*N*/ 		//	Degenerate case of a zero length line.
@@ -132,8 +132,8 @@ using namespace ::std;
 /*N*/ 		//	Values of the line parameter where the line enters resp. leaves the rectangle.
 /*N*/ 		double	fTE = 0,
 /*N*/ 				fTL = 1;
-/*N*/ 				
-/*N*/ 		//	Test wether at least a part lies in the four half-planes with respect to 
+/*N*/
+/*N*/ 		//	Test wether at least a part lies in the four half-planes with respect to
 /*N*/ 		//	the rectangles four edges.
 /*N*/ 		if (CLIPt (aD.X(), rRectangle.Left() - rPoint0.X(), fTE, fTL))
 /*N*/ 			if (CLIPt (-aD.X(), rPoint0.X() - rRectangle.Right(), fTE, fTL))
@@ -155,7 +155,7 @@ using namespace ::std;
 /*N*/ 						}
 /*N*/ 						return TRUE;
 /*N*/ 					}
-/*N*/ 					
+/*N*/
 /*N*/ 		//	Line is not visible.
 /*N*/ 		return FALSE;
 /*N*/ 	}
@@ -164,13 +164,13 @@ using namespace ::std;
 
 
 
-/*N*/ BOOL	SchCalculationHelper::CLIPt	(double fDenom, 
-/*N*/ 									double fNum, 
-/*N*/ 									double & fTE, 
+/*N*/ BOOL	SchCalculationHelper::CLIPt	(double fDenom,
+/*N*/ 									double fNum,
+/*N*/ 									double & fTE,
 /*N*/ 									double & fTL)
 /*N*/ {
 /*N*/ 	double	fT;
-/*N*/ 	
+/*N*/
 /*N*/ 	if (fDenom > 0)				//	Intersection enters: PE
 /*N*/ 	{
 /*N*/ 		fT = fNum / fDenom;		//	Parametric value at the intersection.
@@ -189,7 +189,7 @@ using namespace ::std;
 /*N*/ 	}
 /*N*/ 	else if (fNum > 0)
 /*N*/ 		return FALSE;			//	Line lies on the outside of the edge.
-/*N*/ 	
+/*N*/
 /*N*/ 	return TRUE;
 /*N*/ }
 

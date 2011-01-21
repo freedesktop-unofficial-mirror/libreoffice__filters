@@ -2,7 +2,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -48,8 +48,6 @@
 
 #include "xdash.hxx"
 
-#include "xpoly.hxx"
-
 #include "poly3d.hxx"
 
 #include "xenum.hxx"
@@ -67,7 +65,7 @@ class XPolygon;
 ///////////////////////////////////////////////////////////////////////////////
 
 // #100127# Bracket filled shapes with a comment, if recording a Mtf
-class ImpGraphicFill 
+class ImpGraphicFill
 {
 public:
     ImpGraphicFill( const SdrObject& rObj, const ExtOutputDevice& rXOut, const SfxItemSet& rFillItemSet, bool bIsShadow=false );
@@ -123,19 +121,19 @@ private:
 
     @param eBmpRectPoint
     Position of the start point relative to the bitmap
-    
+
  */
 void ImpCalcBmpFillSizes( Size&			   rStartOffset,
                           Size&			   rBmpOutputSize,
-                          const Rectangle& rOutputRect, 
+                          const Rectangle& rOutputRect,
                           const MapMode&   rOutputMapMode,
                           const Bitmap&    rFillBitmap,
-                          const Size&      rBmpSize, 
-                          const Size&      rBmpPerCent, 
+                          const Size&      rBmpSize,
+                          const Size&      rBmpPerCent,
                           const Size&	   rBmpOffPerCent,
-                          BOOL             bBmpLogSize, 
-                          BOOL             bBmpTile, 
-                          BOOL             bBmpStretch, 
+                          BOOL             bBmpLogSize,
+                          BOOL             bBmpTile,
+                          BOOL             bBmpStretch,
                           RECT_POINT       eBmpRectPoint );
 
 

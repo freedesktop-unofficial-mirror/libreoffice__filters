@@ -2,7 +2,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -30,9 +30,7 @@
 #include <math.h>
 #include "xpoly.hxx"
 
-
 #include <tools/bigint.hxx>
-
 
 namespace binfilter {
 
@@ -55,7 +53,7 @@ namespace binfilter {
 /*N*/ 	Fraction xFact(rxFact);
 /*N*/ 	Fraction yFact(ryFact);
 /*N*/ 	long nHgt=rRect.Bottom()-rRect.Top();
-/*N*/ 
+/*N*/
 /*N*/ 	{
 /*N*/ 		if (xFact.GetDenominator()==0) {
 /*?*/ 			long nWdt=rRect.Right()-rRect.Left();
@@ -80,7 +78,7 @@ namespace binfilter {
 /*?*/ 				yFact=Fraction(yFact.GetNumerator(),-1);
 /*?*/ 				if (nHgt==0) rRect.Top()--;
 /*?*/ 			}
-/*?*/ 
+/*?*/
 /*?*/ 			yFact=Fraction(yFact.GetNumerator(),1); // DivZero abfangen
 /*N*/ 		}
 /*N*/ 		rRect.Top()   =rRef.Y()+Round(((double)(rRect.Top()   -rRef.Y())*yFact.GetNumerator())/yFact.GetDenominator());
@@ -267,7 +265,7 @@ namespace binfilter {
 /*N*/ 		nCos=cos(a);
 /*N*/ 	}
 /*N*/ }
-/*N*/ 
+/*N*/
 /*N*/ void GeoStat::RecalcTan()
 /*N*/ {
 /*N*/ 	if (nShearWink==0) {
@@ -299,11 +297,11 @@ namespace binfilter {
 /*N*/ 	rGeo.nDrehWink=NormAngle360(rGeo.nDrehWink);
 /*N*/ 	// Drehung ist damit im Kasten
 /*N*/ 	rGeo.RecalcSinCos();
-/*N*/ 
+/*N*/
 /*N*/ 	Point aPt1(rPol[1]-rPol[0]);
 /*N*/ 	if (rGeo.nDrehWink!=0) RotatePoint(aPt1,Point(0,0),-rGeo.nSin,rGeo.nCos); // -Sin fuer Rueckdrehung
 /*N*/ 	long nWdt=aPt1.X();
-/*N*/ 
+/*N*/
 /*N*/ 	Point aPt0(rPol[0]);
 /*N*/ 	Point aPt3(rPol[3]-rPol[0]);
 /*N*/ 	if (rGeo.nDrehWink!=0) RotatePoint(aPt3,Point(0,0),-rGeo.nSin,rGeo.nCos); // -Sin fuer Rueckdrehung
@@ -311,7 +309,7 @@ namespace binfilter {
 /*N*/ 	long nShW=GetAngle(aPt3);
 /*N*/ 	nShW-=27000; // ShearWink wird zur Senkrechten gemessen
 /*N*/ 	nShW=-nShW;  // Negieren, denn '+' ist Rechtskursivierung
-/*N*/ 
+/*N*/
 /*N*/ 	bool bMirr=aPt3.Y()<0;
 /*N*/ 	if (bMirr) { // "Punktetausch" bei Spiegelung
 /*N*/ 		nHgt=-nHgt;
@@ -398,7 +396,7 @@ namespace binfilter {
 /*?*/ FrPair GetMapFactor(FieldUnit eS, FieldUnit eD)
 /*?*/ {
 /*?*/ 	if (eS==eD) return FrPair(1,1,1,1);
-/*?*/ {DBG_BF_ASSERT(0, "STRIP");}return FrPair(1,1,1,1);//STRIP001 //STRIP001 /*?*/ 	FrPair aS(GetInchOrMM(eS));
+/*?*/ {DBG_BF_ASSERT(0, "STRIP");}return FrPair(1,1,1,1);
 /*?*/ };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -409,13 +407,6 @@ namespace binfilter {
     // 1 pole    =  5 1/2 yd  =    198" =     5.029,2mm
     // 1 yd      =  3 ft      =     36" =       914,4mm
     // 1 ft      = 12 "       =      1" =       304,8mm
-
-
-
-
-
-
-
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 

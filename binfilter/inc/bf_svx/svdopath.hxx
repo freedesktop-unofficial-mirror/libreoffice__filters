@@ -2,7 +2,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -31,14 +31,7 @@
 
 #include <bf_svx/svdotext.hxx>
 
-#include <bf_svx/xpoly.hxx>
 namespace binfilter {
-
-//************************************************************
-//   Vorausdeklarationen
-//************************************************************
-
-class XPolyPolygon;
 
 //************************************************************
 //   Defines
@@ -109,10 +102,6 @@ public:
     virtual void NbcSetSnapRect(const Rectangle& rRect);
     virtual void TakeContour(XPolyPolygon& rPoly) const;
 
-
-
-
-
     virtual void NbcMove(const Size& aSize);
     virtual void NbcResize(const Point& rRefPnt, const Fraction& aXFact, const Fraction& aYFact);
     virtual void NbcRotate(const Point& rRefPnt, long nAngle, double fSin, double fCos);
@@ -179,17 +168,17 @@ public:
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     //
-    // transformation interface for StarOfficeAPI. This implements support for 
+    // transformation interface for StarOfficeAPI. This implements support for
     // homogen 3x3 matrices containing the transformation of the SdrObject. At the
-    // moment it contains a shearX, rotation and translation, but for setting all linear 
+    // moment it contains a shearX, rotation and translation, but for setting all linear
     // transforms like Scale, ShearX, ShearY, Rotate and Translate are supported.
     //
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // gets base transformation and rectangle of object. If it's an SdrPathObj it fills the PolyPolygon
     // with the base geometry and returns TRUE. Otherwise it returns FALSE.
     virtual BOOL TRGetBaseGeometry(Matrix3D& rMat, XPolyPolygon& rPolyPolygon) const;
-    // sets the base geometry of the object using infos contained in the homogen 3x3 matrix. 
-    // If it's an SdrPathObj it will use the provided geometry information. The Polygon has 
+    // sets the base geometry of the object using infos contained in the homogen 3x3 matrix.
+    // If it's an SdrPathObj it will use the provided geometry information. The Polygon has
     // to use (0,0) as upper left and will be scaled to the given size in the matrix.
     virtual void TRSetBaseGeometry(const Matrix3D& rMat, const XPolyPolygon& rPolyPolygon);
 };

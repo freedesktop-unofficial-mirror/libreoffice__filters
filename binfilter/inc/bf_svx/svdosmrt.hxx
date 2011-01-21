@@ -2,7 +2,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -28,8 +28,6 @@
 
 #ifndef _SVDSMRT_HXX
 #define _SVDSMRT_HXX
-
-#include <bf_svx/xpoly.hxx>
 
 #include <bf_svx/svdosmev.hxx>
 class SvStream;
@@ -387,10 +385,6 @@ public:
     SdrSmartDragPointList aDragPoints;
     bool bAnimated;
     ULONG    nTimerStep;
-//    AutoTimer aAnimator;
-//    SdrPathObj* pPathObj;
-//private:
-//    DECL_LINK(AniHdl,AutoTimer*);
 public:
     SdrObjSmartData();
     ~SdrObjSmartData();

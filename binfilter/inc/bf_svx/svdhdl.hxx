@@ -2,7 +2,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -37,14 +37,14 @@
 
 #include <bf_svtools/solar.hrc>
 
-#include <bf_svx/xpoly.hxx>
 #include <bf_svx/svdoedge.hxx>
+
 class VirtualDevice;
 class OutputDevice;
 class Region;
 class Window;
-namespace binfilter {
 
+namespace binfilter {
 
 class SdrHdlList;
 class SdrObject;
@@ -64,7 +64,7 @@ class SdrMarkView;
 // Modus selektiert wird.
 // HDL_MOVE...HDL_LWRGT muessen im enum immer zusammen stehen bleiben!
 
-enum SdrHdlKind 
+enum SdrHdlKind
 {
     HDL_MOVE,		// Handle zum Verschieben des Objekts
     HDL_UPLFT,		// Oben links

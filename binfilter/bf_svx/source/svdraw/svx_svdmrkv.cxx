@@ -2,7 +2,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -123,7 +123,7 @@ namespace binfilter {
 /*N*/ 			{
 /*N*/ 				HideMarkHdl(NULL);
 /*N*/ 			}
-/*N*/ 
+/*N*/
 /*N*/ 			bMarkedObjRectDirty=TRUE;
 /*N*/ 			bMarkedPointsRectsDirty=TRUE;
 /*N*/ 		}
@@ -208,22 +208,22 @@ namespace binfilter {
 /*N*/ 	{
 /*N*/ 		// break all creation actions when hiding page (#75081#)
 /*N*/ 		BrkAction();
-/*N*/ 
+/*N*/
 /*N*/ 		BOOL bVis(IsMarkHdlShown());
-/*N*/ 
+/*N*/
 /*N*/ 		if(bVis)
 /*?*/ 			HideMarkHdl(NULL);
-/*N*/ 
+/*N*/
 /*N*/ 		// Alle Markierungen dieser Seite verwerfen
 /*N*/ 		BOOL bMrkChg(aMark.DeletePageView(*pPV));
 /*N*/ 		SdrSnapView::HidePage(pPV);
-/*N*/ 
+/*N*/
 /*N*/ 		if(bMrkChg)
 /*N*/ 		{
 /*?*/ 			MarkListHasChanged();
 /*?*/ 			AdjustMarkHdl();
 /*N*/ 		}
-/*N*/ 		
+/*N*/
 /*N*/ 		if(bVis)
 /*N*/ 			ShowMarkHdl(NULL);
 /*N*/ 	}
@@ -238,7 +238,7 @@ namespace binfilter {
 
 /*N*/ void SdrMarkView::BrkMarkObj()
 /*N*/ {
-/*N*/ 	if (bMarking) {DBG_BF_ASSERT(0, "STRIP"); //STRIP001 
+/*N*/ 	if (bMarking) {DBG_BF_ASSERT(0, "STRIP"); //STRIP001
 /*N*/ 	}
 /*N*/ }
 
@@ -250,7 +250,7 @@ namespace binfilter {
 
 /*N*/ void SdrMarkView::BrkMarkPoints()
 /*N*/ {
-/*N*/ 	if (bMarkingPoints) {DBG_BF_ASSERT(0, "STRIP"); //STRIP001 
+/*N*/ 	if (bMarkingPoints) {DBG_BF_ASSERT(0, "STRIP"); //STRIP001
 /*N*/ 	}
 /*N*/ }
 
@@ -262,7 +262,7 @@ namespace binfilter {
 
 /*N*/ void SdrMarkView::BrkMarkGluePoints()
 /*N*/ {
-/*N*/ 	if (bMarkingGluePoints) {DBG_BF_ASSERT(0, "STRIP"); //STRIP001 
+/*N*/ 	if (bMarkingGluePoints) {DBG_BF_ASSERT(0, "STRIP"); //STRIP001
 /*N*/ 	}
 /*N*/ }
 
@@ -400,7 +400,7 @@ namespace binfilter {
 /*N*/ }
 
 /*N*/ void SdrMarkView::SetMarkHdlHidden(BOOL bOn)
-/*N*/ {DBG_BF_ASSERT(0, "STRIP"); //STRIP001 
+/*N*/ {DBG_BF_ASSERT(0, "STRIP"); //STRIP001
 /*N*/ }
 
 /*N*/ BOOL SdrMarkView::ImpIsFrameHandles() const
@@ -408,7 +408,7 @@ namespace binfilter {
 /*N*/ 	ULONG nMarkAnz=aMark.GetMarkCount();
 /*N*/ 	BOOL bFrmHdl=nMarkAnz>nFrameHandlesLimit || bForceFrameHandles;
 /*N*/ 	BOOL bStdDrag=eDragMode==SDRDRAG_MOVE;
-/*N*/ 	if (nMarkAnz==1 && bStdDrag && bFrmHdl) {DBG_BF_ASSERT(0, "STRIP"); //STRIP001 
+/*N*/ 	if (nMarkAnz==1 && bStdDrag && bFrmHdl) {DBG_BF_ASSERT(0, "STRIP"); //STRIP001
 /*N*/ 	}
 /*N*/ 	if (!bStdDrag && !bFrmHdl) {
 /*?*/ 		// Grundsaetzlich erstmal alle anderen Dragmodi nur mit FrameHandles
@@ -424,7 +424,7 @@ namespace binfilter {
 /*N*/ 	}
 /*N*/ 	if (!bFrmHdl) {
 /*N*/ 		// FrameHandles, wenn wenigstens 1 Obj kein SpecialDrag kann
-/*N*/ 		for (ULONG nMarkNum=0; nMarkNum<nMarkAnz && !bFrmHdl; nMarkNum++) {DBG_BF_ASSERT(0, "STRIP"); //STRIP001 
+/*N*/ 		for (ULONG nMarkNum=0; nMarkNum<nMarkAnz && !bFrmHdl; nMarkNum++) {DBG_BF_ASSERT(0, "STRIP"); //STRIP001
 /*N*/ 		}
 /*N*/ 	}
 /*N*/ 	return bFrmHdl;
@@ -435,23 +435,20 @@ namespace binfilter {
 /*N*/ 	// #105722# remember old focus handle values to search for it again
 /*N*/ 	const SdrHdl* pSaveOldFocusHdl = aHdl.GetFocusHdl();
 /*N*/ 	sal_Bool bSaveOldFocus(sal_False);
-/*N*/ 	sal_uInt16 nSavePolyNum, nSavePointNum;
-/*N*/ 	SdrHdlKind eSaveKind;
-/*N*/ 
+/*N*/
 /*N*/ 	if(pSaveOldFocusHdl
 /*N*/ 		&& pSaveOldFocusHdl->GetObj()
 /*N*/ 		&& pSaveOldFocusHdl->GetObj()->ISA(SdrPathObj)
 /*N*/ 		&& (pSaveOldFocusHdl->GetKind() == HDL_POLY || pSaveOldFocusHdl->GetKind() == HDL_BWGT))
 /*N*/ 	{DBG_BF_ASSERT(0, "STRIP");
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	aHdl.Clear();
 /*N*/ 	aHdl.SetRotateShear(eDragMode==SDRDRAG_ROTATE);
 /*N*/ 	aHdl.SetDistortShear(eDragMode==SDRDRAG_SHEAR);
 /*N*/ 	pMarkedObj=NULL;
 /*N*/ 	pMarkedPV=NULL;
 /*N*/ 	ULONG nMarkAnz=aMark.GetMarkCount();
-/*N*/ 	BOOL bStdDrag=eDragMode==SDRDRAG_MOVE;
 /*N*/ 	if (nMarkAnz==1) {
 /*?*/ 		pMarkedObj=aMark.GetMark(0)->GetObj();
 /*N*/ 	}
@@ -476,21 +473,21 @@ namespace binfilter {
 /*N*/ 		} // for nMarkNum
 /*N*/ 	} // if bFrmHdl else
 /*N*/ 	// GluePoint-Handles
-/*N*/ 	for (ULONG nMarkNum=0; nMarkNum<nMarkAnz; nMarkNum++) {DBG_BF_ASSERT(0, "STRIP"); //STRIP001 
+/*N*/ 	for (ULONG nMarkNum=0; nMarkNum<nMarkAnz; nMarkNum++) {DBG_BF_ASSERT(0, "STRIP"); //STRIP001
 /*N*/ 	}
 
     // Drehpunkt/Spiegelachse
 /*N*/ 	AddDragModeHdl(eDragMode);
-/*N*/ 
+/*N*/
 /*N*/ 	// add custom handles (used by other apps, e.g. AnchorPos)
 /*N*/ 	AddCustomHdl();
-/*N*/ 
+/*N*/
 /*N*/ 	// sort handles
 /*N*/ 	aHdl.Sort();
-/*N*/ 
+/*N*/
 /*N*/ 	// #105722# try to restore focus handle index from remembered values
 /*N*/ 	if(bSaveOldFocus)
-/*N*/ 	{DBG_BF_ASSERT(0, "STRIP");//STRIP001 
+/*N*/ 	{DBG_BF_ASSERT(0, "STRIP");//STRIP001
 /*N*/ 	}
 /*N*/ }
 
@@ -501,30 +498,6 @@ namespace binfilter {
 
 /*N*/ void SdrMarkView::AddDragModeHdl(SdrDragMode eMode)
 /*N*/ {
-/*N*/ 	switch(eMode)
-/*N*/ 	{
-/*?*/ 		case SDRDRAG_ROTATE:
-/*?*/ 		{
-/*?*/ 			// add rotation center
-/*?*/ 		DBG_BF_ASSERT(0, "STRIP"); //STRIP001 	SdrHdl* pHdl = new SdrHdl(aRef1, HDL_REF1);
-/*?*/ 
-/*?*/ 
-/*?*/ 			break;
-/*?*/ 		}
-/*?*/ 		case SDRDRAG_MIRROR:
-/*?*/ 		{DBG_BF_ASSERT(0, "STRIP"); //STRIP001 
-/*?*/ 
-/*?*/ 			break;
-/*?*/ 		}
-/*?*/ 		case SDRDRAG_TRANSPARENCE:
-/*?*/ 		{DBG_BF_ASSERT(0, "STRIP"); //STRIP001 
-/*?*/ 			break;
-/*?*/ 		}
-/*?*/ 		case SDRDRAG_GRADIENT:
-/*?*/ 		{DBG_BF_ASSERT(0, "STRIP"); //STRIP001 
-/*?*/ 			break;
-/*N*/ 		}
-/*N*/ 	}
 /*N*/ }
 
 
@@ -532,7 +505,7 @@ namespace binfilter {
 
 /*N*/ void SdrMarkView::CheckMarked()
 /*N*/ {
-/*N*/ 	for (ULONG nm=aMark.GetMarkCount(); nm>0;) {DBG_BF_ASSERT(0, "STRIP"); //STRIP001 
+/*N*/ 	for (ULONG nm=aMark.GetMarkCount(); nm>0;) {DBG_BF_ASSERT(0, "STRIP"); //STRIP001
 /*N*/ 	}
 
     // #67670# When this leads to a change, MarkListHasChanged()
@@ -589,16 +562,15 @@ namespace binfilter {
 /*N*/ {
 /*N*/ 	if (pObj!=NULL && pPV!=NULL && IsObjMarkable(pObj, pPV)) {
 /*N*/ 		BrkAction();
-/*N*/ 		if (!bUnmark) {DBG_BF_ASSERT(0, "STRIP"); //STRIP001 
-/*N*/ 		} else {
+/*N*/ 		if (bUnmark)
+            {
 /*N*/ 			ULONG nPos=aMark.FindObject(pObj);
-/*N*/ 			if (nPos!=CONTAINER_ENTRY_NOTFOUND) {DBG_BF_ASSERT(0, "STRIP"); //STRIP001 
+/*N*/ 			if (nPos!=CONTAINER_ENTRY_NOTFOUND) {
 /*N*/ 			}
 /*N*/ 		}
 /*N*/ 		if (!bImpNoSetMarkHdl) {
 /*N*/ 			MarkListHasChanged();
 /*N*/ 			AdjustMarkHdl(TRUE);
-/*N*/ //            if (!IsSolidMarkHdl() || !bSomeObjChgdFlag) {
 /*N*/ 			if (!bSomeObjChgdFlag) {
 /*N*/ 				// ShowMarkHdl kommt sonst mit dem AfterPaintTimer
 /*N*/ 				ShowMarkHdl(NULL);
@@ -624,7 +596,6 @@ namespace binfilter {
 /*N*/ 		return NULL;
 /*N*/ 	}
 /*N*/ 	BOOL bCheckIfMarkable=(nOptions & SDRSEARCH_TESTMARKABLE)!=0;
-/*N*/ 	BOOL bBack=(nOptions & SDRSEARCH_BACKWARD)!=0;
 /*N*/ 	BOOL bDeep=(nOptions & SDRSEARCH_DEEP)!=0;
 /*N*/ 	BOOL bOLE=pObj->ISA(SdrOle2Obj);
 /*N*/ 	SdrObject* pRet=NULL;
@@ -714,7 +685,7 @@ namespace binfilter {
 /*N*/ 	if(bRestraintPaint && bVis)
 /*N*/ 	{
 /*?*/ 		ShowMarkHdl(NULL);
-/*N*/ 
+/*N*/
 /*N*/ 		// refresh IAOs
 //STRIP012/*N*/ //--/		RefreshAllIAOManagers();
 /*N*/ 	}
@@ -761,22 +732,22 @@ namespace binfilter {
 /*N*/ 	bEdgesOfMarkedNodesDirty=TRUE;
 /*N*/ 	aEdgesOfMarkedNodes.Clear();
 /*N*/ 	aMarkedEdgesOfMarkedNodes.Clear();
-/*N*/ 
+/*N*/
 /*N*/ 	// #i13033#
 /*N*/ 	// Forget transitive hull of complete selection
 /*N*/ 	maAllMarkedObjects.Clear();
-/*N*/ 
+/*N*/
 /*N*/ 	bMarkedObjRectDirty=TRUE;
 /*N*/ 	bMarkedPointsRectsDirty=TRUE;
 /*N*/ #ifndef SVX_LIGHT
 /*?*/ 	if (pItemBrowser!=NULL) DBG_BF_ASSERT(0, "STRIP"); //STRIP001 pItemBrowser->SetDirty();
 /*N*/ #endif
 /*N*/ 	BOOL bOneEdgeMarked=FALSE;
-/*N*/ 	if (aMark.GetMarkCount()==1) {DBG_BF_ASSERT(0, "STRIP"); //STRIP001 
+/*N*/ 	if (aMark.GetMarkCount()==1) {DBG_BF_ASSERT(0, "STRIP"); //STRIP001
 /*N*/ 	}
 /*N*/ 	ImpSetGlueVisible4(bOneEdgeMarked);
 /*N*/ }
-/*N*/ 
+/*N*/
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /*N*/ void SdrMarkView::WriteRecords(SvStream& rOut) const
@@ -860,7 +831,7 @@ namespace binfilter {
 /*N*/ 			{
 /*N*/ 				const SdrPageViewWinRec& rWR = rWinList[ (USHORT) i];
 /*N*/ 				const SdrUnoControlList& rControlList = rWR.GetControlList();
-/*N*/ 				
+/*N*/
 /*N*/ 				for(UINT32 j = 0; j < rControlList.GetCount(); j++)
 /*N*/ 				{
 /*?*/ 					::com::sun::star::uno::Reference< ::com::sun::star::awt::XControl > xControl = rControlList[ (USHORT) j].GetControl();

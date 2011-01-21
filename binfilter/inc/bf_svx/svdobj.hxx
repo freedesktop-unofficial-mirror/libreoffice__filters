@@ -2,7 +2,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -73,7 +73,6 @@ class SfxPoolItem;
 //************************************************************
 
 class ExtOutputDevice;
-//class ImpSdrMtfAnimator;
 class OutlinerParaObject;
 class SdrOutliner;
 class SdrDragStat;
@@ -94,7 +93,6 @@ class SdrVirtObj;
 class XFillAttrSetItem;
 class XLineAttrSetItem;
 class XPolyPolygon;
-class XPolygon;
 class XTextAttrSetItem;
 class SdrLineGeometry;
 
@@ -643,7 +641,7 @@ public:
         CreateLinePoly().
 
         @param rXOut
-        Output device that specifies required resolution 
+        Output device that specifies required resolution
 
         @param rSet
         Item set attributing the line style
@@ -655,11 +653,11 @@ public:
         transfers to the caller.
      */
     ::std::auto_ptr< SdrLineGeometry > ImpPrepareLineGeometry(ExtOutputDevice& rXOut, const SfxItemSet& rSet, BOOL bIsLineDraft = FALSE) const;
-    void ImpDrawLineGeometry(   ExtOutputDevice& 	rXOut, 
-                                Color&              rColor, 
-                                sal_uInt16        	nTransparence, 
+    void ImpDrawLineGeometry(   ExtOutputDevice& 	rXOut,
+                                Color&              rColor,
+                                sal_uInt16        	nTransparence,
                                 SdrLineGeometry&    rLineGeometry,
-                                sal_Int32          	nDX=0, 
+                                sal_Int32          	nDX=0,
                                 sal_Int32          	nDY=0			) const;
     void ImpDrawColorLineGeometry(ExtOutputDevice& rXOut, const SfxItemSet& rSet, SdrLineGeometry& rLineGeometry) const;
     /** Line geometry creation and output (used during Paint())
@@ -668,7 +666,7 @@ public:
         SdrLineGeometry is opaque here.
 
         @param rOut
-        Output device that specifies required resolution 
+        Output device that specifies required resolution
 
         @param bForceOnePixel
         Force generated line geometry to be a hair line of one pixel width (in device resolution)
@@ -684,9 +682,9 @@ public:
         @return the generated line geometry. Ownership of the pointer
         transfers to the caller.
      */
-    virtual ::std::auto_ptr< SdrLineGeometry > CreateLinePoly( OutputDevice& 	rOut, 
-                                                               BOOL 			bForceOnePixel, 
-                                                               BOOL 			bForceTwoPixel, 
+    virtual ::std::auto_ptr< SdrLineGeometry > CreateLinePoly( OutputDevice& 	rOut,
+                                                               BOOL 			bForceOnePixel,
+                                                               BOOL 			bForceTwoPixel,
                                                                BOOL 			bIsLineDraft	) const;
 
     // HitTest, 2. Stufe. nTol ist die zulaessige Toleranz in logischen Einheiten.
