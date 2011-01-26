@@ -2,7 +2,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -90,7 +90,6 @@ bf_OfficeWrapper::bf_OfficeWrapper( const Reference < XMultiServiceFactory >& )
 {
     SvtModuleOptions aMOpt;
 
-    //	if ( aMOpt.IsModuleInstalled( SvtModuleOptions::E_SWRITER ) )
     {
         pSwDLL  = new SwDLL;
         SwDLL::LibInit();
@@ -145,7 +144,6 @@ bf_OfficeWrapper::~bf_OfficeWrapper()
             DELETEZ( pSmDLL );
         }
 
-        //	if ( aMOpt.IsModuleInstalled( SvtModuleOptions::E_SWRITER ) )
         {
             SwDLL::LibExit();
             DELETEZ( pSwDLL );
@@ -169,15 +167,7 @@ bf_OfficeWrapper::~bf_OfficeWrapper()
     delete &GetSdrGlobalData(); // ??????????
 
     (*(SdrGlobalData**)GetAppData(BF_SHL_SVD))=0;
-    (*(SvxGlobalItemData**)GetAppData(BF_SHL_ITEM))=0; 
-
-    SotData_Impl * pSotData = SOTDATA();
-    SotFactory * pFact = pSotData->pFactoryList->First();
-
-    while( pFact )
-    {
-        pFact = pSotData->pFactoryList->Next();
-    }
+    (*(SvxGlobalItemData**)GetAppData(BF_SHL_ITEM))=0;
 }
 
 void SAL_CALL bf_OfficeWrapper::dispose() throw ( RuntimeException )
@@ -200,7 +190,7 @@ void SAL_CALL bf_OfficeWrapper::removeEventListener( const Reference< XEventList
 extern "C"
 {
 
-void SAL_CALL component_getImplementationEnvironment(	
+void SAL_CALL component_getImplementationEnvironment(
     const sal_Char** ppEnvironmentTypeName,
     uno_Environment** /*ppEnvironment*/)
 {
@@ -210,7 +200,6 @@ void SAL_CALL component_getImplementationEnvironment(
 sal_Bool SAL_CALL component_writeInfo( void* pServiceManager , void* pRegistryKey )
 {
     Reference< XMultiServiceFactory >  xMan( reinterpret_cast< XMultiServiceFactory* >( pServiceManager ) ) ;
-    //	::utl::setProcessServiceFactory( xMan );
     Reference< XRegistryKey > xKey( reinterpret_cast< XRegistryKey* >( pRegistryKey ) ) ;
 
     // Eigentliche Implementierung und ihre Services registrieren
@@ -225,7 +214,7 @@ sal_Bool SAL_CALL component_writeInfo( void* pServiceManager , void* pRegistryKe
     return sal_True;
 }
 
-void* SAL_CALL component_getFactory(	
+void* SAL_CALL component_getFactory(
     const sal_Char* pImplementationName,
     void* pServiceManager,
     void* /*pRegistryKey*/)
@@ -241,7 +230,7 @@ void* SAL_CALL component_getFactory(
 
         if ( bf_OfficeWrapper::impl_getStaticImplementationName().compareToAscii( pImplementationName ) == COMPARE_EQUAL )
         {
-            xFactory = Reference< XSingleServiceFactory >( 
+            xFactory = Reference< XSingleServiceFactory >(
                 cppu::createOneInstanceFactory( xServiceManager, bf_OfficeWrapper::impl_getStaticImplementationName(),
                 bf_OfficeWrapper_CreateInstance, bf_OfficeWrapper::impl_getStaticSupportedServiceNames() ) );
         }
