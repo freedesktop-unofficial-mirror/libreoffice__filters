@@ -2,7 +2,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -106,11 +106,11 @@ using namespace ::rtl;
 /*N*/ void SwDBFieldType::ReleaseRef()
 /*N*/ {
 /*N*/ 	ASSERT(nRefCnt > 0, "RefCount kleiner 0!");
-/*N*/ 
+/*N*/
 /*N*/ 	if (--nRefCnt <= 0)
 /*N*/ 	{
 /*N*/ 		USHORT nPos = GetDoc()->GetFldTypes()->GetPos(this);
-/*N*/ 
+/*N*/
 /*N*/ 		if (nPos != USHRT_MAX)
 /*N*/ 		{
 /*N*/ 			GetDoc()->RemoveFldType(nPos);
@@ -254,11 +254,11 @@ using namespace ::rtl;
 /*N*/ 	String sOldExpand = Expand();
 /*N*/ 	String sNewExpand = sOldExpand;
 /*N*/ 	BOOL bOldInit = bInitialized;
-/*N*/ 
+/*N*/
 /*N*/ 	bInitialized = FALSE;
 /*N*/ 	InitContent();
 /*N*/ 	bInitialized = bOldInit;
-/*N*/ 
+/*N*/
 /*N*/ 	if( ::binfilter::GetAppCmpStrIgnore().isEqual( sNewExpand, Expand() ) )
 /*N*/ 	{
 /*N*/ 		sNewExpand = '<';
@@ -266,7 +266,7 @@ using namespace ::rtl;
 /*N*/ 		sNewExpand += '>';
 /*N*/ 	}
 /*N*/ 	SetExpansion( sOldExpand );
-/*N*/ 
+/*N*/
 /*N*/ 	return sNewExpand;
 /*N*/ }
 
@@ -291,7 +291,7 @@ using namespace ::rtl;
 /*N*/ 	pTmp->bInitialized	= bInitialized;
 /*N*/ 	pTmp->nSubType		= nSubType;
 /*N*/ 	pTmp->SetValue(GetValue());
-/*N*/ 
+/*N*/
 /*N*/ 	return pTmp;
 /*N*/ }
 
@@ -386,7 +386,7 @@ const String& SwDBField::GetPar1() const
 /*?*/ 		DBG_ERROR("illegal property");
 /*N*/ 	}
 /*N*/ 	return TRUE;
-/*N*/ 
+/*N*/
 /*N*/ }
 /*-----------------06.03.98 16:15-------------------
 
@@ -403,9 +403,9 @@ const String& SwDBField::GetPar1() const
 /*N*/ 			SetSubType(GetSubType()|SUB_OWN_FMT);
 /*N*/ 		break;
 /*N*/     case FIELD_PROP_BOOL2:
-/*N*/     {    
+/*N*/     {
 /*N*/         USHORT nSubType = GetSubType();
-/*N*/         sal_Bool bVisible;
+/*N*/         sal_Bool bVisible(false);
 /*N*/         if(!(rAny >>= bVisible))
 /*N*/             return FALSE;
 /*N*/         if(bVisible)
@@ -413,9 +413,9 @@ const String& SwDBField::GetPar1() const
 /*N*/         else
 /*N*/             nSubType |= SUB_INVISIBLE;
 /*N*/         SetSubType(nSubType);
-/*N*/         //invalidate text node 
+/*N*/         //invalidate text node
 /*N*/         if(GetTyp())
-/*N*/         {        
+/*N*/         {
 /*N*/             SwClientIter aIter( *GetTyp() );
 /*N*/             SwFmtFld* pFld = (SwFmtFld*)aIter.First( TYPE( SwFmtFld ));
 /*N*/             while(pFld)
@@ -434,7 +434,7 @@ const String& SwDBField::GetPar1() const
 /*N*/     break;
 /*N*/ 	case FIELD_PROP_FORMAT:
 /*N*/ 		{
-/*N*/ 			sal_Int32 nTemp;
+/*N*/ 			sal_Int32 nTemp(0);
 /*N*/ 			rAny >>= nTemp;
 /*N*/ 			SetFormat(nTemp);
 /*N*/ 		}
@@ -519,9 +519,9 @@ BOOL SwDBNameInfField::PutValue( const ::com::sun::star::uno::Any& rAny, BYTE nM
         rAny >>= aDBData.nCommandType;
         break;
     case FIELD_PROP_BOOL2:
-    {    
+    {
         USHORT nSubType = GetSubType();
-        sal_Bool bVisible;
+        sal_Bool bVisible(sal_False);
         if(!(rAny >>= bVisible))
             return FALSE;
         if(bVisible)
@@ -542,7 +542,7 @@ BOOL SwDBNameInfField::PutValue( const ::com::sun::star::uno::Any& rAny, BYTE nM
 /*N*/ USHORT SwDBNameInfField::GetSubType() const
 /*N*/ {
 /*N*/     return nSubType;
-/*N*/ }        
+/*N*/ }
 /* -----------------4/10/2003 15:03------------------
 
  --------------------------------------------------*/
@@ -656,21 +656,6 @@ BOOL SwDBNextSetField::PutValue( const ::com::sun::star::uno::Any& rAny, BYTE nM
 }
 
 /*--------------------------------------------------------------------
-    Beschreibung:
- --------------------------------------------------------------------*/
-/*
-String SwDBNextSetField::GetPar2() const
-{
-    return GetDBName();
-}
-
-void SwDBNextSetField::SetPar2(const String& rStr)
-{
-    GetDBName() = rStr;
-}
-*/
-
-/*--------------------------------------------------------------------
     Beschreibung: Datensatz mit bestimmter ID
  --------------------------------------------------------------------*/
 
@@ -723,7 +708,7 @@ void SwDBNextSetField::SetPar2(const String& rStr)
 /*N*/ {
 /*N*/ 	SwNewDBMgr* pMgr = pDoc->GetNewDBMgr();
 /*N*/ 	const SwDBData& aTmpData = GetDBData();
-/*N*/ 
+/*N*/
 /*N*/ 	if( bCondValid && pMgr && pMgr->IsInMerge() &&
 /*N*/                         pMgr->IsDataSourceOpen(aTmpData.sDataSource, aTmpData.sCommand, sal_True))
 /*N*/ 	{	// Bedingug OK -> aktuellen Set einstellen
@@ -792,7 +777,7 @@ BOOL    SwDBNumSetField::PutValue( const ::com::sun::star::uno::Any& rAny, BYTE 
         break;
     case FIELD_PROP_FORMAT:
         {
-            sal_Int32 nVal;
+            sal_Int32 nVal(0);
             rAny >>= nVal;
             aPar2 = String::CreateFromInt32(nVal);
         }
@@ -913,7 +898,6 @@ BOOL SwDBNameField::PutValue( const ::com::sun::star::uno::Any& rAny, BYTE nMId 
 /*?*/ 		return aEmptyStr;
 /*N*/ 	else
 /*N*/ 		return FormatNumber((USHORT)nNumber, GetFormat());
-/*N*/ 	//return(nNumber == 0 ? aEmptyStr : FormatNumber(nNumber, GetFormat()));
 /*N*/ }
 
 //------------------------------------------------------------------------------
@@ -921,9 +905,9 @@ BOOL SwDBNameField::PutValue( const ::com::sun::star::uno::Any& rAny, BYTE nMId 
 /*N*/ void SwDBSetNumberField::Evaluate(SwDoc* pDoc)
 /*N*/ {
 /*N*/ 	SwNewDBMgr* pMgr = pDoc->GetNewDBMgr();
-/*N*/ 
+/*N*/
 /*N*/     const SwDBData& aTmpData = GetDBData();
-/*N*/     if (!pMgr || !pMgr->IsInMerge() || 
+/*N*/     if (!pMgr || !pMgr->IsInMerge() ||
 /*N*/         !pMgr->IsDataSourceOpen(aTmpData.sDataSource, aTmpData.sCommand, sal_False))
 /*N*/         return;
 /*N*/     nNumber = pMgr->GetSelectedRecordId();
@@ -972,7 +956,7 @@ BOOL SwDBSetNumberField::PutValue( const ::com::sun::star::uno::Any& rAny, BYTE 
     {
     case FIELD_PROP_USHORT1:
         {
-            sal_Int16 nSet;
+            sal_Int16 nSet(0);
             rAny >>= nSet;
             if(nSet < (INT16) SVX_NUMBER_NONE )
                 SetFormat(nSet);

@@ -2,7 +2,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -48,11 +48,11 @@
 #include <ddefld.hxx>
 #include <swddetbl.hxx>
 #include <frame.hxx>
-namespace binfilter {
-/*N*/ extern bool CheckNodesRange( const SwNodeIndex& rStt,
-/*N*/ 							const SwNodeIndex& rEnd, bool bChkSection );
 
-SV_DECL_PTRARR(SwSttNdPtrs,SwStartNode*,2,2)
+namespace binfilter {
+    extern bool CheckNodesRange( const SwNodeIndex& rStt, const SwNodeIndex& rEnd, bool bChkSection );
+
+    SV_DECL_PTRARR(SwSttNdPtrs,SwStartNode*,2,2)
 } //namespace binfilter
 
 namespace binfilter {
@@ -508,8 +508,8 @@ namespace binfilter {
 /*?*/ 		return 0;
 /*N*/
 /*N*/ 	SwNodeIndex aTmp(*pIdx, +1);
-/*N*/ 	SwNode* pNd;
-/*N*/ 	while( aTmp < Count()-1 && 0 == ( pNd = &aTmp.GetNode())->IsCntntNode() )
+/*N*/ 	SwNode* pNd(NULL);
+/*N*/ 	while( aTmp < Count()-1 && 0 == ( pNd = &aTmp.GetNode() )->IsCntntNode() )
 /*N*/ 		aTmp++;
 /*N*/
 /*N*/ 	if( aTmp == Count()-1 )
@@ -525,7 +525,7 @@ namespace binfilter {
 /*?*/ 		return 0;
 /*N*/
 /*N*/ 	SwNodeIndex aTmp( *pIdx, -1 );
-/*N*/ 	SwNode* pNd;
+/*N*/ 	SwNode* pNd(NULL);
 /*N*/ 	while( aTmp.GetIndex() && 0 == ( pNd = &aTmp.GetNode())->IsCntntNode() )
 /*N*/ 		aTmp--;
 /*N*/
@@ -542,7 +542,7 @@ namespace binfilter {
 /*?*/ 		return 0;
 /*N*/
 /*N*/ 	SwNodeIndex aTmp(*pIdx, +1);
-/*N*/ 	SwNode* pNd;
+/*N*/ 	SwNode* pNd(NULL);
 /*N*/ 	while( aTmp < Count()-1 )
 /*N*/ 	{
 /*N*/ 		pNd = &aTmp.GetNode();
@@ -1018,12 +1018,12 @@ namespace binfilter {
 /*N*/ 									const SwNode* pEnd ) const
 /*N*/ {
 /*N*/ 	SwNode* pFrmNd = 0;
-/*N*/ 
+/*N*/
 /*N*/ 	// habe wir gar kein Layout, vergiss es
 /*N*/ 	if( GetDoc()->GetRootFrm() )
 /*N*/ 	{
 /*N*/ 		SwNode* pSttNd = &rFrmIdx.GetNode();
-/*N*/ 
+/*N*/
 /*N*/ 		// wird in eine versteckte Section verschoben ??
 /*N*/ 		SwSectionNode* pSectNd = pSttNd->IsSectionNode()
 /*N*/ 					? pSttNd->FindStartNode()->FindSectionNode()
@@ -1039,10 +1039,10 @@ namespace binfilter {
 /*N*/ 			}
 /*N*/ 			else
 /*?*/ 				pNd = pSttNd;
-/*N*/ 
+/*N*/
 /*N*/ 			if( ( pFrmNd = pNd )->IsCntntNode() )
 /*N*/ 				rFrmIdx = aIdx;
-/*N*/ 
+/*N*/
 /*N*/ 				// suche nach vorne/hinten nach einem Content Node
 /*N*/ 			else if( 0 != ( pFrmNd = GoPrevSection( &aIdx, TRUE, FALSE )) &&
 /*N*/ 					::binfilter::CheckNodesRange( aIdx, rFrmIdx, TRUE ) &&
@@ -1063,7 +1063,7 @@ namespace binfilter {
 /*N*/ 					aIdx = pEnd->GetIndex() + 1;
 /*N*/ 				else
 /*?*/ 					aIdx = rFrmIdx;
-/*N*/ 
+/*N*/
 /*N*/ 				// JP 19.09.93: aber nie die Section dafuer verlassen !!
 /*N*/ 				if( ( pEnd && ( pFrmNd = &aIdx.GetNode())->IsCntntNode() ) ||
 /*N*/ 					( 0 != ( pFrmNd = GoNextSection( &aIdx, TRUE, FALSE )) &&
@@ -1105,13 +1105,13 @@ namespace binfilter {
 /*?*/ 						aIdx = pEnd->GetIndex() + 1;
 /*?*/ 					else
 /*?*/ 						aIdx = rFrmIdx.GetIndex() + 1;
-/*?*/ 
+/*?*/
 /*?*/ 					if( (pFrmNd = &aIdx.GetNode())->IsTableNode() )
 /*?*/ 						rFrmIdx = aIdx;
 /*?*/ 					else
 /*?*/ 					{
 /*?*/ 						pFrmNd = 0;
-/*?*/ 
+/*?*/
 /*?*/ 						// is there some sectionnodes before a tablenode?
 /*?*/ 						while( aIdx.GetNode().IsSectionNode() )
 /*?*/ 						{
@@ -1153,7 +1153,7 @@ namespace binfilter {
 /*N*/ {
 /*N*/ 	ULONG nEnd = nDelPos + nSize;
 /*N*/ 	SwNode* pNew = (*this)[ nEnd ];
-/*N*/ 
+/*N*/
 /*N*/ 	if( pRoot )
 /*N*/ 	{
 /*N*/ 		SwNodeIndex *p = pRoot;
@@ -1163,10 +1163,10 @@ namespace binfilter {
 /*N*/ 			SwNodeIndex* pNext = p->pNext;
 /*N*/ 			if( nDelPos <= nIdx && nIdx < nEnd )
 /*N*/ 				(*p) = *pNew;
-/*N*/ 
+/*N*/
 /*N*/ 			p = pNext;
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		p = pRoot->pPrev;
 /*N*/ 		while( p )
 /*N*/ 		{
@@ -1174,16 +1174,16 @@ namespace binfilter {
 /*?*/ 			SwNodeIndex* pPrev = p->pPrev;
 /*?*/ 			if( nDelPos <= nIdx && nIdx < nEnd )
 /*?*/ 				(*p) = *pNew;
-/*?*/ 
+/*?*/
 /*?*/ 			p = pPrev;
 /*N*/ 		}
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	if( bDel )
 /*N*/ 	{
 /*N*/ 		ULONG nCnt = nSize;
 /*N*/ 		SwNode *pDel = (*this)[ nDelPos+nCnt-1 ], *pPrev = (*this)[ nDelPos+nCnt-2 ];
-/*N*/ 
+/*N*/
 /*N*/ #if 1
 /*N*/ // temp. Object setzen
 /*N*/ 		//JP 24.08.98: muessten eigentlich einzeln removed werden, weil
@@ -1194,7 +1194,7 @@ namespace binfilter {
 /*N*/ 		// siehe Bug 55406
 /*N*/ 		_TempBigPtrEntry aTempEntry;
 /*N*/ 		BigPtrEntry* pTempEntry = &aTempEntry;
-/*N*/ 
+/*N*/
 /*N*/ 		while( nCnt-- )
 /*N*/ 		{
 /*N*/ 			delete pDel;
@@ -1223,7 +1223,7 @@ namespace binfilter {
 /*N*/ 	}
 /*N*/ 	else
 /*N*/ #endif
-/*N*/ 
+/*N*/
 /*N*/ 	BigPtrArray::Remove( nDelPos, nSize );
 /*N*/ }
 
@@ -1250,15 +1250,15 @@ namespace binfilter {
 /*N*/ {
 /*N*/ 	register SwNodeIndex* pN = rIdx.pNext;
 /*N*/ 	register SwNodeIndex* pP = rIdx.pPrev;
-/*N*/ 
+/*N*/
 /*N*/ 	if( pRoot == &rIdx )
 /*N*/ 		pRoot = pP ? pP : pN;
-/*N*/ 
+/*N*/
 /*N*/ 	if( pP )
 /*N*/ 		pP->pNext = pN;
 /*N*/ 	if( pN )
 /*N*/ 		pN->pPrev = pP;
-/*N*/ 
+/*N*/
 /*N*/ 	rIdx.pNext = 0;
 /*N*/ 	rIdx.pPrev = 0;
 /*N*/ }
@@ -1275,7 +1275,7 @@ namespace binfilter {
 /*N*/ 	BigPtrArray::Insert( pIns, nPos );
 /*N*/ }
 
-    // #i31620# 
+    // #i31620#
     SwNode * SwNodes::operator[](int n) const
     {
         return operator[]((ULONG) n);

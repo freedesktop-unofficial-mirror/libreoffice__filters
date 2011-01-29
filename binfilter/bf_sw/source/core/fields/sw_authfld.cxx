@@ -2,7 +2,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -366,9 +366,6 @@ const SwAuthEntry*  SwAuthorityFieldType::GetEntryByPosition(USHORT nPos) const
 USHORT  SwAuthorityFieldType::GetSequencePos(long nHandle)
 {
     //find the field in a sorted array of handles,
-#ifdef DBG_UTIL
-    sal_Bool bCurrentFieldWithoutTextNode = sal_False;
-#endif
     if(m_pSequArr->Count() && m_pSequArr->Count() != m_pDataArr->Count())
         DelSequenceArray();
     if(!m_pSequArr->Count())
@@ -381,16 +378,10 @@ USHORT  SwAuthorityFieldType::GetSequencePos(long nHandle)
         for( SwFmtFld* pFmtFld = (SwFmtFld*)aIter.First( TYPE(SwFmtFld) );
                                 pFmtFld; pFmtFld = (SwFmtFld*)aIter.Next() )
         {
-            SwAuthorityField* pAFld = (SwAuthorityField*)pFmtFld->GetFld();
             const SwTxtFld* pTxtFld = pFmtFld->GetTxtFld();
-         if(!pTxtFld || !pTxtFld->GetpTxtNode())
-            {
-#ifdef DBG_UTIL
-                if(nHandle == pAFld->GetHandle())
-                    bCurrentFieldWithoutTextNode = sal_True;
-#endif
+            if(!pTxtFld || !pTxtFld->GetpTxtNode())
                 continue;
-            }
+
             const SwTxtNode& rFldTxtNode = pTxtFld->GetTxtNode();
             SwPosition aFldPos(rFldTxtNode);
             SwDoc& rDoc = *(SwDoc*)rFldTxtNode.GetDoc();
@@ -398,7 +389,7 @@ USHORT  SwAuthorityFieldType::GetSequencePos(long nHandle)
             const SwTxtNode* pTxtNode = 0;
             if(pFrm && !pFrm->IsInDocBody())
                 pTxtNode = GetBodyTxtNode( rDoc, aFldPos, *pFrm );
-            //if no text node could be found or the field is in the document 
+            //if no text node could be found or the field is in the document
             //body the directly available text node will be used
             if(!pTxtNode)
                 pTxtNode = &rFldTxtNode;
@@ -457,7 +448,6 @@ USHORT  SwAuthorityFieldType::GetSequencePos(long nHandle)
             break;
         }
     }
-    ASSERT(bCurrentFieldWithoutTextNode || nRet, "Handle not found")
     return nRet;
 }
 /* -----------------------------15.11.00 17:33--------------------------------
@@ -668,7 +658,7 @@ String  SwAuthorityField::Expand() const
      String sRet;
      if(pAuthType->GetPrefix())
          sRet.Assign(pAuthType->GetPrefix());
- 
+
      if( pAuthType->IsSequence() )
      {
          sRet += String::CreateFromInt32( pAuthType->GetSequencePos( nHandle ));
@@ -813,7 +803,7 @@ BOOL    SwAuthorityField::PutValue( const Any& rAny, BYTE nMId )
             OUString sContent;
             if(AUTH_FIELD_AUTHORITY_TYPE == nFound)
             {
-                sal_Int16 nVal;
+                sal_Int16 nVal(0);
                 pParam[i].Value >>= nVal;
                 sContent = OUString::valueOf((sal_Int32)nVal);
             }

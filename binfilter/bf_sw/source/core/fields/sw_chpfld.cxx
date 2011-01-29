@@ -2,7 +2,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -78,14 +78,14 @@ SwFieldType* SwChapterFieldType::Copy() const
 /*N*/ 	switch( GetFormat() )
 /*N*/ 	{
 /*N*/ 		case CF_TITLE:		sStr = sTitle;	break;
-/*N*/ 
+/*N*/
 /*N*/ 		case CF_NUMBER:
 /*N*/ 		case CF_NUM_TITLE:  sStr.Insert( sPre, 0 );
 /*N*/ 							sStr += sPost;
 /*N*/ 							if( CF_NUM_TITLE == GetFormat() )
 /*N*/ 								sStr += sTitle;
 /*N*/ 							break;
-/*N*/ 
+/*N*/
 /*?*/ 		case CF_NUM_NOPREPST_TITLE:	sStr += sTitle;	break;
 /*N*/ 	}
 /*N*/ 	return sStr;
@@ -101,7 +101,7 @@ SwFieldType* SwChapterFieldType::Copy() const
 /*N*/ 	pTmp->sNumber = sNumber;
 /*N*/ 	pTmp->sPost = sPost;
 /*N*/ 	pTmp->sPre = sPre;
-/*N*/ 
+/*N*/
 /*N*/ 	return pTmp;
 /*N*/ }
 
@@ -113,13 +113,13 @@ SwFieldType* SwChapterFieldType::Copy() const
 /*N*/ 	ASSERT( pFrm, "in welchem Frame stehe ich denn?" )
 /*N*/ 	SwDoc* pDoc = (SwDoc*)pTxtNd->GetDoc();
 /*N*/ 	SwPosition aPos( pDoc->GetNodes().GetEndOfContent() );
-/*N*/ 
+/*N*/
 /*N*/ 	if( pFrm->IsInDocBody() )
 /*N*/ 		aPos.nNode = *pTxtNd;
 /*N*/ 	else if( 0 == (pTxtNd = GetBodyTxtNode( *pDoc, aPos, *pFrm )) )
 /*N*/ 		// kein TxtNode (Formatierung Kopf/Fusszeile)
 /*?*/ 		return;
-/*N*/ 
+/*N*/
 /*N*/ 	ASSERT( pTxtNd, "Wo steht das Feld" );
 /*N*/ 	pTxtNd = pTxtNd->FindOutlineNodeOfLevel( nLevel );
 /*N*/ 	if( pTxtNd )
@@ -141,7 +141,7 @@ SwFieldType* SwChapterFieldType::Copy() const
 /*?*/ 						pTxtNd = pONd;
 /*?*/ 						break;
 /*N*/ 					}
-/*N*/ 
+/*N*/
 /*N*/ 					if( !nLevel-- )
 /*N*/ 						break;
 /*N*/ 					pONd = pTxtNd->FindOutlineNodeOfLevel( nLevel );
@@ -150,11 +150,11 @@ SwFieldType* SwChapterFieldType::Copy() const
 /*?*/ 					break;
 /*N*/ 			} while( sal_True );
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		const SwNodeNum& rNum = *pTxtNd->GetOutlineNum();
 /*N*/ 		// nur die Nummer besorgen, ohne Pre-/Post-fixstrings
 /*N*/ 		sNumber = pDoc->GetOutlineNumRule()->MakeNumString( rNum, sal_False );
-/*N*/ 
+/*N*/
 /*N*/ 		if( NO_NUM > rNum.GetLevel() && !( NO_NUMLEVEL & rNum.GetLevel() ) )
 /*N*/ 		{
 /*N*/ 			const SwNumFmt& rNFmt = pDoc->GetOutlineNumRule()->Get( rNum.GetLevel() );
@@ -163,9 +163,9 @@ SwFieldType* SwChapterFieldType::Copy() const
 /*N*/ 		}
 /*N*/ 		else
 /*?*/ 			sPost = aEmptyStr, sPre = aEmptyStr;
-/*N*/ 
+/*N*/
 /*N*/ 		sTitle = pTxtNd->GetExpandTxt();
-/*N*/ 
+/*N*/
 /*N*/ 		for( xub_StrLen i = 0; i < sTitle.Len(); ++i )
 /*N*/ 			if( ' ' > sTitle.GetChar( i ) )
 /*?*/ 				sTitle.Erase( i--, 1 );
@@ -190,7 +190,7 @@ SwFieldType* SwChapterFieldType::Copy() const
 /*N*/ 	case FIELD_PROP_BYTE1:
 /*N*/ 		rAny <<= (sal_Int8)nLevel;
 /*N*/ 		break;
-/*N*/ 
+/*N*/
 /*N*/ 	case FIELD_PROP_USHORT1:
 /*N*/ 		{
 /*N*/ 			sal_Int16 nRet;
@@ -210,7 +210,7 @@ SwFieldType* SwChapterFieldType::Copy() const
 /*N*/ 			rAny <<= nRet;
 /*N*/ 		}
 /*N*/ 		break;
-/*N*/ 
+/*N*/
 /*N*/ 	default:
 /*?*/ 		DBG_ERROR("illegal property");
 /*N*/ 	}
@@ -219,47 +219,46 @@ SwFieldType* SwChapterFieldType::Copy() const
 /*-----------------05.03.98 16:19-------------------
 
 --------------------------------------------------*/
-/*N*/ BOOL SwChapterField::PutValue( const ::com::sun::star::uno::Any& rAny, BYTE nMId )
-/*N*/ {
-/*N*/ 	BOOL bRet = TRUE;
-/*N*/     nMId &= ~CONVERT_TWIPS;
-/*N*/ 	switch( nMId )
-/*N*/ 	{
-/*N*/ 	case FIELD_PROP_BYTE1:
-/*?*/ 		sal_Int8 nTmp;
-/*?*/ 		rAny >>= nTmp;
-/*?*/ 		if(nTmp >= 0 && nTmp < MAXLEVEL)
-/*?*/ 			nLevel = nTmp;
-/*?*/ 		else
-/*?*/ 			bRet = FALSE;
-/*?*/ 		break;
-/*N*/ 
-/*N*/ 	case FIELD_PROP_USHORT1:
-/*N*/ 		{
-/*N*/ 			sal_Int16 nVal;
-/*N*/ 			rAny >>= nVal;
-/*N*/ 			switch( nVal )
-/*N*/ 			{
-/*N*/ 				case text::ChapterFormat::NAME:	SetFormat(CF_TITLE); break;
-/*N*/ 				case text::ChapterFormat::NUMBER:  SetFormat(CF_NUMBER); break;
-/*N*/ 				case text::ChapterFormat::NO_PREFIX_SUFFIX:
-/*?*/ 							SetFormat(CF_NUM_NOPREPST_TITLE);
-/*?*/ 				break;
-/*N*/ 				case text::ChapterFormat::DIGIT:
-/*N*/ 						SetFormat(CF_NUMBER_NOPREPST);
-/*N*/ 				break;
-/*N*/ 				//case text::ChapterFormat::NAME_NUMBER:
-/*N*/ 				default:		SetFormat(CF_NUM_TITLE);
-/*N*/ 			}
-/*N*/ 		}
-/*N*/ 		break;
-/*N*/ 
-/*N*/ 	default:
-/*?*/ 		DBG_ERROR("illegal property");
-/*?*/ 		bRet = FALSE;
-/*N*/ 	}
-/*N*/ 	return bRet;
-/*N*/ }
+BOOL SwChapterField::PutValue( const ::com::sun::star::uno::Any& rAny, BYTE nMId )
+{
+    BOOL bRet = TRUE;
+    nMId &= ~CONVERT_TWIPS;
+
+    switch( nMId )
+    {
+    case FIELD_PROP_BYTE1:
+        {
+            sal_Int8 nTmp(0);
+            rAny >>= nTmp;
+            if(nTmp >= 0 && nTmp < MAXLEVEL)
+                nLevel = nTmp;
+            else
+                bRet = FALSE;
+        }
+        break;
+
+    case FIELD_PROP_USHORT1:
+        {
+            sal_Int16 nVal(0);
+            rAny >>= nVal;
+            switch( nVal )
+            {
+            case text::ChapterFormat::NAME:             SetFormat(CF_TITLE); break;
+            case text::ChapterFormat::NUMBER:           SetFormat(CF_NUMBER); break;
+            case text::ChapterFormat::NO_PREFIX_SUFFIX: SetFormat(CF_NUM_NOPREPST_TITLE); break;
+            case text::ChapterFormat::DIGIT:            SetFormat(CF_NUMBER_NOPREPST); break;
+            default:                                    SetFormat(CF_NUM_TITLE);
+            }
+        }
+        break;
+
+    default:
+        DBG_ERROR("illegal property");
+        bRet = FALSE;
+    }
+    return bRet;
+}
+
 }
 
 /* vim:set shiftwidth=4 softtabstop=4 expandtab: */
