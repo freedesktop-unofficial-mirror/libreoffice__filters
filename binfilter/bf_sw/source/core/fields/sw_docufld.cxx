@@ -2,7 +2,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -26,12 +26,9 @@
  *
  ************************************************************************/
 
-
 #ifdef _MSC_VER
 #pragma hdrstop
 #endif
-
-
 
 #include <com/sun/star/text/PlaceholderType.hpp>
 #include <com/sun/star/text/TemplateDisplayFormat.hpp>
@@ -46,7 +43,6 @@
 #include <bf_sfx2/docfile.hxx>
 #include <bf_sfx2/doctempl.hxx>
 #include <bf_svx/adritem.hxx>
-
 
 #include <charfmt.hxx>
 #include <docstat.hxx>
@@ -69,7 +65,9 @@
 #include <swunohelper.hxx>
 #include <legacysmgr/legacy_binfilters_smgr.hxx>
 #define URL_DECODE 	INetURLObject::DECODE_UNAMBIGUOUS
+
 namespace binfilter {
+
 extern String& GetString( const ::com::sun::star::uno::Any& rAny, String& rStr );
 using namespace ::com::sun::star;
 using namespace ::com::sun::star::uno;
@@ -92,7 +90,7 @@ using namespace ::rtl;
 /*N*/ {
 /*N*/ 	sal_uInt32 nTmpFmt = (SVX_NUM_PAGEDESC == nFmt) ? (sal_uInt32)nNumberingType : nFmt;
 /*N*/ 	long nTmp = nNum + nOff;
-/*N*/ 
+/*N*/
 /*N*/ 	if( 0 >= nTmp || SVX_NUM_NUMBER_NONE == nTmpFmt || (!bVirtuell && nTmp > nMax) )
 /*N*/ 		rRet = aEmptyStr;
 /*N*/ 	else if( SVX_NUM_CHAR_SPECIAL == nTmpFmt )
@@ -109,7 +107,7 @@ using namespace ::rtl;
         pTmp->nMax       = nMax;
         pTmp->nNumberingType = nNumberingType;
         pTmp->bVirtuell  = bVirtuell;
- 
+
         return pTmp;
 /*N*/ }
 
@@ -125,7 +123,7 @@ using namespace ::rtl;
 /*N*/ 	nMax = nNumPages;
 /*N*/ 	if( pNumFmt )
 /*N*/ 		nNumberingType = *pNumFmt;
-/*N*/ 
+/*N*/
 /*N*/ 	bVirtuell = sal_False;
 /*N*/ 	if( bVirt )
 /*N*/ 	{
@@ -171,7 +169,7 @@ using namespace ::rtl;
 /*N*/ {
 /*N*/ 	String sRet;
 /*N*/ 	SwPageNumberFieldType* pFldType = (SwPageNumberFieldType*)GetTyp();
-/*N*/ 
+/*N*/
 /*N*/ 	if( PG_NEXT == nSubType && 1 != nOffset )
 /*N*/ 	{
 /*?*/ 		if( pFldType->Expand( GetFormat(), 1, sUserStr, sRet ).Len() )
@@ -239,7 +237,7 @@ void SwPageNumberField::SetPar2(const String& rStr)
 /*N*/ 	case FIELD_PROP_PAR1:
 /*?*/ 		rAny <<= OUString(sUserStr);
 /*?*/ 		break;
-/*?*/ 
+/*?*/
 /*?*/ 	default:
 /*?*/ 		DBG_ERROR("illegal property");
 /*N*/ 	}
@@ -251,13 +249,13 @@ void SwPageNumberField::SetPar2(const String& rStr)
 /*N*/ BOOL SwPageNumberField::PutValue( const uno::Any& rAny, BYTE nMId )
 /*N*/ {
 /*N*/     BOOL bRet = TRUE;
-/*N*/ 	sal_Int16 nSet;
-/*N*/     nMId &= ~CONVERT_TWIPS;
+/*N*/ 	sal_Int16 nSet(0);
+/*N*/   nMId &= ~CONVERT_TWIPS;
 /*N*/ 	switch( nMId )
 /*N*/ 	{
 /*N*/ 	case FIELD_PROP_FORMAT:
 /*?*/ 		rAny >>= nSet;
-/*?*/ 
+/*?*/
 /*?*/ 		// TODO: woher kommen die defines?
 /*?*/ 		if(nSet <= SVX_NUM_PAGEDESC )
 /*?*/ 			SetFormat(nSet);
@@ -288,7 +286,7 @@ void SwPageNumberField::SetPar2(const String& rStr)
 /*?*/ 	case FIELD_PROP_PAR1:
 /*?*/ 		::binfilter::GetString( rAny, sUserStr );
 /*?*/ 		break;
-/*?*/ 
+/*?*/
 /*?*/ 	default:
 /*?*/ 		DBG_ERROR("illegal property");
 /*N*/ 	}
@@ -334,7 +332,7 @@ void SwPageNumberField::SetPar2(const String& rStr)
 /*N*/ 	if (!IsFixed())
 /*N*/ 		((SwAuthorField*)this)->aContent =
 /*N*/ 					((SwAuthorFieldType*)GetTyp())->Expand(GetFormat());
-/*N*/ 
+/*N*/
 /*N*/ 	return aContent;
 /*N*/ }
 
@@ -359,16 +357,16 @@ void SwPageNumberField::SetPar2(const String& rStr)
 /*N*/ 		bVal = GetFormat() == AF_NAME;
 /*N*/ 		rAny.setValue(&bVal, ::getBooleanCppuType());
 /*N*/ 		break;
-/*N*/ 
+/*N*/
 /*N*/ 	case FIELD_PROP_BOOL2:
 /*N*/ 		bVal = IsFixed();
 /*N*/ 		rAny.setValue(&bVal, ::getBooleanCppuType());
 /*N*/ 		break;
-/*N*/ 
+/*N*/
 /*N*/ 	case FIELD_PROP_PAR1:
 /*?*/ 		rAny <<= ::rtl::OUString(GetContent());
 /*?*/ 		break;
-/*?*/ 
+/*?*/
 /*?*/ 	default:
 /*?*/ 		DBG_ERROR("illegal property");
 /*N*/ 	}
@@ -441,15 +439,15 @@ BOOL SwAuthorField::PutValue( const uno::Any& rAny, BYTE nMId )
 /*M*/ 					}
 /*M*/ 				}
 /*M*/ 				break;
-/*M*/ 
+/*M*/
 /*M*/ 			case FF_NAME:
 /*M*/ 				aRet = rURLObj.GetLastName( URL_DECODE );
 /*M*/ 				break;
-/*M*/ 
+/*M*/
 /*M*/ 			case FF_NAME_NOEXT:
 /*M*/ 				aRet = rURLObj.GetBase();
 /*M*/ 				break;
-/*M*/ 
+/*M*/
 /*M*/ 			default:
 /*M*/ 				if( INET_PROT_FILE == rURLObj.GetProtocol() )
 /*M*/ 					aRet = rURLObj.GetFull();
@@ -481,7 +479,7 @@ BOOL SwAuthorField::PutValue( const uno::Any& rAny, BYTE nMId )
 /*N*/ {
 /*N*/ 	if (!IsFixed())
 /*N*/ 		((SwFileNameField*)this)->aContent = ((SwFileNameFieldType*)GetTyp())->Expand(GetFormat());
-/*N*/ 
+/*N*/
 /*N*/ 	return aContent;
 /*N*/ }
 
@@ -490,7 +488,7 @@ BOOL SwAuthorField::PutValue( const uno::Any& rAny, BYTE nMId )
 /*N*/ 	SwFileNameField *pTmp =
 /*N*/ 		new SwFileNameField((SwFileNameFieldType*)GetTyp(), GetFormat());
 /*N*/ 	pTmp->SetExpansion(aContent);
-/*N*/ 
+/*N*/
 /*N*/ 	return pTmp;
 /*N*/ }
 
@@ -521,14 +519,14 @@ BOOL SwAuthorField::PutValue( const uno::Any& rAny, BYTE nMId )
 /*N*/ 			rAny <<= nRet;
 /*N*/ 		}
 /*N*/ 		break;
-/*N*/ 
+/*N*/
 /*N*/ 	case FIELD_PROP_BOOL2:
 /*N*/ 		{
 /*N*/ 			BOOL bVal = IsFixed();
 /*N*/ 			rAny.setValue(&bVal, ::getBooleanCppuType());
 /*N*/ 		}
 /*N*/ 		break;
-/*N*/ 
+/*N*/
 /*N*/ 	case FIELD_PROP_PAR3:
 /*?*/ 		rAny <<= OUString(GetContent());
 /*?*/ 		break;
@@ -550,7 +548,7 @@ BOOL SwAuthorField::PutValue( const uno::Any& rAny, BYTE nMId )
 /*N*/ 			//JP 24.10.2001: int32 because in UnoField.cxx a putvalue is
 /*N*/ 			//				called with a int32 value! But normally we need
 /*N*/ 			//				here only a int16
-/*N*/ 			sal_Int32 nType;
+/*N*/ 			sal_Int32 nType(0);
 /*N*/ 			rAny >>= nType;
 /*N*/ 			BOOL bFixed = IsFixed();
 /*N*/ 			switch( nType )
@@ -571,18 +569,18 @@ BOOL SwAuthorField::PutValue( const uno::Any& rAny, BYTE nMId )
 /*N*/ 			SetFormat(nType);
 /*N*/ 		}
 /*N*/ 		break;
-/*N*/ 
+/*N*/
 /*N*/ 	case FIELD_PROP_BOOL2:
 /*?*/ 		if( *(sal_Bool*)rAny.getValue() )
 /*?*/ 			SetFormat( GetFormat() | FF_FIXED);
 /*?*/ 		else
 /*?*/ 			SetFormat( GetFormat() & ~FF_FIXED);
 /*?*/ 		break;
-/*?*/ 
+/*?*/
 /*?*/ 	case FIELD_PROP_PAR3:
 /*?*/ 		::binfilter::GetString( rAny, aContent );
 /*?*/ 		break;
-/*?*/ 
+/*?*/
 /*?*/ 	default:
 /*?*/ 		DBG_ERROR("illegal property");
 /*N*/ 	}
@@ -601,10 +599,10 @@ BOOL SwAuthorField::PutValue( const uno::Any& rAny, BYTE nMId )
 /*N*/ String SwTemplNameFieldType::Expand(ULONG nFmt) const
 /*N*/ {
 /*N*/ 	ASSERT(nFmt >= FF_BEGIN && nFmt < FF_END, "Expand: kein guelt. Fmt!" );
-/*N*/ 
+/*N*/
 /*N*/ 	String aRet;
 /*N*/ 	const SfxDocumentInfo* pDInfo = pDoc->GetpInfo();
-/*N*/ 
+/*N*/
 /*N*/ 	if( pDInfo )
 /*N*/ 	{
 /*N*/ 		if( FF_UI_NAME == nFmt )
@@ -682,7 +680,7 @@ BOOL SwAuthorField::PutValue( const uno::Any& rAny, BYTE nMId )
 /*N*/ 				case FF_UI_RANGE: 	nRet = text::TemplateDisplayFormat::AREA; break;
 /*N*/ 				case FF_UI_NAME:    nRet = text::TemplateDisplayFormat::TITLE;  break;
 /*N*/ 				default:	nRet = text::FilenameDisplayFormat::FULL;
-/*N*/ 
+/*N*/
 /*N*/ 			}
 /*N*/ 			rAny <<= nRet;
 /*N*/ 		}
@@ -705,7 +703,7 @@ BOOL SwAuthorField::PutValue( const uno::Any& rAny, BYTE nMId )
 /*N*/ 			//JP 24.10.2001: int32 because in UnoField.cxx a putvalue is
 /*N*/ 			//				called with a int32 value! But normally we need
 /*N*/ 			//				here only a int16
-/*N*/ 			sal_Int32 nType;
+/*N*/ 			sal_Int32 nType(0);
 /*N*/ 			rAny >>= nType;
 /*N*/ 			switch( nType )
 /*N*/ 			{
@@ -765,7 +763,7 @@ BOOL SwAuthorField::PutValue( const uno::Any& rAny, BYTE nMId )
 /*N*/ 		default:
 /*?*/ 			ASSERT( sal_False, "SwDocStatFieldType::Expand: unbekannter SubType" );
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	String sRet;
 /*N*/ 	if( nVal <= SHRT_MAX )
 /*N*/ 		sRet = FormatNumber( (sal_uInt16)nVal, nFmt );
@@ -847,7 +845,7 @@ BOOL SwDocStatField::PutValue( const uno::Any& rAny, BYTE nMId )
     {
     case FIELD_PROP_USHORT2:
         {
-            sal_Int16 nSet;
+            sal_Int16 nSet(0);
             rAny >>= nSet;
             if(nSet <= SVX_NUM_CHARS_LOWER_LETTER_N &&
                 nSet != SVX_NUM_CHAR_SPECIAL &&
@@ -904,10 +902,10 @@ BOOL SwDocStatField::PutValue( const uno::Any& rAny, BYTE nMId )
 /*N*/ 	String aStr;
 /*N*/ 	LocaleDataWrapper *pAppLocalData = 0, *pLocalData = 0;
 /*N*/ 	const SfxDocumentInfo*	pInf = GetDoc()->GetInfo();
-/*N*/ 
+/*N*/
 /*N*/ 	sal_uInt16 nExtSub = nSub & 0xff00;
 /*N*/ 	nSub &= 0xff;	// ExtendedSubTypes nicht beachten
-/*N*/ 
+/*N*/
 /*N*/ 	switch(nSub)
 /*N*/ 	{
 /*N*/ 	case DI_TITEL:	aStr = pInf->GetTitle();	break;
@@ -933,7 +931,7 @@ BOOL SwDocStatField::PutValue( const uno::Any& rAny, BYTE nMId )
 /*N*/ 			aStr = ExpandValue(fVal, nFormat, nLang);
 /*N*/ 		}
 /*N*/ 		break;
-/*N*/ 
+/*N*/
 /*N*/ 	default:
 /*N*/ 		{
 /*N*/ 			SfxStamp aTmp;
@@ -950,7 +948,7 @@ BOOL SwDocStatField::PutValue( const uno::Any& rAny, BYTE nMId )
 /*N*/ 				aTmp = pInf->GetPrinted();
 /*N*/ 			else
 /*?*/ 				break;
-/*N*/ 
+/*N*/
 /*N*/ 			if (aTmp.IsValid())
 /*N*/ 			{
 /*N*/ 				switch (nExtSub & ~DI_SUB_FIXED)
@@ -958,7 +956,7 @@ BOOL SwDocStatField::PutValue( const uno::Any& rAny, BYTE nMId )
 /*N*/ 				case DI_SUB_AUTHOR:
 /*N*/ 					aStr = aTmp.GetName();
 /*N*/ 					break;
-/*N*/ 
+/*N*/
 /*N*/ 				case DI_SUB_TIME:
 /*N*/ 					if (!nFormat)
 /*N*/ 					{
@@ -975,7 +973,7 @@ BOOL SwDocStatField::PutValue( const uno::Any& rAny, BYTE nMId )
 /*?*/ 						aStr = ExpandValue(fVal, nFormat, nLang);
 /*N*/ 					}
 /*N*/ 					break;
-/*N*/ 
+/*N*/
 /*N*/ 				case DI_SUB_DATE:
 /*N*/ 					if (!nFormat)
 /*N*/ 					{
@@ -996,10 +994,10 @@ BOOL SwDocStatField::PutValue( const uno::Any& rAny, BYTE nMId )
 /*N*/ 		}
 /*N*/ 		break;
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	if( pAppLocalData != pLocalData )
 /*N*/ 		delete pLocalData;
-/*N*/ 
+/*N*/
 /*N*/ 	return aStr;
 /*N*/ }
 
@@ -1018,7 +1016,7 @@ BOOL SwDocStatField::PutValue( const uno::Any& rAny, BYTE nMId )
 /*N*/ {
 /*N*/ 	if (!IsFixed())	// aContent fuer Umschaltung auf fixed mitpflegen
 /*N*/ 		((SwDocInfoField*)this)->aContent = ((SwDocInfoFieldType*)GetTyp())->Expand(nSubType, GetFormat(), GetLanguage());
-/*N*/ 
+/*N*/
 /*N*/ 	return aContent;
 /*N*/ }
 /* ---------------------------------------------------------------------------
@@ -1040,7 +1038,7 @@ BOOL SwDocStatField::PutValue( const uno::Any& rAny, BYTE nMId )
 /*N*/ 	SwDocInfoField* pFld = new SwDocInfoField((SwDocInfoFieldType*)GetTyp(), nSubType, GetFormat());
 /*N*/     pFld->SetAutomaticLanguage(IsAutomaticLanguage());
 /*N*/ 	pFld->aContent = aContent;
-/*N*/ 
+/*N*/
 /*N*/ 	return pFld;
 /*N*/ }
 /* ---------------------------------------------------------------------------
@@ -1078,11 +1076,11 @@ void SwDocInfoField::SetSubType(sal_uInt16 nSub)
 /*N*/ 	case FIELD_PROP_PAR1:
 /*?*/ 		rAny <<= OUString(aContent);
 /*?*/ 		break;
-/*?*/ 
+/*?*/
 /*?*/ 	case FIELD_PROP_USHORT1:
 /*?*/ 		rAny  <<= (sal_Int16)aContent.ToInt32();
 /*?*/ 		break;
-/*N*/ 
+/*N*/
 /*N*/ 	case FIELD_PROP_BOOL1:
 /*N*/ 		{
 /*N*/ 			sal_Bool bVal = 0 != (nSubType & DI_SUB_FIXED);
@@ -1092,7 +1090,7 @@ void SwDocInfoField::SetSubType(sal_uInt16 nSub)
 /*N*/ 	case FIELD_PROP_FORMAT:
 /*N*/ 		rAny  <<= (sal_Int32)GetFormat();
 /*N*/ 		break;
-/*N*/ 
+/*N*/
 /*?*/ 	case FIELD_PROP_DOUBLE:
 /*?*/ 		{
 /*?*/ 			double fVal = GetValue();
@@ -1119,7 +1117,7 @@ void SwDocInfoField::SetSubType(sal_uInt16 nSub)
  ---------------------------------------------------------------------------*/
 BOOL SwDocInfoField::PutValue( const uno::Any& rAny, BYTE nMId )
 {
-    sal_Int32 nValue;
+    sal_Int32 nValue(0);
     nMId &= ~CONVERT_TWIPS;
     switch( nMId )
     {
@@ -1194,7 +1192,7 @@ BOOL SwDocInfoField::PutValue( const uno::Any& rAny, BYTE nMId )
 /*N*/ 	{
 /*N*/ 		sal_uInt16 nPos = 0;
 /*N*/ 		aTRUETxt = rStr.GetToken(0, '|', nPos);
-/*N*/ 
+/*N*/
 /*N*/ 		if(nPos != STRING_NOTFOUND)
 /*N*/ 		{
 /*N*/ 			aFALSETxt = rStr.GetToken(0, '|', nPos);
@@ -1228,19 +1226,19 @@ BOOL SwDocInfoField::PutValue( const uno::Any& rAny, BYTE nMId )
 /*N*/ {
 /*N*/ 	// Type: !Hidden  -> immer anzeigen
 /*N*/ 	// 		  Hide	  -> Werte die Bedingung aus
-/*N*/ 
+/*N*/
 /*N*/ 	if( TYP_CONDTXTFLD == nSubType )
 /*N*/ 	{
 /*N*/ 		if( bValid )
 /*?*/ 			return aContent;
-/*N*/ 
+/*N*/
 /*N*/ 		if( bCanToggle && !bIsHidden )
 /*?*/ 			return aTRUETxt;
 /*N*/ 	}
 /*N*/ 	else if( !((SwHiddenTxtFieldType*)GetTyp())->GetHiddenFlag() ||
 /*N*/ 		( bCanToggle && bIsHidden ))
 /*?*/ 		return aTRUETxt;
-/*N*/ 
+/*N*/
 /*N*/ 	return aFALSETxt;
 /*N*/ }
 
@@ -1251,19 +1249,19 @@ BOOL SwDocInfoField::PutValue( const uno::Any& rAny, BYTE nMId )
 /*N*/ void SwHiddenTxtField::Evaluate(SwDoc* pDoc)
 /*N*/ {
 /*N*/ 	ASSERT(pDoc, Wo ist das Dokument Seniore);
-/*N*/ 
+/*N*/
 /*N*/ 	if( TYP_CONDTXTFLD == nSubType )
 /*N*/ 	{
 /*N*/ 		pDoc->GetNewDBMgr();
-/*N*/ 
+/*N*/
 /*N*/ 		bValid = sal_False;
 /*N*/ 		String sTmpName;
-/*N*/ 
+/*N*/
 /*N*/ 		if (bCanToggle && !bIsHidden)
 /*N*/ 			sTmpName = aTRUETxt;
 /*N*/ 		else
 /*N*/ 			sTmpName = aFALSETxt;
-/*N*/ 
+/*N*/
 /*N*/ // OS 21.08.97: #42943# Datenbankausdruecke muessen sich von
 /*N*/ // 				einfachem Text unterscheiden. also wird der einfache Text
 /*N*/ // 				bevorzugt in Anfuehrungszeichen gesetzt.
@@ -1295,7 +1293,7 @@ BOOL SwDocInfoField::PutValue( const uno::Any& rAny, BYTE nMId )
 /*?*/ 		aStr += aCond;
 /*?*/ 		aStr += ' ';
 /*?*/ 		aStr += aTRUETxt;
-/*?*/ 
+/*?*/
 /*?*/ 		if(nSubType == TYP_CONDTXTFLD)
 /*?*/ 		{
 /*?*/ static char const cTmp[] = " : ";
@@ -1481,7 +1479,7 @@ BOOL SwHiddenTxtField::PutValue( const uno::Any& rAny, BYTE nMId )
 /*N*/ {
 /*N*/ 	SwHiddenParaField* pFld = new SwHiddenParaField((SwHiddenParaFieldType*)GetTyp(), aCond);
 /*N*/ 	pFld->bIsHidden = bIsHidden;
-/*N*/ 
+/*N*/
 /*N*/ 	return pFld;
 /*N*/ }
 /*-----------------05.03.98 13:25-------------------
@@ -1501,7 +1499,7 @@ BOOL SwHiddenTxtField::PutValue( const uno::Any& rAny, BYTE nMId )
 /*N*/         	rAny.setValue(&bHidden, ::getBooleanCppuType());
 /*N*/ 		}
 /*N*/ 		break;
-/*N*/ 
+/*N*/
 /*N*/ 	default:
 /*?*/ 		DBG_ERROR("illegal property");
 /*N*/ 	}
@@ -1696,7 +1694,7 @@ BOOL SwPostItField::PutValue( const uno::Any& rAny, BYTE nMId )
 /*N*/ 	case EU_FIRSTNAME:		aRet = aAdr.GetFirstName(); break;
 /*N*/ 	case EU_NAME:   		aRet = aAdr.GetName();		break;
 /*N*/ 	case EU_SHORTCUT: 		aRet = aAdr.GetShortName(); break;
-/*N*/ 
+/*N*/
 /*N*/ 	case EU_COMPANY:  		nRet = POS_COMPANY; 		break;
 /*N*/ 	case EU_STREET:			nRet = POS_STREET;			break;
 /*N*/ 	case EU_TITLE:  		nRet = POS_TITLE;			break;
@@ -1732,7 +1730,7 @@ BOOL SwPostItField::PutValue( const uno::Any& rAny, BYTE nMId )
 /*N*/ {
 /*N*/ 	if (!IsFixed())
 /*N*/ 		((SwExtUserField*)this)->aContent = ((SwExtUserFieldType*)GetTyp())->Expand(nType, GetFormat());
-/*N*/ 
+/*N*/
 /*N*/ 	return aContent;
 /*N*/ }
 /* ---------------------------------------------------------------------------
@@ -1742,7 +1740,7 @@ BOOL SwPostItField::PutValue( const uno::Any& rAny, BYTE nMId )
 /*N*/ {
 /*N*/ 	SwExtUserField* pFld = new SwExtUserField((SwExtUserFieldType*)GetTyp(), nType, GetFormat());
 /*N*/ 	pFld->SetExpansion(aContent);
-/*N*/ 
+/*N*/
 /*N*/ 	return pFld;
 /*N*/ }
 /* ---------------------------------------------------------------------------
@@ -1771,7 +1769,7 @@ void SwExtUserField::SetSubType(sal_uInt16 nSub)
 /*N*/ 	case FIELD_PROP_PAR1:
 /*?*/ 		rAny <<= OUString(aContent);
 /*?*/ 		break;
-/*N*/ 
+/*N*/
 /*N*/ 	case FIELD_PROP_USHORT1:
 /*N*/ 		{
 /*N*/ 			sal_Int16 nTmp = nType;
@@ -1803,7 +1801,7 @@ BOOL SwExtUserField::PutValue( const uno::Any& rAny, BYTE nMId )
 
     case FIELD_PROP_USHORT1:
         {
-            sal_Int16 nTmp;
+            sal_Int16 nTmp(0);
             rAny >>= nTmp;
             nType = nTmp;
         }
@@ -1945,7 +1943,7 @@ BOOL SwRefPageSetField::PutValue( const uno::Any& rAny, BYTE nMId )
 /*?*/ 		// sammel erstmal alle SetPageRefFelder ein.
 /*?*/ 		DBG_BF_ASSERT(0, "STRIP");
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	// weiter an die Text-Felder, diese "Expandieren" den Text
 /*N*/ 	SwModify::Modify( pOld, pNew );
 /*N*/ }
@@ -2014,7 +2012,7 @@ BOOL SwRefPageGetField::PutValue( const uno::Any& rAny, BYTE nMId )
     {
         case FIELD_PROP_USHORT1:
         {
-            sal_Int16 nSet;
+            sal_Int16 nSet(0);
             rAny >>= nSet;
             if(nSet <= SVX_NUM_PAGEDESC )
                 SetFormat(nSet);
@@ -2057,11 +2055,11 @@ BOOL SwRefPageGetField::PutValue( const uno::Any& rAny, BYTE nMId )
 /*N*/ SwCharFmt* SwJumpEditFieldType::GetCharFmt()
 /*N*/ {
 /*N*/ 	SwCharFmt* pFmt = pDoc->GetCharFmtFromPool( RES_POOLCHR_JUMPEDIT );
-/*N*/ 
+/*N*/
 /*N*/ 	// noch nicht registriert ?
 /*N*/ 	if( !aDep.GetRegisteredIn() )
 /*N*/ 		pFmt->Add( &aDep );		// anmelden
-/*N*/ 
+/*N*/
 /*N*/ 	return pFmt;
 /*N*/ }
 /* ---------------------------------------------------------------------------
@@ -2170,7 +2168,7 @@ BOOL SwJumpEditField::PutValue( const uno::Any& rAny, BYTE nMId )
             //JP 24.10.2001: int32 because in UnoField.cxx a putvalue is
             //              called with a int32 value! But normally we need
             //              here only a int16
-            sal_Int32 nSet;
+            sal_Int32 nSet(0);
             rAny >>= nSet;
             switch( nSet )
             {
