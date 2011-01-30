@@ -2,7 +2,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -29,12 +29,12 @@
 #define _FRMFMT_HXX
 
 #include <format.hxx>
-class Graphic; 
-class Point; 
+class Graphic;
+class Point;
 
 namespace binfilter {
 
-class ImageMap; 
+class ImageMap;
 class SwDrawContact;
 class SwFlyFrm;
 class IMapObject;

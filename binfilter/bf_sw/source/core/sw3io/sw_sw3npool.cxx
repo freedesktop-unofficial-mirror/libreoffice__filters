@@ -2,7 +2,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -515,7 +515,7 @@ bool SwFmtFlyCnt::Sw3ioExportAllowed() const
 /*N*/ 	rStrm.ReadByteString( aURL1, rStrm.GetStreamCharSet() );
 /*N*/ 	rStrm.ReadByteString( aTarget, rStrm.GetStreamCharSet() );
 /*N*/ 	rStrm >> nId1 >> nId2;
-/*N*/ 
+/*N*/
 /*N*/ 	aURL1 = ::binfilter::StaticBaseUrl::SmartRelToAbs( aURL1 );
 /*N*/ 	SwFmtINetFmt *pNew = new SwFmtINetFmt( aURL1, aTarget );
 /*N*/ 	Sw3IoImp* pIo = Sw3IoImp::GetCurrentIo();
