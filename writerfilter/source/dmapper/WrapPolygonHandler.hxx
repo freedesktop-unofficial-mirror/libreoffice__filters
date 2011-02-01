@@ -24,43 +24,68 @@
  * for a copy of the LGPLv3 License.
  *
  ************************************************************************/
-#ifndef INCLUDED_MEASUREHANDLER_HXX
-#define INCLUDED_MEASUREHANDLER_HXX
 
-#include <WriterFilterDllApi.hxx>
+#ifndef WRAP_POLYGON_HANDLER_HXX
+#define WRAP_POLYGON_HANDLER_HXX
+
+#include <com/sun/star/drawing/PointSequenceSequence.hpp>
 #include <resourcemodel/LoggedResources.hxx>
-#include <boost/shared_ptr.hpp>
+#include <resourcemodel/Fraction.hxx>
 
 namespace writerfilter {
-namespace dmapper
+namespace dmapper {
+
+using namespace ::com::sun::star;
+using resourcemodel::Fraction;
+
+class WrapPolygon
 {
-class PropertyMap;
-/** Handler for sprms that contain a measure and a unit
-    - Left indent of tables
-    - Preferred width of tables
- */
-class WRITERFILTER_DLLPRIVATE MeasureHandler : public LoggedProperties
+public:
+    typedef ::std::deque<awt::Point> Points_t;
+    typedef ::boost::shared_ptr<WrapPolygon> Pointer_t;
+
+private:
+    Points_t mPoints;
+
+public:
+    WrapPolygon();
+    virtual ~WrapPolygon();
+
+    void addPoint(const awt::Point & rPoint);
+
+    Points_t::const_iterator begin() const;
+    Points_t::const_iterator end() const;
+    Points_t::iterator begin();
+    Points_t::iterator end();
+
+    size_t size() const;
+
+    WrapPolygon::Pointer_t move(const awt::Point & rMove);
+    WrapPolygon::Pointer_t scale(const Fraction & rFractionX, const Fraction & rFractionY);
+    WrapPolygon::Pointer_t correctWordWrapPolygon(const awt::Size & rSrcSize, const awt::Size & rDstSize);
+    drawing::PointSequenceSequence getPointSequenceSequence() const;
+};
+
+class WrapPolygonHandler : public LoggedProperties
 {
-    sal_Int32 m_nMeasureValue;
-    sal_Int32 m_nUnit;
-    sal_Int16 m_nRowHeightSizeType; //table row height type
+public:
+    WrapPolygonHandler();
+    virtual ~WrapPolygonHandler();
+
+    WrapPolygon::Pointer_t getPolygon();
+
+private:
+    WrapPolygon::Pointer_t mpPolygon;
+
+    sal_uInt32 mnX;
+    sal_uInt32 mnY;
 
     // Properties
     virtual void lcl_attribute(Id Name, Value & val);
     virtual void lcl_sprm(Sprm & sprm);
     
-public:
-    MeasureHandler();
-    virtual ~MeasureHandler();
-
-    sal_Int32 getMeasureValue() const;
-    //at least tables can have automatic width
-    bool isAutoWidth() const;
-
-    sal_Int16 GetRowHeightSizeType() const { return m_nRowHeightSizeType;}
 };
-typedef boost::shared_ptr
-    < MeasureHandler >  MeasureHandlerPtr;
+
 }}
 
-#endif //
+#endif // WRAP_POLYGON_HANDLER_HXX

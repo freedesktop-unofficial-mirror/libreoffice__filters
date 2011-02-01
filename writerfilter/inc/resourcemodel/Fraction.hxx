@@ -24,43 +24,37 @@
  * for a copy of the LGPLv3 License.
  *
  ************************************************************************/
-#ifndef INCLUDED_MEASUREHANDLER_HXX
-#define INCLUDED_MEASUREHANDLER_HXX
+#ifndef INCLUDED_FRACTION_HXX
+#define INCLUDED_FRACTION_HXX
 
-#include <WriterFilterDllApi.hxx>
-#include <resourcemodel/LoggedResources.hxx>
-#include <boost/shared_ptr.hpp>
+#include <sal/types.h>
 
 namespace writerfilter {
-namespace dmapper
-{
-class PropertyMap;
-/** Handler for sprms that contain a measure and a unit
-    - Left indent of tables
-    - Preferred width of tables
- */
-class WRITERFILTER_DLLPRIVATE MeasureHandler : public LoggedProperties
-{
-    sal_Int32 m_nMeasureValue;
-    sal_Int32 m_nUnit;
-    sal_Int16 m_nRowHeightSizeType; //table row height type
+namespace resourcemodel {
 
-    // Properties
-    virtual void lcl_attribute(Id Name, Value & val);
-    virtual void lcl_sprm(Sprm & sprm);
-    
+class Fraction
+{
 public:
-    MeasureHandler();
-    virtual ~MeasureHandler();
+    explicit Fraction(sal_Int32 nNumerator, sal_Int32 nDenominator = 1);
+    explicit Fraction(const Fraction & a, const Fraction & b);
+    virtual ~Fraction();
 
-    sal_Int32 getMeasureValue() const;
-    //at least tables can have automatic width
-    bool isAutoWidth() const;
+    void init(sal_Int32 nNumerator, sal_Int32 nDenominator);
+    void assign(const Fraction & rFraction);
+    
+    Fraction inverse() const;
 
-    sal_Int16 GetRowHeightSizeType() const { return m_nRowHeightSizeType;}
+    Fraction operator=(const Fraction & rFraction);
+    Fraction operator+(const Fraction & rFraction) const;
+    Fraction operator-(const Fraction & rFraction) const;
+    Fraction operator*(const Fraction & rFraction) const;
+    Fraction operator/(const Fraction & rFraction) const;
+    operator sal_Int32() const;
+    operator float() const;
+
+private:
+    sal_Int32 mnNumerator;
+    sal_Int32 mnDenominator;
 };
-typedef boost::shared_ptr
-    < MeasureHandler >  MeasureHandlerPtr;
 }}
-
-#endif //
+#endif // INCLUDED_FRACTION_HXX

@@ -24,43 +24,42 @@
  * for a copy of the LGPLv3 License.
  *
  ************************************************************************/
-#ifndef INCLUDED_MEASUREHANDLER_HXX
-#define INCLUDED_MEASUREHANDLER_HXX
+#ifndef INCLUDED_XPATH_LOGGER_HXX
+#define INCLUDED_XPATH_LOGGER_HXX
 
-#include <WriterFilterDllApi.hxx>
-#include <resourcemodel/LoggedResources.hxx>
+#include <hash_map>
+#include <stack>
+#include <string>
+#include <vector>
 #include <boost/shared_ptr.hpp>
+#include <WriterFilterDllApi.hxx>
 
-namespace writerfilter {
-namespace dmapper
+namespace writerfilter
 {
-class PropertyMap;
-/** Handler for sprms that contain a measure and a unit
-    - Left indent of tables
-    - Preferred width of tables
- */
-class WRITERFILTER_DLLPRIVATE MeasureHandler : public LoggedProperties
-{
-    sal_Int32 m_nMeasureValue;
-    sal_Int32 m_nUnit;
-    sal_Int16 m_nRowHeightSizeType; //table row height type
+using ::std::hash_map;
+using ::std::stack;
+using ::std::string;
+using ::std::vector;
 
-    // Properties
-    virtual void lcl_attribute(Id Name, Value & val);
-    virtual void lcl_sprm(Sprm & sprm);
-    
+class WRITERFILTER_DLLPUBLIC XPathLogger
+{
+    typedef hash_map<string, unsigned int> TokenMap_t;
+    typedef boost::shared_ptr<TokenMap_t> TokenMapPointer_t;
+
+    TokenMapPointer_t mp_tokenMap;
+    stack<TokenMapPointer_t> m_tokenMapStack;
+    vector<string> m_path;
+    string m_currentPath;
+
+    void updateCurrentPath();
+
 public:
-    MeasureHandler();
-    virtual ~MeasureHandler();
+    explicit XPathLogger();
+    virtual ~XPathLogger();
 
-    sal_Int32 getMeasureValue() const;
-    //at least tables can have automatic width
-    bool isAutoWidth() const;
-
-    sal_Int16 GetRowHeightSizeType() const { return m_nRowHeightSizeType;}
+    string getXPath() const;
+    void startElement(string _token);
+    void endElement();
 };
-typedef boost::shared_ptr
-    < MeasureHandler >  MeasureHandlerPtr;
-}}
-
-#endif //
+}
+#endif // INCLUDED_XPATH_LOGGER_HXX
