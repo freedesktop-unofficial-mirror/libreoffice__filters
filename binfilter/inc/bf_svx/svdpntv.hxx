@@ -2,7 +2,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -29,7 +29,7 @@
 #ifndef _SVDPNTV_HXX
 #define _SVDPNTV_HXX
 
-#include <slist>
+#include <list>
 #include <vcl/timer.hxx>
 #include <vcl/virdev.hxx>
 #include <bf_svtools/brdcst.hxx>
@@ -282,7 +282,7 @@ protected:
     USHORT						nMinMovPix;
     USHORT						nHitTolLog;
     USHORT						nMinMovLog;
-    ULONG						nMasterCacheMode;	
+    ULONG						nMasterCacheMode;
     ULONG                       nGraphicManagerDrawMode;
 
     unsigned					bForeignXOut : 1;
@@ -328,7 +328,7 @@ protected:
     Color						maGridColor;
 
 private:
-    typedef ::std::slist< SdrGrafObj* > GraphicsStack;
+    typedef ::std::list< SdrGrafObj* > GraphicsStack;
     GraphicsStack				maSwappedInGraphicsStack;
 
     void ImpForceSwapOut();
@@ -678,8 +678,8 @@ BOOL Paste(Window* pWin=NULL, ULONG nFormat=SDR_ANYFORMAT) { (void)pWin; (void)n
 
         @return a representative background color.
      */
-    Color CalcBackgroundColor( const Rectangle& 	rArea, 
-                               const SetOfByte& 	rVisibleLayers, 
+    Color CalcBackgroundColor( const Rectangle& 	rArea,
+                               const SetOfByte& 	rVisibleLayers,
                                const SdrPage& 	rCurrPage ) const;
 };
 
