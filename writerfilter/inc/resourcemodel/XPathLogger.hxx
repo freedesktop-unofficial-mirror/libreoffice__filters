@@ -24,33 +24,42 @@
  * for a copy of the LGPLv3 License.
  *
  ************************************************************************/
+#ifndef INCLUDED_XPATH_LOGGER_HXX
+#define INCLUDED_XPATH_LOGGER_HXX
 
-#include "oox/token/propertylist.hxx"
-#include "properties.hxx"
+#include <hash_map>
+#include <stack>
+#include <string>
+#include <vector>
+#include <boost/shared_ptr.hpp>
+#include <WriterFilterDllApi.hxx>
 
-namespace oox {
-
-namespace {
-
-// include auto-generated property name lists
-#include "propertywords.inc"
-
-} // namespace
-
-// ============================================================================
-
-PropertyList::PropertyList()
+namespace writerfilter
 {
-    reserve( static_cast< size_t >( PROP_COUNT ) );
-    for( sal_Int32 nIdx = 0; nIdx < PROP_COUNT; ++nIdx )
-        push_back( ::rtl::OUString::createFromAscii( propertywordlist[ nIdx ] ) );
-}
+using ::std::hash_map;
+using ::std::stack;
+using ::std::string;
+using ::std::vector;
 
-PropertyList::~PropertyList()
+class WRITERFILTER_DLLPUBLIC XPathLogger
 {
+    typedef hash_map<string, unsigned int> TokenMap_t;
+    typedef boost::shared_ptr<TokenMap_t> TokenMapPointer_t;
+
+    TokenMapPointer_t mp_tokenMap;
+    stack<TokenMapPointer_t> m_tokenMapStack;
+    vector<string> m_path;
+    string m_currentPath;
+
+    void updateCurrentPath();
+
+public:
+    explicit XPathLogger();
+    virtual ~XPathLogger();
+
+    string getXPath() const;
+    void startElement(string _token);
+    void endElement();
+};
 }
-
-// ============================================================================
-
-} // namespace oox
-
+#endif // INCLUDED_XPATH_LOGGER_HXX
