@@ -24,16 +24,42 @@
  * for a copy of the LGPLv3 License.
  *
  ************************************************************************/
+#ifndef INCLUDED_XPATH_LOGGER_HXX
+#define INCLUDED_XPATH_LOGGER_HXX
 
+#include <hash_map>
+#include <stack>
+#include <string>
+#include <vector>
+#include <boost/shared_ptr.hpp>
+#include <WriterFilterDllApi.hxx>
 
-#ifndef __FRAMEWORK_DISPATCH_INTERACTION_HXX_
-#include <framework/interaction.hxx>
-#endif
-namespace binfilter {
+namespace writerfilter
+{
+using ::std::hash_map;
+using ::std::stack;
+using ::std::string;
+using ::std::vector;
 
-using namespace ::framework;
-typedef ContinuationBase< ::com::sun::star::task::XInteractionApprove > SfxContinuationApprove;
-typedef ContinuationBase< ::com::sun::star::task::XInteractionDisapprove > SfxContinuationDisapprove;
- 
-}//end of namespace binfilter
+class WRITERFILTER_DLLPUBLIC XPathLogger
+{
+    typedef hash_map<string, unsigned int> TokenMap_t;
+    typedef boost::shared_ptr<TokenMap_t> TokenMapPointer_t;
 
+    TokenMapPointer_t mp_tokenMap;
+    stack<TokenMapPointer_t> m_tokenMapStack;
+    vector<string> m_path;
+    string m_currentPath;
+
+    void updateCurrentPath();
+
+public:
+    explicit XPathLogger();
+    virtual ~XPathLogger();
+
+    string getXPath() const;
+    void startElement(string _token);
+    void endElement();
+};
+}
+#endif // INCLUDED_XPATH_LOGGER_HXX
