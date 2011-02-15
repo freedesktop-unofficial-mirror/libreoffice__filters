@@ -24,12 +24,42 @@
  * for a copy of the LGPLv3 License.
  *
  ************************************************************************/
-namespace binfilter {
+#ifndef INCLUDED_XPATH_LOGGER_HXX
+#define INCLUDED_XPATH_LOGGER_HXX
 
-/*! (pb) needs new construction */
+#include <hash_map>
+#include <stack>
+#include <string>
+#include <vector>
+#include <boost/shared_ptr.hpp>
+#include <WriterFilterDllApi.hxx>
 
-#ifndef _DLL_
-#error PCH wird mal wieder ohne -D_DLL_ kompiliert
-#endif
+namespace writerfilter
+{
+using ::std::hash_map;
+using ::std::stack;
+using ::std::string;
+using ::std::vector;
 
+class WRITERFILTER_DLLPUBLIC XPathLogger
+{
+    typedef hash_map<string, unsigned int> TokenMap_t;
+    typedef boost::shared_ptr<TokenMap_t> TokenMapPointer_t;
+
+    TokenMapPointer_t mp_tokenMap;
+    stack<TokenMapPointer_t> m_tokenMapStack;
+    vector<string> m_path;
+    string m_currentPath;
+
+    void updateCurrentPath();
+
+public:
+    explicit XPathLogger();
+    virtual ~XPathLogger();
+
+    string getXPath() const;
+    void startElement(string _token);
+    void endElement();
+};
 }
+#endif // INCLUDED_XPATH_LOGGER_HXX
