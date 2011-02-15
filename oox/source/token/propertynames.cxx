@@ -24,12 +24,28 @@
  * for a copy of the LGPLv3 License.
  *
  ************************************************************************/
-namespace binfilter {
 
-/*! (pb) needs new construction */
+#include "oox/token/propertynames.hxx"
 
-#ifndef _DLL_
-#error PCH wird mal wieder ohne -D_DLL_ kompiliert
-#endif
+namespace oox {
 
+// ============================================================================
+
+PropertyNameVector::PropertyNameVector()
+{
+    static const sal_Char* sppcPropertyNames[] =
+    {
+        // include auto-generated C array with property names as C strings
+#include "propertynames.inc"
+        ""
+    };
+
+    size_t nArraySize = (sizeof( sppcPropertyNames ) / sizeof( *sppcPropertyNames )) - 1;
+    reserve( nArraySize );
+    for( size_t nIndex = 0; nIndex < nArraySize; ++nIndex )
+        push_back( ::rtl::OUString::createFromAscii( sppcPropertyNames[ nIndex ] ) );
 }
+
+// ============================================================================
+
+} // namespace oox
