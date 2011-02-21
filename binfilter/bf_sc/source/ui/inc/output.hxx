@@ -2,7 +2,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -29,7 +29,6 @@
 #ifndef SC_OUTPUT_HXX
 #define SC_OUTPUT_HXX
 
-#include <tools/list.hxx>
 #include <tools/color.hxx>
 #include <tools/fract.hxx>
 class Rectangle;

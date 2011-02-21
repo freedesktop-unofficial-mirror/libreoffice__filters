@@ -2,7 +2,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -60,8 +60,8 @@ namespace com { namespace sun { namespace star { namespace io {
 }}}}
 
 
-class ImageProducer :	public ::com::sun::star::awt::XImageProducer, 
-                        public ::com::sun::star::lang::XInitialization, 
+class ImageProducer :	public ::com::sun::star::awt::XImageProducer,
+                        public ::com::sun::star::lang::XInitialization,
                         public ::cppu::OWeakObject
 {
 private:
@@ -110,7 +110,7 @@ public:
     ::com::sun::star::uno::Any					SAL_CALL queryInterface( const ::com::sun::star::uno::Type & rType ) throw(::com::sun::star::uno::RuntimeException);
     void										SAL_CALL acquire() throw()	{ OWeakObject::acquire(); }
     void										SAL_CALL release() throw()	{ OWeakObject::release(); }
-    
+
     // MT: ???
     void			setImage( ::com::sun::star::uno::Reference< ::com::sun::star::io::XInputStream > & rStmRef );
 

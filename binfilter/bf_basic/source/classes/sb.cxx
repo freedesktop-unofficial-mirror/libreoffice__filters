@@ -2,7 +2,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -37,7 +37,6 @@
 #include <tools/errinf.hxx>
 #endif
 #include <sbx.hxx>
-#include <tools/list.hxx>
 #include <tools/rc.hxx>
 #include <vcl/svapp.hxx>
 #include "sbunoobj.hxx"
@@ -328,7 +327,7 @@ SbClassModuleObject::SbClassModuleObject( SbModule* pClassModule )
     aOUSource = pClassModule->aOUSource;
     aComment = pClassModule->aComment;
     pImage = pClassModule->pImage;
-    
+
     SetClassName( pClassModule->GetName() );
 
     // Allow search only internally
@@ -362,7 +361,7 @@ SbClassModuleObject::SbClassModuleObject( SbModule* pClassModule )
         }
     }
 
-    // Copy SbIfaceMapperMethod in a second step to ensure that 
+    // Copy SbIfaceMapperMethod in a second step to ensure that
     // the corresponding base methods have already been copied
     for( i = 0 ; i < nMethodCount ; i++ )
     {
@@ -387,7 +386,7 @@ SbClassModuleObject::SbClassModuleObject( SbModule* pClassModule )
                 DBG_ERROR( "Found no ImplMethod copy" );
                 continue;
             }
-            SbIfaceMapperMethod* pNewIfaceMethod = 
+            SbIfaceMapperMethod* pNewIfaceMethod =
                 new SbIfaceMapperMethod( pIfaceMethod->GetName(), pImplMethodCopy );
             pMethods->PutDirect( pNewIfaceMethod, i );
         }
@@ -432,7 +431,7 @@ SbClassModuleObject::~SbClassModuleObject()
 {
     triggerTerminateEvent();
 
-    // Must be deleted by base class dtor because this data 
+    // Must be deleted by base class dtor because this data
     // is not owned by the SbClassModuleObject object
     pImage = NULL;
 }
@@ -562,7 +561,7 @@ void SbClassModuleObject::triggerTerminateEvent( void )
 
 void SbClassData::clear( void )
 {
-    mxIfaces->Clear(); 
+    mxIfaces->Clear();
 }
 
 SbClassFactory::SbClassFactory( void )
