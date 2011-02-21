@@ -466,6 +466,11 @@ sal_Bool SVGFilter::implExportDocument( const Reference< XDrawPages >& rxMasterP
         xExtDocHandler->unknown( SVG_DTD_STRING );
     }
 
+    mpSVGExport->AddAttribute( XML_NAMESPACE_NONE, "version", B2UCONST( "1.2" ) );
+    
+    if( mpSVGExport->IsUseTinyProfile() )
+         mpSVGExport->AddAttribute( XML_NAMESPACE_NONE, "baseProfile", B2UCONST( "tiny" ) );
+
 #ifdef _SVG_WRITE_EXTENTS
     aAttr = OUString::valueOf( nDocWidth * 0.01 ); 
     aAttr += B2UCONST( "mm" );
@@ -481,11 +486,6 @@ sal_Bool SVGFilter::implExportDocument( const Reference< XDrawPages >& rxMasterP
     aAttr += B2UCONST( " " );
     aAttr += OUString::valueOf( nDocHeight );
 
-    mpSVGExport->AddAttribute( XML_NAMESPACE_NONE, "version", B2UCONST( "1.2" ) );
-    
-    if( mpSVGExport->IsUseTinyProfile() )
-         mpSVGExport->AddAttribute( XML_NAMESPACE_NONE, "baseProfile", B2UCONST( "tiny" ) );
- 
     mpSVGExport->AddAttribute( XML_NAMESPACE_NONE, "viewBox", aAttr );
     mpSVGExport->AddAttribute( XML_NAMESPACE_NONE, "preserveAspectRatio", B2UCONST( "xMidYMid" ) );
     mpSVGExport->AddAttribute( XML_NAMESPACE_NONE, "fill-rule", B2UCONST( "evenodd" ) );
