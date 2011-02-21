@@ -2,7 +2,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -40,11 +40,6 @@
 
 namespace binfilter
 {
-
-//static long         hCurConv  = 0;
-//static DWORD        hDdeInst  = NULL;
-//static short        nInstance = 0;
-//static DdeServices* pServices;
 
 enum DdeItemType
 {
