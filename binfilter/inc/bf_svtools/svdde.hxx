@@ -2,7 +2,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -55,11 +55,6 @@ struct DdeImp;
 DECLARE_LIST( DdeConnections, DdeConnection* )
 DECLARE_LIST( DdeTransactions, DdeTransaction* )
 DECLARE_LIST( DdeFormats, long )
-
-#ifndef STRING_LIST
-#define STRING_LIST
-DECLARE_LIST( StringList, String * )
-#endif
 
 #ifdef WNT
 class DdeService;
