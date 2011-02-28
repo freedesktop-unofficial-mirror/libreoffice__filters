@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -25,19 +25,20 @@
  *
  ************************************************************************/
 
-#include "comment.hxx"
+#include <comment.hxx>
 
 #include <com/sun/star/xml/sax/XExtendedDocumentHandler.hpp>
 
+
 namespace DOM
 {
-    CComment::CComment(const xmlNodePtr aNodePtr)
+    CComment::CComment(CDocument const& rDocument, ::osl::Mutex const& rMutex,
+            xmlNodePtr const pNode)
+        : CComment_Base(rDocument, rMutex, NodeType_COMMENT_NODE, pNode)
     {
-        m_aNodeType = NodeType_COMMENT_NODE;
-        init_node(aNodePtr);
     }
 
-    void SAL_CALL CComment::saxify(
+    void CComment::saxify(
             const Reference< XDocumentHandler >& i_xHandler) {
         if (!i_xHandler.is()) throw RuntimeException();
         Reference< XExtendedDocumentHandler > xExtended(i_xHandler, UNO_QUERY);
