@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -24,20 +24,47 @@
  * for a copy of the LGPLv3 License.
  *
  ************************************************************************/
-#include "filter.hrc"
 
-#define BTN_OK 1
-#define BTN_CANCEL 1
-#define BTN_HELP 1
-#define	GRP_PREVIEW 1
-#define GRP_VERSION 2
-#define GRP_COLOR 3
-#define GRP_COMPRESSION 4
-#define CB_PREVIEW_TIFF 1
-#define CB_PREVIEW_EPSI 2
-#define RB_LEVEL1 1
-#define RB_LEVEL2 2
-#define RB_COLOR  3
-#define RB_GRAYSCALE 4
-#define RB_COMPRESSION_LZW 5
-#define RB_COMPRESSION_NONE 6
+
+#include "strings.hrc"
+
+String KEY_VERSION_CHECK
+{
+    Text [ en-US ] = "Warning: Not all of the imported EPS graphics could be saved at level1\nas some are at a higher level!";
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
