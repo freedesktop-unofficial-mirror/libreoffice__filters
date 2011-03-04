@@ -137,8 +137,8 @@ namespace PictReaderShape {
   void drawRectangle(VirtualDevice *dev, bool drawFrame, Rectangle const &orig, Size const &pSize) {
     int penSize=(pSize.Width()+pSize.Height())/2;
     Rectangle rect = PictReaderShapePrivate::contractRectangle(drawFrame, orig, pSize);
-    double const X[2] = { rect.Left(), rect.Right() };
-    double const Y[2] = { rect.Top(), rect.Bottom() };
+    double const X[2] = { (double)rect.Left(), (double)rect.Right() };
+    double const Y[2] = { (double)rect.Top(), (double)rect.Bottom() };
 
     using namespace basegfx;
     B2DPolygon poly;
@@ -157,8 +157,8 @@ namespace PictReaderShape {
     int penSize=(pSize.Width()+pSize.Height())/2;
     Rectangle oval = PictReaderShapePrivate::contractRectangle(drawFrame, orig, pSize);
     using namespace basegfx;
-    double const X[2] = { oval.Left(), oval.Right() };
-    double const Y[2] = { oval.Top(), oval.Bottom() };
+    double const X[2] = { (double)oval.Left(), (double)oval.Right() };
+    double const Y[2] = { (double)oval.Top(), (double)oval.Bottom() };
     B2DPoint center(0.5*(X[1]+X[0]), 0.5*(Y[1]+Y[0]));
     B2DPolygon poly = tools::createPolygonFromEllipse(center, 0.5*(X[1]-X[0]), 0.5*(Y[1]-Y[0]));
     if (drawFrame)
@@ -177,8 +177,8 @@ namespace PictReaderShape {
     // pict angle are CW with 0 at twelve oclock ( with Y-axis inverted)...
     double angl1 = angle1-PI2;
     double angl2 = angle2-PI2;
-    double const X[2] = { arc.Left(), arc.Right() };
-    double const Y[2] = { arc.Top(), arc.Bottom() };
+    double const X[2] = { (double)arc.Left(), (double)arc.Right() };
+    double const Y[2] = { (double)arc.Top(), (double)arc.Bottom() };
     B2DPoint center(0.5*(X[1]+X[0]), 0.5*(Y[1]+Y[0]));
     
     // We must have angl1 between 0 and F_2PI
@@ -208,8 +208,8 @@ namespace PictReaderShape {
     Rectangle oval = PictReaderShapePrivate::contractRectangle(drawFrame, orig, pSize);
     int ovalW=ovalSize.Width(), ovalH=ovalSize.Height();
     using namespace basegfx;
-    double const X[2] = { oval.Left(), oval.Right() };
-    double const Y[2] = { oval.Top(), oval.Bottom() };
+    double const X[2] = { (double)oval.Left(), (double)oval.Right() };
+    double const Y[2] = { (double)oval.Top(), (double)oval.Bottom() };
     double width = X[1] - X[0];
     double height = Y[1] - Y[0];
     if (ovalW > width) ovalW = static_cast< int >( width );

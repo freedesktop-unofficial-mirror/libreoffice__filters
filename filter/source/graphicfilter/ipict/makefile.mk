@@ -47,7 +47,7 @@ SLOFILES =  $(SLO)$/ipict.obj $(SLO)$/shape.obj
 
 SHL1TARGET=     ipt$(DLLPOSTFIX)
 SHL1IMPLIB=     ipict
-SHL1STDLIBS=    $(VCLLIB) $(TOOLSLIB) $(SALLIB)
+SHL1STDLIBS=    $(VCLLIB) $(TOOLSLIB) $(SALLIB) $(BASEGFXLIB)
 SHL1LIBS=       $(SLB)$/ipict.lib
 
 .IF "$(GUI)" != "UNX"
