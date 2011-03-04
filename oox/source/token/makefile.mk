@@ -49,7 +49,6 @@ SLOFILES = \
 .INCLUDE :  target.mk
 
 GENHEADERPATH = $(INCCOM)$/oox$/token
-    @@-$(RM) $@
 
 $(MISC)$/tokenhash.gperf $(INCCOM)$/tokennames.inc $(GENHEADERPATH)$/tokens.hxx $(INCCOM)$/namespacenames.inc $(MISC)$/namespaces.txt $(GENHEADERPATH)$/namespaces.hxx $(INCCOM)$/propertynames.inc $(GENHEADERPATH)$/properties.hxx :
     @@noop $(assign do_phony:=.PHONY)

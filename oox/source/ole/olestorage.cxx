@@ -36,9 +36,10 @@
 #include <com/sun/star/io/XStream.hpp>
 #include <com/sun/star/lang/XMultiServiceFactory.hpp>
 #include <cppuhelper/implbase2.hxx>
-#include "oox/helper/helper.hxx"
 #include "oox/helper/binaryinputstream.hxx"
 #include "oox/helper/binaryoutputstream.hxx"
+#include "oox/helper/containerhelper.hxx"
+#include "oox/helper/helper.hxx"
 
 using ::rtl::OUString;
 using ::com::sun::star::container::XNameContainer;

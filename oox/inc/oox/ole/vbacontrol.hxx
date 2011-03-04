@@ -167,13 +167,7 @@ private:
     /** Imports the site models of all embedded controls from the 'f' stream. */
     bool                importEmbeddedSiteModels( BinaryInputStream& rInStrm );
     /*  Final processing of all embedded controls after import. */
-    void                finalizeEmbeddedControls();
-
-    /** Moves the control relative to its current position by the passed distance. */
-    void                moveRelative( const AxPairData& rDistance );
-    /** Moves all embedded controls from their relative position in this
-        control to an absolute position in the parent of this control. */
-    void                moveEmbeddedToAbsoluteParent();
+    void                finalizeEmbeddedControls( StorageBase& rStrg );
 
     /** Functor for comparing controls by their tab index. */
     static bool         compareByTabIndex( const VbaFormControlRef& rxLeft, const VbaFormControlRef& rxRight );

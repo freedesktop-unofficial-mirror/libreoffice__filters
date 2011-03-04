@@ -130,6 +130,29 @@ bool VbaFilterConfig::isExportVba() const
 
 // ============================================================================
 
+VbaMacroAttacherBase::VbaMacroAttacherBase( const OUString& rMacroName ) :
+    maMacroName( rMacroName )
+{
+    OSL_ENSURE( maMacroName.getLength() > 0, "VbaMacroAttacherBase::VbaMacroAttacherBase - empty macro name" );
+}
+
+VbaMacroAttacherBase::~VbaMacroAttacherBase()
+{
+}
+
+void VbaMacroAttacherBase::resolveAndAttachMacro( const Reference< XVBAMacroResolver >& rxResolver )
+{
+    try
+    {
+        attachMacro( rxResolver->resolveVBAMacroToScriptURL( maMacroName ) );
+    }
+    catch( Exception& )
+    {
+    }
+}
+
+// ============================================================================
+
 VbaProject::VbaProject( const Reference< XComponentContext >& rxContext,
         const Reference< XModel >& rxDocModel, const OUString& rConfigCompName ) :
     VbaFilterConfig( rxContext, rConfigCompName ),
@@ -158,6 +181,12 @@ void VbaProject::importVbaProject( StorageBase& rVbaPrjStrg, const GraphicHelper
         if( isExportVba() )
             copyStorage( rVbaPrjStrg );
     }
+}
+
+void VbaProject::registerMacroAttacher( const VbaMacroAttacherRef& rxAttacher )
+{
+    OSL_ENSURE( rxAttacher.get(), "VbaProject::registerMacroAttacher - unexpected empty reference" );
+    maMacroAttachers.push_back( rxAttacher );
 }
 
 bool VbaProject::hasModules() const
@@ -475,6 +504,23 @@ void VbaProject::importVba( StorageBase& rVbaPrjStrg, const GraphicHelper& rGrap
 
     // virtual call, derived classes may do some more processing
     finalizeImport();
+}
+
+void VbaProject::attachMacros()
+{
+    if( !maMacroAttachers.empty() && mxCompContext.is() ) try
+    {
+        Reference< XMultiComponentFactory > xFactory( mxCompContext->getServiceManager(), UNO_SET_THROW );
+        Sequence< Any > aArgs( 2 );
+        aArgs[ 0 ] <<= mxDocModel;
+        aArgs[ 1 ] <<= maPrjName;
+        Reference< XVBAMacroResolver > xResolver( xFactory->createInstanceWithArgumentsAndContext(
+            CREATE_OUSTRING( "com.sun.star.script.vba.VBAMacroResolver" ), aArgs, mxCompContext ), UNO_QUERY_THROW );
+        maMacroAttachers.forEachMem( &VbaMacroAttacherBase::resolveAndAttachMacro, ::boost::cref( xResolver ) );
+    }
+    catch( Exception& )
+    {
+    }
 }
 
 void VbaProject::copyStorage( StorageBase& rVbaPrjStrg )

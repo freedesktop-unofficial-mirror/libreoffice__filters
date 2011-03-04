@@ -28,6 +28,7 @@
 
 #include "oox/ole/vbamodule.hxx"
 #include <hash_map>
+#include <com/sun/star/container/XNameContainer.hpp>
 #include <com/sun/star/container/XIndexContainer.hpp>
 #include <cppuhelper/implbase1.hxx>
 #include <com/sun/star/script/ModuleInfo.hpp>

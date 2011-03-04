@@ -43,8 +43,7 @@ CDEFS+= -DEDITDEBUG
 .ENDIF
 
 SRS1NAME=$(TARGET)
-SRC1FILES =	dlgegif.src		\
-        egifstr.src
+SRC1FILES =	dlgegif.src
 .IF "$(L10N_framework)"==""
 SLOFILES= \
         $(EXCEPTIONSFILES)	\

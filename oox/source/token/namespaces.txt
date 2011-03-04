@@ -3,7 +3,6 @@
 
 xml                     http://www.w3.org/XML/1998/namespace
 schema                  http://schemas.openxmlformats.org/schemaLibrary/2006/main
-CDR
 
 # package ---------------------------------------------------------------------
 

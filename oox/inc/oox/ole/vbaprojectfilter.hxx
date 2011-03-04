@@ -63,7 +63,6 @@ public:
     explicit            WordVbaProjectFilter(
                             const ::com::sun::star::uno::Reference< ::com::sun::star::uno::XComponentContext >& rxContext )
                             throw( ::com::sun::star::uno::RuntimeException );
->>>>>>> stage/ooo/dev300_m98_fixed
 
 private:
     virtual ::rtl::OUString implGetImplementationName() const;

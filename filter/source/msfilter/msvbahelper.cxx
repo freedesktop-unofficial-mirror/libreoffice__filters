@@ -257,8 +257,8 @@ MacroResolvedInfo resolveVBAMacro( SfxObjectShell* pShell, const rtl::OUString& 
         // recursively
 
         // assume for now that the document name is *this* document
-        String sDocUrlOrPath = sMacroUrl.copy( 0, nDocSepIndex );
-        sMacroUrl = sMacroUrl.copy( nDocSepIndex + 1 );
+        String sDocUrlOrPath = aMacroName.copy( 0, nDocSepIndex );
+        aMacroName = aMacroName.copy( nDocSepIndex + 1 );
         OSL_TRACE("doc search, current shell is 0x%x", pShell );
         SfxObjectShell* pFoundShell = NULL;
         if( bSearchGlobalTemplates )

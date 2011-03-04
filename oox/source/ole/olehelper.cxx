@@ -29,7 +29,7 @@
 #include "oox/ole/olehelper.hxx"
 
 #include <rtl/ustrbuf.hxx>
-#include "tokens.hxx"
+#include "oox/token/tokens.hxx"
 #include "oox/helper/binaryinputstream.hxx"
 #include "oox/helper/graphichelper.hxx"
 #include "oox/token/tokens.hxx"

@@ -29,6 +29,7 @@
 #include "oox/core/filterbase.hxx"
 
 #include <set>
+#include <com/sun/star/container/XNameAccess.hpp>
 #include <com/sun/star/frame/XModel.hpp>
 #include <com/sun/star/task/XStatusIndicator.hpp>
 #include <com/sun/star/task/XInteractionHandler.hpp>
@@ -56,6 +57,7 @@ using namespace ::com::sun::star::io;
 using namespace ::com::sun::star::lang;
 using namespace ::com::sun::star::task;
 using namespace ::com::sun::star::uno;
+using namespace ::com::sun::star::container;
 
 using ::comphelper::MediaDescriptor;
 using ::comphelper::SequenceAsHashMap;
@@ -581,7 +583,7 @@ void FilterBase::setMediaDescriptor( const Sequence< PropertyValue >& rMediaDesc
     OUString sFilterName = mxImpl->maMediaDesc.getUnpackedValueOrDefault( CREATE_OUSTRING( "FilterName" ), OUString() );
     try
     {
-        Reference< XNameAccess > xFilters( getGlobalFactory()->createInstance(
+        Reference< XNameAccess > xFilters( getServiceFactory()->createInstance(
                     CREATE_OUSTRING( "com.sun.star.document.FilterFactory" ) ), UNO_QUERY_THROW );
         Any aValues = xFilters->getByName( sFilterName );
         Sequence<PropertyValue > aPropSeq;

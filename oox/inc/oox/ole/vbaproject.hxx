@@ -73,6 +73,69 @@ private:
 
 // ============================================================================
 
+/** Base class for objects that attach a amcro to a specific action.
+
+    Purpose is to collect objects that need to attach a VBA macro to an action.
+    The VBA project will be loaded at a very late point of the document import
+    process, because it depends on an initialized core document model (e.g.
+    spreadsheet codenames). Some objects that want to attach a VBA macro to an
+    action (e.g. mouse click action for drawing shapes) are loaded long before
+    the VBA project. The drawback is that in most cases macros are specified
+    without module name, or the VBA project name is part of the macro name.
+    In the former case, all code modules have to be scanned for the macro to be
+    able to create a valid script URL.
+
+    The import code will register these requests to attach a VBA macro with an
+    instance of a class derived from this base class. The derived class will
+    store all information needed to finally attach the macro to the action,
+    once the VBA project has been imported.
+ */
+class VbaMacroAttacherBase
+{
+public:
+    explicit            VbaMacroAttacherBase( const ::rtl::OUString& rMacroName );
+    virtual             ~VbaMacroAttacherBase();
+
+    /** Resolves the internal macro name to the related macro URL, and attaches
+        the macro to the object. */
+    void                resolveAndAttachMacro(
+                            const ::com::sun::star::uno::Reference< ::com::sun::star::script::vba::XVBAMacroResolver >& rxResolver );
+
+private:
+    /** Called after the VBA project has been imported. Derived classes will
+        attach the passed script to the object represented by this instance. */
+    virtual void        attachMacro( const ::rtl::OUString& rScriptUrl ) = 0;
+
+private:
+    ::rtl::OUString     maMacroName;
+};
+
+typedef ::boost::shared_ptr< VbaMacroAttacherBase > VbaMacroAttacherRef;
+
+// ============================================================================
+
+class OOX_DLLPUBLIC VbaProject : public VbaFilterConfig
+{
+public:
+    explicit            VbaProject(
+                            const ::com::sun::star::uno::Reference< ::com::sun::star::uno::XComponentContext >& rxContext,
+                            const ::com::sun::star::uno::Reference< ::com::sun::star::frame::XModel >& rxDocModel,
+                            const ::rtl::OUString& rConfigCompName );
+    virtual             ~VbaProject();
+
+    /** Imports the entire VBA project from the passed storage.
+
+        @param rVbaPrjStrg  The root storage of the entire VBA project.
+     */
+    void                importVbaProject(
+                            StorageBase& rVbaPrjStrg,
+                            const GraphicHelper& rGraphicHelper,
+                            bool bDefaultColorBgr = true );
+
+    /** Registers a macro atatcher object. For details, see description of the
+        VbaMacroAttacherBase class. */
+    void                registerMacroAttacher( const VbaMacroAttacherRef& rxAttacher );
+
     /** Returns true, if the document contains at least one code module. */
     bool                hasModules() const;
     /** Returns true, if the document contains the specified code module. */
@@ -117,10 +180,14 @@ private:
                             const GraphicHelper& rGraphicHelper,
                             bool bDefaultColorBgr );
 
+    /** Attaches VBA macros to objects registered via registerMacroAttacher(). */
+    void                attachMacros();
+
     /** Copies the entire VBA project storage to the passed document model. */
     void                copyStorage( StorageBase& rVbaPrjStrg );
 
 private:
+    typedef RefVector< VbaMacroAttacherBase >           MacroAttacherVector;
     typedef ::std::map< ::rtl::OUString, sal_Int32 >    DummyModuleMap;
 
     ::com::sun::star::uno::Reference< ::com::sun::star::uno::XComponentContext >
@@ -133,6 +200,7 @@ private:
                         mxDialogLib;        /// The dialog library of the document used for import.
     ::com::sun::star::uno::Reference< ::com::sun::star::container::XNameContainer >
                         mxOleOverridesSink;
+    MacroAttacherVector maMacroAttachers;   /// Objects that want to attach a VBA macro to an action.
     DummyModuleMap      maDummyModules;     /// Additional empty modules created on import.
     ::rtl::OUString     maPrjName;          /// Name of the VBA project.
 };

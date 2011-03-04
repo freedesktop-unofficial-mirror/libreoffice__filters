@@ -542,7 +542,6 @@ OUString ControlModelBase::getServiceName() const
         case API_CONTROL_PAGE:          return CREATE_OUSTRING( "com.sun.star.awt.UnoPageModel" );
         case API_CONTROL_MULTIPAGE:     return CREATE_OUSTRING( "com.sun.star.awt.UnoMultiPageModel" );
         case API_CONTROL_DIALOG:        return CREATE_OUSTRING( "com.sun.star.awt.UnoControlDialogModel" );
-        case API_CONTROL_DIALOG:        return CREATE_OUSTRING( "com.sun.star.awt.UnoControlDialogModel" );
         default:    OSL_ENSURE( false, "ControlModelBase::getServiceName - no AWT model service supported" );
     }
     else switch( eCtrlType )
