@@ -41,8 +41,7 @@ DEPTARGET=vipict
 CDEFS+= -DEDITDEBUG
 .ENDIF
 .IF "$(L10N_framework)"==""
-SLOFILES =  $(EXCEPTIONSFILES)
-EXCEPTIONSFILES = $(SLO)$/ipict.obj
+SLOFILES =  $(SLO)$/ipict.obj $(SLO)$/shape.obj
 
 # ==========================================================================
 

@@ -2756,29 +2756,4 @@ extern "C" BOOL __LOADONCALLAPI GraphicImport(SvStream & rStream, Graphic & rGra
     return bRet;
 }
 
-//================== ein bischen Muell fuer Windows ==========================
-
-#ifdef WIN
-
-static HINSTANCE hDLLInst = 0;      // HANDLE der DLL
-
-extern "C" int CALLBACK LibMain( HINSTANCE hDLL, WORD, WORD nHeap, LPSTR )
-{
-#ifndef WNT
-    if ( nHeap )
-        UnlockData( 0 );
-#endif
-
-    hDLLInst = hDLL;
-
-    return TRUE;
-}
-
-extern "C" int CALLBACK WEP( int )
-{
-    return 1;
-}
-
-#endif
-
 /* vim:set shiftwidth=4 softtabstop=4 expandtab: */

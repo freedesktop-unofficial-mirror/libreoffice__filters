@@ -276,7 +276,7 @@ public:
 //************************************************************
 //   Hilfsklasse SdrObjGeoData
 //
-// Alle geometrischen Daten eines beliebigen Objektes zur Übergabe an's Undo/Redo
+// Alle geometrischen Daten eines beliebigen Objektes zur ï¿½bergabe an's Undo/Redo
 //
 //************************************************************
 

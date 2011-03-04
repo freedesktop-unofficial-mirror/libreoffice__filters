@@ -85,24 +85,24 @@ StyleSheetEntry::~StyleSheetEntry()
 }
 
 #ifdef DEBUG_DOMAINMAPPER
-void StyleSheetEntry::dumpXml( const TagLogger::Pointer_t pLogger )
+XMLTag::Pointer_t StyleSheetEntry::toTag()
 {
-    pLogger->startElement("StyleSheetEntry");
+    XMLTag::Pointer_t pResult(new XMLTag("StyleSheetEntry"));
     
-    pLogger->attribute("identifierI", sStyleIdentifierI);
-    pLogger->attribute("identifierD", sStyleIdentifierD);
-    pLogger->attribute("default", bIsDefaultStyle ? "true" : "false");
-    pLogger->attribute("invalidHeight", bInvalidHeight ? "true" : "false");
-    pLogger->attribute("hasUPE", bHasUPE ? "true" : "false");
-    pLogger->attribute("styleType", nStyleTypeCode);
-    pLogger->attribute("baseStyle", sBaseStyleIdentifier);
-    pLogger->attribute("nextStyle", sNextStyleIdentifier);
-    pLogger->attribute("styleName", sStyleName);
-    pLogger->attribute("styleName1", sStyleName1);
-    pLogger->attribute("convertedName", sConvertedStyleName);
-    pProperties->dumpXml( pLogger );
+    pResult->addAttr("identifierI", sStyleIdentifierI);
+    pResult->addAttr("identifierD", sStyleIdentifierD);
+    pResult->addAttr("default", bIsDefaultStyle ? "true" : "false");
+    pResult->addAttr("invalidHeight", bInvalidHeight ? "true" : "false");
+    pResult->addAttr("hasUPE", bHasUPE ? "true" : "false");
+    pResult->addAttr("styleType", nStyleTypeCode);
+    pResult->addAttr("baseStyle", sBaseStyleIdentifier);
+    pResult->addAttr("nextStyle", sNextStyleIdentifier);
+    pResult->addAttr("styleName", sStyleName);
+    pResult->addAttr("styleName1", sStyleName1);
+    pResult->addAttr("convertedName", sConvertedStyleName);
+    pResult->addTag(pProperties->toTag());
     
-    pLogger->endElement();
+    return pResult;
 }
 #endif
 
@@ -133,8 +133,8 @@ void TableStyleSheetEntry::AddTblStylePr( TblStyleType nType, PropertyMapPtr pPr
 #ifdef DEBUG_DOMAINMAPPER
     dmapper_logger->startElement("AddTblStylePr");
     dmapper_logger->attribute("type", nType);
-    pProps->dumpXml(dmapper_logger);
-    dmapper_logger->endElement();
+    dmapper_logger->addTag(pProps->toTag());
+    dmapper_logger->endElement("AddTblStylePr");
 #endif
 
     static TblStyleType pTypesToFix[] =
@@ -202,37 +202,20 @@ PropertyMapPtr TableStyleSheetEntry::GetProperties( sal_Int32 nMask )
 }
 
 #ifdef DEBUG_DOMAINMAPPER
-void TableStyleSheetEntry::dumpXml( const TagLogger::Pointer_t pLogger )
+XMLTag::Pointer_t TableStyleSheetEntry::toTag()
 {
-
-    pLogger->startElement("StyleSheetEntry");
+    XMLTag::Pointer_t pResult(StyleSheetEntry::toTag());
     
-    pLogger->attribute("identifierI", sStyleIdentifierI);
-    pLogger->attribute("identifierD", sStyleIdentifierD);
-    pLogger->attribute("default", bIsDefaultStyle ? "true" : "false");
-    pLogger->attribute("invalidHeight", bInvalidHeight ? "true" : "false");
-    pLogger->attribute("hasUPE", bHasUPE ? "true" : "false");
-    pLogger->attribute("styleType", nStyleTypeCode);
-    pLogger->attribute("baseStyle", sBaseStyleIdentifier);
-    pLogger->attribute("nextStyle", sNextStyleIdentifier);
-    pLogger->attribute("styleName", sStyleName);
-    pLogger->attribute("styleName1", sStyleName1);
-    pLogger->attribute("convertedName", sConvertedStyleName);
-    pProperties->dumpXml( pLogger );
-
     for (sal_Int32 nBit = 0; nBit < 13; ++nBit)
     {
-        pLogger->startElement("properties");
-
         PropertyMapPtr pMap = GetProperties(1 << nBit);
-
-        pMap->dumpXml( pLogger );
-        pLogger->attribute("kind", nBit);
-
-        pLogger->endElement();
+        
+        XMLTag::Pointer_t pTag = pMap->toTag();
+        pTag->addAttr("kind", nBit);
+        pResult->addTag(pTag);        
     }
     
-    pLogger->endElement();
+    return pResult;
 }
 #endif
 
@@ -532,7 +515,7 @@ void StyleSheetTable::attribute(Id Name, Value & val)
     }
     
 #ifdef DEBUG_DOMAINMAPPER
-    dmapper_logger->endElement();
+    dmapper_logger->endElement("StyleSheetTable.attribute");
 #endif
 }
 /*-- 19.06.2006 12:04:33---------------------------------------------------
@@ -580,11 +563,14 @@ void StyleSheetTable::sprm(Sprm & rSprm)
         case NS_ooxml::LN_CT_Style_rsid:
         case NS_ooxml::LN_CT_Style_trPr:
         case NS_ooxml::LN_CT_Style_tcPr:
+            /* WRITERFILTERSTATUS: done: 0, planned: 0, spent: 0 */
         break;
         case NS_ooxml::LN_CT_Style_tblPr: //contains table properties
         case NS_ooxml::LN_CT_Style_tblStylePr: //contains  to table properties
+        case NS_ooxml::LN_CT_DocDefaults_rPrDefault:
         case NS_ooxml::LN_CT_TblPrBase_tblInd: //table properties - at least width value and type
         case NS_ooxml::LN_EG_RPrBase_rFonts: //table fonts
+        /* WRITERFILTERSTATUS: done: 100, planned: 0, spent: 0 */
         {
             writerfilter::Reference<Properties>::Pointer_t pProperties = rSprm.getProps();
             if( pProperties.get())
@@ -610,7 +596,6 @@ void StyleSheetTable::sprm(Sprm & rSprm)
             }
             break;
         }
-        case NS_ooxml::LN_CT_DocDefaults_pPrDefault:
         case NS_ooxml::LN_CT_PPrDefault_pPr:
             m_pImpl->m_rDMapper.PushStyleSheetProperties( m_pImpl->m_pDefaultParaProps );
             resourcemodel::resolveSprmProps( m_pImpl->m_rDMapper, rSprm );
@@ -659,6 +644,7 @@ void StyleSheetTable::sprm(Sprm & rSprm)
             //no cell margins in styles
         break;
         case NS_ooxml::LN_CT_Style_pPr:
+        /* WRITERFILTERSTATUS: done: 100, planned: 0, spent: 0 */
             // no break
         case NS_ooxml::LN_CT_Style_rPr:
             // no break
@@ -685,7 +671,7 @@ void StyleSheetTable::sprm(Sprm & rSprm)
     }
     
 #ifdef DEBUG_DOMAINMAPPER
-    dmapper_logger->endElement();
+    dmapper_logger->endElement("StyleSheetTable.sprm");
 #endif
 }
 /*-- 19.06.2006 12:04:33---------------------------------------------------
@@ -717,14 +703,14 @@ void StyleSheetTable::entry(int /*pos*/, writerfilter::Reference<Properties>::Po
     }    
     
 #ifdef DEBUG_DOMAINMAPPER
-    m_pImpl->m_pCurrentEntry->dumpXml( dmapper_logger );
+    dmapper_logger->addTag(m_pImpl->m_pCurrentEntry->toTag());
 #endif
 
     StyleSheetEntryPtr pEmptyEntry;
     m_pImpl->m_pCurrentEntry = pEmptyEntry;
     
 #ifdef DEBUG_DOMAINMAPPER
-    dmapper_logger->endElement();
+    dmapper_logger->endElement("StyleSheetTable.entry");
 #endif
 }
 /*-- 21.06.2006 15:34:49---------------------------------------------------
@@ -902,7 +888,7 @@ void StyleSheetTable::ApplyStyleSheets( FontTablePtr rFontTable )
                             {
                                 aPropValues.realloc( aPropValues.getLength( ) + 1 );
                                 beans::PropertyValue aStyleVal( rPropNameSupplier.GetName( PROP_NUMBERING_STYLE_NAME ), 0,
-                                        uno::makeAny( rtl::OUString() ),
+                                        uno::makeAny( rtl::OUString::createFromAscii( "" ) ),
                                         beans::PropertyState_DIRECT_VALUE );
                                 aPropValues[ aPropValues.getLength( ) - 1 ] = aStyleVal;
                             }
@@ -963,7 +949,7 @@ void StyleSheetTable::ApplyStyleSheets( FontTablePtr rFontTable )
                                 aSortedPropVals.Insert( aPropValues[nProp] );
                             }
 #ifdef DEBUG_DOMAINMAPPER
-                            dmapper_logger->endElement();
+                            dmapper_logger->endElement("propvalue");
 #endif
                         }
                         if(bAddFollowStyle)
@@ -1018,8 +1004,8 @@ void StyleSheetTable::ApplyStyleSheets( FontTablePtr rFontTable )
 #ifdef DEBUG_DOMAINMAPPER
                         uno::Reference<beans::XPropertySet> xProps(xStyle, uno::UNO_QUERY);
                         dmapper_logger->startElement("insertStyle");
-                        dmapper_logger->unoPropertySet(xProps);
-                        dmapper_logger->endElement();
+                        dmapper_logger->addTag(unoPropertySetToTag(xProps));
+                        dmapper_logger->endElement("insertStyle");
 #endif
                     }
                 }
@@ -1034,7 +1020,7 @@ void StyleSheetTable::ApplyStyleSheets( FontTablePtr rFontTable )
     }
 
 #ifdef DEBUG_DOMAINMAPPER
-    dmapper_logger->endElement();
+    dmapper_logger->endElement("applyStyleSheets");
 #endif
 }
 /*-- 22.06.2006 15:56:56---------------------------------------------------

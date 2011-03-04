@@ -2,7 +2,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- *
+ * 
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -930,9 +930,8 @@ void OOXMLFastContextHandler::propagateTableProperties()
     OOXMLPropertySet::Pointer_t pProps = getPropertySet();
 #ifdef DEBUG_ELEMENT
     debug_logger->startElement("propagateTableProperties");
-    debug_logger->propertySet(getPropertySet(),
-            IdToString::Pointer_t(new OOXMLIdToString()));
-    debug_logger->endElement();
+    debug_logger->addTag(toPropertiesTag(pProps));
+    debug_logger->endElement("propagateTableProperties");
 #endif
 
     mpParserState->setTableProperties(pProps);
@@ -947,7 +946,7 @@ void OOXMLFastContextHandler::sendCellProperties()
     mpParserState->resolveCellProperties(*mpStream);
 
 #ifdef DEBUG_ELEMENT
-    debug_logger->endElement();
+    debug_logger->endElement("sendCellProperties");
 #endif
 }
 
@@ -960,7 +959,7 @@ void OOXMLFastContextHandler::sendRowProperties()
     mpParserState->resolveRowProperties(*mpStream);
 
 #ifdef DEBUG_ELEMENT
-    debug_logger->endElement();
+    debug_logger->endElement("sendRowProperties");
 #endif
 }
 
@@ -973,7 +972,7 @@ void OOXMLFastContextHandler::sendTableProperties()
     mpParserState->resolveTableProperties(*mpStream);
 
 #ifdef DEBUG_ELEMENT
-    debug_logger->endElement();
+    debug_logger->endElement("sendTableProperties");
 #endif
 }
 
@@ -1152,8 +1151,16 @@ void OOXMLFastContextHandler::sendPropertyToParent()
                 pProp(new OOXMLPropertyImpl(mId, getValue(),
                                             OOXMLPropertyImpl::SPRM));
             pProps->add(pProp);
+            
+#ifdef DEBUG_ELEMENT
+            debug_logger->addTag(toPropertiesTag(pProps));
+#endif
         }
     }
+
+#ifdef DEBUG_ELEMENT
+    debug_logger->endElement("sendPropertyToParent");
+#endif
 }
 
 void OOXMLFastContextHandler::sendPropertiesToParent()
@@ -1169,6 +1176,12 @@ void OOXMLFastContextHandler::sendPropertiesToParent()
         {
             OOXMLPropertySet::Pointer_t pProps(getPropertySet());
 
+#ifdef DEBUG_ELEMENT
+            debug_logger->startElement("me");
+            debug_logger->addTag(toPropertiesTag(pProps));
+            debug_logger->endElement("me");
+#endif
+            
             if (pProps.get() != NULL)
             {
                 OOXMLValue::Pointer_t pValue
@@ -1177,25 +1190,26 @@ void OOXMLFastContextHandler::sendPropertiesToParent()
                 OOXMLProperty::Pointer_t pProp
                 (new OOXMLPropertyImpl(getId(), pValue, OOXMLPropertyImpl::SPRM));
 
+                
 #ifdef DEBUG_ELEMENT
                 debug_logger->startElement("propertyForSet");
                 debug_logger->chars(pProp->toString());
-                debug_logger->endElement();
+                debug_logger->endElement("propertyForSet");
 #endif
 
                 pParentProps->add(pProp);
 
 #ifdef DEBUG_ELEMENT
                 debug_logger->startElement("parent");
-                debug_logger->propertySet(pParentProps,
-                        IdToString::Pointer_t(new OOXMLIdToString()));
+                debug_logger->addTag(toPropertiesTag(pParentProps));
+                debug_logger->endElement("parent");
                 debug_logger->endElement();
 #endif
             }
         }
     }
 #ifdef DEBUG_ELEMENT
-    debug_logger->endElement();
+    debug_logger->endElement("sendPropertiesToParent");
 #endif
 }
 
@@ -1203,9 +1217,6 @@ uno::Reference< uno::XComponentContext >
 OOXMLFastContextHandler::getComponentContext()
 {
     return m_xContext;
-}
-
-/*
   class OOXMLFastContextHandlerStream
  */
 
@@ -1550,7 +1561,7 @@ void OOXMLFastContextHandlerValue::lcl_endFastElement
 throw (uno::RuntimeException, xml::sax::SAXException)
 {
     sendPropertyToParent();
-
+    
     endAction(Element);
 }
 
@@ -1572,7 +1583,7 @@ void OOXMLFastContextHandlerValue::setDefaultIntegerValue()
 #ifdef DEBUG_ELEMENT
     debug_logger->element("setDefaultIntegerValue");
 #endif
-
+    
     if (mpValue.get() == NULL)
     {
         OOXMLValue::Pointer_t pValue(new OOXMLIntegerValue(0));
@@ -1585,7 +1596,7 @@ void OOXMLFastContextHandlerValue::setDefaultHexValue()
 #ifdef DEBUG_ELEMENT
     debug_logger->element("setDefaultHexValue");
 #endif
-
+    
     if (mpValue.get() == NULL)
     {
         OOXMLValue::Pointer_t pValue(new OOXMLHexValue(0));
@@ -1598,7 +1609,7 @@ void OOXMLFastContextHandlerValue::setDefaultStringValue()
 #ifdef DEBUG_ELEMENT
     debug_logger->element("setDefaultStringValue");
 #endif
-
+    
     if (mpValue.get() == NULL)
     {
         OOXMLValue::Pointer_t pValue(new OOXMLStringValue(::rtl::OUString()));
@@ -1775,7 +1786,7 @@ void OOXMLFastContextHandlerTextTableCell::endCell()
                 IdToString::Pointer_t(new OOXMLIdToString()));
         debug_logger->endElement();
 #endif
-        mpStream->props(writerfilter::Reference<Properties>::Pointer_t(pProps));
+        mpStream->props(writerfilter::Reference<Properties>::Pointer_t(pProps));        
     }
 }
 

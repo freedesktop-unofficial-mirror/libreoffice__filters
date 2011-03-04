@@ -919,7 +919,7 @@ void DomainMapper_Impl::finishParagraph( PropertyMapPtr pPropertyMap )
     }
 
 #ifdef DEBUG_DOMAINMAPPER
-    dmapper_logger->endElement();
+    dmapper_logger->endElement("finishParagraph");
 #endif
 }
 /*-------------------------------------------------------------------------
@@ -1791,7 +1791,7 @@ void DomainMapper_Impl::AppendFieldCommand(::rtl::OUString& rPartOfCommand)
 #ifdef DEBUG_DOMAINMAPPER
     dmapper_logger->startElement("appendFieldCommand");
     dmapper_logger->chars(rPartOfCommand);
-    dmapper_logger->endElement();
+    dmapper_logger->endElement("appendFieldCommand");
 #endif
     
     FieldContextPtr pContext = m_aFieldStack.top();
@@ -2121,7 +2121,7 @@ void DomainMapper_Impl::handleToc
 //                    {
                             //todo: entries can only be included completely
 //                    }
-//                  \n Builds a table of contents or a range of entries, sucah as “1-9”, in a table of contents without page numbers
+//                  \n Builds a table of contents or a range of entries, sucah as ï¿½1-9ï¿½, in a table of contents without page numbers
 //                    if( lcl_FindInCommand( pContext->GetCommand(), 'n', sValue ))
 //                    {
                         //todo: what does the description mean?
@@ -2333,7 +2333,7 @@ void DomainMapper_Impl::CloseFieldCommand()
 #ifdef DEBUG_DOMAINMAPPER
                     dmapper_logger->startElement("fieldService");
                     dmapper_logger->chars(sServiceName);
-                    dmapper_logger->endElement();
+                    dmapper_logger->endElement("fieldService");
 #endif
                     
                     xFieldInterface = m_xTextFactory->createInstance(sServiceName);
@@ -2767,7 +2767,7 @@ void DomainMapper_Impl::SetFieldFFData(FFDataHandler::Pointer_t pFFDataHandler)
     }
     
 #ifdef DEBUG_DOMAINMAPPER
-    dmapper_logger->endElement();
+    dmapper_logger->endElement("setFieldFFData");
 #endif
 }
 

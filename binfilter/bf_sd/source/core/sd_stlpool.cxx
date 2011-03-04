@@ -780,22 +780,22 @@ namespace binfilter {
 /*N*/ 						nNewId = HID_POOLSHEET_OBJWITHSHADOW;
 /*N*/ 					else if( aOldName == String( SdResId( STR_POOLSHEET_OBJWITHOUTFILL ) ) ||
 /*N*/ 						aOldName == String( SdResId( STR_POOLSHEET_OBJWITHOUTFILL_NT ) ) )
-/*N*/ 						//aOldName.EqualsAscii( "Objekt ohne Füllung", 0, RTL_CONSTASCII_LENGTH( "Objekt ohne Füllung" )) )
+/*N*/ 						//aOldName.EqualsAscii( "Objekt ohne Fï¿½llung", 0, RTL_CONSTASCII_LENGTH( "Objekt ohne Fï¿½llung" )) )
 /*N*/ 						nNewId = HID_POOLSHEET_OBJWITHOUTFILL;
 /*N*/ 					else if( aOldName == String( SdResId( STR_POOLSHEET_TEXT ) ) ||
 /*N*/ 						aOldName.EqualsAscii( "Text", 0, RTL_CONSTASCII_LENGTH( "Text" )) )
 /*N*/ 						nNewId = HID_POOLSHEET_TEXT;
 /*N*/ 					else if( aOldName == String( SdResId( STR_POOLSHEET_TEXTBODY ) ) ||
 /*N*/ 						aOldName == String( SdResId( STR_POOLSHEET_TEXTBODY_NT ) ) )
-/*N*/ 						//aOldName.EqualsAscii( "Textkörper", 0, RTL_CONSTASCII_LENGTH( "Textkörper" )) )
+/*N*/ 						//aOldName.EqualsAscii( "Textkï¿½rper", 0, RTL_CONSTASCII_LENGTH( "Textkï¿½rper" )) )
 /*N*/ 						nNewId = HID_POOLSHEET_TEXTBODY;
 /*N*/ 					else if( aOldName == String( SdResId( STR_POOLSHEET_TEXTBODY_JUSTIFY ) ) ||
 /*N*/ 						aOldName == String( SdResId( STR_POOLSHEET_TEXTBODY_JUSTIFY_NT ) ) )
-/*N*/ 						//aOldName.EqualsAscii( "Textkörper Blocksatz", 0, RTL_CONSTASCII_LENGTH( "Textkörper Blocksatz" )) )
+/*N*/ 						//aOldName.EqualsAscii( "Textkï¿½rper Blocksatz", 0, RTL_CONSTASCII_LENGTH( "Textkï¿½rper Blocksatz" )) )
 /*N*/ 						nNewId = HID_POOLSHEET_TEXTBODY_JUSTIFY;
 /*N*/ 					else if( aOldName == String( SdResId( STR_POOLSHEET_TEXTBODY_INDENT ) ) ||
 /*N*/ 						aOldName == String( SdResId( STR_POOLSHEET_TEXTBODY_INDENT_NT ) ) )
-/*N*/ 						//aOldName.EqualsAscii( "Textkörper Einzug", 0, RTL_CONSTASCII_LENGTH( "Textkörper Einzug" )) )
+/*N*/ 						//aOldName.EqualsAscii( "Textkï¿½rper Einzug", 0, RTL_CONSTASCII_LENGTH( "Textkï¿½rper Einzug" )) )
 /*N*/ 						nNewId = HID_POOLSHEET_TEXTBODY_INDENT;
 /*N*/ 					else if( aOldName == String( SdResId( STR_POOLSHEET_TITLE ) ) ||
 /*N*/ 						aOldName.EqualsAscii( "Titel", 0, RTL_CONSTASCII_LENGTH( "Titel" )) )
@@ -808,19 +808,19 @@ namespace binfilter {
 /*N*/ 						nNewId = HID_POOLSHEET_TITLE2;
 /*N*/ 					else if( aOldName == String( SdResId( STR_POOLSHEET_HEADLINE ) ) ||
 /*N*/ 						aOldName == String( SdResId( STR_POOLSHEET_HEADLINE_NT ) ) )
-/*N*/ 						//aOldName.EqualsAscii( "Überschrift", 0, RTL_CONSTASCII_LENGTH( "Überschrift" )) )
+/*N*/ 						//aOldName.EqualsAscii( "ï¿½berschrift", 0, RTL_CONSTASCII_LENGTH( "ï¿½berschrift" )) )
 /*N*/ 						nNewId = HID_POOLSHEET_HEADLINE;
 /*N*/ 					else if( aOldName == String( SdResId( STR_POOLSHEET_HEADLINE1 ) ) ||
 /*N*/ 						aOldName == String( SdResId( STR_POOLSHEET_HEADLINE1_NT ) ) )
-/*N*/ 						//aOldName.EqualsAscii( "Überschrift1", 0, RTL_CONSTASCII_LENGTH( "Überschrift1" )) )
+/*N*/ 						//aOldName.EqualsAscii( "ï¿½berschrift1", 0, RTL_CONSTASCII_LENGTH( "ï¿½berschrift1" )) )
 /*N*/ 						nNewId = HID_POOLSHEET_HEADLINE1;
 /*N*/ 					else if( aOldName == String( SdResId( STR_POOLSHEET_HEADLINE2 ) ) ||
 /*N*/ 						aOldName == String( SdResId( STR_POOLSHEET_HEADLINE2_NT ) ) )
-/*N*/ 						//aOldName.EqualsAscii( "Überschrift2", 0, RTL_CONSTASCII_LENGTH( "Überschrift2" )) )
+/*N*/ 						//aOldName.EqualsAscii( "ï¿½berschrift2", 0, RTL_CONSTASCII_LENGTH( "ï¿½berschrift2" )) )
 /*N*/ 						nNewId = HID_POOLSHEET_HEADLINE2;
 /*N*/ 					else if( aOldName == String( SdResId( STR_POOLSHEET_MEASURE ) ) ||
 /*N*/ 						aOldName == String( SdResId( STR_POOLSHEET_MEASURE_NT ) ) )
-/*N*/ 						//aOldName.EqualsAscii( "Maßlinie", 0, RTL_CONSTASCII_LENGTH( "Maßlinie" )) )
+/*N*/ 						//aOldName.EqualsAscii( "Maï¿½linie", 0, RTL_CONSTASCII_LENGTH( "Maï¿½linie" )) )
 /*N*/ 						nNewId = HID_POOLSHEET_MEASURE;
 /*N*/ 				}
 /*N*/ 				else if( eFam == SFX_STYLE_FAMILY_PSEUDO )

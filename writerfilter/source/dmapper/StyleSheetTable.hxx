@@ -78,7 +78,7 @@ public:
     ::rtl::OUString sConvertedStyleName;
     
 #ifdef DEBUG_DOMAINMAPPER
-    virtual void dumpXml( const TagLogger::Pointer_t pLogger );
+    virtual XMLTag::Pointer_t toTag();
 #endif
     
     StyleSheetEntry();
@@ -150,7 +150,7 @@ public:
     PropertyMapPtr GetProperties( sal_Int32 nMask );
     
 #ifdef DEBUG_DOMAINMAPPER
-    virtual void dumpXml( const TagLogger::Pointer_t pLogger );
+    virtual XMLTag::Pointer_t toTag();
 #endif
 
     TableStyleSheetEntry( StyleSheetEntry& aEntry, StyleSheetTable* pStyles );

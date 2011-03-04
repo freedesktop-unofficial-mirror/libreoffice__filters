@@ -180,7 +180,7 @@ class SfxApplication: public SfxShell
 /*  [Beschreibung]
 
     Die Klasse SfxApplication bietet eine erweiterte Funktionalit"at
-    der StarView-Klasse MDIApplication und mu?als Basisklasse fÅr
+    der StarView-Klasse MDIApplication und mu?als Basisklasse fÔøΩr
     Applikationen, die das StarFramework verwenden wollen,
     eingesetzt werden.
 

@@ -31,6 +31,7 @@
 #include "oox/dump/pptxdumper.hxx"
 #include "oox/drawingml/table/tablestylelistfragmenthandler.hxx"
 #include "oox/helper/graphichelper.hxx"
+#include "oox/ole/vbaproject.hxx"
 
 using ::rtl::OUString;
 using namespace ::com::sun::star;
@@ -45,19 +46,20 @@ namespace oox { namespace ppt {
 
 OUString SAL_CALL PowerPointImport_getImplementationName() throw()
 {
-    return CREATE_OUSTRING( "com.sun.star.comp.Impress.oox.PowerPointImport" );
+    return CREATE_OUSTRING( "com.sun.star.comp.oox.ppt.PowerPointImport" );
 }
 
 uno::Sequence< OUString > SAL_CALL PowerPointImport_getSupportedServiceNames() throw()
 {
-    const OUString aServiceName = CREATE_OUSTRING( "com.sun.star.comp.ooxpptx" );
-    const Sequence< OUString > aSeq( &aServiceName, 1 );
+    Sequence< OUString > aSeq( 2 );
+    aSeq[ 0 ] = CREATE_OUSTRING( "com.sun.star.document.ImportFilter" );
+    aSeq[ 1 ] = CREATE_OUSTRING( "com.sun.star.document.ExportFilter" );
     return aSeq;
 }
 
-uno::Reference< uno::XInterface > SAL_CALL PowerPointImport_createInstance(const uno::Reference< lang::XMultiServiceFactory > & rSMgr ) throw( uno::Exception )
+uno::Reference< uno::XInterface > SAL_CALL PowerPointImport_createInstance( const Reference< XComponentContext >& rxContext ) throw( Exception )
 {
-    return (cppu::OWeakObject*)new PowerPointImport( rSMgr );
+    return static_cast< ::cppu::OWeakObject* >( new PowerPointImport( rxContext ) );
 }
 
 #if OSL_DEBUG_LEVEL > 0
@@ -84,9 +86,9 @@ bool PowerPointImport::importDocument() throw()
         file:///<path-to-oox-module>/source/dump/pptxdumper.ini. */
     OOX_DUMP_FILE( ::oox::dump::pptx::Dumper );
 
-    OUString aFragmentPath = getFragmentPathFromFirstType( CREATE_OFFICEDOC_RELATIONSTYPE( "officeDocument" ) );
+    OUString aFragmentPath = getFragmentPathFromFirstType( CREATE_OFFICEDOC_RELATION_TYPE( "officeDocument" ) );
     FragmentHandlerRef xPresentationFragmentHandler( new PresentationFragmentHandler( *this, aFragmentPath ) );
-    maTableStyleListPath = xPresentationFragmentHandler->getFragmentPathFromFirstType( CREATE_OFFICEDOC_RELATIONSTYPE( "tableStyles" ) );
+    maTableStyleListPath = xPresentationFragmentHandler->getFragmentPathFromFirstType( CREATE_OFFICEDOC_RELATION_TYPE( "tableStyles" ) );
     return importFragment( xPresentationFragmentHandler );
 
 
@@ -197,7 +199,7 @@ private:
 };
 
 PptGraphicHelper::PptGraphicHelper( const PowerPointImport& rFilter ) :
-    GraphicHelper( rFilter.getGlobalFactory(), rFilter.getTargetFrame(), rFilter.getStorage() ),
+    GraphicHelper( rFilter.getComponentContext(), rFilter.getTargetFrame(), rFilter.getStorage() ),
     mrFilter( rFilter )
 {
 }
@@ -214,6 +216,9 @@ GraphicHelper* PowerPointImport::implCreateGraphicHelper() const
     return new PptGraphicHelper( *this );
 }
 
+::oox::ole::VbaProject* PowerPointImport::implCreateVbaProject() const
+{
+    return new ::oox::ole::VbaProject( getComponentContext(), getModel(), CREATE_OUSTRING( "Impress" ) );
 OUString PowerPointImport::implGetImplementationName() const
 {
     return PowerPointImport_getImplementationName();

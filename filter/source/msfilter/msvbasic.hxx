@@ -35,8 +35,6 @@
 #include <tools/dynary.hxx>
 #include <vector>
 #include <map>
-#include <com/sun/star/script/ModuleType.hpp>
-using namespace ::com::sun::star::script::ModuleType;
 
 /* class VBA:
  * The VBA class provides a set of methods to handle Visual Basic For

@@ -279,7 +279,7 @@ sal_Bool SAL_CALL SvxDrawPage::hasElements()
 
 //----------------------------------------------------------------------
 // ACHTUNG: _SelectObjectsInView selektiert die ::com::sun::star::drawing::Shapes nur in der angegebennen
-//         SdrPageView. Dies muß nicht die sichtbare SdrPageView sein.
+//         SdrPageView. Dies muï¿½ nicht die sichtbare SdrPageView sein.
 //----------------------------------------------------------------------
 void SvxDrawPage::_SelectObjectsInView( const Reference< drawing::XShapes > & aShapes, SdrPageView* pPageView ) throw ()
 {
@@ -308,7 +308,7 @@ void SvxDrawPage::_SelectObjectsInView( const Reference< drawing::XShapes > & aS
 
 //----------------------------------------------------------------------
 // ACHTUNG: _SelectObjectInView selektiert das Shape *nur* in der angegebennen
-//         SdrPageView. Dies muß nicht die sichtbare SdrPageView sein.
+//         SdrPageView. Dies muï¿½ nicht die sichtbare SdrPageView sein.
 //----------------------------------------------------------------------
 void SvxDrawPage::_SelectObjectInView( const Reference< drawing::XShape > & xShape, SdrPageView* pPageView ) throw()
 {

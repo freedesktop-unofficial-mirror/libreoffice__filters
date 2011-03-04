@@ -83,7 +83,7 @@ SHL1STDLIBS=\
 SHL1DEPN=
 SHL1IMPLIB=	i$(SHL1TARGET)
 SHL1LIBS=	$(SLB)$/$(TARGET).lib
-SHL1VERSIONMAP=exports.map
+SHL1VERSIONMAP=$(SOLARENV)/src/component.map
 SHL1DEF=	$(MISC)$/$(SHL1TARGET).def
 
 DEF1NAME=$(SHL1TARGET)
@@ -104,3 +104,10 @@ $(SLO)$/tokenmap.obj : $(INCCOM)$/tokens.cxx $(INCCOM)$/tokens.hxx
 $(SLO)$/parserfragments.obj : $(INCCOM)$/tokens.cxx $(INCCOM)$/tokens.hxx
 
 $(SLO)$/svgreader.obj : $(INCCOM)$/tokens.cxx $(INCCOM)$/tokens.hxx
+ALLTAR : $(MISC)/svgfilter.component
+
+$(MISC)/svgfilter.component .ERRREMOVE : $(SOLARENV)/bin/createcomponent.xslt \
+        svgfilter.component
+    $(XSLTPROC) --nonet --stringparam uri \
+        '$(COMPONENTPREFIX_BASIS_NATIVE)$(SHL1TARGETN:f)' -o $@ \
+        $(SOLARENV)/bin/createcomponent.xslt svgfilter.component

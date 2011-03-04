@@ -39,7 +39,7 @@ class PCXReader {
 
 private:
 
-    SvStream& m_rPCX;				// Die einzulesende PCX-Datei
+    SvStream*			pPCX;				// Die einzulesende PCX-Datei
 
     Bitmap				aBmp;
     BitmapWriteAccess*	pAcc;
@@ -63,17 +63,16 @@ private:
     void				ImplReadHeader();
 
 public:
-                        PCXReader(SvStream &rStream);
+                        PCXReader();
                         ~PCXReader();
-    BOOL				ReadPCX(Graphic & rGraphic );
+    BOOL				ReadPCX( SvStream & rPCX, Graphic & rGraphic );
                         // Liesst aus dem Stream eine PCX-Datei und fuellt das GDIMetaFile
 };
 
 //=================== Methoden von PCXReader ==============================
 
-PCXReader::PCXReader(SvStream &rStream)
-    : m_rPCX(rStream)
-    , pAcc(NULL)
+PCXReader::PCXReader() :
+    pAcc		( NULL )
 {
     pPalette = new BYTE[ 768 ];
 }
@@ -96,9 +95,9 @@ BOOL PCXReader::Callback( USHORT /*nPercent*/ )
     return FALSE;
 }
 
-BOOL PCXReader::ReadPCX(Graphic & rGraphic)
+BOOL PCXReader::ReadPCX( SvStream & rPCX, Graphic & rGraphic )
 {
-    if ( m_rPCX.GetError() )
+    if ( rPCX.GetError() )
         return FALSE;
 
     ULONG*	pDummy = new ULONG; delete pDummy; // damit unter OS/2
@@ -107,7 +106,8 @@ BOOL PCXReader::ReadPCX(Graphic & rGraphic)
                                                // in dieser DLL nur Vector-news
                                                // gibt;
 
-    m_rPCX.SetNumberFormatInt(NUMBERFORMAT_INT_LITTLEENDIAN);
+    pPCX = &rPCX;
+    pPCX->SetNumberFormatInt(NUMBERFORMAT_INT_LITTLEENDIAN);
 
     // Kopf einlesen:
 
@@ -140,7 +140,7 @@ BOOL PCXReader::ReadPCX(Graphic & rGraphic)
         if ( nDestBitsPerPixel == 8 && nStatus )
         {
             BYTE* pPal = pPalette;
-            m_rPCX.SeekRel(1);
+            pPCX->SeekRel(1);
             ImplReadPalette(256);
             pAcc->SetPaletteEntryCount( 256 );
             for ( USHORT i = 0; i < 256; i++, pPal += 3 )
@@ -171,15 +171,15 @@ void PCXReader::ImplReadHeader()
     USHORT nushort;
     USHORT nMinX,nMinY,nMaxX,nMaxY;
 
-    m_rPCX >> nbyte >> nVersion >> nEncoding;
+    *pPCX >> nbyte >> nVersion >> nEncoding;
     if ( nbyte!=0x0a || (nVersion != 0 && nVersion != 2 && nVersion != 3 && nVersion != 5) || nEncoding > 1 )
     {
         nStatus = FALSE;
         return;
     }
 
-    m_rPCX >> nbyte; nBitsPerPlanePix = (ULONG)nbyte;
-    m_rPCX >> nMinX >> nMinY >> nMaxX >> nMaxY;
+    *pPCX >> nbyte; nBitsPerPlanePix = (ULONG)nbyte;
+    *pPCX >> nMinX >> nMinY >> nMaxX >> nMaxY;
 
     if ((nMinX > nMaxX) || (nMinY > nMaxY))
     {
@@ -190,19 +190,19 @@ void PCXReader::ImplReadHeader()
     nWidth = nMaxX-nMinX+1;
     nHeight = nMaxY-nMinY+1;
 
-    m_rPCX >> nResX;
-    m_rPCX >> nResY;
+    *pPCX >> nResX;
+    *pPCX >> nResY;
     if ( nResX >= nWidth || nResY >= nHeight || ( nResX != nResY ) )
         nResX = nResY = 0;
 
     ImplReadPalette( 16 );
 
-    m_rPCX.SeekRel( 1 );
-    m_rPCX >> nbyte;   nPlanes = (ULONG)nbyte;
-    m_rPCX >> nushort; nBytesPerPlaneLin = (ULONG)nushort;
-    m_rPCX >> nPaletteInfo;
+    pPCX->SeekRel( 1 );
+    *pPCX >> nbyte;   nPlanes = (ULONG)nbyte;
+    *pPCX >> nushort; nBytesPerPlaneLin = (ULONG)nushort;
+    *pPCX >> nPaletteInfo;
 
-    m_rPCX.SeekRel( 58 );
+    pPCX->SeekRel( 58 );
 
     nDestBitsPerPixel = (USHORT)( nBitsPerPlanePix * nPlanes );
     if (nDestBitsPerPixel == 2 || nDestBitsPerPixel == 3) nDestBitsPerPixel = 4;
@@ -239,7 +239,7 @@ void PCXReader::ImplReadBody()
     nCount = 0;
     for ( ny = 0; ny < nHeight; ny++ )
     {
-        if (m_rPCX.GetError() || m_rPCX.IsEof())
+        if (pPCX->GetError() || pPCX->IsEof())
         {
             nStatus = FALSE;
             break;
@@ -254,7 +254,7 @@ void PCXReader::ImplReadBody()
         for ( np = 0; np < nPlanes; np++)
         {
             if ( nEncoding == 0)
-                m_rPCX.Read( (void *)pPlane[ np ], nBytesPerPlaneLin );
+                pPCX->Read( (void *)pPlane[ np ], nBytesPerPlaneLin );
             else
             {
                 pDest = pPlane[ np ];
@@ -267,11 +267,11 @@ void PCXReader::ImplReadBody()
                 }
                 while ( nx > 0 )
                 {
-                    m_rPCX >> nDat;
+                    *pPCX >> nDat;
                     if ( ( nDat & 0xc0 ) == 0xc0 )
                     {
                         nCount =( (ULONG)nDat ) & 0x003f;
-                        m_rPCX >> nDat;
+                        *pPCX >> nDat;
                         if ( nCount < nx )
                         {
                             nx -= nCount;
@@ -412,7 +412,7 @@ void PCXReader::ImplReadPalette( ULONG nCol )
     BYTE*	pPtr = pPalette;
     for ( ULONG i = 0; i < nCol; i++ )
     {
-        m_rPCX >> r >> g >> b;
+        *pPCX >> r >> g >> b;
         *pPtr++ = r;
         *pPtr++ = g;
         *pPtr++ = b;
@@ -423,36 +423,11 @@ void PCXReader::ImplReadPalette( ULONG nCol )
 
 extern "C" BOOL __LOADONCALLAPI GraphicImport(SvStream & rStream, Graphic & rGraphic, FilterConfigItem*, BOOL )
 {
-    PCXReader aPCXReader(rStream);
-    BOOL nRetValue = aPCXReader.ReadPCX(rGraphic);
+    PCXReader aPCXReader;
+    BOOL nRetValue = aPCXReader.ReadPCX( rStream, rGraphic );
     if ( nRetValue == FALSE )
         rStream.SetError( SVSTREAM_FILEFORMAT_ERROR );
     return nRetValue;
 }
-
-//================== ein bischen Muell fuer Windows ==========================
-
-#ifdef WIN
-
-static HINSTANCE hDLLInst = 0;      // HANDLE der DLL
-
-extern "C" int CALLBACK LibMain( HINSTANCE hDLL, WORD, WORD nHeap, LPSTR )
-{
-#ifndef WNT
-    if ( nHeap )
-        UnlockData( 0 );
-#endif
-
-    hDLLInst = hDLL;
-
-    return TRUE;
-}
-
-extern "C" int CALLBACK WEP( int )
-{
-    return 1;
-}
-
-#endif
 
 /* vim:set shiftwidth=4 softtabstop=4 expandtab: */

@@ -131,7 +131,7 @@ namespace dmapper {
                     pTablePropMap->insert( pBorderHandler->getProperties() );
                     
 #ifdef DEBUG_DOMAINMAPPER
-                    pTablePropMap->dumpXml( dmapper_logger );
+                    dmapper_logger->addTag(pTablePropMap->toTag());
 #endif
                     insertTableProps( pTablePropMap );
                 }
@@ -220,7 +220,7 @@ namespace dmapper {
         }
         
 #ifdef DEBUG_DOMAINMAPPER
-        dmapper_logger->endElement();
+        dmapper_logger->endElement("TablePropertiesHandler.sprm");
 #endif
         
         return bRet;

@@ -324,8 +324,8 @@ void CGM::ImplDoClass4()
                 if ( mpBitmapInUse )
                 {
                     CGMBitmap* pBmpDesc = mpBitmapInUse->GetNext();
-                    if ( pBmpDesc )	// eventuell bekommen wir eine bitmap zurück, die nicht
-                    {				// zur vorherigen paßt -> diese müssen wir dann auch löschen
+                    if ( pBmpDesc )	// eventuell bekommen wir eine bitmap zurï¿½ck, die nicht
+                    {				// zur vorherigen paï¿½t -> diese mï¿½ssen wir dann auch lï¿½schen
                         mpOutAct->DrawBitmap( pBmpDesc->GetBitmap() );
                         delete pBmpDesc;
                     }

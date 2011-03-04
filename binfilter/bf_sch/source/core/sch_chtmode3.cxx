@@ -349,7 +349,7 @@ namespace binfilter {
 /*N*/ 	long n1Pixel=pRefOutDev ? pRefOutDev->PixelToLogic(aSize).Width() : nHalfSymbolSizeY/2;
 /*N*/
 /*N*/ 	if(!bInsert)
-/*N*/ 		n1Pixel=nHalfSymbolSizeY/2; //für Legende vergrößern
+/*N*/ 		n1Pixel=nHalfSymbolSizeY/2; //fï¿½r Legende vergrï¿½ï¿½ern
 /*N*/
 /*N*/ 	const SfxPoolItem* pPoolItem;
 /*N*/ 	if(aDataAttr.GetItemState(SCHATTR_STYLE_SYMBOL, TRUE, &pPoolItem) == SFX_ITEM_SET)
@@ -417,8 +417,8 @@ namespace binfilter {
 /*N*/ 					break;
 /*N*/ 				}
 /*N*/ 				nWhatSymbol=nRow;
-/*N*/ 				aDataAttr.ClearItem(SCHATTR_SYMBOL_BRUSH);//Größe gegebenenfalls löschen
-/*N*/ 				aDataAttr.ClearItem(SCHATTR_SYMBOL_SIZE);//Größe gegebenenfalls löschen
+/*N*/ 				aDataAttr.ClearItem(SCHATTR_SYMBOL_BRUSH);//Grï¿½ï¿½e gegebenenfalls lï¿½schen
+/*N*/ 				aDataAttr.ClearItem(SCHATTR_SYMBOL_SIZE);//Grï¿½ï¿½e gegebenenfalls lï¿½schen
 /*N*/ 				break;
 /*N*/
 /*N*/ 			case SVX_SYMBOLTYPE_BRUSHITEM:
@@ -633,7 +633,7 @@ namespace binfilter {
 /*N*/ 		GenerateSymbolAttr(aSymbolAttr,nRow,SYMBOLMODE_ROW);
 /*N*/ 		if (nWhatSymbol == SVX_SYMBOLTYPE_NONE)
 /*N*/ 		{
-/*N*/ 			//	Don´t show the symbol.  It is only needed for selection of the
+/*N*/ 			//	Donï¿½t show the symbol.  It is only needed for selection of the
 /*N*/ 			//	data point.
 /*N*/ 			aSymbolAttr.Put(XFillStyleItem (XFILL_NONE));
 /*N*/ 			aSymbolAttr.Put(XLineStyleItem (XLINE_NONE));
@@ -652,8 +652,8 @@ namespace binfilter {
 
 /*N*/ void ChartModel::GenerateSymbolAttr(/*const SfxItemSet& rAttr,*/SfxItemSet& rSymbolAttr,const long nRow,const long nMode)
 /*N*/ {
-/*N*/ 	// Symbole immer gleiche Umrandung und Füllfarbe = Linienfarbe, wenn es sich um ein "echtes"
-/*N*/ 	// Symbol handelt (d.h. nicht ein Symbol für Bars/Säulen,Pies etc.)
+/*N*/ 	// Symbole immer gleiche Umrandung und Fï¿½llfarbe = Linienfarbe, wenn es sich um ein "echtes"
+/*N*/ 	// Symbol handelt (d.h. nicht ein Symbol fï¿½r Bars/Sï¿½ulen,Pies etc.)
 /*N*/
 /*N*/ 	switch(nMode)
 /*N*/ 	{
@@ -994,8 +994,8 @@ namespace binfilter {
 /*N*/ 	}
 /*N*/ }
 /*N*/
-/*N*/ //Achtung! diese Funktion sollte nur für 3-D-Objekte ausgeführt werden,
-/*N*/ //bei z.B. Legendensymbolen führt der Aufruf zu einer Endlos-Schleife !!!!!!!!!!!!!
+/*N*/ //Achtung! diese Funktion sollte nur fï¿½r 3-D-Objekte ausgefï¿½hrt werden,
+/*N*/ //bei z.B. Legendensymbolen fï¿½hrt der Aufruf zu einer Endlos-Schleife !!!!!!!!!!!!!
 /*N*/ //Im BuildChart wird ueber bAttrAutoStorage=FALSE doppelte Ausfuehrung unterbunden
 /*N*/ void ChartModel::StoreObjectsAttributes(SdrObject* pObj,const SfxItemSet& rAttr, bool bReplaceAll)
 /*N*/ {//#52277#
@@ -1003,7 +1003,7 @@ namespace binfilter {
 /*N*/ 		return;
 /*N*/ 	bAttrAutoStorage=FALSE; //Rekursionen verhindern
 /*N*/
-/*N*/ 	//Eventuell 3D-Materialfarbe in 2D-Füllfarbe konvertieren:
+/*N*/ 	//Eventuell 3D-Materialfarbe in 2D-Fï¿½llfarbe konvertieren:
 /*	const SfxPoolItem *pPoolItem;
     if( SFX_ITEM_SET == rAttr.GetItemState( SID_ATTR_3D_MAT_COLOR, TRUE, &pPoolItem ) )
     {
@@ -1080,10 +1080,10 @@ namespace binfilter {
 |* Aendere die Attribute bestimmter Objekte in der Page und im Model, bzw.
 |* lokalisiere bestimmte Objekte anhand der Id.
 |* Wird derzeit nur fuer UNO verwendet, koennte aber allgemeiner und sollte vor
-|* allem vollständiger werden
+|* allem vollstï¿½ndiger werden
 |*
-|* ACHTUNG: es gibt weitere Methoden gleichen/ähnlichen Namens und anderen Argumenten,
-|* die ähnlich wie diese Funktionen arbeiten!
+|* ACHTUNG: es gibt weitere Methoden gleichen/ï¿½hnlichen Namens und anderen Argumenten,
+|* die ï¿½hnlich wie diese Funktionen arbeiten!
 |*
 \************************************************************************/
 
@@ -1191,7 +1191,7 @@ namespace binfilter {
 
 /*N*/ SdrObject* ChartModel::GetObjectWithId(const long nId,const long /*nCol*/,const long /*nRow*/)
 /*N*/ {
-/*N*/ 	//ToDo: Das hier könnte man auch schöner machen (kein DEEP!)
+/*N*/ 	//ToDo: Das hier kï¿½nnte man auch schï¿½ner machen (kein DEEP!)
 /*N*/ 	SdrObject* pObj=(GetObjWithId ((USHORT)nId,*GetPage(0),0,IM_DEEPWITHGROUPS));
 /*N*/ #ifdef DBG_UTIL
 /*N*/ 	// there is no DBG_ASSERT2
@@ -1204,11 +1204,11 @@ namespace binfilter {
 // GetAttr-Methoden:
 //GetAttr(id) Diese Methode sucht anhand der Id den passenden Model-eigenen AttrSet
 //Achtung! Wenn zu einer ID kein Set existiert, wird *pDummyAttr returned!
-//(ungefährlich, geringer Overhead, wirft daher nur DBG__TRACE)
-//Nicht-Singuläre Objekte können nicht an der ID alleine identifiziert werden,
+//(ungefï¿½hrlich, geringer Overhead, wirft daher nur DBG__TRACE)
+//Nicht-Singulï¿½re Objekte kï¿½nnen nicht an der ID alleine identifiziert werden,
 //in diesem Fall muss GetAttr(SdrObject*) statt GetAttr(long id) gerufen werden
-// GetAttr(long id, SfxItemSet&) besorgt alle für ein Objekt verfügbaren und
-// gültigen Attribute
+// GetAttr(long id, SfxItemSet&) besorgt alle fï¿½r ein Objekt verfï¿½gbaren und
+// gï¿½ltigen Attribute
 
 /*
 Fehlen evtl. noch in GetAttr(ID):
@@ -1344,7 +1344,7 @@ Fehlen evtl. noch in GetAttr(ID):
 /*N*/ 		case CHOBJID_DIAGRAM_A_AXIS:
 /*N*/ 			return *pChartAAxis->GetItemSet();
 /*N*/
-/*N*/ 		case CHOBJID_LEGEND_BACK: //Achtung, dies ist nur das Drawing-Objekt, normalerweise erhält man die andere ID für das Gruppenobjekt
+/*N*/ 		case CHOBJID_LEGEND_BACK: //Achtung, dies ist nur das Drawing-Objekt, normalerweise erhï¿½lt man die andere ID fï¿½r das Gruppenobjekt
 /*N*/ 		case CHOBJID_LEGEND:
 /*N*/ 			return *pLegendAttr;
 /*N*/

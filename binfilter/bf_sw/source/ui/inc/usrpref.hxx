@@ -34,7 +34,7 @@
 #include <fldupde.hxx>
 #include "viewopt.hxx"
 
-#include <vcl/fldunit.hxx>
+#include <tools/fldunit.hxx>
 namespace binfilter {
 
 /* -----------------------------28.09.00 09:45--------------------------------

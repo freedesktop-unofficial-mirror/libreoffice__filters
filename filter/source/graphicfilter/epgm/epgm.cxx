@@ -36,9 +36,6 @@
 #include <svl/solar.hrc>
 #include <svtools/fltcall.hxx>
 #include <svtools/FilterConfigItem.hxx>
-#include "strings.hrc"
-#include "dlgepgm.hrc"
-#include "dlgepgm.hxx"
 
 //============================ PGMWriter ==================================
 
@@ -46,7 +43,7 @@ class PGMWriter {
 
 private:
 
-    SvStream& m_rOStm; 			// Die auszugebende PGM-Datei
+    SvStream*			mpOStm; 			// Die auszugebende PGM-Datei
     USHORT				mpOStmOldModus;
 
     BOOL				mbStatus;
@@ -61,18 +58,17 @@ private:
     com::sun::star::uno::Reference< com::sun::star::task::XStatusIndicator > xStatusIndicator;
 
 public:
-    PGMWriter(SvStream &rStream);
-    ~PGMWriter();
+                        PGMWriter();
+                        ~PGMWriter();
 
-    BOOL WritePGM( const Graphic& rGraphic, FilterConfigItem* pFilterConfigItem );
+    BOOL				WritePGM( const Graphic& rGraphic, SvStream& rPGM, FilterConfigItem* pFilterConfigItem );
 };
 
 //=================== Methoden von PGMWriter ==============================
 
-PGMWriter::PGMWriter(SvStream &rStream)
-    : m_rOStm(rStream)
-    , mbStatus(TRUE)
-    , mpAcc(NULL)
+PGMWriter::PGMWriter() :
+    mbStatus	( TRUE ),
+    mpAcc		( NULL )
 {
 }
 
@@ -84,8 +80,11 @@ PGMWriter::~PGMWriter()
 
 // ------------------------------------------------------------------------
 
-BOOL PGMWriter::WritePGM( const Graphic& rGraphic, FilterConfigItem* pFilterConfigItem )
+BOOL PGMWriter::WritePGM( const Graphic& rGraphic, SvStream& rPGM, FilterConfigItem* pFilterConfigItem )
 {
+
+    mpOStm = &rPGM;
+
     if ( pFilterConfigItem )
     {
         mnMode = pFilterConfigItem->ReadInt32( String( RTL_CONSTASCII_USTRINGPARAM( "FileFormat" ) ), 0 );
@@ -102,8 +101,8 @@ BOOL PGMWriter::WritePGM( const Graphic& rGraphic, FilterConfigItem* pFilterConf
     Bitmap		aBmp = aBmpEx.GetBitmap();
     aBmp.Convert( BMP_CONVERSION_8BIT_GREYS );
 
-    mpOStmOldModus = m_rOStm.GetNumberFormatInt();
-    m_rOStm.SetNumberFormatInt( NUMBERFORMAT_INT_BIGENDIAN );
+    mpOStmOldModus = mpOStm->GetNumberFormatInt();
+    mpOStm->SetNumberFormatInt( NUMBERFORMAT_INT_BIGENDIAN );
 
     mpAcc = aBmp.AcquireReadAccess();
     if( mpAcc )
@@ -117,7 +116,7 @@ BOOL PGMWriter::WritePGM( const Graphic& rGraphic, FilterConfigItem* pFilterConf
     else
         mbStatus = FALSE;
 
-    m_rOStm.SetNumberFormatInt( mpOStmOldModus );
+    mpOStm->SetNumberFormatInt( mpOStmOldModus );
 
     if ( xStatusIndicator.is() )
         xStatusIndicator->end();
@@ -134,16 +133,16 @@ BOOL PGMWriter::ImplWriteHeader()
     if ( mnWidth && mnHeight )
     {
         if ( mnMode == 0 )
-            m_rOStm << "P5\x0a";
+            *mpOStm << "P5\x0a";
         else
-            m_rOStm << "P2\x0a";
+            *mpOStm << "P2\x0a";
 
         ImplWriteNumber( mnWidth );
-        m_rOStm << (BYTE)32;
+        *mpOStm << (BYTE)32;
         ImplWriteNumber( mnHeight );
-        m_rOStm << (BYTE)32;
+        *mpOStm << (BYTE)32;
         ImplWriteNumber( 255 ); 		// max. gray value
-        m_rOStm << (BYTE)10;
+        *mpOStm << (BYTE)10;
     }
     else
         mbStatus = FALSE;
@@ -161,7 +160,7 @@ void PGMWriter::ImplWriteBody()
         {
             for ( ULONG x = 0; x < mnWidth; x++ )
             {
-                m_rOStm << (BYTE)( mpAcc->GetPixel( y, x ) );
+                *mpOStm << (BYTE)( mpAcc->GetPixel( y, x ) );
             }
         }
     }
@@ -176,18 +175,18 @@ void PGMWriter::ImplWriteBody()
                 if ( nCount < 0 )
                 {
                     nCount = 69;
-                    m_rOStm << (BYTE)10;
+                    *mpOStm << (BYTE)10;
                 }
                 nDat = (BYTE)mpAcc->GetPixel( y, x );
                 nNumb = nDat / 100;
                 if ( nNumb )
                 {
-                    m_rOStm << (BYTE)( nNumb + '0' );
+                    *mpOStm << (BYTE)( nNumb + '0' );
                     nDat -= ( nNumb * 100 );
                     nNumb = nDat / 10;
-                    m_rOStm << (BYTE)( nNumb + '0' );
+                    *mpOStm << (BYTE)( nNumb + '0' );
                     nDat -= ( nNumb * 10 );
-                    m_rOStm << (BYTE)( nDat + '0' );
+                    *mpOStm << (BYTE)( nDat + '0' );
                     nCount -= 4;
                 }
                 else
@@ -195,20 +194,20 @@ void PGMWriter::ImplWriteBody()
                     nNumb = nDat / 10;
                     if ( nNumb )
                     {
-                        m_rOStm << (BYTE)( nNumb + '0' );
+                        *mpOStm << (BYTE)( nNumb + '0' );
                         nDat -= ( nNumb * 10 );
-                        m_rOStm << (BYTE)( nDat + '0' );
+                        *mpOStm << (BYTE)( nDat + '0' );
                         nCount -= 3;
                     }
                     else
                     {
-                        m_rOStm << (BYTE)( nDat + '0' );
+                        *mpOStm << (BYTE)( nDat + '0' );
                         nCount -= 2;
                     }
                 }
-                m_rOStm << (BYTE)' ';
+                *mpOStm << (BYTE)' ';
             }
-            m_rOStm << (BYTE)10;
+            *mpOStm << (BYTE)10;
         }
     }
 }
@@ -221,7 +220,7 @@ void PGMWriter::ImplWriteNumber( sal_Int32 nNumber )
     const ByteString aNum( ByteString::CreateFromInt32( nNumber ) );
 
     for( sal_Int16 n = 0UL, nLen = aNum.Len(); n < nLen; n++  )
-        m_rOStm << aNum.GetChar( n );
+        *mpOStm << aNum.GetChar( n );
 
 }
 
@@ -233,64 +232,10 @@ void PGMWriter::ImplWriteNumber( sal_Int32 nNumber )
 
 extern "C" BOOL __LOADONCALLAPI GraphicExport( SvStream& rStream, Graphic& rGraphic, FilterConfigItem* pFilterConfigItem, BOOL )
 {
-    PGMWriter aPGMWriter(rStream);
+    PGMWriter aPGMWriter;
 
-    return aPGMWriter.WritePGM( rGraphic, pFilterConfigItem );
+    return aPGMWriter.WritePGM( rGraphic, rStream, pFilterConfigItem );
 }
 
 // ------------------------------------------------------------------------
-
-extern "C" BOOL __LOADONCALLAPI DoExportDialog( FltCallDialogParameter& rPara )
-{
-    BOOL bRet = FALSE;
-
-    if ( rPara.pWindow )
-    {
-        ByteString 	aResMgrName( "epg" );
-        ResMgr*	pResMgr;
-
-        pResMgr = ResMgr::CreateResMgr( aResMgrName.GetBuffer(), Application::GetSettings().GetUILocale() );
-
-        if( pResMgr )
-        {
-            rPara.pResMgr = pResMgr;
-            bRet = ( DlgExportEPGM( rPara ).Execute() == RET_OK );
-            delete pResMgr;
-        }
-        else
-            bRet = TRUE;
-    }
-
-    return bRet;
-}
-
-// ------------------------------------------------------------------------
-
-// ---------------
-// - Win16 trash -
-// ---------------
-
-#ifdef WIN
-
-static HINSTANCE hDLLInst = 0;
-
-extern "C" int CALLBACK LibMain( HINSTANCE hDLL, WORD, WORD nHeap, LPSTR )
-{
-    if ( nHeap )
-        UnlockData( 0 );
-
-    hDLLInst = hDLL;
-
-    return TRUE;
-}
-
-// ------------------------------------------------------------------------
-
-extern "C" int CALLBACK WEP( int )
-{
-    return 1;
-}
-
-#endif
-
 /* vim:set shiftwidth=4 softtabstop=4 expandtab: */

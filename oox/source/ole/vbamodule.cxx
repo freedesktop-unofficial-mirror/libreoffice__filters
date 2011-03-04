@@ -28,12 +28,11 @@
 
 #include "oox/ole/vbamodule.hxx"
 #include <hash_map>
-#include <com/sun/star/container/XNameContainer.hpp>
 #include <com/sun/star/container/XIndexContainer.hpp>
+#include <cppuhelper/implbase1.hxx>
 #include <com/sun/star/script/ModuleInfo.hpp>
 #include <com/sun/star/script/ModuleType.hpp>
 #include <com/sun/star/script/vba/XVBAModuleInfo.hpp>
-#include <cppuhelper/implbase1.hxx>
 #include "oox/helper/binaryinputstream.hxx"
 #include "oox/helper/storagebase.hxx"
 #include "oox/helper/textinputstream.hxx"
@@ -282,7 +281,7 @@ void VbaModule::createModule( const OUString& rVBASourceCode,
 {
     if( maName.getLength() == 0 )
         return;
-        
+
     // prepare the Basic module
     ModuleInfo aModuleInfo;
     aModuleInfo.ModuleType = mnType;
@@ -303,7 +302,7 @@ void VbaModule::createModule( const OUString& rVBASourceCode,
         break;
         case ModuleType::DOCUMENT:
             aSourceCode.appendAscii( RTL_CONSTASCII_STRINGPARAM( "VBADocumentModule" ) );
-            // get the VBA object associated to the document module
+            // get the VBA implementation object associated to the document module
             if( rxDocObjectNA.is() ) try
             {
                 aModuleInfo.ModuleObject.set( rxDocObjectNA->getByName( maName ), UNO_QUERY );

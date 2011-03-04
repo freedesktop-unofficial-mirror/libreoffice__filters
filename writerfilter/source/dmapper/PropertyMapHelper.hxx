@@ -3,10 +3,16 @@
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  * 
- * Copyright 2008 by Sun Microsystems, Inc.
+ * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
  *
+<<<<<<< HEAD:binfilter/bf_sfx2/source/inc/eacopier.hxx
+=======
+ * $RCSfile: PropertyMap.hxx,v $
+ * $Revision: 1.18 $
+ *
+>>>>>>> stage/ooo/dev300_m98_fixed:writerfilter/source/dmapper/PropertyMapHelper.hxx
  * This file is part of OpenOffice.org.
  *
  * OpenOffice.org is free software: you can redistribute it and/or modify
@@ -26,7 +32,7 @@
  *
  ************************************************************************/
 
-#if OSL_DEBUG_LEVEL > 1
+#ifdef DEBUG
 #include "PropertyMap.hxx"
 #include <com/sun/star/beans/PropertyValues.hpp>
 
@@ -35,20 +41,18 @@ namespace writerfilter
 namespace dmapper
 {
 
-void lcl_DumpTableColumnSeparators(const TagLogger::Pointer_t pLogger,
-        const uno::Any & rTableColumnSeparators);
-void lcl_DumpPropertyValues(const TagLogger::Pointer_t pLogger,
-        beans::PropertyValues & rValues);
+<<<<<<< HEAD:binfilter/bf_sfx2/source/inc/eacopier.hxx
+/* vim:set shiftwidth=4 softtabstop=4 expandtab: */
+=======
+XMLTag::Pointer_t lcl_TableColumnSeparatorsToTag(const uno::Any & rTableColumnSeparators);
+XMLTag::Pointer_t lcl_PropertyValuesToTag(beans::PropertyValues & rValues);
     
 typedef uno::Sequence<beans::PropertyValues> PropertyValueSeq_t;    
-void lcl_DumpPropertyValueSeq(const TagLogger::Pointer_t pLogger,
-     PropertyValueSeq_t & rPropValSeq);
+XMLTag::Pointer_t lcl_PropertyValueSeqToTag(PropertyValueSeq_t & rPropValSeq);
     
 typedef uno::Sequence<PropertyValueSeq_t> PropertyValueSeqSeq_t;
-void lcl_DumpPropertyValueSeqSeq(const TagLogger::Pointer_t pLogger,
-        PropertyValueSeqSeq_t & rPropValSeqSeq);
+XMLTag::Pointer_t lcl_PropertyValueSeqSeqToTag(PropertyValueSeqSeq_t & rPropValSeqSeq);
 }
 }
 #endif // DEBUG
-
-/* vim:set shiftwidth=4 softtabstop=4 expandtab: */
+>>>>>>> stage/ooo/dev300_m98_fixed:writerfilter/source/dmapper/PropertyMapHelper.hxx

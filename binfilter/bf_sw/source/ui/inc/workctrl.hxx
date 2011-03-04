@@ -32,7 +32,7 @@
 
 #include <vcl/toolbox.hxx>
 #include <bf_svtools/stdctrl.hxx>
-#include <vcl/imagebtn.hxx>
+#include <vcl/button.hxx>
 class PopupMenu; 
 namespace binfilter {
 

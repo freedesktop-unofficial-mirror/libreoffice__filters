@@ -51,7 +51,7 @@
 #include <comphelper/property.hxx>
 #include <comphelper/numbers.hxx>
 #include <toolkit/helper/vclunohelper.hxx>
-#include <vcl/wintypes.hxx>
+#include <tools/wintypes.hxx>
 #include <vcl/svapp.hxx>
 #include <vcl/stdtext.hxx>
 #include <rtl/ustrbuf.hxx>

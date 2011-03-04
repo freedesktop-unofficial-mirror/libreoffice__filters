@@ -5006,7 +5006,7 @@ SdrObject* SvxMSDffManager::ImportShape( const DffRecordHeader& rHd, SvStream& r
                             aSet.Put( SvxWeightItem( ( GetPropertyValue( DFF_Prop_gtextFStrikethrough, 0 ) & 0x0020 ) != 0 ? WEIGHT_BOLD : WEIGHT_NORMAL, EE_CHAR_WEIGHT ) );
 
                         // SJ TODO: Vertical Writing is not correct, instead this should be
-                        // replaced through "CharacterRotation" by 90°, therefore a new Item has to be
+                        // replaced through "CharacterRotation" by 90ï¿½, therefore a new Item has to be
                         // supported by svx core, api and xml file format
                         ((SdrObjCustomShape*)pRet)->SetVerticalWriting( ( GetPropertyValue( DFF_Prop_gtextFStrikethrough, 0 ) & 0x2000 ) != 0 );
 

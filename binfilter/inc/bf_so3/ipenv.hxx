@@ -30,7 +30,6 @@
 #define _IPENV_HXX
 
 #include <bf_so3/client.hxx>
-#include <vcl/mapunit.hxx>
 
 #include "bf_so3/so3dllapi.h"
 

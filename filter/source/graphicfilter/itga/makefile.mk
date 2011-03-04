@@ -41,8 +41,7 @@ DEPTARGET=vitga
 CDEFS+= -DEDITDEBUG
 .ENDIF
 .IF "$(L10N_framework)"==""
-SLOFILES =	$(EXCEPTIONSFILES)
-EXCEPTIONSFILES = $(SLO)$/itga.obj
+SLOFILES =	$(SLO)$/itga.obj
 
 # ==========================================================================
 

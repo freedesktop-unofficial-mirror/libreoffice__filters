@@ -189,7 +189,7 @@ SbxBase* SbxBase::Create( UINT16 nSbxId, UINT32 nCreator )
         case SBXID_METHOD:		return new SbxMethod( aEmptyStr, SbxEMPTY );
         case SBXID_PROPERTY:	return new SbxProperty( aEmptyStr, SbxEMPTY );
     }
-    // Unbekanter Typ: Åber die Factories gehen!
+    // Unbekanter Typ: ÔøΩber die Factories gehen!
     SbxAppData* p = GetSbxData_Impl();
     SbxBase* pNew = NULL;
     for( USHORT i = 0; i < p->aFacs.Count(); i++ )

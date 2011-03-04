@@ -281,9 +281,10 @@ unsigned int OOXMLParserState::getContextCount() const
     return mnContexts;
 }
 
-void OOXMLParserState::dumpXml( const TagLogger::Pointer_t& pLogger )
+string OOXMLParserState::toString() const
 {
-    pLogger->startElement("parserstate");
+    return toTag()->toString();
+}
 
     string sTmp;
 

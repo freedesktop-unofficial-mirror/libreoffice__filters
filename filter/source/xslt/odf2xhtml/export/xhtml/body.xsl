@@ -1778,7 +1778,7 @@
 		3) 'fo:text-indent' the indent of the first line of some child (e.g. paragraph) (applied by CSS class style)
 
 	Possible list children:
-	<!ELEMENT text:list-item (text:p|text:h|text:list)+>
+	<!ELEMENT text:list-item (text:p|text:h|text:list|text:list)+>
 
 	In the Office the list label before the text depends on two attributes:
 		- 'text:min-label-width': the distance between list label and all text of the list item.
@@ -2168,6 +2168,7 @@
 		<!-- E.g.: If a list level 2 number is searched, a level 3 with content found with only a level 1 parent with content,
 			the level 3 gets a 'pseudoLevel' -->
 		<xsl:param name="pseudoLevel" select="0" />
+
 		<xsl:variable name="isListHeader" select="boolean(self::text:list-header)"/>
 		<xsl:variable name="isEmptyList" select="not(*[name() = 'text:h' or name() = 'text:p'])"/>
 

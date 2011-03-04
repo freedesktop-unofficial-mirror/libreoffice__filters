@@ -139,6 +139,10 @@ public:
     virtual void dumpXml( const TagLogger::Pointer_t pLogger ) const;
 #endif
     
+#ifdef DEBUG_DOMAINMAPPER
+    virtual XMLTag::Pointer_t toTag() const;
+#endif
+    
 };
 typedef boost::shared_ptr<PropertyMap>  PropertyMapPtr;
 

@@ -54,6 +54,8 @@
 #include "xmlfileview.hrc"
 #include "xmlfilterhelpids.hrc"
 
+#include <deque>
+
 using namespace rtl;
 using namespace osl;
 using namespace com::sun::star::lang;
@@ -76,8 +78,7 @@ struct SwTextPortion
     svtools::ColorConfigEntry eType;
 };
 
-SV_DECL_VARARR(SwTextPortions, SwTextPortion,16,16)
-SV_IMPL_VARARR(SwTextPortions, SwTextPortion);
+typedef std::deque<SwTextPortion> SwTextPortions;
 
 class XMLErrorHandler : public ::cppu::WeakImplHelper1< XErrorHandler >
 {
@@ -687,10 +688,10 @@ void lcl_Highlight(const String& rSource, SwTextPortions& aPortionList)
 
 
     const USHORT nStrLen = rSource.Len();
-    USHORT nInsert = 0;			// Anzahl der eingefuegten Portions
-    USHORT nActPos = 0;			//Position, an der '<' gefunden wurde
-    USHORT nOffset = 0; 		//Offset von nActPos zur '<'
-    USHORT nPortStart = USHRT_MAX; 	// fuer die TextPortion
+    USHORT nInsert = 0;			// Number of inserted Portions
+    USHORT nActPos = 0;			// Position, at the '<' was found
+    USHORT nOffset = 0; 		// Offset of nActPos for '<'
+    USHORT nPortStart = USHRT_MAX; 	// For the TextPortion
     USHORT nPortEnd  = 	0;  //
     SwTextPortion aText;
     while(nActPos < nStrLen)
@@ -708,7 +709,8 @@ void lcl_Highlight(const String& rSource, SwTextPortions& aPortionList)
                     aText.nStart += 1;
                 aText.nEnd = nActPos - 1;
                 aText.eType = svtools::HTMLUNKNOWN;
-                aPortionList.Insert(aText, nInsert++);
+                aPortionList.push_back( aText );
+                nInsert++;
             }
             sal_Unicode cFollowFirst = rSource.GetChar((xub_StrLen)(nActPos + 1));
             sal_Unicode cFollowNext = rSource.GetChar((xub_StrLen)(nActPos + 2));
@@ -800,7 +802,8 @@ void lcl_Highlight(const String& rSource, SwTextPortions& aPortionList)
                     aText2.nStart = nPortStart + 1;
                     aText2.nEnd = nPortEnd;
                     aText2.eType = eFoundType;
-                    aPortionList.Insert(aText2, nInsert++);
+                    aPortionList.push_back( aText2 ); 
+                    nInsert++;		
                     eFoundType = svtools::HTMLUNKNOWN;
                 }
 
@@ -814,7 +817,8 @@ void lcl_Highlight(const String& rSource, SwTextPortions& aPortionList)
         aText.nStart = nPortEnd + 1;
         aText.nEnd = nActPos - 1;
         aText.eType = svtools::HTMLUNKNOWN;
-        aPortionList.Insert(aText, nInsert++);
+        aPortionList.push_back( aText );
+        nInsert++;
     }
 }
 
@@ -832,7 +836,7 @@ void XMLFileWindow::ImpDoHighlight( const String& rSource, USHORT nLineOff )
     SwTextPortions aPortionList;
     lcl_Highlight(rSource, aPortionList);
 
-    USHORT nCount = aPortionList.Count();
+    size_t nCount = aPortionList.size();
     if ( !nCount )
         return;
 
@@ -840,7 +844,7 @@ void XMLFileWindow::ImpDoHighlight( const String& rSource, USHORT nLineOff )
     if ( rLast.nStart > rLast.nEnd ) 	// Nur bis Bug von MD behoeben
     {
         nCount--;
-        aPortionList.Remove( nCount);
+        aPortionList.pop_back();
         if ( !nCount )
             return;
     }
@@ -856,7 +860,7 @@ void XMLFileWindow::ImpDoHighlight( const String& rSource, USHORT nLineOff )
         // Wenn zwei gleiche Attribute hintereinander eingestellt werden,
         // optimiert das die TextEngine.
         USHORT nLastEnd = 0;
-        for ( USHORT i = 0; i < nCount; i++ )
+        for ( size_t i = 0; i < nCount; i++ )
         {
             SwTextPortion& r = aPortionList[i];
             DBG_ASSERT( r.nLine == aPortionList[0].nLine, "doch mehrere Zeilen ?" );
@@ -876,7 +880,7 @@ void XMLFileWindow::ImpDoHighlight( const String& rSource, USHORT nLineOff )
     }
 
     svtools::ColorConfig aConfig;
-    for ( USHORT i = 0; i < aPortionList.Count(); i++ )
+    for ( size_t i = 0; i < aPortionList.size(); i++ )
     {
         SwTextPortion& r = aPortionList[i];
         if ( r.nStart > r.nEnd ) 	// Nur bis Bug von MD behoeben

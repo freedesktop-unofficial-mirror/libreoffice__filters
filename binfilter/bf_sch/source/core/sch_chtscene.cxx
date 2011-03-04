@@ -181,7 +181,7 @@ namespace binfilter {
 /*N*/ 	Rectangle aPrevRect(0,0,0,0);
 /*N*/ 	Rectangle aNextRect(0,0,0,0);
 /*N*/
-/*N*/ 	//Transformation berechnen, die später im Paint ausgeführt wird,
+/*N*/ 	//Transformation berechnen, die spï¿½ter im Paint ausgefï¿½hrt wird,
 /*N*/ 	//(Derzeit sind die Labelobject-Positionen unbekannt)
 /*N*/ 	Rectangle aBound(GetSnapRect());
 /*N*/ 	Volume3D aVolume = FitInSnapRect();
@@ -202,25 +202,25 @@ namespace binfilter {
 /*N*/ 		const SdrTextObj* pObj = (const SdrTextObj*)p3DObj->Get2DLabelObj();
 /*N*/
 /*N*/ 		//Es reicht, die Rotation des ersten Elements zu ermitteln,
-/*N*/ 		//alle in der Liste sind gleichermaßen gedreht
+/*N*/ 		//alle in der Liste sind gleichermaï¿½en gedreht
 /*N*/ 		//GetRotateAngle() gibt 100tel, gebraucht werden 10tel Grad.
 /*N*/ 		long nAngle = pObj->GetRotateAngle()/10;
 /*N*/
 /*N*/ 		aPrevRect=Get3DDescrRect(p3DObj,rSet);
 /*N*/ 		if(nAngle!=0)
 /*N*/ 		{
-/*?*/ 			//Um TopLeft drehen, so wie es später gezeichnet wird
+/*?*/ 			//Um TopLeft drehen, so wie es spï¿½ter gezeichnet wird
 /*?*/ 			XPolygon aPoly(aPrevRect);
 /*?*/ 			aPoly.Rotate(aPrevRect.TopLeft(),(USHORT)nAngle);
-/*?*/ 			//und um den Koordinaten-Ursprung herum zurückdrehen
-/*?*/ 			//um wieder Rectangles zu erhalten (für Intersect)
+/*?*/ 			//und um den Koordinaten-Ursprung herum zurï¿½ckdrehen
+/*?*/ 			//um wieder Rectangles zu erhalten (fï¿½r Intersect)
 /*?*/ 			aPoly.Rotate(Point(0,0),(USHORT)(3600 - nAngle));
 /*?*/ 			aPrevRect=aPoly.GetBoundRect();
 /*N*/ 		}
 /*N*/
 /*N*/ 		while(p3DObj)
 /*N*/ 		{
-/*N*/ 			//nächstes Objekt holen, abhängig davon, ob das zuletzt behandelte
+/*N*/ 			//nï¿½chstes Objekt holen, abhï¿½ngig davon, ob das zuletzt behandelte
 /*N*/ 			//entfernt wurde oder nicht (bGetCurrent)
 /*N*/ 			if(bGetCurrent)
 /*N*/ 			{
@@ -234,8 +234,8 @@ namespace binfilter {
 /*N*/ 			bGetCurrent=FALSE;
 /*N*/
 /*N*/ 			//Da insbesondere bei Remove() des letzten Objects sowohl Next()
-/*N*/ 			//als auch GetCurObject() den alten Pointer zurückgeben,
-/*N*/ 			//wird getestet, ob tatsächlich verschiedene Objekte vorliegen
+/*N*/ 			//als auch GetCurObject() den alten Pointer zurï¿½ckgeben,
+/*N*/ 			//wird getestet, ob tatsï¿½chlich verschiedene Objekte vorliegen
 /*N*/ 			DBG_ASSERT(p3DObj!=pOld3DObj,"Chart: pointers equal in Scene:reduce...");
 /*N*/ 			if(p3DObj && p3DObj!=pOld3DObj)
 /*N*/ 			{
@@ -248,7 +248,7 @@ namespace binfilter {
 /*?*/ 					//Um TopLeft drehen (wie oben):
 /*?*/ 					XPolygon aPoly(aNextRect);
 /*?*/ 					aPoly.Rotate(aNextRect.TopLeft(),(USHORT)nAngle);
-/*?*/ 					//und um den Ursprung herum zurückdrehen
+/*?*/ 					//und um den Ursprung herum zurï¿½ckdrehen
 /*?*/ 					aPoly.Rotate(Point(0,0),(USHORT)(3600 - nAngle));
 /*?*/ 					aNextRect=aPoly.GetBoundRect();
 /*N*/ 				}
@@ -256,7 +256,7 @@ namespace binfilter {
 /*N*/ 				aIntersect=aNextRect.GetIntersection(aPrevRect);
 /*N*/ 				if( !  (aIntersect.IsEmpty())
 /*N*/ 					&& (   (aIntersect.GetHeight()>aNextRect.GetHeight()/100)
-/*N*/ 						 ||(aIntersect.GetWidth() >aNextRect.GetHeight()/100)//2% Deckung maximal bezogen auf die Fonthöhe
+/*N*/ 						 ||(aIntersect.GetWidth() >aNextRect.GetHeight()/100)//2% Deckung maximal bezogen auf die Fonthï¿½he
 /*N*/ 						)
 /*N*/ 				  )
 /*N*/ 				{

@@ -227,6 +227,8 @@ public:
 
 #if OSL_DEBUG_LEVEL > 1
     virtual void dumpXml( const TagLogger::Pointer_t pLogger ) const;
+    virtual XMLTag::Pointer_t toTag() const;
+    virtual string toString() const;
 #endif
 
 #ifdef DEBUG_MEMORY
@@ -344,7 +346,7 @@ public:
     virtual OOXMLPropertySet::Pointer_t getPropertySet() const;
 
 #if OSL_DEBUG_LEVEL > 1
-    virtual void dumpXml( const TagLogger::Pointer_t pLogger ) const;
+    virtual XMLTag::Pointer_t toTag() const;
 #endif
 
 protected:
@@ -375,16 +377,11 @@ protected:
  };
  
 class OOXMLFastContextHandlerValue :
-    public OOXMLFastContextHandler
-{
-public:
     OOXMLFastContextHandlerValue
     (OOXMLFastContextHandler * pContext);
     virtual ~OOXMLFastContextHandlerValue();
-    
     virtual void setValue(OOXMLValue::Pointer_t pValue);
     virtual OOXMLValue::Pointer_t getValue() const;
-    
     virtual void lcl_endFastElement(Token_t Element) 
     throw (uno::RuntimeException, xml::sax::SAXException);
 

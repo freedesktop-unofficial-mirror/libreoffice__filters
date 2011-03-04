@@ -2,10 +2,17 @@
 #
 # DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
 # 
-# Copyright 2008 by Sun Microsystems, Inc.
+# Copyright 2000, 2010 Oracle and/or its affiliates.
 #
 # OpenOffice.org - a multi-platform office productivity suite
 #
+<<<<<<< HEAD:unoxml/qa/complex/makefile.mk
+=======
+# $RCSfile: makefile.mk,v $
+#
+# $Revision: 1.5.198.1 $
+#
+>>>>>>> stage/ooo/dev300_m98_fixed:writerfilter/qa/complex/ooxml/makefile.mk
 # This file is part of OpenOffice.org.
 #
 # OpenOffice.org is free software: you can redistribute it and/or modify
@@ -23,7 +30,11 @@
 # <http://www.openoffice.org/license.html>
 # for a copy of the LGPLv3 License.
 #
+<<<<<<< HEAD:unoxml/qa/complex/makefile.mk
+#***********************************************************************/
+=======
 #*************************************************************************
+>>>>>>> stage/ooo/dev300_m98_fixed:writerfilter/qa/complex/ooxml/makefile.mk
 
 PRJ = ..$/..$/..
 TARGET  = PropertyValues

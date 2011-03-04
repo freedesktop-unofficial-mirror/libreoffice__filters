@@ -127,7 +127,7 @@ namespace binfilter {
 /*N*/ }
 /*************************************************************************
 |*
-|* für SP2 #66110# bzw. #61907#
+|* fï¿½r SP2 #66110# bzw. #61907#
 |*
 \************************************************************************/
 /*N*/ void ChartModel::SetChartDataBuffered(SchMemChart& rData, BOOL bNewTitles)

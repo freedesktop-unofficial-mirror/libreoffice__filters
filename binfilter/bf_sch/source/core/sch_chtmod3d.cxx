@@ -238,7 +238,7 @@ namespace binfilter {
 /*N*/ 	E3dDefaultAttributes aDefltAttr3D;
 /*N*/
 /*N*/ 	Matrix4D aShift;
-/*N*/ 	aShift.Translate(-(aSizeVec/500.0));//Wände etwas verschieben...
+/*N*/ 	aShift.Translate(-(aSizeVec/500.0));//Wï¿½nde etwas verschieben...
 /*N*/
 /*N*/ 	const double fFloorWidth = 100.0;
 /*N*/
@@ -702,7 +702,7 @@ namespace binfilter {
 /*N*/
 /*N*/ 						E3dLabelObj *pE3DLabel = new E3dLabelObj(aTextPos,pTextObj);
 /*N*/ 						pE3DLabel->SetMarkProtect(TRUE);
-/*N*/ 						aZDescrList.insert( aZDescrList.begin(), pE3DLabel );//ZListe umgekehrt füllen
+/*N*/ 						aZDescrList.insert( aZDescrList.begin(), pE3DLabel );//ZListe umgekehrt fï¿½llen
 /*N*/ 					}
 /*N*/
 /*N*/ 					if (pZGridHelpGroup && (i < nRowCnt))
@@ -1052,7 +1052,7 @@ namespace binfilter {
 /*?*/ 								Vector3D aFill = (fData == DBL_MIN) ? aLastValue : a3DPos;
 /*?*/ 								for (short nFill = nPoints;nFill <= nColCnt;nFill ++)
 /*?*/ 								{
-/*?*/ 									//aFrontSide wird noch für die Beschriftung gebraucht
+/*?*/ 									//aFrontSide wird noch fï¿½r die Beschriftung gebraucht
 /*?*/ 									aFrontSide[nColCnt+1-nFill]=aFill;
 /*?*/ 									aFrontSide[nColCnt+1-nFill].Y()=0;
 /*?*/ 									aFrontSide[nColCnt+1-nFill].Z() += nBarWidthZ;
@@ -1813,7 +1813,7 @@ namespace binfilter {
 /*N*/ 	long	nH      = nSize;
 /*N*/ 	long    nZ      = nSize;//(nSize * 4) / 6;
 /*N*/
-/*N*/ 	//erweiterung auf Donuts  emöglichen!
+/*N*/ 	//erweiterung auf Donuts  emï¿½glichen!
 /*N*/ 	long nColCnt = GetColCount();
 /*N*/ 	const short nRowCnt=1;//	long	nRowCnt = GetRowCount();
 /*N*/ 	const short nRow=0;

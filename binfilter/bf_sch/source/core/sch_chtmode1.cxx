@@ -143,7 +143,7 @@ namespace binfilter {
 /*N*/ 	SCHATTR_TEXT_DEGREES,SCHATTR_TEXT_DEGREES,      //
 /*N*/ 	XATTR_LINE_FIRST, XATTR_LINE_LAST,              // 1000
 /*N*/ 	XATTR_FILL_FIRST, XATTR_FILL_LAST,              // 1020
-/*N*/ 	SDRATTR_START, SDRATTR_END, //hier geändert auf alle SdrAttr
+/*N*/ 	SDRATTR_START, SDRATTR_END, //hier geï¿½ndert auf alle SdrAttr
 /*N*/ 	EE_ITEMS_START, EE_ITEMS_END,                   // 4000
 /*N*/ 	0
 /*N*/ };
@@ -217,7 +217,7 @@ namespace binfilter {
 /*N*/
 /*N*/ 	switch(nId)
 /*N*/ 	{
-/*N*/ 		//Alle Titel sorgen selbst für ihre Attributierung:
+/*N*/ 		//Alle Titel sorgen selbst fï¿½r ihre Attributierung:
 /*N*/ 		case CHOBJID_DIAGRAM_TITLE_X_AXIS:
 /*N*/ 		case CHOBJID_DIAGRAM_TITLE_Y_AXIS:
 /*N*/ 		case CHOBJID_DIAGRAM_TITLE_Z_AXIS:
@@ -241,7 +241,7 @@ namespace binfilter {
 /*N*/ 	   pObj->NbcMove( AdjustRotatedRect(aOldBoundRect, eAdjust,pObj->GetBoundRect()));
 /*N*/ 	}
 /*N*/
-/*N*/ 	//ToDo: anhängen der ,*(pItemPool->GetFrozenIdRanges()) ???, erstmal mit diesen Whichpairs
+/*N*/ 	//ToDo: anhï¿½ngen der ,*(pItemPool->GetFrozenIdRanges()) ???, erstmal mit diesen Whichpairs
 /*N*/ 	SfxItemSet aAreaAttr(*pItemPool,nExchangeTitleWhichPairs);
 /*N*/
 /*N*/ 	//Neu: #52009#
@@ -388,7 +388,7 @@ namespace binfilter {
 /*N*/ 				else
 /*N*/ 					pOutliner->SetText(aNumStr, pOutliner->GetParagraph( 0 ));
 /*N*/
-/*N*/ 				// FG: Hier wird wirklich berechnet wie groß der Textbereich werden soll. Insbesondere
+/*N*/ 				// FG: Hier wird wirklich berechnet wie groï¿½ der Textbereich werden soll. Insbesondere
 /*N*/ 				//     wird hier entschieden, ob der Text umgebrochen werden soll oder nicht!
 /*N*/ 				SetTextAttributes (aTextAttr);
 /*N*/ 				Size aSize = CalcTextSizeOfOneText (eOrient, aTextAttr, pOutliner, MaximumWidth,
@@ -439,7 +439,7 @@ namespace binfilter {
 /*N*/ 			else
 /*N*/ 				pOutliner->SetText(aDescrStr, pOutliner->GetParagraph( 0 ));
 /*N*/
-/*N*/ 			// FG: Hier wird wirklich berechnet wie groß der Textbereich werden soll. Insbesondere wird
+/*N*/ 			// FG: Hier wird wirklich berechnet wie groï¿½ der Textbereich werden soll. Insbesondere wird
 /*N*/ 			//     hier entschieden, ob der Text umgebrochen werden soll oder nicht!
 /*N*/ 			SetTextAttributes (aTextAttr);
 /*N*/ 			Size aSize = CalcTextSizeOfOneText (eOrient, aTextAttr, pOutliner, MaximumWidth,TRUE,
@@ -475,7 +475,7 @@ namespace binfilter {
 
 /*************************************************************************
 |*
-|* Text-H”he ermitteln
+|* Text-Hï¿½he ermitteln
 |*
 \************************************************************************/
 
@@ -487,7 +487,7 @@ namespace binfilter {
 \************************************************************************/
 
 //
-// schneller machen, es muß nicht alles neu gebaut werden
+// schneller machen, es muï¿½ nicht alles neu gebaut werden
 //
 
 /*N*/ void ChartModel::InitDataAttrs()
@@ -966,12 +966,12 @@ namespace binfilter {
 /*N*/ 	{
 /*N*/ 		//TVM: In einigen Bereichen macht Umbruch keinen Sinn, da die Breite steigt (90 bzw.
 /*N*/ 		//270 Grad ist der triviale Fall!) Der genaue Bereich ist hier nicht festgelegt,
-/*N*/ 		//denn jeder andere Fall ist leider nicht trivial! (Abhängig davon, wieviele Zeichen
+/*N*/ 		//denn jeder andere Fall ist leider nicht trivial! (Abhï¿½ngig davon, wieviele Zeichen
 /*N*/ 		//und welche umgebrochen werden, 2 Beispiele:
 /*N*/ 		// 1. nur ein 'i' wird umgebrochen    => Text wird fast immer breiter (ausser bei ~ 0 Grad)
 /*N*/ 		// 2. der halbe Text wird umgebrochen => fast immer sinnvoll
 /*N*/ 		//Die genaue Berechnung erfordert einen Test und ein Undo, wenn es breiter wird
-/*N*/ 		//Im folgenden wird einfach die Mitte genommen -> 90% - Lösung
+/*N*/ 		//Im folgenden wird einfach die Mitte genommen -> 90% - Lï¿½sung
 /*N*/ 		bBreakOK =!(   ((nDegrees > 4500) && (nDegrees < 13500))
 /*N*/ 					|| ((nDegrees >22500) && (nDegrees < 31500)));
 /*N*/
@@ -1038,8 +1038,8 @@ namespace binfilter {
 /*?*/ 				pInOutliner->SetParaAttribs(i, aAttr);
 /*?*/ 			}
 /*?*/
-/*?*/ 			//#50395# durch Bindestriche vergrößert worden->
-/*?*/ 			//statt 2 werden jetzt 3 Zeilen benötigt
+/*?*/ 			//#50395# durch Bindestriche vergrï¿½ï¿½ert worden->
+/*?*/ 			//statt 2 werden jetzt 3 Zeilen benï¿½tigt
 /*?*/ 			ULONG nActLines = 0;
 /*?*/ 			for( USHORT n = 0; n < pInOutliner->GetParagraphCount(); n++ )
 /*?*/ 			{

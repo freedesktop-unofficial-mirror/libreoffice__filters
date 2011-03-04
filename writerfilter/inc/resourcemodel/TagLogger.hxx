@@ -47,6 +47,10 @@ namespace writerfilter
     public:
         typedef boost::shared_ptr<IdToString> Pointer_t;
         virtual std::string toString(const Id & id) const = 0;
+        void addAttr(string name, const ::rtl::OUString & value);
+        void addAttr(string name, sal_uInt32 nValue);
+        void addAttr(string name, uno::Any rAny);
+        void chars(const ::rtl::OUString & rChars);
     };
     
     class WRITERFILTER_DLLPUBLIC TagLogger
@@ -57,6 +61,7 @@ namespace writerfilter
     private:
         xmlTextWriterPtr pWriter;
         const char* pName;
+        string mFileName;
 
         TagLogger(const char* name);
         
@@ -83,6 +88,8 @@ namespace writerfilter
         void propertySet(writerfilter::Reference<Properties>::Pointer_t props,
                 IdToString::Pointer_t pIdToString);
     };
+
+WRITERFILTER_DLLPUBLIC XMLTag::Pointer_t unoPropertySetToTag(uno::Reference<beans::XPropertySet> rPropSet);
 }
 
 #endif // DEBUG

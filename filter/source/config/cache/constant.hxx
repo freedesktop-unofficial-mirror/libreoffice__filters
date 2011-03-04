@@ -167,7 +167,7 @@ extern rtl::OUString pFilterStrings[];
 #define  FLAGVAL_ENCRYPTION        0x01000000 // 16777216
 #define  FLAGVAL_PASSWORDTOMODIFY  0x02000000 // 33554432
 #define  FLAGVAL_PREFERRED         0x10000000 // 268435456
-#define  FLAGVAL_STARTPRESENTATION 0x20000000 // 268435456
+#define  FLAGVAL_STARTPRESENTATION 0x20000000 // 536870912
 #define  FLAGVAL_ALL               0xffffffff // 4294967295
 
 /** @short  uno service names of our document services

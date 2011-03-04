@@ -41,8 +41,7 @@ DEPTARGET=vios2met
 CDEFS+= -DEDITDEBUG
 .ENDIF
 .IF "$(L10N_framework)"==""
-SLOFILES =  $(EXCEPTIONSFILES)
-EXCEPTIONSFILES = $(SLO)$/ios2met.obj
+SLOFILES =  $(SLO)$/ios2met.obj
 
 # ==========================================================================
 

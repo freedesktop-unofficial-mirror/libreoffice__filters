@@ -31,14 +31,17 @@
 
 #include <map>
 #include <com/sun/star/uno/XInterface.hpp>
+#include "oox/helper/refvector.hxx"
 #include "oox/helper/storagebase.hxx"
+#include "oox/dllapi.h"
 
 namespace com { namespace sun { namespace star {
     namespace container { class XNameContainer; }
     namespace document { class XEventsSupplier; }
     namespace frame { class XModel; }
     namespace script { class XLibraryContainer; }
-    namespace lang { class XMultiServiceFactory; }
+    namespace script { namespace vba { class XVBAMacroResolver; } }
+    namespace uno { class XComponentContext; }
 } } }
 
 namespace oox { class GraphicHelper; }
@@ -48,11 +51,11 @@ namespace ole {
 
 // ============================================================================
 
-class VbaFilterConfig
+class OOX_DLLPUBLIC VbaFilterConfig
 {
 public:
     explicit            VbaFilterConfig(
-                            const ::com::sun::star::uno::Reference< ::com::sun::star::lang::XMultiServiceFactory >& rxGlobalFactory,
+                            const ::com::sun::star::uno::Reference< ::com::sun::star::uno::XComponentContext >& rxContext,
                             const ::rtl::OUString& rConfigCompName );
                         ~VbaFilterConfig();
 
@@ -70,24 +73,6 @@ private:
 
 // ============================================================================
 
-class VbaProject : public VbaFilterConfig
-{
-public:
-    explicit            VbaProject(
-                            const ::com::sun::star::uno::Reference< ::com::sun::star::lang::XMultiServiceFactory >& rxGlobalFactory,
-                            const ::com::sun::star::uno::Reference< ::com::sun::star::frame::XModel >& rxDocModel,
-                            const ::rtl::OUString& rConfigCompName );
-    virtual             ~VbaProject();
-
-    /** Imports the entire VBA project from the passed storage.
-
-        @param rVbaPrjStrg  The root storage of the entire VBA project.
-     */
-    void                importVbaProject(
-                            StorageBase& rVbaPrjStrg,
-                            const GraphicHelper& rGraphicHelper,
-                            bool bDefaultColorBgr = true );
-
     /** Returns true, if the document contains at least one code module. */
     bool                hasModules() const;
     /** Returns true, if the document contains the specified code module. */
@@ -99,6 +84,15 @@ public:
     bool                hasDialog( const ::rtl::OUString& rDialogName ) const;
 
     void                setOleOverridesSink( ::com::sun::star::uno::Reference< ::com::sun::star::container::XNameContainer >&  rxOleOverridesSink ){ mxOleOverridesSink = rxOleOverridesSink; }
+protected:
+    /** Registers a dummy module that will be created when the VBA project is
+        imported. */
+    void                addDummyModule( const ::rtl::OUString& rName, sal_Int32 nType );
+
+    /** Called when the import process of the VBA project has been started. */
+    virtual void        prepareImport();
+    /** Called when the import process of the VBA project is finished. */
+    virtual void        finalizeImport();
 
 private:
                         VbaProject( const VbaProject& );
@@ -116,6 +110,7 @@ private:
     /** Creates and returns the dialog library of the document used for import. */
     ::com::sun::star::uno::Reference< ::com::sun::star::container::XNameContainer >
                         createDialogLibrary();
+
     /** Imports the VBA code modules and forms. */
     void                importVba(
                             StorageBase& rVbaPrjStrg,
@@ -125,20 +120,11 @@ private:
     /** Copies the entire VBA project storage to the passed document model. */
     void                copyStorage( StorageBase& rVbaPrjStrg );
 
-
-protected:
-    /** Registers a dummy module that will be created when the VBA project is
-        imported. */
-    void                addDummyModule( const ::rtl::OUString& rName, sal_Int32 nType );
-
-    /** Called when the import process of the VBA code modules starts. */
-    virtual void        prepareModuleImport();
-
 private:
-    typedef ::std::map< ::rtl::OUString, sal_Int32 > DummyModuleMap;
+    typedef ::std::map< ::rtl::OUString, sal_Int32 >    DummyModuleMap;
 
-    ::com::sun::star::uno::Reference< ::com::sun::star::lang::XMultiServiceFactory >
-                        mxGlobalFactory;    /// Global service factory.
+    ::com::sun::star::uno::Reference< ::com::sun::star::uno::XComponentContext >
+                        mxCompContext;      /// Component context with service manager.
     ::com::sun::star::uno::Reference< ::com::sun::star::frame::XModel >
                         mxDocModel;         /// Document model used to import/export the VBA project.
     ::com::sun::star::uno::Reference< ::com::sun::star::container::XNameContainer >

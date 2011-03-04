@@ -517,7 +517,7 @@ namespace binfilter {
 /*N*/ 	}
 /*N*/
 /*N*/ 	ChartScene *pLclScene=GetScene();
-/*N*/ 	if(pLclScene) //ToDo: Ist das hier nötig??? warum nicht direkt rAttr? #63904#
+/*N*/ 	if(pLclScene) //ToDo: Ist das hier nï¿½tig??? warum nicht direkt rAttr? #63904#
 /*N*/ 	{
 /*N*/ 		SfxItemSet aSceneSet(*pItemPool,nRowWhichPairs);
 /*N*/ 		aSceneSet.Put(rAttr);
@@ -868,7 +868,7 @@ namespace binfilter {
 /*N*/ 	}
 /*N*/ }
 
-//Übertragung der Page-Objekt-Attribute in die Modeleigenen AttrSets
+//ï¿½bertragung der Page-Objekt-Attribute in die Modeleigenen AttrSets
 /*N*/ void ChartModel::Rescue3DObjAttr(SdrObjList* pList)//#52277#
 /*N*/ {
 /*N*/ 	CHART_TRACE( "ChartModel::Rescue3DObjAttr" );
@@ -1245,11 +1245,11 @@ private:
 /*N*/ 	{
 /*N*/ 		RTL_LOGFILE_CONTEXT_AUTHOR (context2,
 /*N*/ 			"sch", "af119097", "::ChartModel::BuildChart not locked");
-/*N*/ 		//nicht ganz so schön, aber vorteilhaft. Hiermit wird ein Itemset mit
-/*N*/ 		//Attributen gefüllt, die beim Einfügen etc. als default benutzt werden
+/*N*/ 		//nicht ganz so schï¿½n, aber vorteilhaft. Hiermit wird ein Itemset mit
+/*N*/ 		//Attributen gefï¿½llt, die beim Einfï¿½gen etc. als default benutzt werden
 /*N*/ 		//(SetDefAttrRow). Da an dieser Stelle ein Defaultset erstellt wird, sind
 /*N*/ 		//auch Chart-globale Items gleich gesetzt (Shape3D, Fehlerbalken,Datenbeschriftung)
-/*N*/ 		//lediglich die Linien oder Flächenfarbe muss generiert werden!
+/*N*/ 		//lediglich die Linien oder Flï¿½chenfarbe muss generiert werden!
 /*N*/ 		//Alternative: nur in ChangeChart defaults erstellen
 /*N*/ 		if( pChartData )
 /*N*/ 		{
@@ -1265,7 +1265,7 @@ private:
 /*N*/ 					pDummyAttr->Put( GetDataRowAttr( 0 ));
 /*N*/ 		}
 /*N*/
-/*N*/ 		//Hotfix für OLE-Charts #54884# Die Wurzel des Übels liegt möglicherweise irgendwo anders!
+/*N*/ 		//Hotfix fï¿½r OLE-Charts #54884# Die Wurzel des ï¿½bels liegt mï¿½glicherweise irgendwo anders!
 /*N*/ 		if(!pRefOutDev)
 /*N*/ 		{
 /*?*/ 			if(pChartRefOutDev)
@@ -1506,7 +1506,7 @@ private:
 /*N*/             }
 /*N*/ 		}
 /*N*/ 	}
-/*N*/ 	//Jetzt sollen sich die Objekte wieder drum kümmern, da?das Model die Attribute erhält
+/*N*/ 	//Jetzt sollen sich die Objekte wieder drum kï¿½mmern, da?das Model die Attribute erhï¿½lt
 /*N*/ 	SetAttrAutoStorage(TRUE);
 /*N*/ 	SetDiagramRectangle( aChartRect );
 /*N*/ 	eOldChartStyle = eChartStyle;
@@ -1530,7 +1530,7 @@ private:
 /*N*/ 		SetZAxisTitleHasBeenMoved(FALSE);
 /*N*/ 		if((IsReal3D() && IsPieChart()))
 /*N*/ 		{
-/*?*/ 			Matrix4D aMatrix; //Reset der Matrix.... könnte man auch grundsätzlich machen?
+/*?*/ 			Matrix4D aMatrix; //Reset der Matrix.... kï¿½nnte man auch grundsï¿½tzlich machen?
 /*?*/ 			aMatrix.RotateX(-F_PI/3);
 /*?*/ 			aSceneMatrix=aMatrix;
 /*?*/ 			if(pScene)

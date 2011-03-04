@@ -105,7 +105,7 @@ void StreamProtocol::utext(const sal_uInt8 * data, size_t len)
 
     m_pTagLogger->startElement("protocol-utext");
     m_pTagLogger->chars(sText);
-    m_pTagLogger->endElement();
+    m_pTagLogger->endElement("protocol-utext");
 
     m_pStream->utext(data, len);
 }

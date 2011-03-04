@@ -99,7 +99,7 @@ ScSpew ScInterpreter::theSpew;
 #endif
 
 //-------------------------------------------------------------------------
-// Funktionen für den Zugriff auf das Document
+// Funktionen fï¿½r den Zugriff auf das Document
 //-------------------------------------------------------------------------
 
 

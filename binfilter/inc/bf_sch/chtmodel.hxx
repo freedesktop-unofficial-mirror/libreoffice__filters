@@ -269,7 +269,7 @@ public:
 
     //Einige (bald alle) Objekte setzen durch Implementation der NbcSetAttributes-Methode
     //die ChartModel-Attributsspeicher automatisch. Dies ist nicht immer notwendig und
-    //sollte dann abgeschaltet werden, z.B. während des BuildChart
+    //sollte dann abgeschaltet werden, z.B. wï¿½hrend des BuildChart
 
     /** Most chart objects have overloaded NbcSetAttributes methods for setting
         draw items at the object specific item sets. This is not always

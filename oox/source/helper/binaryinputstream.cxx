@@ -27,26 +27,31 @@
  ************************************************************************/
 
 #include "oox/helper/binaryinputstream.hxx"
+
 #include <string.h>
 #include <vector>
 #include <rtl/strbuf.hxx>
 #include <rtl/ustrbuf.hxx>
 #include "oox/helper/binaryoutputstream.hxx"
 
+namespace oox {
+
+// ============================================================================
+
+using namespace ::com::sun::star::io;
+using namespace ::com::sun::star::uno;
+
 using ::rtl::OString;
 using ::rtl::OStringBuffer;
 using ::rtl::OStringToOUString;
 using ::rtl::OUString;
 using ::rtl::OUStringBuffer;
-using ::com::sun::star::uno::UNO_QUERY;
-using ::com::sun::star::uno::Reference;
-using ::com::sun::star::uno::Exception;
-using ::com::sun::star::io::XInputStream;
-using ::com::sun::star::io::XSeekable;
 
-namespace oox {
+namespace {
 
 const sal_Int32 INPUTSTREAM_BUFFERSIZE      = 0x8000;
+
+} // namespace
 
 // ============================================================================
 
@@ -270,6 +275,66 @@ bool RelativeInputStream::isSeekable() const
 {
     return mrInStrm.isSeekable();
 }
+
+sal_Int64 RelativeInputStream::getLength() const
+{
+    return mnLength;
+}
+
+sal_Int64 RelativeInputStream::tell() const
+{
+    return mnRelPos;
+}
+
+void RelativeInputStream::seek( sal_Int64 nPos )
+{
+    if( mrInStrm.isSeekable() && (mnStartPos >= 0) )
+    {
+        mnRelPos = getLimitedValue< sal_Int64, sal_Int64 >( nPos, 0, mnLength );
+        mrInStrm.seek( mnStartPos + mnRelPos );
+        mbEof = (mnRelPos != nPos) || mrInStrm.isEof();
+    }
+}
+
+sal_Int32 RelativeInputStream::readData( StreamDataSequence& orData, sal_Int32 nBytes )
+{
+    sal_Int32 nReadBytes = 0;
+    if( !mbEof )
+    {
+        sal_Int32 nRealBytes = getLimitedValue< sal_Int32, sal_Int64 >( nBytes, 0, mnLength - mnRelPos );
+        nReadBytes = mrInStrm.readData( orData, nRealBytes );
+        mnRelPos += nReadBytes;
+        mbEof = (nRealBytes < nBytes) || mrInStrm.isEof();
+    }
+    return nReadBytes;
+}
+
+sal_Int32 RelativeInputStream::readMemory( void* opMem, sal_Int32 nBytes )
+{
+    sal_Int32 nReadBytes = 0;
+    if( !mbEof )
+    {
+        sal_Int32 nRealBytes = getLimitedValue< sal_Int32, sal_Int64 >( nBytes, 0, mnLength - mnRelPos );
+        nReadBytes = mrInStrm.readMemory( opMem, nRealBytes );
+        mnRelPos += nReadBytes;
+        mbEof = (nRealBytes < nBytes) || mrInStrm.isEof();
+    }
+    return nReadBytes;
+}
+
+void RelativeInputStream::skip( sal_Int32 nBytes )
+{
+    if( !mbEof )
+    {
+        sal_Int32 nSkipBytes = getLimitedValue< sal_Int32, sal_Int64 >( nBytes, 0, mnLength - mnRelPos );
+        mrInStrm.skip( nSkipBytes );
+        mnRelPos += nSkipBytes;
+        mbEof = nSkipBytes < nBytes;
+    }
+}
+
+// ============================================================================
+
 
 sal_Int64 RelativeInputStream::getLength() const
 {

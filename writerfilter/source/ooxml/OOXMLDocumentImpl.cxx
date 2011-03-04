@@ -355,7 +355,7 @@ void OOXMLDocumentImpl::resolve(Stream & rStream)
     }
 
 #ifdef DEBUG_RESOLVE
-    debug_logger->endElement();
+    debug_logger->endElement("OOXMLDocumentImpl.resolve");
 #endif
 }
 

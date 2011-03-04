@@ -58,7 +58,7 @@ private:
 
     ULONG				nLastPercent;
 
-    SvStream &m_rPCD;
+    SvStream*			pPCD;
     BitmapWriteAccess*	mpAcc;
 
     BYTE				nOrientation;	// Ausrichtung des Bildes in der PCD-Datei:
@@ -89,23 +89,21 @@ private:
 
 public:
 
-    PCDReader(SvStream &rStream)
-        : m_rPCD(rStream)
-    {
-    }
+    PCDReader() {}
     ~PCDReader() {}
 
-    BOOL ReadPCD( Graphic & rGraphic, FilterConfigItem* pConfigItem );
+    BOOL ReadPCD( SvStream & rPCD, Graphic & rGraphic, FilterConfigItem* pConfigItem );
 };
 
 //=================== Methoden von PCDReader ==============================
 
-BOOL PCDReader::ReadPCD( Graphic & rGraphic, FilterConfigItem* pConfigItem )
+BOOL PCDReader::ReadPCD( SvStream & rPCD, Graphic & rGraphic, FilterConfigItem* pConfigItem )
 {
     Bitmap		 aBmp;
 
     bStatus      = TRUE;
     nLastPercent = 0;
+    pPCD         = &rPCD;
 
     MayCallback( 0 );
 
@@ -196,8 +194,8 @@ void PCDReader::CheckPCDImagePacFile()
 {
     char Buf[ 8 ];
 
-    m_rPCD.Seek( 2048 );
-    m_rPCD.Read( Buf, 7 );
+    pPCD->Seek( 2048 );
+    pPCD->Read( Buf, 7 );
     Buf[ 7 ] = 0;
     if ( ByteString( Buf ).CompareTo( "PCD_IPI" ) != COMPARE_EQUAL )
         bStatus = FALSE;
@@ -209,8 +207,8 @@ void PCDReader::ReadOrientation()
 {
     if ( bStatus == FALSE )
         return;
-    m_rPCD.Seek( 194635 );
-    m_rPCD >> nOrientation;
+    pPCD->Seek( 194635 );
+    *pPCD >> nOrientation;
     nOrientation &= 0x03;
 }
 
@@ -257,13 +255,13 @@ void PCDReader::ReadImage(ULONG nMinPercent, ULONG nMaxPercent)
         return;
     }
 
-    m_rPCD.Seek( nImagePos );
+    pPCD->Seek( nImagePos );
 
     // naechstes Zeilen-Paar := erstes Zeile-Paar:
-    m_rPCD.Read( pL0N, nWidth );
-    m_rPCD.Read( pL1N, nWidth );
-    m_rPCD.Read( pCbN, nW2 );
-    m_rPCD.Read( pCrN, nW2 );
+    pPCD->Read( pL0N, nWidth );
+    pPCD->Read( pL1N, nWidth );
+    pPCD->Read( pCbN, nW2 );
+    pPCD->Read( pCrN, nW2 );
     pCbN[ nW2 ] = pCbN[ nW2 - 1 ];
     pCrN[ nW2 ] = pCrN[ nW2 - 1 ];
 
@@ -278,10 +276,10 @@ void PCDReader::ReadImage(ULONG nMinPercent, ULONG nMaxPercent)
         // naechstes Zeilen-Paar holen:
         if ( nYPair < nH2 - 1 )
         {
-            m_rPCD.Read( pL0N, nWidth );
-            m_rPCD.Read( pL1N, nWidth );
-            m_rPCD.Read( pCbN, nW2 );
-            m_rPCD.Read( pCrN, nW2 );
+            pPCD->Read( pL0N, nWidth );
+            pPCD->Read( pL1N, nWidth );
+            pPCD->Read( pCbN, nW2 );
+            pPCD->Read( pCrN, nW2 );
             pCbN[nW2]=pCbN[ nW2 - 1 ];
             pCrN[nW2]=pCrN[ nW2 - 1 ];
         }
@@ -371,7 +369,7 @@ void PCDReader::ReadImage(ULONG nMinPercent, ULONG nMaxPercent)
             }
         }
 
-        if ( m_rPCD.GetError() )
+        if ( pPCD->GetError() )
             bStatus = FALSE;
         MayCallback( nMinPercent + ( nMaxPercent - nMinPercent ) * nYPair / nH2 );
         if ( bStatus == FALSE )
@@ -391,34 +389,8 @@ void PCDReader::ReadImage(ULONG nMinPercent, ULONG nMaxPercent)
 
 extern "C" BOOL __LOADONCALLAPI GraphicImport(SvStream & rStream, Graphic & rGraphic, FilterConfigItem* pConfigItem, BOOL )
 {
-    PCDReader aPCDReader(rStream);
-    return aPCDReader.ReadPCD(rGraphic, pConfigItem);
+    PCDReader aPCDReader;
+    return aPCDReader.ReadPCD( rStream, rGraphic, pConfigItem );
 }
-
-//============================= fuer Windows ==================================
-
-#ifdef WIN
-
-static HINSTANCE hDLLInst = 0;      // HANDLE der DLL
-
-extern "C" int CALLBACK LibMain( HINSTANCE hDLL, WORD, WORD nHeap, LPSTR )
-{
-#ifndef WNT
-    if ( nHeap )
-        UnlockData( 0 );
-#endif
-
-    hDLLInst = hDLL;
-
-    return TRUE;
-}
-
-extern "C" int CALLBACK WEP( int )
-{
-    return 1;
-}
-
-#endif
-
 
 /* vim:set shiftwidth=4 softtabstop=4 expandtab: */

@@ -70,16 +70,7 @@ SHL1STDLIBS= \
         $(SALLIB)		\
         $(BASEGFXLIB)	\
         $(SAXLIB)       \
-        $(XMLSCRIPTLIB) \
-        $(VCLLIB)		\
-        $(GOODIESLIB)		\
-        $(SVTOOLLIB)		\
-        $(SVXCORELIB)		\
-        $(SVLLIB)	\
-        $(MSFILTERLIB)	\
-        $(UNOTOOLSLIB)	\
-        $(XMLOFFLIB)    \
-        $(TOOLSLIB)
+        $(XMLSCRIPTLIB)
 
 # link openssl, copied this bit from ucb/source/ucp/webdav/makefile.mk
 .IF "$(GUI)"=="WNT"
@@ -104,3 +95,11 @@ DEFLIB1NAME =$(TARGET)
 .ENDIF # L10N_framework
 
 .INCLUDE :  target.mk
+
+ALLTAR : $(MISC)/oox.component
+
+$(MISC)/oox.component .ERRREMOVE : $(SOLARENV)/bin/createcomponent.xslt \
+        oox.component
+    $(XSLTPROC) --nonet --stringparam uri \
+        '$(COMPONENTPREFIX_BASIS_NATIVE)$(SHL1TARGETN:f)' -o $@ \
+        $(SOLARENV)/bin/createcomponent.xslt oox.component

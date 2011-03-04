@@ -847,6 +847,10 @@ void import( VBA_Impl& rVBA )
 };
 
 
+#include <com/sun/star/script/ModuleType.hpp>
+
+using namespace ::com::sun::star::script;
+
 /*
 A few urls which may in the future be of some use
 http://www.virusbtn.com/vb2000/Programme/papers/bontchev.pdf

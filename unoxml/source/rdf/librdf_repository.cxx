@@ -42,6 +42,7 @@
 
 #include <libxslt/security.h>
 
+// #i114999# do not include librdf.h, it is broken in redland 1.0.11
 #include <redland.h>
 
 #include <com/sun/star/lang/XServiceInfo.hpp>

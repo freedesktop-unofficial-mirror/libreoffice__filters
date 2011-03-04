@@ -38,7 +38,7 @@
 
 #include <vcl/lstbox.hxx>
 
-#include <vcl/imagebtn.hxx>
+#include <vcl/button.hxx>
 
 #include <vcl/combobox.hxx>
 

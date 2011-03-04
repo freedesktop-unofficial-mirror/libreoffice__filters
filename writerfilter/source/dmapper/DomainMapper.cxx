@@ -200,7 +200,7 @@ void DomainMapper::attribute(Id nName, Value & val)
     dmapper_logger->startElement("attribute");
     dmapper_logger->attribute("name", (*QNameToString::Instance())(nName));
     dmapper_logger->attribute("value", val.toString());
-    dmapper_logger->endElement();
+    dmapper_logger->endElement("attribute");
 #endif
     static ::rtl::OUString sLocalBookmarkName;
     sal_Int32 nIntValue = val.getInt();
@@ -1646,6 +1646,7 @@ void DomainMapper::attribute(Id nName, Value & val)
         m_pImpl->RemoveCurrentRedline( );
     break;
     case NS_ooxml::LN_CT_DocGrid_linePitch:
+            /* WRITERFILTERSTATUS: done: 100, planned: 0.5, spent: 0 */
             {
                 //see SwWW8ImplReader::SetDocumentGrid
                 OSL_ENSURE(pSectionContext, "SectionContext unavailable!");
@@ -1656,6 +1657,7 @@ void DomainMapper::attribute(Id nName, Value & val)
             }
         break;  
             case NS_ooxml::LN_CT_DocGrid_charSpace:
+                /* WRITERFILTERSTATUS: done: 100, planned: 2, spent: 0 */
             {
                 OSL_ENSURE(pSectionContext, "SectionContext unavailable!");
                 if(pSectionContext)
@@ -1665,6 +1667,7 @@ void DomainMapper::attribute(Id nName, Value & val)
             }    
             break;
             case NS_ooxml::LN_CT_DocGrid_type:
+                /* WRITERFILTERSTATUS: done: 100, planned: 2, spent: 0 */
             {
                 if (pSectionContext != NULL)
                 {
@@ -2084,6 +2087,7 @@ void DomainMapper::sprm( Sprm& rSprm, PropertyMapPtr rContext, SprmType eSprmTyp
 
         break;  // sprmPFBiDi
     case NS_ooxml::LN_EG_SectPrContents_bidi:
+        /* WRITERFILTERSTATUS: done: 100, planned: 2, spent: 0 */
         if (pSectionContext != NULL)
             pSectionContext->Insert(PROP_WRITING_MODE,false, uno::makeAny( text::WritingMode2::RL_TB));
         break;
@@ -2244,7 +2248,7 @@ void DomainMapper::sprm( Sprm& rSprm, PropertyMapPtr rContext, SprmType eSprmTyp
 #ifdef DEBUG_DOMAINMAPPER
                         dmapper_logger->startElement("charWeight");
                         dmapper_logger->attribute("weight", nIntValue ? awt::FontWeight::BOLD : awt::FontWeight::NORMAL);
-                        dmapper_logger->endElement();
+                        dmapper_logger->endElement("charWeight");
 #endif
 
                         rContext->Insert(ePropertyId, true, aBold );
@@ -3380,6 +3384,7 @@ void DomainMapper::sprm( Sprm& rSprm, PropertyMapPtr rContext, SprmType eSprmTyp
     case NS_ooxml::LN_EG_SectPrContents_formProt: //section protection, only form editing is enabled - unsupported
     case NS_ooxml::LN_EG_SectPrContents_vAlign:
     case NS_ooxml::LN_EG_RPrBase_fitText:
+            /* WRITERFILTERSTATUS: done: 0, planned: 0, spent: 0 */
     break;
     case NS_ooxml::LN_ffdata:
     {
@@ -3399,14 +3404,14 @@ void DomainMapper::sprm( Sprm& rSprm, PropertyMapPtr rContext, SprmType eSprmTyp
             dmapper_logger->startElement("unhandled");
             dmapper_logger->attribute("id", nSprmId);
             dmapper_logger->attribute("name", rSprm.getName());
-            dmapper_logger->endElement();
+            dmapper_logger->endElement("unhandled");
 #endif
         }
     }
     
 #ifdef DEBUG_DOMAINMAPPER
-    rContext->dumpXml(dmapper_logger);
-    dmapper_logger->endElement();
+    dmapper_logger->addTag(rContext->toTag());
+    dmapper_logger->endElement("DomainMapper.sprm");
 #endif
 }
 /*-- 09.06.2006 09:52:13---------------------------------------------------
@@ -3422,7 +3427,7 @@ void DomainMapper::entry(int /*pos*/,
     ref->resolve(*this);
     
 #ifdef DEBUG_DOMAINMAPPER
-    dmapper_logger->endElement();
+    dmapper_logger->endElement("DomainMapper.entry");
 #endif
 }
 /*-- 09.06.2006 09:52:13---------------------------------------------------
@@ -3515,7 +3520,7 @@ void DomainMapper::endShape( )
     m_pImpl->PopShapeContext( );
     
 #ifdef DEBUG_DOMAINMAPPER
-    dmapper_logger->endElement();
+    dmapper_logger->endElement("shape");
 #endif    
 }
 
@@ -3593,7 +3598,7 @@ void DomainMapper::text(const sal_uInt8 * data_, size_t len)
 #ifdef DEBUG_DOMAINMAPPER
     dmapper_logger->startElement("text");
     dmapper_logger->chars(sText);
-    dmapper_logger->endElement();
+    dmapper_logger->endElement("text");
 #endif
 
     try
@@ -3682,7 +3687,7 @@ void DomainMapper::utext(const sal_uInt8 * data_, size_t len)
 #ifdef DEBUG_DOMAINMAPPER
     dmapper_logger->startElement("utext");
     dmapper_logger->chars(sText);
-    dmapper_logger->endElement();
+    dmapper_logger->endElement("utext");
 #endif
 
     try
