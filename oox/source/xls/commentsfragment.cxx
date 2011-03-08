@@ -48,6 +48,7 @@ CommentsFragment::CommentsFragment( const WorksheetHelper& rHelper, const OUStri
 
 ContextHandlerRef CommentsFragment::onCreateContext( sal_Int32 nElement, const AttributeList& rAttribs )
 {
+    maElementText = OUString();
     switch( getCurrentElement() )
     {
         case XML_ROOT_CONTEXT:
@@ -87,9 +88,11 @@ void CommentsFragment::onCharacters( const OUString& rChars )
 {
     if( isCurrentElement( XLS_TOKEN( author ) ) )
         getComments().appendAuthor( rChars );
+    else
+        maElementText = rChars;
 }
 
-void CommentsFragment::onEndElement( const OUString& rChars )
+void CommentsFragment::onEndElement( )
 {
     bool bFrom = false;
     if( getParentElement() == XDR_TOKEN( from ) )
@@ -100,7 +103,7 @@ void CommentsFragment::onEndElement( const OUString& rChars )
         case XDR_TOKEN( colOff ):
         case XDR_TOKEN( row ):
         case XDR_TOKEN( rowOff ):
-            mxComment->importAnchor( bFrom, getCurrentElement(), rChars );
+            mxComment->importAnchor( bFrom, getCurrentElement(), maElementText );
             break;
         case XLS_TOKEN( comment ):
             mxComment.reset();
