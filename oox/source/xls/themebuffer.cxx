@@ -27,7 +27,7 @@
  ************************************************************************/
 
 #include "oox/xls/themebuffer.hxx"
-#include "tokens.hxx"
+#include "oox/token/tokens.hxx"
 
 #include "oox/xls/stylesbuffer.hxx"
 

@@ -46,7 +46,7 @@ public:
 protected:
     virtual ::oox::core::ContextHandlerRef onCreateContext( sal_Int32 nElement, const AttributeList& rAttribs );
     virtual void        onCharacters( const ::rtl::OUString& rChars );
-    virtual void        onEndElement();
+    virtual void        onEndElement( const ::rtl::OUString& rChars );
 
     virtual ::oox::core::ContextHandlerRef onCreateRecordContext( sal_Int32 nRecId, SequenceInputStream& rStrm );
     virtual void        onEndRecord();

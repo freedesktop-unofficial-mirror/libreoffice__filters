@@ -89,10 +89,10 @@ void CommentsFragment::onCharacters( const OUString& rChars )
         getComments().appendAuthor( rChars );
 }
 
-void OoxCommentsFragment::onEndElement( const OUString& rChars )
+void CommentsFragment::onEndElement( const OUString& rChars )
 {
     bool bFrom = false;
-    if( getPreviousElement() == XDR_TOKEN( from ) )
+    if( getParentElement() == XDR_TOKEN( from ) )
         bFrom = true;
     switch( getCurrentElement() )
     {

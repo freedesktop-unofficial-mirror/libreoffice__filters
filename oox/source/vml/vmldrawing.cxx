@@ -128,6 +128,7 @@ void Drawing::registerBlockId( sal_Int32 nBlockId )
         BlockIdVector::iterator aIt = ::std::lower_bound( maBlockIds.begin(), maBlockIds.end(), nBlockId );
         if( (aIt == maBlockIds.end()) || (nBlockId != *aIt) )
             maBlockIds.insert( aIt, nBlockId );
+    }
 }
 
 void Drawing::registerOleObject( const OleObjectInfo& rOleObject )

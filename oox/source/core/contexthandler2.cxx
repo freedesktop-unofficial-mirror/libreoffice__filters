@@ -49,7 +49,7 @@ struct ElementInfo
     sal_Int32           mnElement;          /// The element identifier.
     bool                mbTrimSpaces;       /// True = trims leading/trailing spaces from text data.
 
-    explicit            ElementInfo();
+    inline explicit     ElementInfo() : mnElement( XML_TOKEN_INVALID ), mbTrimSpaces( false ) {}
                         ElementInfo( sal_Int32 nElement ) : mnElement( nElement ), mbTrimSpaces(false) {}
 };
 

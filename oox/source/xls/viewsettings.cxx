@@ -678,13 +678,6 @@ void ViewSettings::importOleSize( SequenceInputStream& rStrm )
     mbValidOleSize = getAddressConverter().convertToCellRange( maOleSize, aBinRange, 0, true, false );
 }
 
-void ViewSettings::importOleSize( RecordInputStream& rStrm )
-{
-    BinRange aBinRange;
-    rStrm >> aBinRange;
-    mbValidOleSize = getAddressConverter().convertToCellRange( maOleSize, aBinRange, 0, true, false );
-}
-
 void ViewSettings::importWindow1( BiffInputStream& rStrm )
 {
     sal_uInt16 nWinX, nWinY, nWinWidth, nWinHeight;

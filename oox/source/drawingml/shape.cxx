@@ -265,7 +265,6 @@ Reference< XShape > Shape::createAndInsert(
     awt::Rectangle aShapeRectHmm( aPosition.X / 360, aPosition.Y / 360, aSize.Width / 360, aSize.Height / 360 );
 
     OUString aServiceName = finalizeServiceName( rFilterBase, rServiceName, aShapeRectHmm );
-    sal_Bool bIsCustomShape = aServiceName.equalsAsciiL( RTL_CONSTASCII_STRINGPARAM( "com.sun.star.drawing.CustomShape" ) );
     sal_Bool bIsCustomShape = aServiceName == OUString(RTL_CONSTASCII_USTRINGPARAM("com.sun.star.drawing.CustomShape"));
 
     basegfx::B2DHomMatrix aTransformation;
@@ -437,13 +436,6 @@ Reference< XShape > Shape::createAndInsert(
 
         PropertyMap aShapeProperties;
         PropertyMap::const_iterator	aShapePropIter;
-
-        if( mxCreateCallback.get() )
-        {
-            for ( aShapePropIter = mxCreateCallback->getShapeProperties().begin();
-                aShapePropIter != mxCreateCallback->getShapeProperties().end(); ++aShapePropIter )
-                aShapeProperties[ (*aShapePropIter).first ] = (*aShapePropIter).second;
-        }
 
         // add properties from textbody to shape properties
         if( mpTextBody.get() )

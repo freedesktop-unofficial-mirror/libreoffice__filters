@@ -66,9 +66,9 @@ uno::Reference< uno::XInterface > SAL_CALL PowerPointImport_createInstance( cons
 XmlFilterBase* PowerPointImport::mpDebugFilterBase = NULL;
 #endif
 
-PowerPointImport::PowerPointImport( const uno::Reference< lang::XMultiServiceFactory > & rSMgr  )
-    : XmlFilterBase( rSMgr )
-    , mxChartConv( new ::oox::drawingml::chart::ChartConverter )
+PowerPointImport::PowerPointImport( const Reference< XComponentContext >& rxContext ) throw( RuntimeException ) :
+    XmlFilterBase( rxContext ),
+    mxChartConv( new ::oox::drawingml::chart::ChartConverter )
 {
 #if OSL_DEBUG_LEVEL > 0
     mpDebugFilterBase = this;
@@ -147,7 +147,7 @@ sal_Bool SAL_CALL PowerPointImport::filter( const Sequence< PropertyValue >& rDe
 {
     if( XmlFilterBase::filter( rDescriptor ) )
         return true;
-
+#if 0 // FIXME
     if( isExportFilter() ) {
         Reference< XExporter > xExporter( getGlobalFactory()->createInstance( CREATE_OUSTRING( "com.sun.star.comp.Impress.oox.PowerPointExport" ) ), UNO_QUERY );
 
@@ -162,7 +162,7 @@ sal_Bool SAL_CALL PowerPointImport::filter( const Sequence< PropertyValue >& rDe
             }
         }
     }
-
+#endif
     return false;
 }
 
@@ -219,6 +219,8 @@ GraphicHelper* PowerPointImport::implCreateGraphicHelper() const
 ::oox::ole::VbaProject* PowerPointImport::implCreateVbaProject() const
 {
     return new ::oox::ole::VbaProject( getComponentContext(), getModel(), CREATE_OUSTRING( "Impress" ) );
+}
+
 OUString PowerPointImport::implGetImplementationName() const
 {
     return PowerPointImport_getImplementationName();

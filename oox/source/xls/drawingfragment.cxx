@@ -47,7 +47,7 @@
 #include "oox/xls/stylesbuffer.hxx"
 #include "oox/xls/themebuffer.hxx"
 #include "oox/xls/unitconverter.hxx"
-#include "properties.hxx"
+#include "oox/token/properties.hxx"
 
 namespace oox {
 namespace xls {
@@ -837,6 +837,7 @@ Reference< XShape > VmlDrawing::createAndInsertClientXShape( const ::oox::vml::S
             break;
             
             case XML_GBox:
+            {
                 AxFrameModel& rAxModel = aControl.createModel< AxFrameModel >();
                 convertControlText( rAxModel.maFontData, rAxModel.mnTextColor, rAxModel.maCaption, pTextBox, pClientData->mnTextHAlign );
                 rAxModel.mnBorderStyle = pClientData->mbNo3D ? AX_BORDERSTYLE_SINGLE : AX_BORDERSTYLE_NONE;
@@ -878,6 +879,7 @@ Reference< XShape > VmlDrawing::createAndInsertClientXShape( const ::oox::vml::S
             }
             break;
             case XML_List:
+            {
                 AxListBoxModel& rAxModel = aControl.createModel< AxListBoxModel >();
                 convertControlFontData( rAxModel.maFontData, rAxModel.mnTextColor, maListBoxFont );
                 rAxModel.mnBorderStyle = pClientData->mbNo3D2 ? AX_BORDERSTYLE_SINGLE : AX_BORDERSTYLE_NONE;
@@ -899,6 +901,7 @@ Reference< XShape > VmlDrawing::createAndInsertClientXShape( const ::oox::vml::S
                 rAxModel.mnBorderStyle = pClientData->mbNo3D2 ? AX_BORDERSTYLE_SINGLE : AX_BORDERSTYLE_NONE;
                 rAxModel.mnSpecialEffect = pClientData->mbNo3D2 ? AX_SPECIALEFFECT_FLAT : AX_SPECIALEFFECT_SUNKEN;
                 rAxModel.mnListRows = pClientData->mnDropLines;
+            }
             break;
 
             case XML_Spin:
@@ -983,9 +986,11 @@ void VmlDrawing::notifyXShapeInserted( const Reference< XShape >& rxShape,
             // control source links
             if( (pClientData->maFmlaLink.getLength() > 0) || (pClientData->maFmlaRange.getLength() > 0) )
                 maControlConv.bindToSources( xCtrlModel, pClientData->maFmlaLink, pClientData->maFmlaRange, getSheetIndex() );
-{
-    // collect all shape positions in the WorksheetHelper base class
-    extendShapeBoundingBox( rShapeRect );
+        }
+        catch( Exception& )
+        {
+        }
+    }
 }
 
 // private --------------------------------------------------------------------

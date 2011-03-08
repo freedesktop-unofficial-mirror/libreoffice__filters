@@ -31,6 +31,8 @@
 #include <com/sun/star/chart2/XChartDocument.hpp>
 #include "oox/drawingml/chart/chartspaceconverter.hxx"
 #include "oox/drawingml/chart/chartspacemodel.hxx"
+#include "oox/helper/containerhelper.hxx"
+#include "oox/core/xmlfilterbase.hxx"
 
 using ::oox::drawingml::chart::DataSequenceModel;
 using ::com::sun::star::uno::Any;
@@ -38,6 +40,12 @@ using ::rtl::OUStringBuffer;
 namespace oox {
 namespace drawingml {
 namespace chart {
+using namespace ::com::sun::star::awt;
+using namespace ::com::sun::star::chart2;
+using namespace ::com::sun::star::chart2::data;
+using namespace ::com::sun::star::drawing;
+using namespace ::com::sun::star::uno;
+
 
 // ============================================================================
 
@@ -47,16 +55,16 @@ static const sal_Unicode API_TOKEN_ARRAY_ROWSEP    = '|';
 static const sal_Unicode API_TOKEN_ARRAY_COLSEP    = ';';
 
 // Code similar to oox/source/xls/FormulaParser.cxx
-static OUString lclGenerateApiString( const OUString& rString )
+    static ::rtl::OUString lclGenerateApiString( const ::rtl::OUString& rString )
 {
-    OUString aRetString = rString;
+    ::rtl::OUString aRetString = rString;
     sal_Int32 nQuotePos = aRetString.getLength();
     while( (nQuotePos = aRetString.lastIndexOf( '"', nQuotePos )) >= 0 )
         aRetString = aRetString.replaceAt( nQuotePos, 1, CREATE_OUSTRING( "\"\"" ) );
     return OUStringBuffer().append( sal_Unicode( '"' ) ).append( aRetString ).append( sal_Unicode( '"' ) ).makeStringAndClear();
 }
 
-static OUString lclGenerateApiArray( const Matrix< Any >& rMatrix )
+static ::rtl::OUString lclGenerateApiArray( const Matrix< Any >& rMatrix )
 {
     OSL_ENSURE( !rMatrix.empty(), "ChartConverter::lclGenerateApiArray - missing matrix values" );
     OUStringBuffer aBuffer;
@@ -68,7 +76,7 @@ static OUString lclGenerateApiArray( const Matrix< Any >& rMatrix )
         for( Matrix< Any >::const_iterator aBeg = rMatrix.row_begin( nRow ), aIt = aBeg, aEnd = rMatrix.row_end( nRow ); aIt != aEnd; ++aIt )
         {
             double fValue = 0.0;
-            OUString aString;
+            ::rtl::OUString aString;
             if( aIt != aBeg )
                 aBuffer.append( API_TOKEN_ARRAY_COLSEP );
             if( *aIt >>= fValue )
@@ -93,8 +101,8 @@ ChartConverter::~ChartConverter()
 {
 }
 
-void ChartConverter::convertFromModel( XmlFilterBase& rFilter,
-        ChartSpaceModel& rChartModel, const Reference< XChartDocument >& rxChartDoc,
+void ChartConverter::convertFromModel( ::oox::core::XmlFilterBase& rFilter,
+                                       ChartSpaceModel& rChartModel, const Reference< XChartDocument >& rxChartDoc,
         const Reference< XShapes >& rxExternalPage, const Point& rChartPos, const Size& rChartSize )
 {
     OSL_ENSURE( rxChartDoc.is(), "ChartConverter::convertFromModel - missing chart document" );
@@ -123,7 +131,7 @@ Reference< XDataSequence > ChartConverter::createDataSequence( const Reference< 
     Reference< XDataSequence > xDataSeq;
     if( rxDataProvider.is() )
     {
-        OUString aRangeRep;
+        ::rtl::OUString aRangeRep;
         if( !rDataSeq.maData.empty() )
         {
             // create a single-row array from constant source data

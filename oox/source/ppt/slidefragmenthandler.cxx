@@ -32,7 +32,7 @@
 #include <com/sun/star/beans/XMultiPropertySet.hpp>
 #include <com/sun/star/container/XNamed.hpp>
 
-#include "properties.hxx"
+#include "oox/token/properties.hxx"
 #include "oox/helper/propertyset.hxx"
 #include "oox/core/xmlfilterbase.hxx"
 #include "headerfootercontext.hxx"
@@ -96,8 +96,6 @@ Reference< XFastContextHandler > SlideFragmentHandler::createFastChildContext( s
         aPropMap[ PROP_Visible ] = Any( attribs.getBool( XML_show, sal_True ) );
         aSlideProp.setProperties( aPropMap );
 
-        break;
-    }
         break;
     }
     case PPT_TOKEN( notes ):			// CT_NotesSlide

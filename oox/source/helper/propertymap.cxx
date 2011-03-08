@@ -31,6 +31,7 @@
 #include <com/sun/star/beans/PropertyValue.hpp>
 #include <com/sun/star/beans/XPropertySet.hpp>
 #include <com/sun/star/beans/XPropertySetInfo.hpp>
+#include <com/sun/star/container/XIndexReplace.hpp>
 #include <cppuhelper/implbase2.hxx>
 #include <osl/mutex.hxx>
 #include "oox/token/propertynames.hxx"

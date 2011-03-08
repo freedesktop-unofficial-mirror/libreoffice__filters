@@ -335,66 +335,6 @@ void RelativeInputStream::skip( sal_Int32 nBytes )
 
 // ============================================================================
 
-
-sal_Int64 RelativeInputStream::getLength() const
-{
-    return mnLength;
-}
-
-sal_Int64 RelativeInputStream::tell() const
-{
-    return mnRelPos;
-}
-
-void RelativeInputStream::seek( sal_Int64 nPos )
-{
-    if( mrInStrm.isSeekable() && (mnStartPos >= 0) )
-    {
-        mnRelPos = getLimitedValue< sal_Int64, sal_Int64 >( nPos, 0, mnLength );
-        mrInStrm.seek( mnStartPos + mnRelPos );
-        mbEof = (mnRelPos != nPos) || mrInStrm.isEof();
-    }
-}
-
-sal_Int32 RelativeInputStream::readData( StreamDataSequence& orData, sal_Int32 nBytes )
-{
-    sal_Int32 nReadBytes = 0;
-    if( !mbEof )
-    {
-        sal_Int32 nRealBytes = getLimitedValue< sal_Int32, sal_Int64 >( nBytes, 0, mnLength - mnRelPos );
-        nReadBytes = mrInStrm.readData( orData, nRealBytes );
-        mnRelPos += nReadBytes;
-        mbEof = (nRealBytes < nBytes) || mrInStrm.isEof();
-    }
-    return nReadBytes;
-}
-
-sal_Int32 RelativeInputStream::readMemory( void* opMem, sal_Int32 nBytes )
-{
-    sal_Int32 nReadBytes = 0;
-    if( !mbEof )
-    {
-        sal_Int32 nRealBytes = getLimitedValue< sal_Int32, sal_Int64 >( nBytes, 0, mnLength - mnRelPos );
-        nReadBytes = mrInStrm.readMemory( opMem, nRealBytes );
-        mnRelPos += nReadBytes;
-        mbEof = (nRealBytes < nBytes) || mrInStrm.isEof();
-    }
-    return nReadBytes;
-}
-
-void RelativeInputStream::skip( sal_Int32 nBytes )
-{
-    if( !mbEof )
-    {
-        sal_Int32 nSkipBytes = getLimitedValue< sal_Int32, sal_Int64 >( nBytes, 0, mnLength - mnRelPos );
-        mrInStrm.skip( nSkipBytes );
-        mnRelPos += nSkipBytes;
-        mbEof = nSkipBytes < nBytes;
-    }
-}
-
-// ============================================================================
-
 } // namespace oox
 
 /* vim:set shiftwidth=4 softtabstop=4 expandtab: */

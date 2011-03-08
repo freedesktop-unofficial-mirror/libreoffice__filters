@@ -27,8 +27,7 @@
  ************************************************************************/
 
 #include <oox/export/vmlexport.hxx>
-
-#include <tokens.hxx>
+#include "oox/token/tokens.hxx"
 
 #include <rtl/strbuf.hxx>
 #include <rtl/ustring.hxx>

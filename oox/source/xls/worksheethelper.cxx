@@ -538,8 +538,6 @@ private:
     /** Merges the passed merged range and updates right/bottom cell borders. */
     void                finalizeMergedRange( const CellRangeAddress& rRange );
 
-    /** Extends the used cell area with the area used by drawing objects. */
-    void                finalizeUsedArea();
     /** Converts column properties for all columns in the sheet. */
     void                convertColumns();
     /** Converts column properties. */
@@ -1171,7 +1169,6 @@ void WorksheetData::finalizeWorksheetImport()
     convertRows();
     lclUpdateProgressBar( mxFinalProgress, 0.75 );
     finalizeDrawings();
-    finalizeUsedArea();             // after DML and VML drawing
     lclUpdateProgressBar( mxFinalProgress, 1.0 );
 
     // reset current sheet index in global data
@@ -1556,42 +1553,6 @@ void WorksheetData::finalizeMergedRange( const CellRangeAddress& rRange )
     catch( Exception& )
     {
     }
-}
-
-void WorksheetData::finalizeDrawing()
-{
-    OSL_ENSURE( (getFilterType() == FILTER_OOX) || (maDrawingPath.getLength() == 0),
-        "WorksheetData::finalizeDrawing - unexpected DrawingML path" );
-    if( (getFilterType() == FILTER_OOX) && (maDrawingPath.getLength() > 0) )
-        importOoxFragment( new OoxDrawingFragment( *this, maDrawingPath ) );
-}
-
-void WorksheetData::finalizeVmlDrawing()
-{
-    OSL_ENSURE( (getFilterType() == FILTER_OOX) || (maVmlDrawingPath.getLength() == 0),
-        "WorksheetData::finalizeVmlDrawing - unexpected VML path" );
-    if( (getFilterType() == FILTER_OOX) && (maVmlDrawingPath.getLength() > 0) )
-        importOoxFragment( new OoxVmlDrawingFragment( *this, maVmlDrawingPath ) );
-}
-
-void WorksheetData::finalizeUsedArea()
-{
-    /*  Extend used area of the sheet by cells covered with drawing objects.
-        Needed if the imported document is inserted as "OLE object from file"
-        and thus does not provide an OLE size property by itself. */
-    if( (maShapeBoundingBox.Width > 0) || (maShapeBoundingBox.Height > 0) )
-        extendUsedArea( getCellRangeFromRectangle( maShapeBoundingBox ) );
-
-    // if no used area is set, default to A1
-    if( maUsedArea.StartColumn > maUsedArea.EndColumn )
-        maUsedArea.StartColumn = maUsedArea.EndColumn = 0;
-    if( maUsedArea.StartRow > maUsedArea.EndRow )
-        maUsedArea.StartRow = maUsedArea.EndRow = 0;
-        
-    /*  Register the used area of this sheet in global view settings. The
-        global view settings will set the visible area if this document is an
-        embedded OLE object. */
-    getViewSettings().setSheetUsedArea( maUsedArea );
 }
 
 void WorksheetData::convertColumns()

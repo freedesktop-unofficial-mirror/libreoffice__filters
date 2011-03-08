@@ -63,14 +63,23 @@ SHL1IMPLIB= i$(TARGET)
 SHL1USE_EXPORTS=name
 
 SHL1STDLIBS= \
-        $(CPPULIB)		\
+       $(CPPULIB)		\
         $(CPPUHELPERLIB)\
         $(COMPHELPERLIB)\
         $(RTLLIB)		\
         $(SALLIB)		\
         $(BASEGFXLIB)	\
         $(SAXLIB)       \
-        $(XMLSCRIPTLIB)
+        $(XMLSCRIPTLIB) \
+        $(VCLLIB)		\
+        $(GOODIESLIB)		\
+        $(SVTOOLLIB)		\
+        $(SVXCORELIB)		\
+        $(SVLLIB)	\
+        $(MSFILTERLIB)	\
+        $(UNOTOOLSLIB)	\
+        $(XMLOFFLIB)    \
+        $(TOOLSLIB)
 
 # link openssl, copied this bit from ucb/source/ucp/webdav/makefile.mk
 .IF "$(GUI)"=="WNT"

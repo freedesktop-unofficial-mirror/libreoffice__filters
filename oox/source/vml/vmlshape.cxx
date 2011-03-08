@@ -51,6 +51,8 @@
 #include "oox/vml/vmldrawing.hxx"
 #include "oox/vml/vmlshapecontainer.hxx"
 #include "oox/vml/vmltextbox.hxx"
+#include "oox/core/xmlfilterbase.hxx"
+#include "oox/helper/containerhelper.hxx"
 using ::com::sun::star::beans::XPropertySet;
 using ::com::sun::star::uno::Any;
 
@@ -158,19 +160,6 @@ void lclSetXShapeRect( const Reference< XShape >& rxShape, const Rectangle& rSha
             }
         }
     }
-}
-
-Reference< XShape > lclCreateAndInsertXShape( const XmlFilterBase& rFilter,
-        const Reference< XShapes >& rxShapes, const OUString& rService, const Rectangle& rShapeRect )
-{
-    Reference< XShape > xShape = lclCreateXShape( rFilter, rService );
-    if ( rService.equalsAsciiL( RTL_CONSTASCII_STRINGPARAM( "com.sun.star.text.TextFrame" ) ) )
-        lclInsertTextFrame( rFilter, xShape );
-    else
-        lclInsertXShape( rxShapes, xShape );
-    lclSetXShapeRect( xShape, rShapeRect );
-
-    return xShape;
 }
 
 } // namespace

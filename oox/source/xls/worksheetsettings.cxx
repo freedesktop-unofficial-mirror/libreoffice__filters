@@ -34,7 +34,7 @@
 #include "oox/xls/pagesettings.hxx"
 #include "oox/xls/workbooksettings.hxx"
 #include "oox/core/filterbase.hxx"
-#include "properties.hxx"
+#include "oox/token/properties.hxx"
 
 #include <com/sun/star/util/XProtectable.hpp>
 

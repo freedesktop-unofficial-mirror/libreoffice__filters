@@ -30,7 +30,7 @@
 #include "oox/helper/helper.hxx"
 #include "layoutnodecontext.hxx"
 #include "oox/drawingml/diagram/datamodelcontext.hxx"
-#include "tokens.hxx"
+#include "oox/token/tokens.hxx"
 
 using namespace ::oox::core;
 using namespace ::com::sun::star::uno;

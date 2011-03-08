@@ -168,6 +168,14 @@ void Comment::importAnchor( bool bFrom, sal_Int32 nWhich, const OUString &rChars
     }
 }
 
+void Comment::importComment( SequenceInputStream& rStrm )
+{
+    BinRange aBinRange;
+    rStrm >> maModel.mnAuthorId >> aBinRange;
+    // cell range will be checked while inserting the comment into the document
+    getAddressConverter().convertToCellRangeUnchecked( maModel.maRange, aBinRange, getSheetIndex() );
+}
+
 RichStringRef Comment::createText()
 {
     maModel.mxText.reset( new RichString( *this ) );

@@ -160,6 +160,32 @@ GraphicHelper* ExcelFilter::implCreateGraphicHelper() const
     return new ExcelGraphicHelper( getWorkbookData() );
 }
 
+sal_Bool SAL_CALL ExcelFilter::filter( const ::com::sun::star::uno::Sequence< ::com::sun::star::beans::PropertyValue >& rDescriptor ) throw( ::com::sun::star::uno::RuntimeException )
+{
+    if ( XmlFilterBase::filter( rDescriptor ) )
+        return true;
+#if 0 /* FIXME */
+    if ( isExportFilter() )
+    {
+        Reference< XExporter > xExporter( getGlobalFactory()->createInstance( CREATE_OUSTRING( "com.sun.star.comp.oox.ExcelFilterExport" ) ), UNO_QUERY );
+
+        if ( xExporter.is() )
+        {
+            Reference< XComponent > xDocument( getModel(), UNO_QUERY );
+            Reference< XFilter > xFilter( xExporter, UNO_QUERY );
+
+            if ( xFilter.is() )
+            {
+                xExporter->setSourceDocument( xDocument );
+                if ( xFilter->filter( rDescriptor ) )
+                    return true;
+            }
+        }
+    }
+#endif /* FIXME */
+    return false;
+}
+
 ::oox::ole::VbaProject* ExcelFilter::implCreateVbaProject() const
 {
     return new ExcelVbaProject( getComponentContext(), Reference< XSpreadsheetDocument >( getModel(), UNO_QUERY ) );

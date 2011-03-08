@@ -267,53 +267,6 @@ oox::drawingml::ShapePtr PPTShape::findPlaceholder( const sal_Int32 nMasterPlace
         aShapePtr = findPlaceholder( nMasterPlaceholder, rChildren );
         if ( aShapePtr.get() )
             break;
-        aRevIter++;
-    }
-    return aShapePtr;
-}
-
-oox::drawingml::ShapePtr PPTShape::findPlaceholderByIndex( const sal_Int32 nIdx, std::vector< oox::drawingml::ShapePtr >& rShapes )
-{
-    oox::drawingml::ShapePtr aShapePtr;
-    std::vector< oox::drawingml::ShapePtr >::reverse_iterator aRevIter( rShapes.rbegin() );
-    while( aRevIter != rShapes.rend() )
-    {
-        if ( (*aRevIter)->getSubTypeIndex() == nIdx )
-        {
-            aShapePtr = *aRevIter;
-            break;
-        }
-        std::vector< oox::drawingml::ShapePtr >& rChildren = (*aRevIter)->getChildren();
-        aShapePtr = findPlaceholderByIndex( nIdx, rChildren );
-        if ( aShapePtr.get() )
-            break;
-        aRevIter++;
-    }
-    return aShapePtr;
-}
-
-// if nFirstPlaceholder can't be found, it will be searched for nSecondPlaceholder
-oox::drawingml::ShapePtr PPTShape::findPlaceholder( sal_Int32 nFirstPlaceholder, sal_Int32 nSecondPlaceholder, std::vector< oox::drawingml::ShapePtr >& rShapes )
-{
-    oox::drawingml::ShapePtr pPlaceholder = findPlaceholder( nFirstPlaceholder, rShapes );
-    return !nSecondPlaceholder || pPlaceholder.get() ? pPlaceholder : findPlaceholder( nSecondPlaceholder, rShapes );
-}
-
-oox::drawingml::ShapePtr PPTShape::findPlaceholder( const sal_Int32 nMasterPlaceholder, std::vector< oox::drawingml::ShapePtr >& rShapes )
-{
-    oox::drawingml::ShapePtr aShapePtr;
-    std::vector< oox::drawingml::ShapePtr >::reverse_iterator aRevIter( rShapes.rbegin() );
-    while( aRevIter != rShapes.rend() )
-    {
-        if ( (*aRevIter)->getSubType() == nMasterPlaceholder )
-        {
-            aShapePtr = *aRevIter;
-            break;
-        }
-        std::vector< oox::drawingml::ShapePtr >& rChildren = (*aRevIter)->getChildren();
-        aShapePtr = findPlaceholder( nMasterPlaceholder, rChildren );
-        if ( aShapePtr.get() )
-            break;
         ++aRevIter;
     }
     return aShapePtr;
