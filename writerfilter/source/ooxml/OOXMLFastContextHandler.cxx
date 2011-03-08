@@ -1217,8 +1217,7 @@ uno::Reference< uno::XComponentContext >
 OOXMLFastContextHandler::getComponentContext()
 {
     return m_xContext;
-  class OOXMLFastContextHandlerStream
- */
+}
 
 OOXMLFastContextHandlerStream::OOXMLFastContextHandlerStream
 (OOXMLFastContextHandler * pContext)

@@ -41,7 +41,6 @@ namespace writerfilter
 namespace dmapper
 {
 
-<<<<<<< HEAD:binfilter/bf_sfx2/source/inc/eacopier.hxx
 /* vim:set shiftwidth=4 softtabstop=4 expandtab: */
 =======
 XMLTag::Pointer_t lcl_TableColumnSeparatorsToTag(const uno::Any & rTableColumnSeparators);
@@ -55,4 +54,4 @@ XMLTag::Pointer_t lcl_PropertyValueSeqSeqToTag(PropertyValueSeqSeq_t & rPropValS
 }
 }
 #endif // DEBUG
->>>>>>> stage/ooo/dev300_m98_fixed:writerfilter/source/dmapper/PropertyMapHelper.hxx
+

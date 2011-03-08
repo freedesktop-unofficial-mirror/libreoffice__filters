@@ -52,8 +52,6 @@ class OOXMLDocumentImpl : public OOXMLDocument
 
     bool mbIsSubstream;
 
-    bool mbIsSubstream;
-
 protected:
     virtual void resolveFastSubStream(Stream & rStream,
                                       OOXMLStream::StreamType_t nType);

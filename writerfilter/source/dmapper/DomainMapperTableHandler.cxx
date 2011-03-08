@@ -421,7 +421,6 @@ TableStyleSheetEntry * DomainMapperTableHandler::endTableGetTableStyle(TableInfo
         {
             aTableBorder.TopLine = aBorderLine;
             aTableBorder.IsTopLineValid = sal_True;
-                rInfo.pTableDefaults->erase( pIt );
         }
         if (lcl_extractTableBorderProperty(m_aTableProperties, PROP_BOTTOM_BORDER, rInfo, aBorderLine))
         {

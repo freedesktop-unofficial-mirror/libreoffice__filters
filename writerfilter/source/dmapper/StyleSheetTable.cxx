@@ -567,7 +567,6 @@ void StyleSheetTable::sprm(Sprm & rSprm)
         break;
         case NS_ooxml::LN_CT_Style_tblPr: //contains table properties
         case NS_ooxml::LN_CT_Style_tblStylePr: //contains  to table properties
-        case NS_ooxml::LN_CT_DocDefaults_rPrDefault:
         case NS_ooxml::LN_CT_TblPrBase_tblInd: //table properties - at least width value and type
         case NS_ooxml::LN_EG_RPrBase_rFonts: //table fonts
         /* WRITERFILTERSTATUS: done: 100, planned: 0, spent: 0 */

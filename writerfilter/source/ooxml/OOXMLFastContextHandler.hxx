@@ -377,6 +377,9 @@ protected:
  };
  
 class OOXMLFastContextHandlerValue :
+    public OOXMLFastContextHandler
+{
+public:
     OOXMLFastContextHandlerValue
     (OOXMLFastContextHandler * pContext);
     virtual ~OOXMLFastContextHandlerValue();
