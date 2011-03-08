@@ -147,9 +147,8 @@ sal_Bool SAL_CALL PowerPointImport::filter( const Sequence< PropertyValue >& rDe
 {
     if( XmlFilterBase::filter( rDescriptor ) )
         return true;
-#if 0 // FIXME
     if( isExportFilter() ) {
-        Reference< XExporter > xExporter( getGlobalFactory()->createInstance( CREATE_OUSTRING( "com.sun.star.comp.Impress.oox.PowerPointExport" ) ), UNO_QUERY );
+        Reference< XExporter > xExporter( getServiceFactory()->createInstance( CREATE_OUSTRING( "com.sun.star.comp.Impress.oox.PowerPointExport" ) ), UNO_QUERY );
 
         if( xExporter.is() ) {
             Reference< XComponent > xDocument( getModel(), UNO_QUERY );
@@ -162,7 +161,6 @@ sal_Bool SAL_CALL PowerPointImport::filter( const Sequence< PropertyValue >& rDe
             }
         }
     }
-#endif
     return false;
 }
 

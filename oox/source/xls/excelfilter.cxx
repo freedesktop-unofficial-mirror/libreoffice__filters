@@ -164,10 +164,9 @@ sal_Bool SAL_CALL ExcelFilter::filter( const ::com::sun::star::uno::Sequence< ::
 {
     if ( XmlFilterBase::filter( rDescriptor ) )
         return true;
-#if 0 /* FIXME */
     if ( isExportFilter() )
     {
-        Reference< XExporter > xExporter( getGlobalFactory()->createInstance( CREATE_OUSTRING( "com.sun.star.comp.oox.ExcelFilterExport" ) ), UNO_QUERY );
+        Reference< XExporter > xExporter( getServiceFactory()->createInstance( CREATE_OUSTRING( "com.sun.star.comp.oox.ExcelFilterExport" ) ), UNO_QUERY );
 
         if ( xExporter.is() )
         {
@@ -182,7 +181,6 @@ sal_Bool SAL_CALL ExcelFilter::filter( const ::com::sun::star::uno::Sequence< ::
             }
         }
     }
-#endif /* FIXME */
     return false;
 }
 
