@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -25,16 +25,20 @@
  *
  ************************************************************************/
 
-#ifndef _ATTR_HXX
-#define _ATTR_HXX
+#ifndef DOM_ATTR_HXX
+#define DOM_ATTR_HXX
+
+#include <memory>
+
+#include <libxml/tree.h>
 
 #include <cppuhelper/implbase1.hxx>
+
 #include <com/sun/star/uno/Reference.h>
-#include <com/sun/star/uno/Exception.hpp>
 #include <com/sun/star/xml/dom/XNode.hpp>
 #include <com/sun/star/xml/dom/XAttr.hpp>
-#include "node.hxx"
-#include <libxml/tree.h>
+
+#include <node.hxx>
 
 using ::rtl::OUString;
 using namespace com::sun::star::uno;
@@ -42,30 +46,43 @@ using namespace com::sun::star::xml::dom;
 
 namespace DOM
 {
-    class CAttr : public cppu::ImplInheritanceHelper1< CNode, XAttr >
+    typedef ::std::pair< ::rtl::OString, ::rtl::OString > stringpair_t;
+
+    typedef ::cppu::ImplInheritanceHelper1< CNode, XAttr > CAttr_Base;
+
+    class CAttr
+        : public CAttr_Base
     {
-        friend class CNode;
-        friend class CElement;
+    private:
+        friend class CDocument;
+
     private:
         xmlAttrPtr m_aAttrPtr;
+        ::std::auto_ptr< stringpair_t > m_pNamespace;
 
     protected:
-        CAttr(const xmlAttrPtr aAttrPtr);
+        CAttr(CDocument const& rDocument, ::osl::Mutex const& rMutex,
+                xmlAttrPtr const pAttr);
 
     public:
+        /// return the libxml namespace corresponding to m_pNamespace on pNode
+        xmlNsPtr GetNamespace(xmlNodePtr const pNode);
+
+        virtual bool IsChildTypeAllowed(NodeType const nodeType);
+
         /**
         Returns the name of this attribute.
         */
         virtual OUString SAL_CALL getName() throw (RuntimeException);
 
         /**
-        The Element node this attribute is attached to or null if this 
+        The Element node this attribute is attached to or null if this
         attribute is not in use.
         */
         virtual Reference< XElement > SAL_CALL getOwnerElement() throw (RuntimeException);
 
         /**
-        If this attribute was explicitly given a value in the original 
+        If this attribute was explicitly given a value in the original
         document, this is true; otherwise, it is false.
         */
         virtual sal_Bool SAL_CALL getSpecified()throw (RuntimeException);
@@ -122,10 +139,7 @@ namespace DOM
         return CNode::getLastChild();
     }
     virtual OUString SAL_CALL getNamespaceURI()
-        throw (RuntimeException)
-    {
-        return CNode::getNamespaceURI();
-    }
+        throw (RuntimeException);
     virtual Reference< XNode > SAL_CALL getNextSibling()
         throw (RuntimeException)
     {
@@ -147,10 +161,7 @@ namespace DOM
         return CNode::getParentNode();
     }
     virtual OUString SAL_CALL getPrefix()
-        throw (RuntimeException)
-    {
-        return CNode::getPrefix();
-    }
+        throw (RuntimeException);
     virtual Reference< XNode > SAL_CALL getPreviousSibling()
         throw (RuntimeException)
     {
@@ -199,10 +210,7 @@ namespace DOM
         return setValue(nodeValue);
     }
     virtual void SAL_CALL setPrefix(const OUString& prefix)
-        throw (RuntimeException, DOMException)
-    {
-        return CNode::setPrefix(prefix);
-    }
+        throw (RuntimeException, DOMException);
 
     };
 }
