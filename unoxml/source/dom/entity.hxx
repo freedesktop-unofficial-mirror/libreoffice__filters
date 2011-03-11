@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -25,16 +25,19 @@
  *
  ************************************************************************/
 
-#ifndef _ENTITY_HXX
-#define _ENTITY_HXX
+#ifndef DOM_ENTITY_HXX
+#define DOM_ENTITY_HXX
 
-#include <sal/types.h>
-#include <com/sun/star/uno/Reference.h>
-#include <com/sun/star/uno/Exception.hpp>
-#include <com/sun/star/xml/dom/XEntity.hpp>
-#include "node.hxx"
 #include <libxml/tree.h>
 #include <libxml/entities.h>
+
+#include <sal/types.h>
+
+#include <com/sun/star/uno/Reference.h>
+#include <com/sun/star/xml/dom/XEntity.hpp>
+
+#include <node.hxx>
+
 
 using ::rtl::OUString;
 using namespace com::sun::star::uno;
@@ -42,16 +45,23 @@ using namespace com::sun::star::xml::dom;
 
 namespace DOM
 {
-    class CEntity : public cppu::ImplInheritanceHelper1< CNode, XEntity >
+    typedef ::cppu::ImplInheritanceHelper1< CNode, XEntity > CEntity_Base;
+
+    class CEntity
+        : public CEntity_Base
     {
-        friend class CNode;
+    private:
+        friend class CDocument;
+
     private:
         xmlEntityPtr m_aEntityPtr;
 
     protected:
-        CEntity(const xmlEntityPtr aEntityPtr);
+        CEntity(CDocument const& rDocument, ::osl::Mutex const& rMutex,
+                xmlEntityPtr const pEntity);
 
     public:
+        virtual bool IsChildTypeAllowed(NodeType const nodeType);
 
         /**
         For unparsed entities, the name of the notation for the entity.
