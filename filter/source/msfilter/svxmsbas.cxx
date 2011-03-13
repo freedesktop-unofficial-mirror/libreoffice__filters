@@ -100,7 +100,7 @@ int SvxImportMSVBasic::Import( const String& rStorageName,
 {
         msProjectName = rtl::OUString();
     int nRet = 0;
-	if( bImport && ImportCode_Impl( rStorageName, rSubStorageName, codeNames, 
+    if( bImport && ImportCode_Impl( rStorageName, rSubStorageName, codeNames, 
                                     bAsComment, bStripped ))
         nRet |= 1;
 
@@ -114,20 +114,20 @@ int SvxImportMSVBasic::Import( const String& rStorageName,
 }
 
 bool SvxImportMSVBasic::ImportForms_Impl(const String& rStorageName,
-    const String& rSubStorageName, BOOL bVBAMode )
+    const String& rSubStorageName, sal_Bool bVBAMode )
 {
     bool bRet = false;
     // #FIXME VBA_Impl ( or some other new class ) should handle both userforms
     // and code 
-	VBA_Impl aVBA( *xRoot, TRUE );
+    VBA_Impl aVBA( *xRoot, sal_True );
     // This call is a waste we read the source ( again ) only to get the refereneces
     // *AGAIN*, we really need to rewrite all of this
     aVBA.Open( rStorageName, rSubStorageName ); 
 
     bRet = ImportForms_Impl( aVBA, rStorageName, rSubStorageName, bVBAMode );
-	std::vector<rtl::OUString> sProjectRefs = aVBA.ProjectReferences();
+    std::vector<rtl::OUString> sProjectRefs = aVBA.ProjectReferences();
 
-	for ( std::vector<rtl::OUString>::iterator it = sProjectRefs.begin(); it != sProjectRefs.end(); ++it )
+    for ( std::vector<rtl::OUString>::iterator it = sProjectRefs.begin(); it != sProjectRefs.end(); ++it )
     {
        rtl::OUString sFileName = *it;
 #ifndef WIN 
@@ -139,7 +139,7 @@ bool SvxImportMSVBasic::ImportForms_Impl(const String& rStorageName,
 #endif
 #endif
        SotStorageRef rRoot = new SotStorage( sFileName, STREAM_STD_READWRITE, STORAGE_TRANSACTED );
-	   VBA_Impl refVBA( *rRoot, TRUE );        
+       VBA_Impl refVBA( *rRoot, sal_True );        
        refVBA.Open( rStorageName, rSubStorageName );
        // The return from ImportForms doesn't indicate and error ( it could )
        // but also it just means no userforms were imported
@@ -149,7 +149,7 @@ bool SvxImportMSVBasic::ImportForms_Impl(const String& rStorageName,
     return bRet;
 }
 
-bool SvxImportMSVBasic::ImportForms_Impl( VBA_Impl& rVBA, const String& rStorageName, const String& rSubStorageName, BOOL /*bVBAMode*/ )
+bool SvxImportMSVBasic::ImportForms_Impl( VBA_Impl& rVBA, const String& rStorageName, const String& rSubStorageName, sal_Bool /*bVBAMode*/ )
 {
     SvStorageRef xVBAStg(rVBA.GetStorage()->OpenSotStorage(rStorageName,
         STREAM_READWRITE | STREAM_NOCREATE | STREAM_SHARE_DENYALL));
@@ -312,25 +312,25 @@ sal_Bool SvxImportMSVBasic::ImportCode_Impl( const String& rStorageName,
             rDocSh.GetBasicManager()->SetName( msProjectName ); // set name of Project
 
         bRet = ImportCode_Impl( aVBA, codeNames, bAsComment, bStripped );
-    	std::vector<rtl::OUString> sProjectRefs = aVBA.ProjectReferences();
+        std::vector<rtl::OUString> sProjectRefs = aVBA.ProjectReferences();
     
-    	for ( std::vector<rtl::OUString>::iterator it = sProjectRefs.begin(); it != sProjectRefs.end(); ++it )
+        for ( std::vector<rtl::OUString>::iterator it = sProjectRefs.begin(); it != sProjectRefs.end(); ++it )
         {
             rtl::OUString sFileName = *it;
-    		OSL_TRACE("referenced project %s ", rtl::OUStringToOString( sFileName, RTL_TEXTENCODING_UTF8 ).getStr() );
+            OSL_TRACE("referenced project %s ", rtl::OUStringToOString( sFileName, RTL_TEXTENCODING_UTF8 ).getStr() );
             SotStorageRef rRoot = new SotStorage( sFileName, STREAM_STD_READWRITE, STORAGE_TRANSACTED );
-    	    VBA_Impl refVBA( *rRoot, bAsComment );
-			std::vector< String > codeNamesNone;
-    	    if( refVBA.Open(rStorageName,rSubStorageName) && ImportCode_Impl( refVBA, codeNamesNone, bAsComment, bStripped ) )
-                bRet = TRUE; // mark that some code was imported
+            VBA_Impl refVBA( *rRoot, bAsComment );
+            std::vector< String > codeNamesNone;
+            if( refVBA.Open(rStorageName,rSubStorageName) && ImportCode_Impl( refVBA, codeNamesNone, bAsComment, bStripped ) )
+                bRet = sal_True; // mark that some code was imported
         }
     }
     return bRet;
 }
 
-BOOL SvxImportMSVBasic::ImportCode_Impl( VBA_Impl& aVBA, const std::vector< String >& codeNames, BOOL bAsComment, BOOL bStripped )
+sal_Bool SvxImportMSVBasic::ImportCode_Impl( VBA_Impl& aVBA, const std::vector< String >& codeNames, sal_Bool bAsComment, sal_Bool bStripped )
 {
-	BOOL bRet = FALSE;
+    sal_Bool bRet = sal_False;
         Reference<XLibraryContainer> xLibContainer = rDocSh.GetBasicContainer();
         DBG_ASSERT( xLibContainer.is(), "No BasicContainer!" );
         

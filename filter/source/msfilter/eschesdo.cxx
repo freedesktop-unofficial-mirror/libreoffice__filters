@@ -228,17 +228,17 @@ sal_uInt32 ImplEESdrWriter::ImplWriteShape( ImplEESdrObject& rObj,
         if( aShapeName.Len() > 0 )
             aPropOpt.AddOpt( ESCHER_Prop_wzName, aShapeName );
         if ( InteractionInfo* pInteraction = mpHostAppData ? mpHostAppData->GetInteractionInfo():NULL )
-		{
-			const std::auto_ptr< SvMemoryStream >& pMemStrm = pInteraction->getHyperlinkRecord();
-			if ( pMemStrm.get() )
-			{
-				pMemStrm->ObjectOwnsMemory( FALSE );
-				sal_uInt8* pBuf = (sal_uInt8*) pMemStrm->GetData();
-				sal_uInt32 nSize = pMemStrm->Seek( STREAM_SEEK_TO_END );
-				aPropOpt.AddOpt( ESCHER_Prop_pihlShape, sal_False, nSize, pBuf, nSize );;       
-			}
-			if ( pInteraction->hasInteraction() )
-				aPropOpt.AddOpt( ESCHER_Prop_fPrint, 0x00080008 );       
+        {
+            const std::auto_ptr< SvMemoryStream >& pMemStrm = pInteraction->getHyperlinkRecord();
+            if ( pMemStrm.get() )
+            {
+                pMemStrm->ObjectOwnsMemory( sal_False );
+                sal_uInt8* pBuf = (sal_uInt8*) pMemStrm->GetData();
+                sal_uInt32 nSize = pMemStrm->Seek( STREAM_SEEK_TO_END );
+                aPropOpt.AddOpt( ESCHER_Prop_pihlShape, sal_False, nSize, pBuf, nSize );;
+            }
+            if ( pInteraction->hasInteraction() )
+                aPropOpt.AddOpt( ESCHER_Prop_fPrint, 0x00080008 );
         }
 
         if ( rObj.GetType().EqualsAscii( "drawing.Custom" ) )
