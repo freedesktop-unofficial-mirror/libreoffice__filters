@@ -2,7 +2,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -26,15 +26,19 @@
  *
  ************************************************************************/
 
-#ifndef _DOCUMENT_HXX
-#define _DOCUMENT_HXX
+#ifndef DOM_DOCUMENT_HXX
+#define DOM_DOCUMENT_HXX
 
-#include <list>
 #include <set>
+#include <memory>
+
+#include <libxml/tree.h>
+
 #include <sal/types.h>
+
 #include <cppuhelper/implbase6.hxx>
+
 #include <com/sun/star/uno/Reference.h>
-#include <com/sun/star/uno/Exception.hpp>
 #include <com/sun/star/beans/StringPair.hpp>
 #include <com/sun/star/xml/dom/XNode.hpp>
 #include <com/sun/star/xml/dom/XAttr.hpp>
@@ -53,13 +57,11 @@
 
 #include "node.hxx"
 
-#include <libxml/tree.h>
 
 using namespace std;
 using ::rtl::OUString;
 using namespace com::sun::star;
 using namespace com::sun::star::uno;
-using namespace com::sun::star::lang;
 using namespace com::sun::star::xml::sax;
 using namespace com::sun::star::io;
 using namespace com::sun::star::xml::dom;
@@ -67,32 +69,70 @@ using namespace com::sun::star::xml::dom::events;
 
 namespace DOM
 {
+    namespace events {
+        class CEventDispatcher;
+    }
 
-    class CDocument : public cppu::ImplInheritanceHelper6<
-        CNode, XDocument, XDocumentEvent,
-        XActiveDataControl, XActiveDataSource, XSAXSerializable, XFastSAXSerializable>
+    class CElement;
+
+    typedef ::cppu::ImplInheritanceHelper6<
+            CNode, XDocument, XDocumentEvent,
+            XActiveDataControl, XActiveDataSource,
+            XSAXSerializable, XFastSAXSerializable>
+        CDocument_Base;
+
+    class CDocument
+        : public CDocument_Base
     {
-        friend class CNode;
-        typedef set< Reference< XStreamListener > > listenerlist_t;
-    private:
 
-        xmlDocPtr m_aDocPtr;
+    private:
+        /// this Mutex is used for synchronization of all UNO wrapper
+        /// objects that belong to this document
+        ::osl::Mutex m_Mutex;
+        /// the libxml document: freed in destructor
+        /// => all UNO wrapper objects must keep the CDocument alive
+        xmlDocPtr const m_aDocPtr;
 
         // datacontrol/source state
+        typedef set< Reference< XStreamListener > > listenerlist_t;
         listenerlist_t m_streamListeners;
         Reference< XOutputStream > m_rOutputStream;
 
-    protected:
-        CDocument(xmlDocPtr aDocPtr);
+        typedef std::map< const xmlNodePtr,
+                    ::std::pair< WeakReference<XNode>, CNode* > > nodemap_t;
+        nodemap_t m_NodeMap;
+
+        ::std::auto_ptr<events::CEventDispatcher> const m_pEventDispatcher;
+
+        CDocument(xmlDocPtr const pDocPtr);
+
 
     public:
+        /// factory: only way to create instance!
+        static ::rtl::Reference<CDocument>
+            CreateCDocument(xmlDocPtr const pDoc);
 
         virtual ~CDocument();
 
-        virtual void SAL_CALL saxify(
-            const Reference< XDocumentHandler >& i_xHandler);
+        // needed by CXPathAPI
+        ::osl::Mutex & GetMutex() { return m_Mutex; }
 
-        virtual void SAL_CALL fastSaxify( Context& rContext );
+        events::CEventDispatcher & GetEventDispatcher();
+        ::rtl::Reference< CElement > GetDocumentElement();
+
+        /// get UNO wrapper instance for a libxml node
+        ::rtl::Reference<CNode> GetCNode(
+                xmlNodePtr const pNode, bool const bCreate = true);
+        /// remove a UNO wrapper instance
+        void RemoveCNode(xmlNodePtr const pNode, CNode const*const pCNode);
+
+        virtual CDocument & GetOwnerDocument();
+
+        virtual void saxify(const Reference< XDocumentHandler >& i_xHandler);
+
+        virtual void fastSaxify( Context& rContext );
+
+        virtual bool IsChildTypeAllowed(NodeType const nodeType);
 
         /**
         Creates an Attr of the given name.
@@ -143,7 +183,7 @@ namespace DOM
             throw (RuntimeException, DOMException);
 
         /**
-        Creates a ProcessingInstruction node given the specified name and 
+        Creates a ProcessingInstruction node given the specified name and
         data strings.
         */
         virtual Reference< XProcessingInstruction > SAL_CALL createProcessingInstruction(
@@ -177,7 +217,7 @@ namespace DOM
             throw (RuntimeException);
 
         /**
-        Returns a NodeList of all the Elements with a given tag name in the 
+        Returns a NodeList of all the Elements with a given tag name in the
         order in which they are encountered in a preorder traversal of the
         Document tree.
         */
@@ -185,8 +225,8 @@ namespace DOM
             throw (RuntimeException);
 
         /**
-        Returns a NodeList of all the Elements with a given local name and 
-        namespace URI in the order in which they are encountered in a preorder 
+        Returns a NodeList of all the Elements with a given local name and
+        namespace URI in the order in which they are encountered in a preorder
         traversal of the Document tree.
         */
         virtual Reference< XNodeList > SAL_CALL getElementsByTagNameNS(const OUString& namespaceURI, const OUString& localName)
@@ -207,7 +247,7 @@ namespace DOM
         // XDocumentEvent
         virtual Reference< XEvent > SAL_CALL createEvent(const OUString& eventType) throw (RuntimeException);
 
-        // XActiveDataControl, 
+        // XActiveDataControl,
         // see http://api.openoffice.org/docs/common/ref/com/sun/star/io/XActiveDataControl.html
         virtual void SAL_CALL addListener(const Reference< XStreamListener >& aListener )  throw (RuntimeException);
         virtual void SAL_CALL removeListener(const Reference< XStreamListener >& aListener ) throw (RuntimeException);
@@ -225,16 +265,13 @@ namespace DOM
             throw (RuntimeException);
         virtual OUString SAL_CALL getNodeValue()
             throw (RuntimeException);
+        virtual Reference< XNode > SAL_CALL cloneNode(sal_Bool deep)
+            throw (RuntimeException);
         // --- delegation for XNde base.
         virtual Reference< XNode > SAL_CALL appendChild(const Reference< XNode >& newChild)
             throw (RuntimeException, DOMException)
         {
             return CNode::appendChild(newChild);
-        }
-        virtual Reference< XNode > SAL_CALL cloneNode(sal_Bool deep)
-            throw (RuntimeException)
-        {
-            return CNode::cloneNode(deep);
         }
         virtual Reference< XNamedNodeMap > SAL_CALL getAttributes()
             throw (RuntimeException)
@@ -308,7 +345,7 @@ namespace DOM
         }
         virtual Reference< XNode > SAL_CALL insertBefore(
                 const Reference< XNode >& newChild, const Reference< XNode >& refChild)
-            throw (DOMException)
+            throw (RuntimeException, DOMException)
         {
             return CNode::insertBefore(newChild, refChild);
         }
@@ -349,12 +386,12 @@ namespace DOM
             const Reference< XDocumentHandler >& i_xHandler,
             const Sequence< beans::StringPair >& i_rNamespaces)
             throw (RuntimeException, SAXException);
-        
-        // ::com::sun::star::xml::sax::XFastSAXSerializable 
-        virtual void SAL_CALL fastSerialize( const Reference< XFastDocumentHandler >& handler, 
-                                             const Reference< XFastTokenHandler >& tokenHandler, 
+
+        // ::com::sun::star::xml::sax::XFastSAXSerializable
+        virtual void SAL_CALL fastSerialize( const Reference< XFastDocumentHandler >& handler,
+                                             const Reference< XFastTokenHandler >& tokenHandler,
                                              const Sequence< beans::StringPair >& i_rNamespaces,
-                                             const Sequence< beans::Pair< rtl::OUString, sal_Int32 > >& namespaces ) 
+                                             const Sequence< beans::Pair< rtl::OUString, sal_Int32 > >& namespaces )
             throw (SAXException, RuntimeException);
     };
 }

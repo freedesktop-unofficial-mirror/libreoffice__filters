@@ -2,7 +2,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -26,19 +26,20 @@
  *
  ************************************************************************/
 
-#ifndef _DOCUMENTTYPE_HXX
-#define _DOCUMENTTYPE_HXX
+#ifndef DOM_DOCUMENTTYPE_HXX
+#define DOM_DOCUMENTTYPE_HXX
+
+#include <libxml/tree.h>
 
 #include <sal/types.h>
+
 #include <com/sun/star/uno/Reference.h>
-#include <com/sun/star/uno/Exception.hpp>
 #include <com/sun/star/xml/dom/XDocumentType.hpp>
 #include <com/sun/star/xml/dom/XNodeList.hpp>
 #include <com/sun/star/xml/dom/XNamedNodeMap.hpp>
 
-#include "node.hxx"
+#include <node.hxx>
 
-#include <libxml/tree.h>
 
 using ::rtl::OUString;
 using namespace com::sun::star::uno;
@@ -46,18 +47,25 @@ using namespace com::sun::star::xml::dom;
 
 namespace DOM
 {
-    class CDocumentType : public cppu::ImplInheritanceHelper1< CNode, XDocumentType >
+    typedef ::cppu::ImplInheritanceHelper1< CNode, XDocumentType >
+        CDocumentType_Base;
+
+    class CDocumentType
+        : public CDocumentType_Base
     {
-        friend class CNode;
+    private:
+        friend class CDocument;
+
     private:
         xmlDtdPtr m_aDtdPtr;
 
     protected:
-        CDocumentType(const xmlDtdPtr aDtdPtr);
+        CDocumentType(CDocument const& rDocument, ::osl::Mutex const& rMutex,
+                xmlDtdPtr const pDtd);
 
     public:
         /**
-        A NamedNodeMap containing the general entities, both external and 
+        A NamedNodeMap containing the general entities, both external and
         internal, declared in the DTD.
         */
         virtual Reference< XNamedNodeMap > SAL_CALL getEntities() throw (RuntimeException);
@@ -68,7 +76,7 @@ namespace DOM
         virtual OUString SAL_CALL getInternalSubset() throw (RuntimeException);
 
         /**
-        The name of DTD; i.e., the name immediately following the DOCTYPE 
+        The name of DTD; i.e., the name immediately following the DOCTYPE
         keyword.
         */
         virtual OUString SAL_CALL getName() throw (RuntimeException);
