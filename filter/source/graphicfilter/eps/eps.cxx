@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -47,6 +47,7 @@
 #include <svtools/fltcall.hxx>
 #include <svtools/FilterConfigItem.hxx>
 #include <vcl/graphictools.hxx>
+#include <vcl/rendergraphicrasterizer.hxx>
 #include "strings.hrc"
 
 #include <math.h>
@@ -128,7 +129,7 @@ private:
     double				nBoundingY1;
     double				nBoundingX2;
     double				nBoundingY2;
-                                            // 
+                                            //
     StackMember*		pGDIStack;
     sal_uLong				mnCursorPos;		// aktuelle Cursorposition im Output
     Color				aColor; 			// aktuelle Farbe die fuer den Output benutzt wird
@@ -214,7 +215,7 @@ private:
     void				ImplIntersect( const PolyPolygon& rPolyPoly );
     void				ImplPolyPoly( const PolyPolygon & rPolyPolygon, sal_Bool bTextOutline = sal_False );
     void				ImplPolyLine( const Polygon & rPolygon );
-    
+
     void				ImplSetClipRegion( Region& rRegion );
     void				ImplBmp( Bitmap*, Bitmap*, const Point &, double nWidth, double nHeight );
     void				ImplText( const String& rUniString, const Point& rPos, const sal_Int32* pDXArry, sal_Int32 nWidth, VirtualDevice& rVDev );
@@ -306,14 +307,14 @@ sal_Bool PSWriter::WritePS( const Graphic& rGraphic, SvStream& rTargetStream, Fi
         {
             String aPreviewStr( RTL_CONSTASCII_USTRINGPARAM( "Preview" ) );
             String aVersionStr( RTL_CONSTASCII_USTRINGPARAM( "Version" ) );
-            String aColorStr( RTL_CONSTASCII_USTRINGPARAM( "ColorFormat" ) );   
+            String aColorStr( RTL_CONSTASCII_USTRINGPARAM( "ColorFormat" ) );
             String aComprStr( RTL_CONSTASCII_USTRINGPARAM( "CompressionMode" ) );
             mnPreview = pFilterConfigItem->ReadInt32( aPreviewStr, 1 );
             mnLevel = pFilterConfigItem->ReadInt32( aVersionStr, 2 );
             if ( mnLevel != 1 )
                 mnLevel = 2;
             mbGrayScale = pFilterConfigItem->ReadInt32( aColorStr, 1 ) == 2;
-            mbCompression = pFilterConfigItem->ReadInt32( aComprStr, 1 ) == 1;	
+            mbCompression = pFilterConfigItem->ReadInt32( aComprStr, 1 ) == 1;
             String sTextMode( RTL_CONSTASCII_USTRINGPARAM( "TextMode" ) );
             mnTextMode = pFilterConfigItem->ReadInt32( sTextMode, 0 );
             if ( mnTextMode > 2 )
@@ -500,7 +501,7 @@ void PSWriter::ImplWriteProlog( const Graphic* pPreview )
                         *mpPS << "%";
                         nCount2 = 312;
                     }
-                    nVal <<= 1;			 
+                    nVal <<= 1;
                     if ( pAcc->GetPixel( nY, nX ) == aBlack )
                         nVal |= 1;
                     if ( ! ( --nCount ) )
@@ -519,7 +520,7 @@ void PSWriter::ImplWriteProlog( const Graphic* pPreview )
             aTmpBitmap.ReleaseAccess( pAcc );
             ImplExecMode( PS_RET );
             ImplWriteLine( "%%EndPreview" );
-        }		
+        }
     }
     ImplWriteLine( "%%BeginProlog" );
     ImplWriteLine( "%%BeginResource: procset SDRes-Prolog 1.0 0" );
@@ -696,7 +697,7 @@ void PSWriter::ImplWriteActions( const GDIMetaFile& rMtf, VirtualDevice& rVDev )
                 Polygon aPoly( ( (const MetaPolyLineAction*) pMA )->GetPolygon() );
                 const LineInfo& rLineInfo = ( ( const MetaPolyLineAction*)pMA )->GetLineInfo();
                 ImplWriteLineInfo( rLineInfo );
-                
+
                 if(basegfx::B2DLINEJOIN_NONE == rLineInfo.GetLineJoin()
                     && rLineInfo.GetWidth() > 1)
                 {
@@ -706,21 +707,21 @@ void PSWriter::ImplWriteActions( const GDIMetaFile& rMtf, VirtualDevice& rVDev )
 
                     for(sal_uInt16 a(0); a + 1 < nPoints; a++)
                     {
-                        if(bCurve 
+                        if(bCurve
                             && POLY_NORMAL != aPoly.GetFlags(a + 1)
                             && a + 2 < nPoints
                             && POLY_NORMAL != aPoly.GetFlags(a + 2)
                             && a + 3 < nPoints)
                         {
-                            const Polygon aSnippet(4, 
-                                aPoly.GetConstPointAry() + a, 
+                            const Polygon aSnippet(4,
+                                aPoly.GetConstPointAry() + a,
                                 aPoly.GetConstFlagAry() + a);
                             ImplPolyLine(aSnippet);
                             a += 2;
                         }
                         else
                         {
-                            const Polygon aSnippet(2, 
+                            const Polygon aSnippet(2,
                                 aPoly.GetConstPointAry() + a);
                             ImplPolyLine(aSnippet);
                         }
@@ -789,7 +790,7 @@ void PSWriter::ImplWriteActions( const GDIMetaFile& rMtf, VirtualDevice& rVDev )
                 if ( mbGrayScale )
                     aBitmap.Convert( BMP_CONVERSION_8BIT_GREYS );
                 Point aPoint = ( (const MetaBmpAction*) pMA )->GetPoint();
-                Size aSize = aBitmap.GetSizePixel();
+                Size aSize( rVDev.PixelToLogic( aBitmap.GetSizePixel() ) );
                 ImplBmp( &aBitmap, NULL, aPoint, aSize.Width(), aSize.Height() );
             }
             break;
@@ -825,8 +826,8 @@ void PSWriter::ImplWriteActions( const GDIMetaFile& rMtf, VirtualDevice& rVDev )
                 if ( mbGrayScale )
                     aBitmap.Convert( BMP_CONVERSION_8BIT_GREYS );
                 Bitmap aMask( aBitmapEx.GetMask() );
-                Point aPoint = ( (const MetaBmpExAction*) pMA)->GetPoint();
-                Size aSize = ( aBitmap.GetSizePixel() );
+                Point aPoint( ( (const MetaBmpExAction*) pMA )->GetPoint() );
+                Size aSize( rVDev.PixelToLogic( aBitmap.GetSizePixel() ) );
                 ImplBmp( &aBitmap, &aMask, aPoint, aSize.Width(), aSize.Height() );
             }
             break;
@@ -886,9 +887,9 @@ void PSWriter::ImplWriteActions( const GDIMetaFile& rMtf, VirtualDevice& rVDev )
             {
                 VirtualDevice	l_aVDev;
                 GDIMetaFile 	aTmpMtf;
-                
+
                 l_aVDev.SetMapMode( rVDev.GetMapMode() );
-                l_aVDev.AddHatchActions( ( (const MetaHatchAction*)pMA)->GetPolyPolygon(), 
+                l_aVDev.AddHatchActions( ( (const MetaHatchAction*)pMA)->GetPolyPolygon(),
                                          ( (const MetaHatchAction*)pMA )->GetHatch(), aTmpMtf );
                 ImplWriteActions( aTmpMtf, rVDev );
             }
@@ -1177,7 +1178,7 @@ void PSWriter::ImplWriteActions( const GDIMetaFile& rMtf, VirtualDevice& rVDev )
             case META_FLOATTRANSPARENT_ACTION:
             {
                 const MetaFloatTransparentAction* pA = (const MetaFloatTransparentAction*) pMA;
-                
+
                 GDIMetaFile		aTmpMtf( pA->GetGDIMetaFile() );
                 Point			aSrcPt( aTmpMtf.GetPrefMapMode().GetOrigin() );
                 const Size		aSrcSize( aTmpMtf.GetPrefSize() );
@@ -1203,7 +1204,7 @@ void PSWriter::ImplWriteActions( const GDIMetaFile& rMtf, VirtualDevice& rVDev )
             break;
 
             case META_COMMENT_ACTION:
-            {									
+            {
                 const MetaCommentAction* pA = (const MetaCommentAction*) pMA;
                 if ( pA->GetComment().CompareIgnoreCaseToAscii( "XGRAD_SEQ_BEGIN" ) == COMPARE_EQUAL )
                 {
@@ -1213,14 +1214,14 @@ void PSWriter::ImplWriteActions( const GDIMetaFile& rMtf, VirtualDevice& rVDev )
                         MetaAction* pAction = rMtf.GetAction( nCurAction );
                         if( pAction->GetType() == META_GRADIENTEX_ACTION )
                             pGradAction = (const MetaGradientExAction*) pAction;
-                        else if( ( pAction->GetType() == META_COMMENT_ACTION ) && 
+                        else if( ( pAction->GetType() == META_COMMENT_ACTION ) &&
                                  ( ( (const MetaCommentAction*) pAction )->GetComment().CompareIgnoreCaseToAscii( "XGRAD_SEQ_END" ) == COMPARE_EQUAL ) )
                         {
                             break;
                         }
                     }
                     if( pGradAction )
-                        ImplWriteGradient( pGradAction->GetPolyPolygon(), pGradAction->GetGradient(), rVDev );				
+                        ImplWriteGradient( pGradAction->GetPolyPolygon(), pGradAction->GetGradient(), rVDev );
                 }
                 else if ( pA->GetComment().Equals( "XPATHFILL_SEQ_END" ) )
                 {
@@ -1236,7 +1237,7 @@ void PSWriter::ImplWriteActions( const GDIMetaFile& rMtf, VirtualDevice& rVDev )
                     if ( pData )
                     {
                         SvMemoryStream	aMemStm( (void*)pData, pA->GetDataSize(), STREAM_READ );
-                        sal_Bool		bSkipSequence = sal_False;					
+                        sal_Bool		bSkipSequence = sal_False;
                         ByteString		sSeqEnd;
 
                         if( pA->GetComment().Equals( "XPATHSTROKE_SEQ_BEGIN" ) )
@@ -1319,8 +1320,8 @@ void PSWriter::ImplWriteActions( const GDIMetaFile& rMtf, VirtualDevice& rVDev )
                                         MetaBitmapAction		using RasterOp xor
 
                                         Because RasterOps cannot been used in Postscript, we have to
-                                        replace these actions. The MetaComment "XPATHFILL_SEQ_BEGIN" is 
-                                        providing the clippath of the object. The following loop is 
+                                        replace these actions. The MetaComment "XPATHFILL_SEQ_BEGIN" is
+                                        providing the clippath of the object. The following loop is
                                         trying to find the bitmap that is matching the clippath, so that
                                         only one bitmap is exported, otherwise if the bitmap is not
                                         locatable, all metaactions are played normally.
@@ -1339,6 +1340,7 @@ void PSWriter::ImplWriteActions( const GDIMetaFile& rMtf, VirtualDevice& rVDev )
                                             case META_BMPSCALEPART_ACTION :
                                             case META_BMPEXSCALE_ACTION :
                                             case META_BMPEXSCALEPART_ACTION :
+                                            case META_RENDERGRAPHIC_ACTION :
                                             {
                                                 nBitmapCount++;
                                                 nBitmapAction = nCurAction;
@@ -1387,7 +1389,7 @@ void PSWriter::ImplWriteActions( const GDIMetaFile& rMtf, VirtualDevice& rVDev )
                                 pMA = rMtf.GetAction( nCurAction );
                                 if ( pMA->GetType() == META_COMMENT_ACTION )
                                 {
-                                    ByteString sComment( ((MetaCommentAction*)pMA)->GetComment() );	
+                                    ByteString sComment( ((MetaCommentAction*)pMA)->GetComment() );
                                     if ( sComment.Equals( sSeqEnd ) )
                                         break;
                                 }
@@ -1395,6 +1397,23 @@ void PSWriter::ImplWriteActions( const GDIMetaFile& rMtf, VirtualDevice& rVDev )
                         }
                     }
                 }
+            }
+            break;
+
+            case( META_RENDERGRAPHIC_ACTION ):
+            {
+                const MetaRenderGraphicAction*	        pA = (const MetaRenderGraphicAction*) pMA;
+                const ::vcl::RenderGraphicRasterizer    aRasterizer( pA->GetRenderGraphic() );
+                const BitmapEx                          aBmpEx( aRasterizer.Rasterize( rVDev.LogicToPixel( pA->GetSize() ) ) );
+                Bitmap                                  aBmp( aBmpEx.GetBitmap() );
+
+                if ( mbGrayScale )
+                    aBmp.Convert( BMP_CONVERSION_8BIT_GREYS );
+
+                Bitmap  aMask( aBmpEx.GetMask() );
+                Size    aSize( pA->GetSize() );
+
+                ImplBmp( &aBmp, &aMask, pA->GetPoint(), aSize.Width(), aSize.Height() );
             }
             break;
         }
@@ -1588,7 +1607,7 @@ void PSWriter::ImplPolyPoly( const PolyPolygon & rPolyPoly, sal_Bool bTextOutlin
         }
         if ( bLineColor )
         {
-            ImplWriteLineColor( PS_SPACE );		
+            ImplWriteLineColor( PS_SPACE );
             for ( i = 0; i < nPolyCount; i++ )
                 ImplAddPath( rPolyPoly.GetObject( i ) );
             ImplClosePathDraw( PS_RET );
@@ -1607,7 +1626,7 @@ void PSWriter::ImplPolyLine( const Polygon & rPoly )
         if ( nPointCount )
         {
             if ( nPointCount > 1 )
-            {							
+            {
                 ImplMoveTo( rPoly.GetPoint( 0 ) );
                 i = 1;
                 while ( i < nPointCount )
@@ -1624,7 +1643,7 @@ void PSWriter::ImplPolyLine( const Polygon & rPoly )
                         ImplLineTo( rPoly.GetPoint( i++ ), PS_SPACE | PS_WRAP );
                 }
             }
-            
+
             // #104645# explicitely close path if polygon is closed
             if( rPoly[ 0 ] == rPoly[ nPointCount-1 ] )
                 ImplClosePathDraw( PS_RET );
@@ -2026,10 +2045,10 @@ void PSWriter::ImplText( const String& rUniString, const Point& rPos, const sal_
     if ( !nLen )
         return;
     if ( mnTextMode == 0 )	// using glpyh outlines
-    {		
+    {
         Font	aNotRotatedFont( maFont );
         aNotRotatedFont.SetOrientation( 0 );
-    
+
         VirtualDevice aVirDev( 1 );
         aVirDev.SetMapMode( rVDev.GetMapMode() );
         aVirDev.SetFont( aNotRotatedFont );
@@ -2037,7 +2056,7 @@ void PSWriter::ImplText( const String& rUniString, const Point& rPos, const sal_
 
         sal_Int16 nRotation = maFont.GetOrientation();
         Polygon	aPolyDummy( 1 );
-    
+
         PolyPolygon aPolyPoly;
         Point aPos( rPos );
         if ( nRotation )
@@ -2378,7 +2397,7 @@ void PSWriter::ImplWriteLineInfo( const LineInfo& rLineInfo )
     {
         default: // B2DLINEJOIN_NONE, B2DLINEJOIN_MIDDLE
             // do NOT use SvtGraphicStroke::joinNone here
-            // since it will be written as numerical value directly 
+            // since it will be written as numerical value directly
             // and is NOT a valid EPS value
             break;
         case basegfx::B2DLINEJOIN_MITER:
