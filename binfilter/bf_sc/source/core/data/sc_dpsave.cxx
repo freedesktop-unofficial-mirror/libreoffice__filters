@@ -2,7 +2,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -74,12 +74,12 @@ using namespace ::com::sun::star;
 /*N*/ 							const ::rtl::OUString& rName, sal_Bool bValue )
 /*N*/ {
 /*N*/ 	//!	move to ScUnoHelpFunctions?
-/*N*/ 
+/*N*/
 /*N*/ 	xProp->setPropertyValue( rName, uno::Any( &bValue, getBooleanCppuType() ) );
 /*N*/ }
-/*N*/ 
+/*N*/
 /*N*/ // -----------------------------------------------------------------------
-/*N*/ 
+/*N*/
 /*N*/ void lcl_SkipExtra( SvStream& rStream )
 /*N*/ {
 /*N*/ 	USHORT nExtra;
@@ -91,80 +91,80 @@ using namespace ::com::sun::star;
 /*N*/ 			rStream.SetError( SCWARN_IMPORT_INFOLOST );
 /*N*/ 	}
 /*N*/ }
-/*N*/ 
+/*N*/
 /*N*/ // -----------------------------------------------------------------------
-/*N*/ 
+/*N*/
 /*N*/ ScDPSaveMember::ScDPSaveMember(const String& rName) :
 /*N*/ 	aName( rName ),
 /*N*/ 	nVisibleMode( SC_DPSAVEMODE_DONTKNOW ),
 /*N*/ 	nShowDetailsMode( SC_DPSAVEMODE_DONTKNOW )
 /*N*/ {
 /*N*/ }
-/*N*/ 
+/*N*/
 /*N*/ ScDPSaveMember::ScDPSaveMember(const ScDPSaveMember& r) :
 /*N*/ 	aName( r.aName ),
 /*N*/ 	nVisibleMode( r.nVisibleMode ),
 /*N*/ 	nShowDetailsMode( r.nShowDetailsMode )
 /*N*/ {
 /*N*/ }
-/*N*/ 
+/*N*/
 /*N*/ ScDPSaveMember::ScDPSaveMember(SvStream& rStream)
 /*N*/ {
 /*N*/ 	rStream.ReadByteString( aName, rStream.GetStreamCharSet() );
 /*N*/ 	rStream >> nVisibleMode;
 /*N*/ 	rStream >> nShowDetailsMode;
-/*N*/ 
+/*N*/
 /*N*/ 	lcl_SkipExtra( rStream );		// reads at least 1 USHORT
 /*N*/ }
-/*N*/ 
+/*N*/
 /*N*/ ScDPSaveMember::~ScDPSaveMember()
 /*N*/ {
 /*N*/ }
-/*N*/ 
+/*N*/
 /*N*/ BOOL ScDPSaveMember::operator== ( const ScDPSaveMember& r ) const
 /*N*/ {
 /*N*/ 	if ( aName			  != r.aName 			||
 /*N*/ 		 nVisibleMode	  != r.nVisibleMode		||
 /*N*/ 		 nShowDetailsMode != r.nShowDetailsMode )
 /*N*/ 		return FALSE;
-/*N*/ 
+/*N*/
 /*N*/ 	return TRUE;
 /*N*/ }
-/*N*/ 
+/*N*/
 /*N*/ void ScDPSaveMember::SetIsVisible(BOOL bSet)
 /*N*/ {
 /*N*/ 	nVisibleMode = bSet;
 /*N*/ }
-/*N*/ 
+/*N*/
 /*N*/ void ScDPSaveMember::SetShowDetails(BOOL bSet)
 /*N*/ {
 /*N*/ 	nShowDetailsMode = bSet;
 /*N*/ }
-/*N*/ 
+/*N*/
 /*N*/ void ScDPSaveMember::WriteToSource( const uno::Reference<uno::XInterface>& xMember )
 /*N*/ {
 /*N*/ 	//	nothing to do?
 /*N*/ 	if ( nVisibleMode == SC_DPSAVEMODE_DONTKNOW && nShowDetailsMode == SC_DPSAVEMODE_DONTKNOW )
 /*N*/ 		return;
-/*N*/ 
+/*N*/
 /*N*/ 	uno::Reference<beans::XPropertySet> xMembProp( xMember, uno::UNO_QUERY );
 /*N*/ 	DBG_ASSERT( xMembProp.is(), "no properties at member" );
 /*N*/ 	if ( xMembProp.is() )
 /*N*/ 	{
 /*N*/ 		// exceptions are caught at ScDPSaveData::WriteToSource
-/*N*/ 
+/*N*/
 /*N*/ 		if ( nVisibleMode != SC_DPSAVEMODE_DONTKNOW )
 /*N*/ 			lcl_SetBoolProperty( xMembProp,
 /*N*/ 					::rtl::OUString(RTL_CONSTASCII_USTRINGPARAM(DP_PROP_ISVISIBLE)), (BOOL)nVisibleMode );
-/*N*/ 
+/*N*/
 /*N*/ 		if ( nShowDetailsMode != SC_DPSAVEMODE_DONTKNOW )
 /*N*/ 			lcl_SetBoolProperty( xMembProp,
 /*N*/ 					::rtl::OUString(RTL_CONSTASCII_USTRINGPARAM(DP_PROP_SHOWDETAILS)), (BOOL)nShowDetailsMode );
 /*N*/ 	}
 /*N*/ }
-/*N*/ 
+/*N*/
 /*N*/ // -----------------------------------------------------------------------
-/*N*/ 
+/*N*/
 /*N*/ ScDPSaveDimension::ScDPSaveDimension(const String& rName, BOOL bDataLayout) :
 /*N*/ 	aName( rName ),
 /*N*/ 	pLayoutName( NULL ),
@@ -179,7 +179,7 @@ using namespace ::com::sun::star;
 /*N*/ 	pSubTotalFuncs( NULL )
 /*N*/ {
 /*N*/ }
-/*N*/ 
+/*N*/
 /*N*/ ScDPSaveDimension::ScDPSaveDimension(const ScDPSaveDimension& r) :
 /*N*/ 	aName( r.aName ),
 /*N*/ 	bIsDataLayout( r.bIsDataLayout ),
@@ -198,34 +198,34 @@ using namespace ::com::sun::star;
 /*N*/ 		for (long nSub=0; nSub<nSubTotalCount; nSub++)
 /*N*/ 			pSubTotalFuncs[nSub] = r.pSubTotalFuncs[nSub];
 /*N*/ 	}
-/*N*/ 
-/*N*/ 	long nCount = r.aMemberList.Count();
-/*N*/ 	for (long i=0; i<nCount; i++)
+/*N*/
+/*N*/ 	size_t nCount = r.aMemberList.size();
+/*N*/ 	for (size_t i = 0; i < nCount; i++)
 /*N*/ 	{
-/*N*/ 		ScDPSaveMember* pNew = new ScDPSaveMember( *(ScDPSaveMember*)r.aMemberList.GetObject(i) );
-/*N*/ 		aMemberList.Insert( pNew, LIST_APPEND );
+/*N*/ 		ScDPSaveMember* pNew = new ScDPSaveMember( *r.aMemberList[ i ] );
+/*N*/ 		aMemberList.push_back( pNew );
 /*N*/ 	}
 /*N*/ 	if (r.pLayoutName)
 /*N*/ 		pLayoutName = new String( *(r.pLayoutName) );
 /*N*/ 	else
 /*N*/ 		pLayoutName = NULL;
 /*N*/ }
-/*N*/ 
+/*N*/
 /*N*/ ScDPSaveDimension::ScDPSaveDimension(SvStream& rStream)
 /*N*/ {
 /*N*/ 	long i;
-/*N*/ 
+/*N*/
 /*N*/ 	rStream.ReadByteString( aName, rStream.GetStreamCharSet() );
 /*N*/ 	rStream >> bIsDataLayout;
-/*N*/ 
+/*N*/
 /*N*/ 	rStream >> bDupFlag;
-/*N*/ 
+/*N*/
 /*N*/ 	rStream >> nOrientation;
 /*N*/ 	rStream >> nFunction;			// enum GeneralFunction
 /*N*/ 	rStream >> nUsedHierarchy;
-/*N*/ 
+/*N*/
 /*N*/ 	rStream >> nShowEmptyMode;		//!	at level
-/*N*/ 
+/*N*/
 /*N*/ 	rStream >> bSubTotalDefault;	//!	at level
 /*N*/ 	rStream >> nSubTotalCount;
 /*N*/ 	if (nSubTotalCount)
@@ -236,30 +236,30 @@ using namespace ::com::sun::star;
 /*N*/ 	}
 /*N*/ 	else
 /*N*/ 		pSubTotalFuncs = NULL;
-/*N*/ 
+/*N*/
 /*N*/ 	lcl_SkipExtra( rStream );		// reads at least 1 USHORT
-/*N*/ 
+/*N*/
 /*N*/ 	long nNewCount;
 /*N*/ 	rStream >> nNewCount;
 /*N*/ 	for (i=0; i<nNewCount; i++)
 /*N*/ 	{
 /*N*/ 		ScDPSaveMember* pNew = new ScDPSaveMember( rStream );
-/*N*/ 		aMemberList.Insert( pNew, LIST_APPEND );
+/*N*/ 		aMemberList.push_back( pNew );
 /*N*/ 	}
 /*N*/ 	pLayoutName = NULL;
 /*N*/ }
-/*N*/ 
+/*N*/
 /*N*/ ScDPSaveDimension::~ScDPSaveDimension()
 /*N*/ {
-/*N*/ 	long nCount = aMemberList.Count();
-/*N*/ 	for (long i=0; i<nCount; i++)
-/*N*/ 		delete (ScDPSaveMember*)aMemberList.GetObject(i);
-/*N*/ 	aMemberList.Clear();
+/*N*/ 	size_t nCount = aMemberList.size();
+/*N*/ 	for (size_t i=0; i < nCount; i++)
+/*N*/ 		delete aMemberList[ i ];
+/*N*/ 	aMemberList.clear();
 /*N*/ 	if (pLayoutName)
 /*N*/ 		delete pLayoutName;
 /*N*/   delete [] pSubTotalFuncs;
 /*N*/ }
-/*N*/ 
+/*N*/
 /*N*/ BOOL ScDPSaveDimension::operator== ( const ScDPSaveDimension& r ) const
 /*N*/ {
 /*N*/ 	if ( aName			  != r.aName			||
@@ -272,32 +272,31 @@ using namespace ::com::sun::star;
 /*N*/ 		 bSubTotalDefault != r.bSubTotalDefault ||
 /*N*/ 		 nSubTotalCount   != r.nSubTotalCount )
 /*N*/ 		return FALSE;
-/*N*/ 
+/*N*/
 /*N*/ 	if ( nSubTotalCount && ( !pSubTotalFuncs || !r.pSubTotalFuncs ) )	// should not happen
 /*N*/ 		return FALSE;
-/*N*/ 
+/*N*/
 /*N*/ 	for (long i=0; i<nSubTotalCount; i++)
 /*N*/ 		if ( pSubTotalFuncs[i] != r.pSubTotalFuncs[i] )
 /*N*/ 			return FALSE;
-/*N*/ 
-/*N*/ 	ULONG nCount = aMemberList.Count();
-/*N*/ 	if ( nCount != r.aMemberList.Count() )
+/*N*/
+/*N*/ 	size_t nCount = aMemberList.size();
+/*N*/ 	if ( nCount != r.aMemberList.size() )
 /*N*/ 		return FALSE;
-/*N*/ 
-/*N*/ 	for (ULONG i=0; i<nCount; i++)
-/*N*/ 		if ( !( *(ScDPSaveMember*)aMemberList.GetObject(i) ==
-/*N*/ 				*(ScDPSaveMember*)r.aMemberList.GetObject(i) ) )
+/*N*/
+/*N*/ 	for (size_t i = 0; i < nCount; i++)
+/*N*/ 		if ( !( *aMemberList[ i ] == *r.aMemberList[ i ] ) )
 /*N*/ 			return FALSE;
-/*N*/ 
+/*N*/
 /*N*/ 	return TRUE;
 /*N*/ }
-/*N*/ 
-/*N*/ 
+/*N*/
+/*N*/
 /*N*/ void ScDPSaveDimension::SetOrientation(USHORT nNew)
 /*N*/ {
 /*N*/ 	nOrientation = nNew;
 /*N*/ }
-/*N*/ 
+/*N*/
 /*N*/ void ScDPSaveDimension::SetSubTotals(long nCount, const USHORT* pFuncs)
 /*N*/ {
 /*N*/ 	if (pSubTotalFuncs)
@@ -311,20 +310,20 @@ using namespace ::com::sun::star;
 /*N*/ 	}
 /*N*/ 	else
 /*N*/ 		pSubTotalFuncs = NULL;
-/*N*/ 
+/*N*/
 /*N*/ 	bSubTotalDefault = FALSE;
 /*N*/ }
-/*N*/ 
+/*N*/
 /*N*/ void ScDPSaveDimension::SetShowEmpty(BOOL bSet)
 /*N*/ {
 /*N*/ 	nShowEmptyMode = bSet;
 /*N*/ }
-/*N*/ 
+/*N*/
 /*N*/ void ScDPSaveDimension::SetFunction(USHORT nNew)
 /*N*/ {
 /*N*/ 	nFunction = nNew;
 /*N*/ }
-/*N*/ 
+/*N*/
 /*N*/ void ScDPSaveDimension::SetUsedHierarchy(long nNew)
 /*N*/ {
 /*N*/ 	nUsedHierarchy = nNew;
@@ -366,27 +365,27 @@ using namespace ::com::sun::star;
 /*N*/ 	{
 /*N*/ 		// exceptions are caught at ScDPSaveData::WriteToSource
 /*N*/ 		uno::Any aAny;
-/*N*/ 
+/*N*/
 /*N*/ 		sheet::DataPilotFieldOrientation eOrient = (sheet::DataPilotFieldOrientation)nOrientation;
 /*N*/ 		aAny <<= eOrient;
 /*N*/ 		xDimProp->setPropertyValue( ::rtl::OUString(RTL_CONSTASCII_USTRINGPARAM(DP_PROP_ORIENTATION)), aAny );
-/*N*/ 
+/*N*/
 /*N*/ 		sheet::GeneralFunction eFunc = (sheet::GeneralFunction)nFunction;
 /*N*/ 		aAny <<= eFunc;
 /*N*/ 		xDimProp->setPropertyValue( ::rtl::OUString(RTL_CONSTASCII_USTRINGPARAM(DP_PROP_FUNCTION)), aAny );
-/*N*/ 
+/*N*/
 /*N*/ 		if ( nUsedHierarchy >= 0 )
 /*N*/ 		{
 /*N*/ 			aAny <<= (INT32)nUsedHierarchy;
 /*N*/ 			xDimProp->setPropertyValue( ::rtl::OUString(RTL_CONSTASCII_USTRINGPARAM(DP_PROP_USEDHIERARCHY)), aAny );
 /*N*/ 		}
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	//	Level loop outside of aMemberList loop
 /*N*/ 	//	because SubTotals have to be set independently of known members
-/*N*/ 
-/*N*/ 	long nCount = aMemberList.Count();
-/*N*/ 
+/*N*/
+/*N*/ 	size_t nCount = aMemberList.size();
+/*N*/
 /*N*/ 	long nHierCount = 0;
 /*N*/ 	uno::Reference<container::XIndexAccess> xHiers;
 /*N*/ 	uno::Reference<sheet::XHierarchiesSupplier> xHierSupp( xDim, uno::UNO_QUERY );
@@ -396,11 +395,11 @@ using namespace ::com::sun::star;
 /*N*/ 		xHiers = new ScNameToIndexAccess( xHiersName );
 /*N*/ 		nHierCount = xHiers->getCount();
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	for (long nHier=0; nHier<nHierCount; nHier++)
 /*N*/ 	{
 /*N*/ 		uno::Reference<uno::XInterface> xHierarchy = ScUnoHelpFunctions::AnyToInterface( xHiers->getByIndex(nHier) );
-/*N*/ 
+/*N*/
 /*N*/ 		long nLevCount = 0;
 /*N*/ 		uno::Reference<container::XIndexAccess> xLevels;
 /*N*/ 		uno::Reference<sheet::XLevelsSupplier> xLevSupp( xHierarchy, uno::UNO_QUERY );
@@ -410,7 +409,7 @@ using namespace ::com::sun::star;
 /*N*/ 			xLevels = new ScNameToIndexAccess( xLevelsName );
 /*N*/ 			nLevCount = xLevels->getCount();
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		for (long nLev=0; nLev<nLevCount; nLev++)
 /*N*/ 		{
 /*N*/ 			uno::Reference<uno::XInterface> xLevel = ScUnoHelpFunctions::AnyToInterface( xLevels->getByIndex(nLev) );
@@ -422,7 +421,7 @@ using namespace ::com::sun::star;
 /*N*/ 				{
 /*N*/ 					if ( !pSubTotalFuncs )
 /*N*/ 						nSubTotalCount = 0;
-/*N*/ 
+/*N*/
 /*N*/ 					uno::Sequence<sheet::GeneralFunction> aSeq(nSubTotalCount);
 /*N*/ 					sheet::GeneralFunction* pArray = aSeq.getArray();
 /*N*/ 					for (long i=0; i<nSubTotalCount; i++)
@@ -434,10 +433,10 @@ using namespace ::com::sun::star;
 /*N*/ 				if ( nShowEmptyMode != SC_DPSAVEMODE_DONTKNOW )
 /*N*/ 					lcl_SetBoolProperty( xLevProp,
 /*N*/ 						::rtl::OUString(RTL_CONSTASCII_USTRINGPARAM(DP_PROP_SHOWEMPTY)), (BOOL)nShowEmptyMode );
-/*N*/ 
+/*N*/
 /*N*/ 				// exceptions are caught at ScDPSaveData::WriteToSource
 /*N*/ 			}
-/*N*/ 
+/*N*/
 /*N*/ 			if ( nCount > 0 )
 /*N*/ 			{
 /*N*/ 				uno::Reference<sheet::XMembersSupplier> xMembSupp( xLevel, uno::UNO_QUERY );
@@ -446,9 +445,9 @@ using namespace ::com::sun::star;
 /*N*/ 					uno::Reference<container::XNameAccess> xMembers = xMembSupp->getMembers();
 /*N*/ 					if ( xMembers.is() )
 /*N*/ 					{
-/*N*/ 						for (long i=0; i<nCount; i++)
+/*N*/ 						for (size_t i = 0; i < nCount; i++)
 /*N*/ 						{
-/*N*/ 							ScDPSaveMember* pMember = (ScDPSaveMember*)aMemberList.GetObject(i);
+/*N*/ 							ScDPSaveMember* pMember = aMemberList[ i ];
 /*N*/ 							::rtl::OUString aLclName = pMember->GetName();
 /*N*/ 							if ( xMembers->hasByName( aLclName ) )
 /*N*/ 							{
@@ -464,7 +463,7 @@ using namespace ::com::sun::star;
 /*N*/ 		}
 /*N*/ 	}
 /*N*/ }
-/*N*/ 
+/*N*/
 // -----------------------------------------------------------------------
 
 /*N*/ ScDPSaveData::ScDPSaveData() :
@@ -497,17 +496,17 @@ using namespace ::com::sun::star;
 /*N*/ 		nRowGrandMode    = r.nRowGrandMode;
 /*N*/ 		nIgnoreEmptyMode = r.nIgnoreEmptyMode;
 /*N*/ 		nRepeatEmptyMode = r.nRepeatEmptyMode;
-/*N*/ 
+/*N*/
 /*N*/ 		//	remove old dimensions
-/*N*/ 
+/*N*/
 /*N*/ 		long nCount = aDimList.Count();
 /*N*/ 		long i;
 /*N*/ 		for (i=0; i<nCount; i++)
 /*N*/ 			delete (ScDPSaveDimension*)aDimList.GetObject(i);
 /*N*/ 		aDimList.Clear();
-/*N*/ 
+/*N*/
 /*N*/ 		//	copy new dimensions
-/*N*/ 
+/*N*/
 /*N*/ 		nCount = r.aDimList.Count();
 /*N*/ 		for (i=0; i<nCount; i++)
 /*N*/ 		{
@@ -518,7 +517,7 @@ using namespace ::com::sun::star;
 /*N*/ 	}
 /*N*/ 	return *this;
 /*N*/ }
-/*N*/ 
+/*N*/
 /*N*/ BOOL ScDPSaveData::operator== ( const ScDPSaveData& r ) const
 /*N*/ {
 /*N*/ 	if ( nColumnGrandMode != r.nColumnGrandMode ||
@@ -526,16 +525,16 @@ using namespace ::com::sun::star;
 /*N*/ 		 nIgnoreEmptyMode != r.nIgnoreEmptyMode ||
 /*N*/ 		 nRepeatEmptyMode != r.nRepeatEmptyMode )
 /*N*/ 		return FALSE;
-/*N*/ 
+/*N*/
 /*N*/ 	ULONG nCount = aDimList.Count();
 /*N*/ 	if ( nCount != r.aDimList.Count() )
 /*N*/ 		return FALSE;
-/*N*/ 
+/*N*/
 /*N*/ 	for (ULONG i=0; i<nCount; i++)
 /*N*/ 		if ( !( *(ScDPSaveDimension*)aDimList.GetObject(i) ==
 /*N*/ 				*(ScDPSaveDimension*)r.aDimList.GetObject(i) ) )
 /*N*/ 			return FALSE;
-/*N*/ 
+/*N*/
 /*N*/ 	return TRUE;
 /*N*/ }
 
@@ -586,43 +585,43 @@ using namespace ::com::sun::star;
 /*N*/ 	aDimList.Insert( pNew, LIST_APPEND );
 /*N*/ 	return pNew;
 /*N*/ }
-/*N*/ 
+/*N*/
 /*N*/ ScDPSaveDimension* ScDPSaveData::DuplicateDimension(const String& rName)
 /*N*/ {
 /*N*/ 	//	always insert new
 /*N*/ 	//!	check if dimension is there?
-/*N*/ 
+/*N*/
 /*N*/ 	ScDPSaveDimension* pOld = GetDimensionByName( rName );
 /*N*/ 	ScDPSaveDimension* pNew = new ScDPSaveDimension( *pOld );
 /*N*/ 	pNew->SetDupFlag( TRUE );
 /*N*/ 	aDimList.Insert( pNew, LIST_APPEND );
 /*N*/ 	return pNew;
 /*N*/ }
-/*N*/ 
+/*N*/
 /*N*/ void ScDPSaveData::SetColumnGrand(BOOL bSet)
 /*N*/ {
 /*N*/ 	nColumnGrandMode = bSet;
 /*N*/ }
-/*N*/ 
+/*N*/
 /*N*/ void ScDPSaveData::SetRowGrand(BOOL bSet)
 /*N*/ {
 /*N*/ 	nRowGrandMode = bSet;
 /*N*/ }
-/*N*/ 
+/*N*/
 /*N*/ void ScDPSaveData::SetIgnoreEmptyRows(BOOL bSet)
 /*N*/ {
 /*N*/ 	nIgnoreEmptyMode = bSet;
 /*N*/ }
-/*N*/ 
+/*N*/
 /*N*/ void ScDPSaveData::SetRepeatIfEmpty(BOOL bSet)
 /*N*/ {
 /*N*/ 	nRepeatEmptyMode = bSet;
 /*N*/ }
-/*N*/ 
+/*N*/
 /*N*/ void lcl_ResetOrient( const uno::Reference<sheet::XDimensionsSupplier>& xSource )
 /*N*/ {
 /*N*/ 	sheet::DataPilotFieldOrientation eOrient = sheet::DataPilotFieldOrientation_HIDDEN;
-/*N*/ 
+/*N*/
 /*N*/ 	uno::Reference<container::XNameAccess> xDimsName = xSource->getDimensions();
 /*N*/ 	uno::Reference<container::XIndexAccess> xIntDims = new ScNameToIndexAccess( xDimsName );
 /*N*/ 	long nIntCount = xIntDims->getCount();
@@ -638,21 +637,21 @@ using namespace ::com::sun::star;
 /*N*/ 		}
 /*N*/ 	}
 /*N*/ }
-/*N*/ 
+/*N*/
 /*N*/ void ScDPSaveData::WriteToSource( const uno::Reference<sheet::XDimensionsSupplier>& xSource )
 /*N*/ {
 /*N*/ 	if (!xSource.is())
 /*N*/ 		return;
-/*N*/ 
+/*N*/
 /*N*/ 	//	source options must be first!
-/*N*/ 
+/*N*/
 /*N*/ 	uno::Reference<beans::XPropertySet> xSourceProp( xSource, uno::UNO_QUERY );
 /*N*/ 	DBG_ASSERT( xSourceProp.is(), "no properties at source" );
 /*N*/ 	if ( xSourceProp.is() )
 /*N*/ 	{
 /*N*/ 		//	source options are not available for external sources
 /*N*/ 		//!	use XPropertySetInfo to test for availability?
-/*N*/ 
+/*N*/
 /*N*/ 		try
 /*N*/ 		{
 /*N*/ 			if ( nIgnoreEmptyMode != SC_DPSAVEMODE_DONTKNOW )
@@ -667,25 +666,25 @@ using namespace ::com::sun::star;
 /*N*/ 			// no error
 /*N*/ 		}
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	// exceptions in the other calls are errors
 /*N*/ 	try
 /*N*/ 	{
 /*N*/ 		//	reset all orientations
 /*N*/ 		//!	"forgetSettings" or similar at source ?????
 /*N*/ 		//!	reset all duplicated dimensions, or reuse them below !!!
-/*N*/ 
+/*N*/
 /*N*/ 		lcl_ResetOrient( xSource );
-/*N*/ 
+/*N*/
 /*N*/ 		long nCount = aDimList.Count();
 /*N*/ 		for (long i=0; i<nCount; i++)
 /*N*/ 		{
 /*N*/ 			ScDPSaveDimension* pDim = (ScDPSaveDimension*)aDimList.GetObject(i);
 /*N*/ 			::rtl::OUString aName = pDim->GetName();
 /*N*/ 			BOOL bData = pDim->IsDataLayout();
-/*N*/ 
+/*N*/
 /*N*/ 			//!	getByName for ScDPSource, including DataLayoutDimension !!!!!!!!
-/*N*/ 
+/*N*/
 /*N*/ 			uno::Reference<container::XNameAccess> xDimsName = xSource->getDimensions();
 /*N*/ 			uno::Reference<container::XIndexAccess> xIntDims = new ScNameToIndexAccess( xDimsName );
 /*N*/ 			long nIntCount = xIntDims->getCount();
@@ -709,17 +708,17 @@ using namespace ::com::sun::star;
 /*N*/ 					if ( xDimName.is() && xDimName->getName() == aName )
 /*N*/ 						bFound = TRUE;
 /*N*/ 				}
-/*N*/ 
+/*N*/
 /*N*/ 				if ( bFound )
 /*N*/ 				{
 /*N*/ 					if ( pDim->GetDupFlag() )
 /*N*/ 					{
 /*N*/ 						String aNewName = pDim->GetName();
-/*N*/ 
+/*N*/
 /*N*/ 						// different name for each duplication of a (real) dimension...
 /*N*/ 						for (long j=0; j<=i; j++)	//! Test !!!!!!
 /*N*/ 							aNewName += '*';		//! modify name at creation of SaveDimension
-/*N*/ 
+/*N*/
 /*N*/ 						uno::Reference<util::XCloneable> xCloneable( xIntDim, uno::UNO_QUERY );
 /*N*/ 						DBG_ASSERT( xCloneable.is(), "cannot clone dimension" );
 /*N*/ 						if (xCloneable.is())
@@ -739,7 +738,7 @@ using namespace ::com::sun::star;
 /*N*/ 			}
 /*N*/ 			DBG_ASSERT(bFound, "WriteToSource: Dimension not found");
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		if ( xSourceProp.is() )
 /*N*/ 		{
 /*N*/ 			if ( nColumnGrandMode != SC_DPSAVEMODE_DONTKNOW )
@@ -755,13 +754,13 @@ using namespace ::com::sun::star;
 /*N*/ 		OSL_FAIL("exception in WriteToSource");
 /*N*/ 	}
 /*N*/ }
-/*N*/ 
+/*N*/
 /*N*/ void ScDPSaveData::Load( SvStream& rStream )
 /*N*/ {
 /*N*/ 	//!	multi-header for individual entries
-/*N*/ 
+/*N*/
 /*N*/ 	DBG_ASSERT( aDimList.Count()==0, "ScDPSaveData::Load not empty" );
-/*N*/ 
+/*N*/
 /*N*/ 	long nNewCount;
 /*N*/ 	rStream >> nNewCount;
 /*N*/ 	for (long i=0; i<nNewCount; i++)
@@ -769,12 +768,12 @@ using namespace ::com::sun::star;
 /*N*/ 		ScDPSaveDimension* pNew = new ScDPSaveDimension( rStream );
 /*N*/ 		aDimList.Insert( pNew, LIST_APPEND );
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	rStream >> nColumnGrandMode;
 /*N*/ 	rStream >> nRowGrandMode;
 /*N*/ 	rStream >> nIgnoreEmptyMode;
 /*N*/ 	rStream >> nRepeatEmptyMode;
-/*N*/ 
+/*N*/
 /*N*/ 	lcl_SkipExtra( rStream );		// reads at least 1 USHORT
 /*N*/ }
 }
