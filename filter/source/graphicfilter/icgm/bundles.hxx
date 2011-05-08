@@ -2,7 +2,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -31,8 +31,8 @@
 
 #include <sal/types.h>
 #include "cgmtypes.hxx"
-#include <tools/list.hxx>
 #include <vcl/salbtype.hxx>
+#include <vector>
 
 // ---------------------------------------------------------------
 
@@ -154,22 +154,25 @@ public:
 
 // ---------------------------------------------------------------
 
+typedef ::std::vector< FontEntry* > FontEntryList;
+
 class CGMFList
 {
-    sal_uInt32				nFontNameCount;
-    sal_uInt32				nCharSetCount;
-    List				aFontEntryList;
-    void				ImplDeleteList();
-public:
-    sal_uInt32				nFontsAvailable;
-    FontEntry*			GetFontEntry( sal_uInt32 );
-    void				InsertName( sal_uInt8* pSource, sal_uInt32 nSize );
-    void				InsertCharSet( CharSetType, sal_uInt8* pSource, sal_uInt32 nSize );
-                        CGMFList();
-    CGMFList&			operator=( CGMFList& rFontList );
-                        ~CGMFList();
-};
+    sal_uInt32      nFontNameCount;
+    sal_uInt32      nCharSetCount;
+    FontEntryList   aFontEntryList;
+    void            ImplDeleteList();
 
+public:
+                    CGMFList();
+                    ~CGMFList();
+
+    sal_uInt32      nFontsAvailable;
+    FontEntry*      GetFontEntry( sal_uInt32 );
+    void            InsertName( sal_uInt8* pSource, sal_uInt32 nSize );
+    void            InsertCharSet( CharSetType, sal_uInt8* pSource, sal_uInt32 nSize );
+    CGMFList&       operator=( CGMFList& rFontList );
+};
 
 #endif
 
