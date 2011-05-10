@@ -2,7 +2,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -231,7 +231,7 @@ sal_Bool PDFExport::ExportSelection( vcl::PDFWriter& rPDFWriter, Reference< com:
                     aMtf.Stop();
                     aMtf.WindStart();
 
-                    if( aMtf.GetActionCount() &&
+                    if( aMtf.GetActionSize() &&
                              ( !mbSkipEmptyPages || aPageSize.Width || aPageSize.Height ) )
                         bRet = ImplExportPage( rPDFWriter, *pPDFExtOutDevData, aMtf ) || bRet;
 
@@ -292,7 +292,7 @@ void PDFExportStreamDoc::write( const Reference< XOutputStream >& xStream )
             aArgs.getArray()[2].Name = OUString( RTL_CONSTASCII_USTRINGPARAM( "EncryptionData" ) );
             aArgs.getArray()[2].Value <<= m_aPreparedPassword;
         }
-        
+
         try
         {
             xStore->storeToURL( OUString( RTL_CONSTASCII_USTRINGPARAM( "private:stream" ) ),
@@ -722,7 +722,7 @@ sal_Bool PDFExport::Export( const OUString& rFile, const Sequence< PropertyValue
             // which is sadly out out our control
             aPermissionPassword = rtl::OUString();
             aOpenPassword = rtl::OUString();
-            
+
             /*
             * FIXME: the entries are only implicitly defined by the resource file. Should there
             * ever be an additional form submit format this could get invalid.
@@ -1031,7 +1031,7 @@ sal_Bool PDFExport::ImplExportPage( PDFWriter& rWriter, PDFExtOutDevData& rPDFEx
 
     basegfx::B2DRectangle aB2DRect( aPageRect.Left(), aPageRect.Top(), aPageRect.Right(), aPageRect.Bottom() );
     rWriter.SetClipRegion( basegfx::B2DPolyPolygon( basegfx::tools::createPolygonFromRect( aB2DRect ) ) );
-    
+
     rWriter.PlayMetafile( aMtf, aCtx, &rPDFExtOutDevData );
 
     rPDFExtOutDevData.ResetSyncData();

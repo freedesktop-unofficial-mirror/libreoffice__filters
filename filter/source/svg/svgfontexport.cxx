@@ -2,7 +2,7 @@
  /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -68,7 +68,7 @@ void SVGFontExport::implCollectGlyphs()
 
             aVDev.Push();
 
-            for( sal_uInt32 i = 0, nCount = rMtf.GetActionCount(); i < nCount; ++i )
+            for( size_t i = 0, nCount = rMtf.GetActionSize(); i < nCount; ++i )
             {
                 ::rtl::OUString		aText;
                 MetaAction*			pAction = rMtf.GetAction( i );
@@ -80,7 +80,7 @@ void SVGFontExport::implCollectGlyphs()
                     {
                         const MetaTextAction* pA = (const MetaTextAction*) pAction;
                         aText = String( pA->GetText(), pA->GetIndex(), pA->GetLen() );
-                    }			
+                    }
                     break;
 
                     case( META_TEXTRECT_ACTION ):
@@ -153,7 +153,7 @@ void SVGFontExport::implEmbedFont( const ::rtl::OUString& rFontName, const ::std
             Point               aPos;
             Size                aSize( nFontEM, nFontEM );
             PolyPolygon         aMissingGlyphPolyPoly( Rectangle( aPos, aSize ) );
-    
+
             aMissingGlyphPolyPoly.Move( 0, -nFontEM );
             aMissingGlyphPolyPoly.Scale( 1.0, -1.0 );
 
@@ -174,7 +174,7 @@ void SVGFontExport::implEmbedFont( const ::rtl::OUString& rFontName, const ::std
             {
                 SvXMLElementExport aExp3( mrExport, XML_NAMESPACE_NONE, "missing-glyph", sal_True, sal_True );
             }
-            
+
             while( aIter != rGlyphs.end() )
             {
                 implEmbedGlyph( aVDev, ::rtl::OUString( *aIter ) );
@@ -201,12 +201,12 @@ void SVGFontExport::implEmbedGlyph( OutputDevice& rOut, const ::rtl::OUString& r
 
         if( !rOut.GetTextBoundRect( aBoundRect, aStr ) )
             aBoundRect = Rectangle( Point( 0, 0 ), Size( rOut.GetTextWidth( aStr ), 0 ) );
-    
+
         mrExport.AddAttribute( XML_NAMESPACE_NONE, "unicode", aStr );
-        
+
         if( rGlyphs[ 0 ] == nSpace )
             aBoundRect = Rectangle( Point( 0, 0 ), Size( rOut.GetTextWidth( sal_Unicode( 'x' ) ), 0 ) );
-        
+
         mrExport.AddAttribute( XML_NAMESPACE_NONE, "horiz-adv-x", SVGActionWriter::GetValueString( aBoundRect.GetWidth() ) );
 
         const ::rtl::OUString aPathString( SVGActionWriter::GetPathString( aPolyPoly, sal_False ) );

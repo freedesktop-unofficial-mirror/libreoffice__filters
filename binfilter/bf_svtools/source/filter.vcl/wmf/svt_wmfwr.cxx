@@ -2,7 +2,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -271,9 +271,9 @@ void WMFWriter::MayCallback()
 
 void WMFWriter::CountActionsAndBitmaps( const GDIMetaFile & rMTF )
 {
-    ULONG nAction, nActionCount;
+    size_t nAction, nActionCount;
 
-    nActionCount = rMTF.GetActionCount();
+    nActionCount = rMTF.GetActionSize();
 
     for ( nAction=0; nAction<nActionCount; nAction++ )
     {
@@ -636,7 +636,7 @@ void WMFWriter::WMFRecord_ExtTextOut( const Point & rPoint,
     TrueExtTextOut(rPoint,rString,aByteString,pDXAry);
 }
 
-void WMFWriter::TrueExtTextOut( const Point & rPoint, const String & rString, 
+void WMFWriter::TrueExtTextOut( const Point & rPoint, const String & rString,
     const ByteString & rByteString, const sal_Int32 * pDXAry )
 {
     WriteRecordHeader( 0, W_META_EXTTEXTOUT );
@@ -1078,12 +1078,12 @@ void WMFWriter::SetAllAttr()
 
 void WMFWriter::WriteRecords( const GDIMetaFile & rMTF )
 {
-    ULONG		nA, nACount;
-    MetaAction*	pMA;
+    size_t      nA, nACount;
+    MetaAction* pMA;
 
     if( bStatus )
     {
-        nACount = rMTF.GetActionCount();
+        nACount = rMTF.GetActionSize();
 
         WMFRecord_SetStretchBltMode();
 
@@ -1232,7 +1232,7 @@ void WMFWriter::WriteRecords( const GDIMetaFile & rMTF )
                 case META_TEXTARRAY_ACTION:
                 {
                     const MetaTextArrayAction* pA = (const MetaTextArrayAction*) pMA;
-                    
+
                     String aTemp( pA->GetText(), pA->GetIndex(), pA->GetLen() );
                     aSrcLineInfo = LineInfo();
                     SetAllAttr();
@@ -1572,8 +1572,8 @@ void WMFWriter::WriteRecords( const GDIMetaFile & rMTF )
                     const MetaEPSAction* pA = (const MetaEPSAction*)pMA;
                     const GDIMetaFile aGDIMetaFile( pA->GetSubstitute() );
 
-                    INT32 nCount = aGDIMetaFile.GetActionCount();
-                    for ( INT32 i = 0; i < nCount; i++ )
+                    size_t nCount = aGDIMetaFile.GetActionSize();
+                    for ( size_t i = 0; i < nCount; i++ )
                     {
                         const MetaAction* pMetaAct = aGDIMetaFile.GetAction( i );
                         if ( pMetaAct->GetType() == META_BMPSCALE_ACTION )
@@ -1604,7 +1604,7 @@ void WMFWriter::WriteRecords( const GDIMetaFile & rMTF )
                 case META_FLOATTRANSPARENT_ACTION:
                 {
                     const MetaFloatTransparentAction* pA = (const MetaFloatTransparentAction*) pMA;
-                    
+
                     GDIMetaFile		aTmpMtf( pA->GetGDIMetaFile() );
                     Point			aSrcPt( aTmpMtf.GetPrefMapMode().GetOrigin() );
                     const Size		aSrcSize( aTmpMtf.GetPrefSize() );
@@ -1843,7 +1843,7 @@ BOOL WMFWriter::WriteWMF( const GDIMetaFile& rMTF, SvStream& rTargetStream,
 
     if ( xStatusIndicator.is() )
         xStatusIndicator->end();
-    
+
     return bStatus;
 }
 

@@ -2,7 +2,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -159,23 +159,23 @@ SVGAttributeWriter::~SVGAttributeWriter()
 NMSP_RTL::OUString SVGAttributeWriter::GetFontStyle( const Font& rFont )
 {
     FastString aStyle;
-    
+
     // font family
     aStyle += B2UCONST( "font-family:" );
-    aStyle += mrFontExport.GetMappedFontName( rFont.GetName() ); 
+    aStyle += mrFontExport.GetMappedFontName( rFont.GetName() );
 
     // font size
     aStyle += B2UCONST( ";" );
     aStyle += B2UCONST( "font-size:" );
     aStyle += SVGActionWriter::GetValueString( rFont.GetHeight() );
     aStyle += B2UCONST( "px" );
-    
+
     // font style
 /*
     if( rFont.GetItalic() != ITALIC_NONE )
     {
         aStyle += B2UCONST( ";" );
-        aStyle += B2UCONST( "font-style:" ); 
+        aStyle += B2UCONST( "font-style:" );
 
         if( rFont.GetItalic() == ITALIC_OBLIQUE )
             aStyle += B2UCONST( "oblique" );
@@ -205,7 +205,7 @@ NMSP_RTL::OUString SVGAttributeWriter::GetFontStyle( const Font& rFont )
     aStyle += B2UCONST( ";" );
     aStyle += B2UCONST( "font-weight:" );
     aStyle += NMSP_RTL::OUString::valueOf( nFontWeight );
-            
+
     // !!!
     // font-variant
     // font-stretch
@@ -253,7 +253,7 @@ NMSP_RTL::OUString SVGAttributeWriter::GetPaintStyle( const Color& rLineColor, c
 
     // line color
     aStyle += B2UCONST( "stroke:" );
-    
+
     if( rLineColor.GetTransparency() == 255 )
         aStyle += B2UCONST( "none" );
     else
@@ -335,7 +335,7 @@ NMSP_RTL::OUString SVGAttributeWriter::GetPaintStyle( const Color& rLineColor, c
     // fill color
     aStyle += B2UCONST( ";" );
     aStyle += B2UCONST( "fill:" );
-    
+
     if( rFillColor.GetTransparency() == 255 )
         aStyle += B2UCONST( "none" );
     else
@@ -978,7 +978,7 @@ void SVGActionWriter::ImplWriteMask( GDIMetaFile& rMtf,
 
 // -----------------------------------------------------------------------------
 
-void SVGActionWriter::ImplWriteText( const Point& rPos, const String& rText, 
+void SVGActionWriter::ImplWriteText( const Point& rPos, const String& rText,
                                      const sal_Int32* pDXArray, long nWidth,
                                      const NMSP_RTL::OUString* pStyle )
 {
@@ -1089,7 +1089,7 @@ void SVGActionWriter::ImplWriteText( const Point& rPos, const String& rText,
             pDX = (sal_Int32*) pDXArray;
         }
         else
-        {	
+        {
             pOwnArray = new sal_Int32[ nLen ];
             aNormSize = Size( mpVDev->GetTextArray( rText, pOwnArray ), 0 );
             pDX = pOwnArray;
@@ -1152,7 +1152,7 @@ void SVGActionWriter::ImplWriteText( const Point& rPos, const String& rText,
                 aTransform += String( NMSP_RTL::OUString::valueOf( rFont.GetOrientation() * -0.1 ) );
                 aTransform += ')';
             }
-            
+
             if( rFont.GetItalic() != ITALIC_NONE )
             {
                 aTransform += String( NMSP_RTL::OUString( RTL_CONSTASCII_USTRINGPARAM( " skewX" )) );
@@ -1184,11 +1184,11 @@ void SVGActionWriter::ImplWriteText( const Point& rPos, const String& rText,
             String 						aOutputText( rText );
             long						nCurPos = 0;
             bool						bIgnoreWhitespace = true;
-    
+
             for( long j = 0, nX = aPt.X(); j < nLen; ++j )
             {
                 const sal_Unicode cCode = rText.GetChar( sal::static_int_cast<sal_uInt16>( j ) );
-            
+
                 // don't take more than one whitespace into account
                 if( !bIgnoreWhitespace || ( ' ' != cCode ) )
                 {
@@ -1197,13 +1197,13 @@ void SVGActionWriter::ImplWriteText( const Point& rPos, const String& rText,
                     bIgnoreWhitespace = ( ' ' == cCode );
                 }
             }
-            
+
             if( nCurPos < nLen )
                 aOutputText.Erase( sal::static_int_cast<sal_uInt16>( nCurPos ) );
-            
+
             mrExport.AddAttribute( XML_NAMESPACE_NONE, aXMLAttrX, aTSpanX.GetString() );
             mrExport.AddAttribute( XML_NAMESPACE_NONE, aXMLAttrY, GetValueString( aPt.Y() ) );
-    
+
             {
                 SvXMLElementExport aElem2( mrExport, XML_NAMESPACE_NONE, aXMLElemTSpan, sal_True, sal_True );
                 mrExport.GetDocHandler()->characters( aOutputText );
@@ -1211,7 +1211,7 @@ void SVGActionWriter::ImplWriteText( const Point& rPos, const String& rText,
 #else
             mrExport.AddAttribute( XML_NAMESPACE_NONE, aXMLAttrX, GetValueString( aPt.X() ) );
             mrExport.AddAttribute( XML_NAMESPACE_NONE, aXMLAttrY, GetValueString( aPt.Y() ) );
-            
+
             {
                 SvXMLElementExport aElem2( mrExport, XML_NAMESPACE_NONE, aXMLElemText, sal_True, sal_True );
                 mrExport.GetDocHandler()->characters( rText );
@@ -1234,7 +1234,7 @@ void SVGActionWriter::ImplWriteText( const Point& rPos, const String& rText,
                 aPoly[ 1 ].X() = aBaseLinePos.X() + aNormSize.Width() - 1; aPoly[ 1 ].Y() = aPoly[ 0 ].Y();
                 aPoly[ 2 ].X() = aPoly[ 1 ].X(); aPoly[ 2 ].Y() = aPoly[ 0 ].Y() + nLineHeight - 1;
                 aPoly[ 3 ].X() = aPoly[ 0 ].X(); aPoly[ 3 ].Y() = aPoly[ 2 ].Y();
-                        
+
                 ImplWritePolyPolygon( aPoly, sal_False );
             }
 
@@ -1246,7 +1246,7 @@ void SVGActionWriter::ImplWriteText( const Point& rPos, const String& rText,
                 aPoly[ 1 ].X() = aBaseLinePos.X() + aNormSize.Width() - 1; aPoly[ 1 ].Y() = aPoly[ 0 ].Y();
                 aPoly[ 2 ].X() = aPoly[ 1 ].X(); aPoly[ 2 ].Y() = aPoly[ 0 ].Y() + nLineHeight - 1;
                 aPoly[ 3 ].X() = aPoly[ 0 ].X(); aPoly[ 3 ].Y() = aPoly[ 2 ].Y();
-                        
+
                 ImplWritePolyPolygon( aPoly, sal_False );
             }
         }
@@ -1258,7 +1258,7 @@ void SVGActionWriter::ImplWriteText( const Point& rPos, const String& rText,
 
 // -----------------------------------------------------------------------------
 
-void SVGActionWriter::ImplWriteBmp( const BitmapEx& rBmpEx, 
+void SVGActionWriter::ImplWriteBmp( const BitmapEx& rBmpEx,
                                     const Point& rPt, const Size& rSz,
                                     const Point& rSrcPt, const Size& rSrcSz,
                                     const NMSP_RTL::OUString* /* pStyle */ )
@@ -1266,7 +1266,7 @@ void SVGActionWriter::ImplWriteBmp( const BitmapEx& rBmpEx,
     if( !!rBmpEx )
     {
         BitmapEx		aBmpEx( rBmpEx );
-         Point aPoint = Point(); 	
+         Point aPoint = Point();
         const Rectangle	aBmpRect( aPoint, rBmpEx.GetSizePixel() );
         const Rectangle aSrcRect( rSrcPt, rSrcSz );
 
@@ -1302,13 +1302,13 @@ void SVGActionWriter::ImplWriteBmp( const BitmapEx& rBmpEx,
 
 // -----------------------------------------------------------------------------
 
-void SVGActionWriter::ImplWriteActions( const GDIMetaFile& rMtf, 
+void SVGActionWriter::ImplWriteActions( const GDIMetaFile& rMtf,
                                         const NMSP_RTL::OUString* pStyle,
                                         sal_uInt32 nWriteFlags )
 {
     ImplAcquireContext();
 
-    for( sal_uLong i = 0, nCount = rMtf.GetActionCount(); i < nCount; i++ )
+    for( size_t i = 0, nCount = rMtf.GetActionSize(); i < nCount; i++ )
     {
         const MetaAction*	pAction = rMtf.GetAction( i );
         const sal_uInt16		nType = pAction->GetType();
@@ -1344,7 +1344,7 @@ void SVGActionWriter::ImplWriteActions( const GDIMetaFile& rMtf,
                 if( nWriteFlags & SVGWRITER_WRITE_FILL )
                 {
                     const MetaLineAction* pA = (const MetaLineAction*) pAction;
-                    
+
                     if(pA->GetLineInfo().IsDefault())
                     {
                         mpContext->SetPaintAttr( mpVDev->GetLineColor(), mpVDev->GetLineColor() );
@@ -1426,7 +1426,7 @@ void SVGActionWriter::ImplWriteActions( const GDIMetaFile& rMtf,
                             aPoly = Polygon( pA->GetRect(), pA->GetStartPoint(), pA->GetEndPoint(), POLY_CHORD );
                         }
                         break;
-                        
+
                         case( META_POLYGON_ACTION ):
                             aPoly = ( (const MetaPolygonAction*) pAction )->GetPolygon();
                         break;
@@ -1471,21 +1471,21 @@ void SVGActionWriter::ImplWriteActions( const GDIMetaFile& rMtf,
 
                             for(sal_uInt16 a(0); a + 1 < nPoints; a++)
                             {
-                                if(bCurve 
+                                if(bCurve
                                     && POLY_NORMAL != rPoly.GetFlags(a + 1)
                                     && a + 2 < nPoints
                                     && POLY_NORMAL != rPoly.GetFlags(a + 2)
                                     && a + 3 < nPoints)
                                 {
-                                    const Polygon aSnippet(4, 
-                                        rPoly.GetConstPointAry() + a, 
+                                    const Polygon aSnippet(4,
+                                        rPoly.GetConstPointAry() + a,
                                         rPoly.GetConstFlagAry() + a);
                                     ImplWritePolyPolygon( aSnippet, sal_True, pStyle );
                                     a += 2;
                                 }
                                 else
                                 {
-                                    const Polygon aSnippet(2, 
+                                    const Polygon aSnippet(2,
                                         rPoly.GetConstPointAry() + a);
                                     ImplWritePolyPolygon( aSnippet, sal_True, pStyle );
                                 }
@@ -1563,7 +1563,7 @@ void SVGActionWriter::ImplWriteActions( const GDIMetaFile& rMtf,
 
                         aNewLineColor.SetTransparency( sal::static_int_cast<sal_uInt8>( FRound( pA->GetTransparence() * 2.55 ) ) );
                         aNewFillColor.SetTransparency( sal::static_int_cast<sal_uInt8>( FRound( pA->GetTransparence() * 2.55 ) ) );
-                    
+
                         mpContext->SetPaintAttr( aNewLineColor, aNewFillColor );
                         ImplWritePolyPolygon( rPolyPoly, sal_False, pStyle );
                         mpContext->SetPaintAttr( aOldLineColor, aOldFillColor );
@@ -1592,17 +1592,17 @@ void SVGActionWriter::ImplWriteActions( const GDIMetaFile& rMtf,
                     const GDIMetaFile		aGDIMetaFile( pA->GetSubstitute() );
                     sal_Bool				bFound = sal_False;
 
-                    for( sal_uLong j = 0, nC = aGDIMetaFile.GetActionCount(); ( j < nC ) && !bFound; j++ )
+                    for( size_t j = 0, nC = aGDIMetaFile.GetActionSize(); ( j < nC ) && !bFound; j++ )
                     {
                         const MetaAction* pSubstAct = aGDIMetaFile.GetAction( j );
-                        
+
                         if( pSubstAct->GetType() == META_BMPSCALE_ACTION )
                         {
                             bFound = sal_True;
                             const MetaBmpScaleAction* pBmpScaleAction = (const MetaBmpScaleAction*) pSubstAct;
                             mpContext->SetPaintAttr( mpVDev->GetLineColor(), mpVDev->GetFillColor() );
-                            ImplWriteBmp( pBmpScaleAction->GetBitmap(), 
-                                          pA->GetPoint(), pA->GetSize(), 
+                            ImplWriteBmp( pBmpScaleAction->GetBitmap(),
+                                          pA->GetPoint(), pA->GetSize(),
                                           Point(), pBmpScaleAction->GetBitmap().GetSizePixel(), pStyle );
                         }
                     }
@@ -1615,7 +1615,7 @@ void SVGActionWriter::ImplWriteActions( const GDIMetaFile& rMtf,
                 const MetaCommentAction*	pA = (const MetaCommentAction*) pAction;
                 String						aSkipComment;
 
-                if( ( pA->GetComment().CompareIgnoreCaseToAscii( "XGRAD_SEQ_BEGIN" ) == COMPARE_EQUAL ) && 
+                if( ( pA->GetComment().CompareIgnoreCaseToAscii( "XGRAD_SEQ_BEGIN" ) == COMPARE_EQUAL ) &&
                     ( nWriteFlags & SVGWRITER_WRITE_FILL ) )
                 {
                     const MetaGradientExAction*	pGradAction = NULL;
@@ -1627,7 +1627,7 @@ void SVGActionWriter::ImplWriteActions( const GDIMetaFile& rMtf,
 
                         if( pAction->GetType() == META_GRADIENTEX_ACTION )
                             pGradAction = (const MetaGradientExAction*) pAction;
-                        else if( ( pAction->GetType() == META_COMMENT_ACTION ) && 
+                        else if( ( pAction->GetType() == META_COMMENT_ACTION ) &&
                                  ( ( (const MetaCommentAction*) pAction )->GetComment().CompareIgnoreCaseToAscii( "XGRAD_SEQ_END" ) == COMPARE_EQUAL ) )
                         {
                             bDone = sal_True;
@@ -1645,10 +1645,10 @@ void SVGActionWriter::ImplWriteActions( const GDIMetaFile& rMtf,
                 if( nWriteFlags & SVGWRITER_WRITE_FILL )
                 {
                     const MetaBmpAction* pA = (const MetaBmpAction*) pAction;
-                    
+
                     mpContext->SetPaintAttr( mpVDev->GetLineColor(), mpVDev->GetFillColor() );
-                    ImplWriteBmp( pA->GetBitmap(), 
-                                  pA->GetPoint(), mpVDev->PixelToLogic( pA->GetBitmap().GetSizePixel() ), 
+                    ImplWriteBmp( pA->GetBitmap(),
+                                  pA->GetPoint(), mpVDev->PixelToLogic( pA->GetBitmap().GetSizePixel() ),
                                   Point(), pA->GetBitmap().GetSizePixel(), pStyle );
                 }
             }
@@ -1659,10 +1659,10 @@ void SVGActionWriter::ImplWriteActions( const GDIMetaFile& rMtf,
                 if( nWriteFlags & SVGWRITER_WRITE_FILL )
                 {
                     const MetaBmpScaleAction* pA = (const MetaBmpScaleAction*) pAction;
-                
+
                     mpContext->SetPaintAttr( mpVDev->GetLineColor(), mpVDev->GetFillColor() );
-                    ImplWriteBmp( pA->GetBitmap(), 
-                                  pA->GetPoint(), pA->GetSize(), 
+                    ImplWriteBmp( pA->GetBitmap(),
+                                  pA->GetPoint(), pA->GetSize(),
                                   Point(), pA->GetBitmap().GetSizePixel(), pStyle );
                 }
             }
@@ -1673,10 +1673,10 @@ void SVGActionWriter::ImplWriteActions( const GDIMetaFile& rMtf,
                 if( nWriteFlags & SVGWRITER_WRITE_FILL )
                 {
                     const MetaBmpScalePartAction* pA = (const MetaBmpScalePartAction*) pAction;
-                    
+
                     mpContext->SetPaintAttr( mpVDev->GetLineColor(), mpVDev->GetFillColor() );
-                    ImplWriteBmp( pA->GetBitmap(), 
-                                  pA->GetDestPoint(), pA->GetDestSize(), 
+                    ImplWriteBmp( pA->GetBitmap(),
+                                  pA->GetDestPoint(), pA->GetDestSize(),
                                   pA->GetSrcPoint(), pA->GetSrcSize(), pStyle );
                 }
             }
@@ -1687,10 +1687,10 @@ void SVGActionWriter::ImplWriteActions( const GDIMetaFile& rMtf,
                 if( nWriteFlags & SVGWRITER_WRITE_FILL )
                 {
                     const MetaBmpExAction*	pA = (const MetaBmpExAction*) pAction;
-                    
+
                     mpContext->SetPaintAttr( mpVDev->GetLineColor(), mpVDev->GetFillColor() );
-                    ImplWriteBmp( pA->GetBitmapEx(), 
-                                  pA->GetPoint(), mpVDev->PixelToLogic( pA->GetBitmapEx().GetSizePixel() ), 
+                    ImplWriteBmp( pA->GetBitmapEx(),
+                                  pA->GetPoint(), mpVDev->PixelToLogic( pA->GetBitmapEx().GetSizePixel() ),
                                   Point(), pA->GetBitmapEx().GetSizePixel(), pStyle );
                 }
             }
@@ -1701,10 +1701,10 @@ void SVGActionWriter::ImplWriteActions( const GDIMetaFile& rMtf,
                 if( nWriteFlags & SVGWRITER_WRITE_FILL )
                 {
                     const MetaBmpExScaleAction* pA = (const MetaBmpExScaleAction*) pAction;
-                
+
                     mpContext->SetPaintAttr( mpVDev->GetLineColor(), mpVDev->GetFillColor() );
-                    ImplWriteBmp( pA->GetBitmapEx(), 
-                                  pA->GetPoint(), pA->GetSize(), 
+                    ImplWriteBmp( pA->GetBitmapEx(),
+                                  pA->GetPoint(), pA->GetSize(),
                                   Point(), pA->GetBitmapEx().GetSizePixel(), pStyle );
                 }
             }
@@ -1715,10 +1715,10 @@ void SVGActionWriter::ImplWriteActions( const GDIMetaFile& rMtf,
                 if( nWriteFlags & SVGWRITER_WRITE_FILL )
                 {
                     const MetaBmpExScalePartAction* pA = (const MetaBmpExScalePartAction*) pAction;
-                    
+
                     mpContext->SetPaintAttr( mpVDev->GetLineColor(), mpVDev->GetFillColor() );
-                    ImplWriteBmp( pA->GetBitmapEx(), 
-                                  pA->GetDestPoint(), pA->GetDestSize(), 
+                    ImplWriteBmp( pA->GetBitmapEx(),
+                                  pA->GetDestPoint(), pA->GetDestSize(),
                                   pA->GetSrcPoint(), pA->GetSrcSize(), pStyle );
                 }
             }
@@ -1735,7 +1735,7 @@ void SVGActionWriter::ImplWriteActions( const GDIMetaFile& rMtf,
                     mpContext->SetFontAttr( aFont );
                     ImplWriteText( pA->GetPoint(), String( pA->GetText(), pA->GetIndex(), pA->GetLen() ), NULL, 0, pStyle );
                 }
-            }			
+            }
             break;
 
             case( META_TEXTRECT_ACTION ):
@@ -1841,7 +1841,7 @@ void SVGActionWriter::WriteMetaFile( const Point& rPos100thmm,
     Fraction    aFractionY( aMapMode.GetScaleY() );
 
     mpVDev->Push();
-    
+
     Size aSize( OutputDevice::LogicToLogic( rSize100thmm, MAP_100TH_MM, aMapMode ) );
     aMapMode.SetScaleX( aFractionX *= Fraction( aSize.Width(), aPrefSize.Width() ) );
     aMapMode.SetScaleY( aFractionY *= Fraction( aSize.Height(), aPrefSize.Height() ) );
@@ -1850,9 +1850,9 @@ void SVGActionWriter::WriteMetaFile( const Point& rPos100thmm,
     aMapMode.SetOrigin( aOffset += aMapMode.GetOrigin() );
 
     mpVDev->SetMapMode( aMapMode );
-    
+
     ImplWriteActions( rMtf, NULL, nWriteFlags );
-    
+
     mpVDev->Pop();
 }
 

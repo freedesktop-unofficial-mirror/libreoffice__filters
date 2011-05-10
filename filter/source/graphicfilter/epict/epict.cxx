@@ -2,7 +2,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -210,12 +210,12 @@ void PictWriter::MayCallback()
 
 void PictWriter::CountActionsAndBitmaps(const GDIMetaFile & rMTF)
 {
-    sal_uLong               nAction, nActionCount;
+    size_t              nAction, nActionCount;
     const MetaAction*   pMA;
 
-    nActionCount = rMTF.GetActionCount();
+    nActionCount = rMTF.GetActionSize();
 
-    for (nAction=0; nAction<nActionCount; nAction++)
+    for (nAction=0; nAction < nActionCount; nAction++)
     {
         pMA = rMTF.GetAction( nAction );
 
@@ -445,7 +445,7 @@ void PictWriter::ConvertLinePattern(PictPattern & rPat, sal_Bool bVisible)
 {
     if( bVisible )
     {
-        rPat.nHi=0xffffffff; 
+        rPat.nHi=0xffffffff;
         rPat.nLo=0xffffffff;
     }
     else
@@ -459,7 +459,7 @@ void PictWriter::ConvertFillPattern(PictPattern & rPat, sal_Bool bVisible)
 {
     if( bVisible )
     {
-        rPat.nHi=0xffffffff; 
+        rPat.nHi=0xffffffff;
         rPat.nLo=0xffffffff;
     }
     else
@@ -714,7 +714,7 @@ void PictWriter::WriteOpcode_FontName(const Font & rFont)
 
     if (bDstFontNameValid==sal_False || nDstFontNameId!=nFontId || aDstFontName!=rFont.GetName())
     {
-        ByteString aByteString( rFont.GetName(), gsl_getSystemTextEncoding() );		
+        ByteString aByteString( rFont.GetName(), gsl_getSystemTextEncoding() );
         sal_uInt16 nFontNameLen = aByteString.Len();
         if ( nFontNameLen )
         {
@@ -736,8 +736,8 @@ void PictWriter::WriteOpcode_ClipRect( const Rectangle& rRect )
     Rectangle aRect( MapRectangle( rRect ) );
     aRect.nBottom++;
     aRect.nRight++;
-    *pPict	<< (sal_uInt16)1	// opcode 1 
-            << (sal_uInt16)10	// data size 
+    *pPict	<< (sal_uInt16)1	// opcode 1
+            << (sal_uInt16)10	// data size
             << (sal_Int16)aRect.Top() << (sal_Int16)aRect.Left()
             << (sal_Int16)aRect.Bottom() << (sal_Int16)aRect.Right();
     aClipRect = aRect;
@@ -915,7 +915,7 @@ void PictWriter::WriteOpcode_BitsRect(const Point & rPoint, const Size & rSize, 
     nBitsPerPixel = aBitmap.GetBitCount();
 
     // export code below only handles four discrete cases
-    nBitsPerPixel = 
+    nBitsPerPixel =
         nBitsPerPixel <= 1 ? 1 : nBitsPerPixel <= 4 ? 4 : nBitsPerPixel <= 8 ? 8 : 24;
 
     nWidth = pAcc->Width();
@@ -1431,15 +1431,15 @@ void PictWriter::HandleLineInfoPolyPolygons(const LineInfo& rInfo, const basegfx
 
 void PictWriter::WriteOpcodes( const GDIMetaFile & rMTF )
 {
-    sal_uLong nA, nACount;
+    size_t nA, nACount;
     const MetaAction* pMA;
 
     if( !bStatus)
         return;
 
-    nACount=rMTF.GetActionCount();
+    nACount = rMTF.GetActionSize();
 
-    for (nA=0; nA<nACount; nA++)	
+    for (nA=0; nA < nACount; nA++)
     {
         pMA = rMTF.GetAction(nA);
 
@@ -1703,7 +1703,7 @@ void PictWriter::WriteOpcodes( const GDIMetaFile & rMTF )
             {
                 const MetaPolyPolygonAction* pA = (const MetaPolyPolygonAction*) pMA;
 
-                const PolyPolygon& rPolyPoly = pA->GetPolyPolygon();				
+                const PolyPolygon& rPolyPoly = pA->GetPolyPolygon();
                 sal_uInt16 nPolyCount = rPolyPoly.Count();
                 PolyPolygon aSimplePolyPoly( rPolyPoly );
                 for ( sal_uInt16 i = 0; i < nPolyCount; i++ )
@@ -1863,8 +1863,8 @@ void PictWriter::WriteOpcodes( const GDIMetaFile & rMTF )
                 const MetaEPSAction* pA = (const MetaEPSAction*)pMA;
                 const GDIMetaFile aGDIMetaFile( pA->GetSubstitute() );
 
-                sal_Int32 nCount = aGDIMetaFile.GetActionCount();
-                for ( sal_Int32 i = 0; i < nCount; i++ )
+                size_t nCount = aGDIMetaFile.GetActionSize();
+                for ( size_t i = 0; i < nCount; i++ )
                 {
                     const MetaAction* pMetaAct = aGDIMetaFile.GetAction( i );
                     if ( pMetaAct->GetType() == META_BMPSCALE_ACTION )
@@ -2086,8 +2086,8 @@ void PictWriter::WriteOpcodes( const GDIMetaFile & rMTF )
                     if ( pAt->aClipRect != aClipRect )
                     {
                         Rectangle aRect( pAt->aClipRect );
-                        *pPict	<< (sal_uInt16)1	// opcode 1 
-                                << (sal_uInt16)10	// data size 
+                        *pPict	<< (sal_uInt16)1	// opcode 1
+                                << (sal_uInt16)10	// data size
                                 << (sal_Int16)aRect.Top() << (sal_Int16)aRect.Left()
                                 << (sal_Int16)aRect.Bottom() << (sal_Int16)aRect.Right();
                     }
@@ -2127,7 +2127,7 @@ void PictWriter::WriteOpcodes( const GDIMetaFile & rMTF )
             case META_FLOATTRANSPARENT_ACTION:
             {
                 const MetaFloatTransparentAction* pA = (const MetaFloatTransparentAction*) pMA;
-                
+
                 GDIMetaFile		aTmpMtf( pA->GetGDIMetaFile() );
                 Point			aSrcPt( aTmpMtf.GetPrefMapMode().GetOrigin() );
                 const Size		aSrcSize( aTmpMtf.GetPrefSize() );
@@ -2169,7 +2169,7 @@ void PictWriter::WriteHeader(const GDIMetaFile & rMTF)
 {
     sal_uInt16  i;
     Size aSize( rMTF.GetPrefSize() );
-    Point aPoint;	
+    Point aPoint;
     Rectangle	aRect( aPoint, aSize );
 
     // 512 Bytes "Muell" am Anfang:
@@ -2195,7 +2195,7 @@ void PictWriter::WriteHeader(const GDIMetaFile & rMTF)
 
     // viele Import-Filter verlangen die Angabe eines
     // Clipping-Bereichs am Anfang
-    
+
     WriteOpcode_ClipRect( aRect );
 }
 
