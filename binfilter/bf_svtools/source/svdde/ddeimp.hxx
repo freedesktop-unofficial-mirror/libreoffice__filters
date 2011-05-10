@@ -2,7 +2,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- *
+ * 
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -49,6 +49,16 @@
 #include <bf_svtools/bf_postwin.h>
 #include "ddewrap.hxx"
 
+/*
+extern "C"
+{
+#define BOOL WIN_BOOL
+#define BYTE WIN_BYTE
+#undef BOOL
+#undef BYTE
+};
+*/
+
 #endif
 
 #include <tools/string.hxx>
@@ -62,6 +72,18 @@ class DdeTopic;
 class DdeItem;
 class DdeTopics;
 class DdeItems;
+
+// ----------------
+// - Conversation -
+// ----------------
+
+struct Conversation
+{
+    HCONV       hConv;
+    DdeTopic*   pTopic;
+};
+
+DECLARE_LIST( ConvList, Conversation* );
 
 // ---------------
 // - DdeInternal -
