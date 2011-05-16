@@ -2,7 +2,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -2031,7 +2031,7 @@ void SdrPowerPointImport::SeekOle( SfxObjectShell* pShell, sal_uInt32 nFilterOpt
                                         sal_uInt32 i;
 
                                         sal_Bool bCopied = sal_True;
-                                        for ( i = 0; i < aList.Count(); i++ )	// copy all entrys
+                                        for ( i = 0; i < aList.size(); i++ )	// copy all entrys
                                         {
                                             const SvStorageInfo& rInfo = aList[ i ];
                                             if ( !xSource->CopyTo( rInfo.GetName(), xMacros, rInfo.GetName() ) )
@@ -2346,7 +2346,7 @@ SdrObject* SdrPowerPointImport::ApplyTextObj( PPTTextObj* pTextObj, SdrTextObj* 
                     if ( *oStartNumbering != nLastStartNumbering )
                         rOutliner.SetNumberingStartValue( nParaIndex, *oStartNumbering );
                     else
-                        rOutliner.SetNumberingStartValue( nParaIndex, -1 );		
+                        rOutliner.SetNumberingStartValue( nParaIndex, -1 );
                     nLastStartNumbering = *oStartNumbering;
                 }
                 else
@@ -2402,7 +2402,7 @@ sal_Bool SdrPowerPointImport::SeekToContentOfProgTag( sal_Int32 nVersion, SvStre
     DffRecordHeader aProgTagsHd, aProgTagBinaryDataHd;
     rSourceHd.SeekToContent( rSt );
     sal_Bool bFound = rSourceHd.nRecType == PPT_PST_ProgTags;
-    if ( !bFound )	
+    if ( !bFound )
         bFound = SeekToRec( rSt, PPT_PST_ProgTags, rSourceHd.GetRecEndFilePos(), &aProgTagsHd );
     if ( bFound )
     {
@@ -2940,8 +2940,8 @@ void SdrPowerPointImport::ImportPage( SdrPage* pRet, const PptSlidePersistEntry*
                         }
                         if ( rSlidePersist.pBObj )
                         {
-                            // #i99386# transfer the attributes from the temporary BackgroundObject 
-                            // to the Page and delete it. Maybe rSlidePersist.bBObjIsTemporary is 
+                            // #i99386# transfer the attributes from the temporary BackgroundObject
+                            // to the Page and delete it. Maybe rSlidePersist.bBObjIsTemporary is
                             // obsolete here, too.
                             pRet->getSdrPageProperties().ClearItem();
                             pRet->getSdrPageProperties().PutItemSet(rSlidePersist.pBObj->GetMergedItemSet());
@@ -4761,7 +4761,7 @@ void StyleTextProp9::Read( SvStream& rIn )
         rIn >> mnBuBlip;
     if ( mnExtParagraphMask & 0x2000000 )
         rIn >> mnHasAnm;
-    if ( mnExtParagraphMask & 0x1000000 )	
+    if ( mnExtParagraphMask & 0x1000000 )
         rIn >> mnAnmScheme;
     if ( mnExtParagraphMask & 0x4000000 )
         rIn >> mpfPP10Ext;
@@ -4782,7 +4782,7 @@ PPTStyleTextPropReader::PPTStyleTextPropReader( SvStream& rIn, SdrPowerPointImpo
 }
 
 void PPTStyleTextPropReader::ReadParaProps( SvStream& rIn, SdrPowerPointImport& rMan, const DffRecordHeader& rTextHeader,
-                                            const String& aString, PPTTextRulerInterpreter& rRuler, 
+                                            const String& aString, PPTTextRulerInterpreter& rRuler,
                                             sal_uInt32& nCharCount, sal_Bool& bTextPropAtom )
 {
     sal_uInt32  nMask = 0; //TODO: nMask initialized here to suppress warning for now, see corresponding TODO below
@@ -4924,11 +4924,11 @@ void PPTStyleTextPropReader::ReadParaProps( SvStream& rIn, SdrPowerPointImport& 
     }
 }
 
-void PPTStyleTextPropReader::ReadCharProps( SvStream& rIn, PPTCharPropSet& aCharPropSet, const String& aString, 
+void PPTStyleTextPropReader::ReadCharProps( SvStream& rIn, PPTCharPropSet& aCharPropSet, const String& aString,
                                             sal_uInt32& nCharCount, sal_uInt32 nCharAnzRead,
-                                            sal_Bool& bTextPropAtom, sal_uInt32 nExtParaPos, 
-                                            const std::vector< StyleTextProp9 >& aStyleTextProp9, 
-                                            sal_uInt32& nExtParaFlags, sal_uInt16& nBuBlip, 
+                                            sal_Bool& bTextPropAtom, sal_uInt32 nExtParaPos,
+                                            const std::vector< StyleTextProp9 >& aStyleTextProp9,
+                                            sal_uInt32& nExtParaFlags, sal_uInt16& nBuBlip,
                                             sal_uInt16& nHasAnm, sal_uInt32& nAnmScheme )
 {
     sal_uInt32  nMask = 0; //TODO: nMask initialized here to suppress warning for now, see corresponding TODO below
@@ -5008,7 +5008,7 @@ void PPTStyleTextPropReader::ReadCharProps( SvStream& rIn, PPTCharPropSet& aChar
         {
             if ( nExtParaNibble && ( ( nExtBuInd + nExtParaNibble ) < aStyleTextProp9.size() ) )
                 nExtBuInd += nExtParaNibble;
-                            
+
             nExtParaFlags = aStyleTextProp9[ nExtBuInd ].mnExtParagraphMask;
             nBuBlip = aStyleTextProp9[ nExtBuInd ].mnBuBlip;
             nHasAnm = aStyleTextProp9[ nExtBuInd ].mnHasAnm;
@@ -5124,10 +5124,10 @@ void PPTStyleTextPropReader::Init( SvStream& rIn, SdrPowerPointImport& rMan, con
             sal_uInt32 nExtParaFlags = 0, nAnmScheme = 0;
             sal_uInt16 nBuBlip = 0xffff, nHasAnm = 0;
             ReadCharProps( rIn, aCharPropSet, aString, nCharCount, nCharAnzRead,
-                           bTextPropAtom, nExtParaPos, aStyleTextProp9, nExtParaFlags, 
+                           bTextPropAtom, nExtParaPos, aStyleTextProp9, nExtParaFlags,
                            nBuBlip, nHasAnm, nAnmScheme );
-            
-            aCharPropList.Insert( 
+
+            aCharPropList.Insert(
                 new PPTCharPropSet( aCharPropSet, 0 ), LIST_APPEND );
         }
     }
@@ -5153,7 +5153,7 @@ void PPTStyleTextPropReader::Init( SvStream& rIn, SdrPowerPointImport& rMan, con
             PPTCharPropSet aCharPropSet( nCurrentPara );
             if ( bTextPropAtom )
                 ReadCharProps( rIn, aCharPropSet, aString, nCharCount, nCharAnzRead,
-                               bTextPropAtom, nExtParaPos, aStyleTextProp9, nExtParaFlags, 
+                               bTextPropAtom, nExtParaPos, aStyleTextProp9, nExtParaFlags,
                                nBuBlip, nHasAnm, nAnmScheme );
             else
                 nCharCount = nStringLen;
@@ -6481,11 +6481,11 @@ PPTTextObj::PPTTextObj( SvStream& rIn, SdrPowerPointImport& rSdrPowerPointImport
                     mpImplTextObj->mnInstance = nInstance;
 
                     sal_uInt32 nFilePos = rIn.Tell();
-                    if ( rSdrPowerPointImport.SeekToRec2( PPT_PST_TextBytesAtom, 
-                                                          PPT_PST_TextCharsAtom, 
-                                                          aClientTextBoxHd.GetRecEndFilePos() ) 
+                    if ( rSdrPowerPointImport.SeekToRec2( PPT_PST_TextBytesAtom,
+                                                          PPT_PST_TextCharsAtom,
+                                                          aClientTextBoxHd.GetRecEndFilePos() )
                          || rSdrPowerPointImport.SeekToRec( rIn,
-                                                            PPT_PST_StyleTextPropAtom, 
+                                                            PPT_PST_StyleTextPropAtom,
                                                             aClientTextBoxHd.GetRecEndFilePos() ) )
                     {
                         PPTTextRulerInterpreter aTextRulerInterpreter( nTextRulerAtomOfs, rSdrPowerPointImport,
@@ -7144,7 +7144,7 @@ void CreateTableRows( Reference< XTableRows > xTableRows, const std::set< sal_In
     Reference< XIndexAccess > xIndexAccess( xTableRows, UNO_QUERY_THROW );
     for ( sal_Int32 n = 0; n < xIndexAccess->getCount(); n++ )
     {
-        sal_Int32 nHeight; 
+        sal_Int32 nHeight;
         if ( ++aIter != rRows.end() )
         {
             nHeight = *aIter - nLastPosition;
@@ -7170,7 +7170,7 @@ void CreateTableColumns( Reference< XTableColumns > xTableColumns, const std::se
     for ( sal_Int32 n = 0; n < xIndexAccess->getCount(); n++ )
     {
         sal_Int32 nWidth;
-        if ( ++aIter != rColumns.end() ) 
+        if ( ++aIter != rColumns.end() )
         {
             nWidth = *aIter - nLastPosition;
             nLastPosition = *aIter;
@@ -7201,7 +7201,7 @@ void MergeCells( const Reference< XTable >& xTable, sal_Int32 nCol, sal_Int32 nR
    {
        DBG_ASSERT( false, "exception caught!" );
    }
-} 
+}
 
 void ApplyCellAttributes( const SdrObject* pObj, Reference< XCell >& xCell )
 {
@@ -7339,7 +7339,7 @@ void ApplyCellLineAttributes( const SdrObject* pLine, Reference< XTable >& xTabl
             static const rtl::OUString sTopBorder( String( RTL_CONSTASCII_USTRINGPARAM( "TopBorder" ) ) );
             static const rtl::OUString sBottomBorder( String( RTL_CONSTASCII_USTRINGPARAM( "BottomBorder" ) ) );
             static const rtl::OUString sLeftBorder( String( RTL_CONSTASCII_USTRINGPARAM( "LeftBorder" ) ) );
-            static const rtl::OUString sRightBorder( String( RTL_CONSTASCII_USTRINGPARAM( "RightBorder" ) ) );	
+            static const rtl::OUString sRightBorder( String( RTL_CONSTASCII_USTRINGPARAM( "RightBorder" ) ) );
             static const rtl::OUString	sDiagonalTLBR( RTL_CONSTASCII_USTRINGPARAM ( "DiagonalTLBR" ) );
             static const rtl::OUString	sDiagonalBLTR( RTL_CONSTASCII_USTRINGPARAM ( "DiagonalBLTR" ) );
 
@@ -7350,7 +7350,7 @@ void ApplyCellLineAttributes( const SdrObject* pLine, Reference< XTable >& xTabl
             Reference< XCell > xCell( xCellRange->getCellByPosition( nColumn, nRow ) );
             Reference< XPropertySet > xPropSet( xCell, UNO_QUERY_THROW );
 
-            if ( nFlags & LinePositionLeft ) 
+            if ( nFlags & LinePositionLeft )
                 xPropSet->setPropertyValue( sLeftBorder, Any( aBorderLine ) );
             if ( nFlags & LinePositionTop )
                 xPropSet->setPropertyValue( sTopBorder, Any( aBorderLine ) );
@@ -7363,7 +7363,7 @@ void ApplyCellLineAttributes( const SdrObject* pLine, Reference< XTable >& xTabl
             if ( nFlags & LinePositionBLTR )
                 xPropSet->setPropertyValue( sDiagonalBLTR, Any( sal_True ) );
             ++aIter;
-        }	
+        }
     }
     catch( Exception& )
     {
@@ -7402,7 +7402,7 @@ SdrObject* SdrPowerPointImport::CreateTable( SdrObject* pGroup, sal_uInt32* pTab
 
                 CreateTableRows( xColumnRowRange->getRows(), aRows, pGroup->GetSnapRect().Bottom() );
                 CreateTableColumns( xColumnRowRange->getColumns(), aColumns, pGroup->GetSnapRect().Right() );
-                
+
                 sal_Int32 nCellCount = aRows.size() * aColumns.size();
                 sal_Int32 *pMergedCellIndexTable = new sal_Int32[ nCellCount ];
                 for ( sal_Int32 i = 0; i < nCellCount; i++ )
@@ -7438,7 +7438,7 @@ SdrObject* SdrPowerPointImport::CreateTable( SdrObject* pGroup, sal_uInt32* pTab
                                     }
                                 }
                             }
-        
+
                             // applying text
                             OutlinerParaObject* pParaObject = pObj->GetOutlinerParaObject();
                             if ( pParaObject )
@@ -7458,21 +7458,21 @@ SdrObject* SdrPowerPointImport::CreateTable( SdrObject* pGroup, sal_uInt32* pTab
                     {
                         std::vector< sal_Int32 > vPositions;	// containing cell indexes + cell position
                         GetLinePositions( pObj, aRows, aColumns, vPositions, pGroup->GetSnapRect() );
-                        
+
                         // correcting merged cell position
                         std::vector< sal_Int32 >::iterator aIter( vPositions.begin() );
                         while( aIter != vPositions.end() )
                         {
                             sal_Int32 nOldPosition = *aIter & 0xffff;
-                            sal_Int32 nOldFlags = *aIter & 0xffff0000;					
+                            sal_Int32 nOldFlags = *aIter & 0xffff0000;
                             sal_Int32 nNewPosition = pMergedCellIndexTable[ nOldPosition ] | nOldFlags;
-                            *aIter++ = nNewPosition; 
+                            *aIter++ = nNewPosition;
                         }
                         ApplyCellLineAttributes( pObj, xTable, vPositions, aColumns.size() );
                     }
                 }
                 delete[] pMergedCellIndexTable;
-                
+
                 // we are replacing the whole group object by a single table object, so
                 // possibly connections to the group object have to be removed.
                 if ( pSolverContainer )

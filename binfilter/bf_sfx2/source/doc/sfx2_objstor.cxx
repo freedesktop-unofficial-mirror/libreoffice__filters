@@ -353,7 +353,7 @@ sal_False           Das Objekt konnte nicht geladen werden
             SetError( nError );
     }
 
-    if ( GetError() == ERRCODE_NONE && pMed->IsStorage() ) 
+    if ( GetError() == ERRCODE_NONE && pMed->IsStorage() )
     {
         SvStorageRef xStor( pMed->GetStorage() );
         if( pMed->GetLastStorageCreationState() == ERRCODE_NONE )
@@ -377,7 +377,7 @@ sal_False           Das Objekt konnte nicht geladen werden
             {
                 SvStorageInfoList aList;
                 xStor->FillInfoList( &aList );
-                if ( !aList.Count() && !xStor->IsOLEStorage() )
+                if ( aList.empty() && !xStor->IsOLEStorage() )
                     SetError( ERRCODE_IO_BROKENPACKAGE );
                 else
                 {
@@ -426,7 +426,7 @@ sal_False           Das Objekt konnte nicht geladen werden
         bHasName = sal_True;
         // Importieren
         const String aOldURL( ::binfilter::StaticBaseUrl::GetBaseURL() );
-        if( aBaseURL.Len() ) 
+        if( aBaseURL.Len() )
             ::binfilter::StaticBaseUrl::SetBaseURL( aBaseURL );
         if( !pMedium->GetFilter()->UsesStorage() )
             pMedium->GetInStream();
@@ -698,7 +698,7 @@ sal_Bool SfxObjectShell::SaveTo_Impl
     Lock_Impl( this, sal_True );
 
     sal_Bool bOk = sal_False;
-    if( sal_True ) 
+    if( sal_True )
     {
         SvStorageRef aMedRef = rMedium.GetStorage();
         if ( !aMedRef.Is() )

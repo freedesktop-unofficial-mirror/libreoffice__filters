@@ -2,7 +2,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -76,7 +76,7 @@ SvInfoObject::SvInfoObject( SvPersist * pObj, const String & rName )
 }
 
 SvInfoObject::SvInfoObject( const String& rObjName,
-                            const SvGlobalName& rClassName ) 
+                            const SvGlobalName& rClassName )
     : pImp( new SvInfoObject_Impl )
     , bDeleted( FALSE )
 {
@@ -668,7 +668,7 @@ BOOL SvPersist::ImplCopy( SvPersist* pSrc, const String& rStorageName, BOOL bMov
             {
                 SvStorageInfoList aList;
                 aSrcEleStor->FillInfoList( &aList );
-                bSave = !aList.Count();
+                bSave = aList.empty();
                 if ( !bSave )
                 {
                     if( pStor->GetVersion() <= SOFFICE_FILEFORMAT_50 )

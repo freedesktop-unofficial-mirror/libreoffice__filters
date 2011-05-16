@@ -2,7 +2,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -63,7 +63,7 @@ using namespace com::sun::star;
 
 using rtl::OUString;
 
-static ::rtl::OUString sVBAOption( RTL_CONSTASCII_USTRINGPARAM( "Option VBASupport 1\n" ) ); 
+static ::rtl::OUString sVBAOption( RTL_CONSTASCII_USTRINGPARAM( "Option VBASupport 1\n" ) );
 
 void SvxImportMSVBasic::extractAttribute( const String& rAttribute, const String& rModName )
 {
@@ -75,11 +75,11 @@ void SvxImportMSVBasic::extractAttribute( const String& rAttribute, const String
     if ( rAttribute.Search( sControlAttribute ) !=  STRING_NOTFOUND )
     {
         String sRest = rAttribute.Copy( sControlAttribute.Len() );
-        xub_StrLen nPos = 0; 
+        xub_StrLen nPos = 0;
         String sCntrlName = sRest.GetToken( 0, ',', nPos );
-        
+
         sal_Int32 nCntrlId = sRest.GetToken( 0, ',', nPos).ToInt32();
-        OSL_TRACE("In module %s, assiging %d controlname %s", 
+        OSL_TRACE("In module %s, assiging %d controlname %s",
             rtl::OUStringToOString( rModName, RTL_TEXTENCODING_UTF8 ).getStr(), nCntrlId,
             rtl::OUStringToOString( sCntrlName, RTL_TEXTENCODING_UTF8 ).getStr() );
         m_ModuleNameToObjIdHash[ rModName ][ nCntrlId ] =  sCntrlName;
@@ -100,7 +100,7 @@ int SvxImportMSVBasic::Import( const String& rStorageName,
 {
         msProjectName = rtl::OUString();
     int nRet = 0;
-    if( bImport && ImportCode_Impl( rStorageName, rSubStorageName, codeNames, 
+    if( bImport && ImportCode_Impl( rStorageName, rSubStorageName, codeNames,
                                     bAsComment, bStripped ))
         nRet |= 1;
 
@@ -118,11 +118,11 @@ bool SvxImportMSVBasic::ImportForms_Impl(const String& rStorageName,
 {
     bool bRet = false;
     // #FIXME VBA_Impl ( or some other new class ) should handle both userforms
-    // and code 
+    // and code
     VBA_Impl aVBA( *xRoot, sal_True );
     // This call is a waste we read the source ( again ) only to get the refereneces
     // *AGAIN*, we really need to rewrite all of this
-    aVBA.Open( rStorageName, rSubStorageName ); 
+    aVBA.Open( rStorageName, rSubStorageName );
 
     bRet = ImportForms_Impl( aVBA, rStorageName, rSubStorageName, bVBAMode );
     std::vector<rtl::OUString> sProjectRefs = aVBA.ProjectReferences();
@@ -130,7 +130,7 @@ bool SvxImportMSVBasic::ImportForms_Impl(const String& rStorageName,
     for ( std::vector<rtl::OUString>::iterator it = sProjectRefs.begin(); it != sProjectRefs.end(); ++it )
     {
        rtl::OUString sFileName = *it;
-#ifndef WIN 
+#ifndef WIN
 #ifdef DEBUG
        // hacky test code to read referenced projects on linux
        sal_Int32 nPos = (*it).lastIndexOf('\\');
@@ -139,7 +139,7 @@ bool SvxImportMSVBasic::ImportForms_Impl(const String& rStorageName,
 #endif
 #endif
        SotStorageRef rRoot = new SotStorage( sFileName, STREAM_STD_READWRITE, STORAGE_TRANSACTED );
-       VBA_Impl refVBA( *rRoot, sal_True );        
+       VBA_Impl refVBA( *rRoot, sal_True );
        refVBA.Open( rStorageName, rSubStorageName );
        // The return from ImportForms doesn't indicate and error ( it could )
        // but also it just means no userforms were imported
@@ -159,9 +159,9 @@ bool SvxImportMSVBasic::ImportForms_Impl( VBA_Impl& rVBA, const String& rStorage
     std::vector<String> aUserForms;
     SvStorageInfoList aContents;
     xVBAStg->FillInfoList(&aContents);
-    for (sal_uInt16 nI = 0; nI < aContents.Count(); ++nI)
+    for (sal_uInt16 nI = 0; nI < aContents.size(); ++nI)
     {
-          SvStorageInfo& rInfo = aContents.GetObject(nI);
+          SvStorageInfo& rInfo = aContents[ nI ];
           if (!rInfo.IsStream() && rInfo.GetName() != rSubStorageName)
               aUserForms.push_back(rInfo.GetName());
     }
@@ -303,7 +303,7 @@ sal_Bool SvxImportMSVBasic::ImportCode_Impl( const String& rStorageName,
 {
     sal_Bool bRet = sal_False;
     VBA_Impl aVBA( *xRoot, bAsComment );
-        
+
     if( aVBA.Open(rStorageName,rSubStorageName) )
     {
         msProjectName = aVBA.ProjectName();
@@ -313,7 +313,7 @@ sal_Bool SvxImportMSVBasic::ImportCode_Impl( const String& rStorageName,
 
         bRet = ImportCode_Impl( aVBA, codeNames, bAsComment, bStripped );
         std::vector<rtl::OUString> sProjectRefs = aVBA.ProjectReferences();
-    
+
         for ( std::vector<rtl::OUString>::iterator it = sProjectRefs.begin(); it != sProjectRefs.end(); ++it )
         {
             rtl::OUString sFileName = *it;
@@ -333,7 +333,7 @@ sal_Bool SvxImportMSVBasic::ImportCode_Impl( VBA_Impl& aVBA, const std::vector< 
     sal_Bool bRet = sal_False;
         Reference<XLibraryContainer> xLibContainer = rDocSh.GetBasicContainer();
         DBG_ASSERT( xLibContainer.is(), "No BasicContainer!" );
-        
+
         /*  Set library container to VBA compatibility mode. This will create
             the VBA Globals object and store it in the Basic manager of the
             document. */
@@ -447,7 +447,7 @@ sal_Bool SvxImportMSVBasic::ImportCode_Impl( VBA_Impl& aVBA, const std::vector< 
                         DBG_ERRORFILE( "SvxImportMSVBasic::ImportCode_Impl - unknown module type" );
                         break;
                 }
-                static ::rtl::OUString sClassOption( RTL_CONSTASCII_USTRINGPARAM( "Option ClassModule\n" ) ); 
+                static ::rtl::OUString sClassOption( RTL_CONSTASCII_USTRINGPARAM( "Option ClassModule\n" ) );
                 if ( !bAsComment )
                 {
                     modeTypeComment += sVBAOption;
@@ -561,7 +561,7 @@ sal_Bool SvxImportMSVBasic::ImportCode_Impl( VBA_Impl& aVBA, const std::vector< 
                         {
                             try
                             {
-                                sModuleInfo.ModuleObject.set( xVBACodeNamedObjectAccess->getByName( it->first ), uno::UNO_QUERY );    
+                                sModuleInfo.ModuleObject.set( xVBACodeNamedObjectAccess->getByName( it->first ), uno::UNO_QUERY );
                                 OSL_TRACE("** Straight up creation of Module");
                             }
                             catch(uno::Exception& e)
@@ -572,7 +572,7 @@ sal_Bool SvxImportMSVBasic::ImportCode_Impl( VBA_Impl& aVBA, const std::vector< 
                     }
                     xVBAModuleInfo->insertModuleInfo( it->first, sModuleInfo );
                 }
-                     
+
                 if( xLib->hasByName( it->first ) )
                     xLib->replaceByName( it->first, it->second );
                 else

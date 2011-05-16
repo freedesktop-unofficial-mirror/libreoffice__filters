@@ -2,7 +2,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -184,9 +184,9 @@ static const char pStorageName[] = "Configurations";
 /*N*/
 /*N*/     SvStorageInfoList aList;
 /*N*/     rStorage.FillInfoList( &aList );
-/*N*/     for( USHORT i = 0; i < aList.Count(); i++ )
+/*N*/     for( size_t i = 0; i < aList.size(); i++ )
 /*N*/     {
-/*?*/         SvStorageInfo& rInfo = aList.GetObject( i );
+/*?*/         SvStorageInfo& rInfo = aList[ i ];
 /*?*/         if ( rInfo.IsStream() )
 /*?*/         {
 /*?*/             // get StreamName and ItemType
@@ -437,7 +437,7 @@ static const char pStorageName[] = "Configurations";
 /*N*/ #define CFG_STREAM_BUFFER_SIZE  5000
 /*N*/ static const USHORT nVersion = 26;
 /*N*/ static const char cCtrlZ = 26;
-/*N*/ 
+/*N*/
 /*N*/ static const USHORT nTypesCount = 82;
 
 /*N*/ BOOL SfxConfigManagerImExport_Impl::HasConfiguration( SotStorage& rStorage )
@@ -451,13 +451,13 @@ static const char pStorageName[] = "Configurations";
 /*N*/         pInStorage->OpenSotStream( String::CreateFromAscii(pHeader), STREAM_STD_READ );
 /*N*/ 	if ( aStr->GetError() )
 /*N*/ 		return SfxConfigManager::ERR_OPEN;
-/*N*/ 
+/*N*/
 /*N*/ 	SvStream* pStream = aStr;
 /*N*/ 	pStream->SetVersion( SOFFICE_FILEFORMAT_40 );
 /*N*/ 	pStream->SetBufferSize( CFG_STREAM_BUFFER_SIZE );
 /*N*/ 	pStream->Seek(0);
 /*N*/ 	USHORT nRet = SfxConfigManager::ERR_NO;
-/*N*/ 
+/*N*/
 /*N*/ 	// check header
 /*N*/ 	const unsigned nLen = strlen( pHeader );
 /*N*/ 	char *pBuf = new char[nLen+1];
@@ -468,9 +468,9 @@ static const char pStorageName[] = "Configurations";
 /*N*/ 		delete[] pBuf;
 /*?*/ 		return SfxConfigManager::ERR_FILETYPE;
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	delete[] pBuf;
-/*N*/ 
+/*N*/
 /*N*/ 	// compare version
 /*N*/ 	char c;
 /*N*/ 	USHORT nFileVersion;
@@ -480,22 +480,22 @@ static const char pStorageName[] = "Configurations";
 /*N*/ 	{
 /*?*/ 		return SfxConfigManager::ERR_VERSION;
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	// get position of directory
 /*N*/ 	long lDirPos;
 /*N*/ 	(*pStream) >> lDirPos;
 /*N*/ 	pStream->Seek(lDirPos);
-/*N*/ 
+/*N*/
 /*N*/ 	// get number of items
 /*N*/ 	USHORT nCount;
 /*N*/ 	(*pStream) >> nCount;
-/*N*/ 
+/*N*/
 /*N*/ 	// read in directory and convert items
 /*N*/ 	for( USHORT i=0; i < nCount; ++i )
 /*N*/ 	{
 /*N*/ 		SfxConfigItem_Impl* pItem = new SfxConfigItem_Impl;
 /*N*/ 		pItemArr->Insert( pItem, pItemArr->Count() );
-/*N*/ 
+/*N*/
 /*N*/ 		// retrieve type of item and human readable name
 /*N*/ 		long lLength, lPos;	            // dummies
 /*N*/         (*pStream) >> pItem->nType >> lPos >> lLength;
@@ -506,7 +506,7 @@ static const char pStorageName[] = "Configurations";
 /*?*/             pItem->bDefault = TRUE;
 /*?*/             return SfxConfigManager::ERR_READ;
 /*N*/         }
-/*N*/ 
+/*N*/
 /*N*/ 		// convert into new format
 /*N*/         if ( !pItem->bDefault )
 /*N*/         {
@@ -516,20 +516,20 @@ static const char pStorageName[] = "Configurations";
 /*N*/             {
 /*N*/                 long lOldPos = pStream->Tell();
 /*N*/                 pStream->Seek( lPos );
-/*N*/ 
+/*N*/
 /*N*/                 // check for correct type id, inequality is allowed for userdef toolboxes
 /*N*/                 USHORT nType;
 /*N*/                 (*pStream) >> nType;
 /*N*/                 BOOL bOk = ( (nType == pItem->nType) ||
 /*N*/                             (1294 <= nType && nType <= 1301 &&
 /*N*/                             1294 <= pItem->nType && pItem->nType <= 1301) );
-/*N*/ 
+/*N*/
 /*N*/                 if ( !bOk || !ImportItem( pItem, pStream, pStorage ) )
 /*N*/                 {
 /*?*/                     pItem->bDefault = TRUE;
 /*?*/                     nRet = SfxConfigManager::ERR_IMPORT;
 /*N*/                 }
-/*N*/ 
+/*N*/
 /*N*/                 pStream->Seek( lOldPos );
 /*N*/             }
 /*N*/             else
@@ -538,7 +538,7 @@ static const char pStorageName[] = "Configurations";
 /*N*/                 // force error message that saving this document would lose some configuration information
 /*N*/             }
 /*N*/         }
-/*N*/ 
+/*N*/
 /*N*/         if ( !pItem->aStreamName.Len() )
 /*N*/ 		{
 /*N*/             // no real config item anymore
@@ -546,7 +546,7 @@ static const char pStorageName[] = "Configurations";
 /*N*/ 			pItemArr->Remove( pItemArr->Count() - 1 );
 /*N*/ 		}
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	return nRet;
 /*N*/ }
 
@@ -571,17 +571,17 @@ static const char pStorageName[] = "Configurations";
 /*N*/ {
 /*N*/         if ( 11 == nType )
 /*N*/             return String::CreateFromAscii( "eventbindings.xml" );
-/*?*/ 
+/*?*/
 /*?*/     return String();
 /*N*/ }
 
 /*?*/ USHORT SfxConfigManagerImExport_Impl::GetType( const String& rStreamName )
 /*?*/ {
 /*NBFF*/     ByteString aCmp( rStreamName, RTL_TEXTENCODING_ASCII_US );
-/*NBFF*/ 
+/*NBFF*/
 /*NBFF*/         if ( !strcmp( aCmp.GetBuffer(), "eventbindings.xml" ) )
 /*NBFF*/             return 11;
-/*NBFF*/ 
+/*NBFF*/
 /*?*/     return 0;
 /*?*/ }
 
