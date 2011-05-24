@@ -2,7 +2,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -31,6 +31,7 @@
 
 #include <bf_svtools/bf_solar.h>
 
+#include <tools/pstm.hxx>
 #include <tools/time.hxx>
 #include <bf_so3/so2ref.hxx>
 #include <bf_so3/iface.hxx>
