@@ -2,7 +2,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -139,7 +139,7 @@ public:
 /*N*/ bool SfxApplication::Initialize_Impl()
 /*N*/ {
 /*N*/
-/*N*/     Reference < XDesktop > xDesktop ( ::legacy_binfilters::getLegacyProcessServiceFactory()->createInstance( 
+/*N*/     Reference < XDesktop > xDesktop ( ::legacy_binfilters::getLegacyProcessServiceFactory()->createInstance(
                                            ::rtl::OUString( RTL_CONSTASCII_USTRINGPARAM( "com.sun.star.frame.Desktop" )) ), UNO_QUERY );
 /*N*/     xDesktop->addTerminateListener( new SfxTerminateListener_Impl() );
 /*N*/
@@ -152,7 +152,7 @@ public:
 /*N*/ 	pAppData_Impl->pSfxFrameObjectFactoryPtr = new SfxFrameObjectFactoryPtr;
 /*N*/ 	pAppData_Impl->pSfxFrameObjectFactoryPtr->pSfxFrameObjectFactory = SfxFrameObject::ClassFactory();
 /*N*/
-/*N*/ 	pImp->pEventHdl = new UniqueIndex( 1, 4, 4 );
+/*N*/ 	pImp->pEventHdl = new UniqueIndex( 1 );
 /*N*/
 /*N*/ #ifdef DBG_UTIL
 /*N*/ 	// Der SimplerErrorHandler dient Debugzwecken. In der Product werden
