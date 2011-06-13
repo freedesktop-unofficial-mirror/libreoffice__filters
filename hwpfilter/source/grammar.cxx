@@ -2,7 +2,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -32,7 +32,7 @@
 
 #define YYBISON 1  /* Identify Bison output.  */
 
-#ifndef YYDEBUG 
+#ifndef YYDEBUG
 #define YYDEBUG 0
 #endif
 #ifndef YYMAXDEPTH
@@ -539,7 +539,7 @@ int yydebug;			/*  nonzero means print parse trace	*/
    definitions require.  With GCC, __builtin_memcpy takes an arg
    of type size_t, but it can handle unsigned int.  */
 
-#if defined __GNUC__ 
+#if defined __GNUC__
 #if __GNUC__ > 1        /* GNU C and GNU C++ define this.  */
 #define __yy_memcpy(TO,FROM,COUNT)	__builtin_memcpy(TO,FROM,COUNT)
 #endif

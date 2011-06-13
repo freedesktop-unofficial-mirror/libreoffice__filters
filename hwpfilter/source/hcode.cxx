@@ -2,7 +2,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -575,7 +575,7 @@ static const hchar jaso_hh_code[] =
     34465, 34497, 34529, 34625, 34657, 34689, 34721
 };
 
-/* os: unused 
+/* os: unused
 static int is_jaso(hchar hh)
 {
     unsigned int i;
@@ -1222,7 +1222,7 @@ int hstr2ksstr(hchar* hstr, char* buf)
           for( j = 0 ; j < res ; j++ ){
               c = dest[j];
               if( c < 32 ) c = ' ';
-              else if( c < 256 ) 
+              else if( c < 256 )
                     tmp[i++] = sal::static_int_cast<char>(c);
               else
               {
@@ -1426,7 +1426,7 @@ char *urltowin(const char *src, char *dest )
           char ext[4];
           strncpy(ext,src + srclen - 3,3);
           ext[3]=0;
-          //printf("hcode.cpp : ext = %s\n",ext);
+          //printf("hcode.cxx : ext = %s\n",ext);
 
           if( !_strnicmp(ext,"HWP",3) || !_strnicmp(ext,"HWT",3)){
                 strcpy(dest,src);

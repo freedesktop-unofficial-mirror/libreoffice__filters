@@ -2,7 +2,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -26,77 +26,58 @@
  *
  ************************************************************************/
 
-#include "precompile.h"
+#include <string.h>
+#include <stdlib.h>
+#include "hstream.h"
 
-#include <ctype.h>
-#include "hwpfile.h"
-#include "hbox.h"
-
-static char *get_one_roman(int num, char one, char five, char ten, char *str)
+HStream::HStream() : size(0), pos(0)
 {
-    static const char *one_strs[] =
-    {
-        "", "i", "ii", "iii", "iv", "v", "vi", "vii", "viii", "ix"
-    };
-
-    strcpy(str, one_strs[num]);
-    while (*str)
-    {
-        switch (*str)
-        {
-            case 'i':
-                *str = one;
-                break;
-            case 'v':
-                *str = five;
-                break;
-            case 'x':
-                *str = ten;
-        }
-        str++;
-    }
-    return str;
+    seq = 0;
 }
 
 
-void num2roman(int num, char *buf)
+HStream::~HStream()
 {
-    char *pt;
-
-    pt = get_one_roman((num / 100) % 10, 'c', 'd', 'm', buf);
-    pt = get_one_roman((num / 10) % 10, 'x', 'l', 'c', pt);
-    get_one_roman(num % 10, 'i', 'v', 'x', pt);
+    if( seq )
+        free( seq );
 }
 
 
-void str2hstr(const char *c, hchar * i)
+void HStream::addData( const byte *buf, int aToAdd)
 {
-    hchar ch;
-
-    while( 0 != (ch = *c++))
-    {
-        if (ch & 0x80)
-        {
-            if (*c > 32)
-            {
-                *i++ = (ch << 8) | *c;
-                c++;
-            }
-        }
-        else
-            *i++ = ch;
-    }
-    *i = 0;
+    seq = (byte *)realloc( seq, size + aToAdd );
+    memcpy( seq + size, buf, aToAdd );
+    size += aToAdd;
 }
 
 
-int hstrlen(const hchar * s)
+int HStream::readBytes(byte * buf, int aToRead)
 {
-    register int n = 0;
+    if (aToRead >= (size - pos))
+        aToRead = size - pos;
+    for (int i = 0; i < aToRead; i++)
+        buf[i] = seq[pos++];
+    return aToRead;
+}
 
-    while (*s++)
-        n++;
-    return (n);
+
+int HStream::skipBytes(int aToSkip)
+{
+    if (aToSkip >= (size - pos))
+        aToSkip = size - pos;
+    pos += aToSkip;
+    return aToSkip;
+}
+
+
+int HStream::available() const
+{
+    return size - pos;
+}
+
+
+void HStream::closeInput()
+{
 }
 
 /* vim:set shiftwidth=4 softtabstop=4 expandtab: */

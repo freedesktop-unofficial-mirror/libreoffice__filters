@@ -16,7 +16,7 @@
 #define YY_NEVER_INTERACTIVE 0
 #endif
 #ifndef YY_MAIN
-#define YY_MAIN 0        
+#define YY_MAIN 0
 #endif
 
 #define FLEX_SCANNER
@@ -1458,7 +1458,7 @@ YY_RULE_SETUP
 case 37:
 YY_RULE_SETUP
 #line 130 "lexer.l"
-{ yylval.str = yytext;   token_debug("	==>Operator[%s]\n",yytext); return OPERATOR; }	
+{ yylval.str = yytext;   token_debug("	==>Operator[%s]\n",yytext); return OPERATOR; }
     //YY_BREAK
 case 38:
 YY_RULE_SETUP
@@ -1488,12 +1488,12 @@ YY_RULE_SETUP
 case 43:
 YY_RULE_SETUP
 #line 136 "lexer.l"
-{ yylval.str = yytext;  token_debug("	==>String[%s]\n",yytext); return STRING; }	
+{ yylval.str = yytext;  token_debug("	==>String[%s]\n",yytext); return STRING; }
     //YY_BREAK
 case 44:
 YY_RULE_SETUP
 #line 137 "lexer.l"
-{ yylval.str = yytext;  token_debug("	==>Else[%s]\n",yytext); return CHARACTER; }	
+{ yylval.str = yytext;  token_debug("	==>Else[%s]\n",yytext); return CHARACTER; }
     //YY_BREAK
 case 45:
 YY_RULE_SETUP
