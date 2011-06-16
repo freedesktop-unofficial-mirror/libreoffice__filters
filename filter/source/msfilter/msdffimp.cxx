@@ -2,7 +2,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -894,9 +894,10 @@ SvxMSDffSolverContainer::SvxMSDffSolverContainer()
 
 SvxMSDffSolverContainer::~SvxMSDffSolverContainer()
 {
-    for ( SvxMSDffConnectorRule* pPtr = (SvxMSDffConnectorRule*)aCList.First();
-            pPtr; pPtr = (SvxMSDffConnectorRule*)aCList.Next() )
-        delete pPtr;
+    for( size_t i = 0, n = aCList.size(); i < n; ++i ) {
+        delete aCList[ i ];
+    }
+    aCList.clear();
 }
 
 SvStream& operator>>( SvStream& rIn, SvxMSDffSolverContainer& rContainer )
@@ -913,7 +914,7 @@ SvStream& operator>>( SvStream& rIn, SvxMSDffSolverContainer& rContainer )
             {
                 SvxMSDffConnectorRule* pRule = new SvxMSDffConnectorRule;
                 rIn >> *pRule;
-                rContainer.aCList.Insert( pRule, LIST_APPEND );
+                rContainer.aCList.push_back( pRule );
             }
             aCRule.SeekToEndOfRecord( rIn );
         }
@@ -923,10 +924,10 @@ SvStream& operator>>( SvStream& rIn, SvxMSDffSolverContainer& rContainer )
 
 void SvxMSDffManager::SolveSolver( const SvxMSDffSolverContainer& rSolver )
 {
-    sal_Int32 i, nCnt;
-    for ( i = 0, nCnt = rSolver.aCList.Count(); i < nCnt; i++ )
+    size_t i, nCnt;
+    for ( i = 0, nCnt = rSolver.aCList.size(); i < nCnt; i++ )
     {
-        SvxMSDffConnectorRule* pPtr = (SvxMSDffConnectorRule*)rSolver.aCList.GetObject( i );
+        SvxMSDffConnectorRule* pPtr = rSolver.aCList[ i ];
         if ( pPtr->pCObj )
         {
             for ( int nN = 0; nN < 2; nN++ )
@@ -1558,7 +1559,7 @@ struct ShadeColor
     Color		aColor;
     double		fDist;
 
-    ShadeColor( const Color& rC, double fR ) : aColor( rC ), fDist( fR ) {}; 
+    ShadeColor( const Color& rC, double fR ) : aColor( rC ), fDist( fR ) {};
 };
 
 void GetShadeColors( const SvxMSDffManager& rManager, const DffPropertyReader& rProperties, SvStream& rIn, std::vector< ShadeColor >& rShadeColors )
@@ -1617,7 +1618,7 @@ void ApplyRectangularGradientAsBitmap( const SvxMSDffManager& rManager, SvStream
                 {
                     double fX = static_cast< double >( nX ) / aBitmapSizePixel.Width();
                     double fY = static_cast< double >( nY ) / aBitmapSizePixel.Height();
-                                        
+
                     double fD, fDist;
                     if ( fX < fFocusX )
                     {
@@ -1655,7 +1656,7 @@ void ApplyRectangularGradientAsBitmap( const SvxMSDffManager& rManager, SvStream
                     }
                     if ( fD != 0.0 )
                         fDist /= fD;
-                    
+
                     std::vector< ShadeColor >::const_iterator aIter( rShadeColors.begin() );
                     double fA = 0.0;
                     Color aColorA = aIter->aColor;
@@ -1680,7 +1681,7 @@ void ApplyRectangularGradientAsBitmap( const SvxMSDffManager& rManager, SvStream
                             }
                         }
                         ++aIter;
-                    }			
+                    }
                     double fRed = aColorA.GetRed(), fGreen = aColorA.GetGreen(), fBlue = aColorA.GetBlue();
                     double fD1 = fB - fA;
                     if ( fD1 != 0.0 )
@@ -1726,7 +1727,7 @@ void ApplyRectangularGradientAsBitmap( const SvxMSDffManager& rManager, SvStream
                 if ( bRotateWithShape )
                 {
                     aBitmap.Rotate( nFix16Angle / 10, rShadeColors[ 0 ].aColor );
-        
+
                     sal_uLong nMirrorFlags = BMP_MIRROR_NONE;
                     if ( rObjData.nSpFlags & SP_FFLIPV )
                         nMirrorFlags |= BMP_MIRROR_VERT;
@@ -3182,7 +3183,7 @@ void DffPropertyReader::ApplyAttributes( SvStream& rIn, SfxItemSet& rSet, const 
                 case mso_fillShadeTitle :
                 break;
                 default:
-                    nFillFlags &=~0x10;			// no fillstyle used	
+                    nFillFlags &=~0x10;			// no fillstyle used
                 break;
             }
         }
@@ -3635,10 +3636,10 @@ bool SvxMSDffManager::GetColorFromPalette( sal_uInt16 /* nNum */, Color& rColor 
 
 // sj: the documentation is not complete, especially in ppt the normal rgb for text
 // color is written as 0xfeRRGGBB, this can't be explained by the documentation, nearly
-// every bit in the upper code is set -> so there seems to be a special handling for 
+// every bit in the upper code is set -> so there seems to be a special handling for
 // ppt text colors, i decided not to fix this in MSO_CLR_ToColor because of possible
-// side effects, instead MSO_TEXT_CLR_ToColor is called for PPT text colors, to map 
-// the color code to something that behaves like the other standard color codes used by 
+// side effects, instead MSO_TEXT_CLR_ToColor is called for PPT text colors, to map
+// the color code to something that behaves like the other standard color codes used by
 // fill and line color
 Color SvxMSDffManager::MSO_TEXT_CLR_ToColor( sal_uInt32 nColorCode ) const
 {
@@ -3662,11 +3663,11 @@ Color SvxMSDffManager::MSO_CLR_ToColor( sal_uInt32 nColorCode, sal_uInt16 nConte
     Color aColor( mnDefaultColor );
 
     // Fuer Textfarben: Header ist 0xfeRRGGBB
-    if ( ( nColorCode & 0xfe000000 ) == 0xfe000000 )	// sj: it needs to be checked if 0xfe is used in 
+    if ( ( nColorCode & 0xfe000000 ) == 0xfe000000 )	// sj: it needs to be checked if 0xfe is used in
         nColorCode &= 0x00ffffff;						// other cases than ppt text -> if not this code can be removed
 
     sal_uInt8 nUpper = (sal_uInt8)( nColorCode >> 24 );
-    
+
     // sj: below change from 0x1b to 0x19 was done because of i84812 (0x02 -> rgb color),
     // now I have some problems to fix i104685 (there the color value is 0x02000000 whichs requires
     // a 0x2 scheme color to be displayed properly), the color docu seems to be incomplete
