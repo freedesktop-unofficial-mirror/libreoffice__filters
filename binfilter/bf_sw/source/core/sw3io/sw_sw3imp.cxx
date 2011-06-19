@@ -1,7 +1,8 @@
+/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -31,136 +32,56 @@
 
 #include <stdio.h>
 
-#ifndef _HINTIDS_HXX
 #include <hintids.hxx>
-#endif
 
 #if !defined _SVSTDARR_USHORTS_DECL || !defined _SVSTDARR_STRINGSDTOR_DECL
 #define _SVSTDARR_STRINGSDTOR
 #define _SVSTDARR_USHORTS
 #endif
-#ifndef _SVX_FONTITEM_HXX //autogen
 #include <bf_svx/fontitem.hxx>
-#endif
-#ifndef _SFXSTYLE_HXX //autogen
 #include <bf_svtools/style.hxx>
-#endif
-#ifndef _MyEDITENG_HXX //autogen
 #include <bf_svx/editeng.hxx>
-#endif
-#ifndef _SVDPOOL_HXX //autogen
 #include <bf_svx/svdpool.hxx>
-#endif
-#ifndef _SVDPAGE_HXX //autogen
 #include <bf_svx/svdpage.hxx>
-#endif
-#ifndef _HTMLKYWD_HXX
 #include <bf_svtools/htmlkywd.hxx>
-#endif
-#ifndef _SFXDOCINF_HXX //autogen
 #include <bf_sfx2/docinf.hxx>
-#endif
-#ifndef _TOOLS_TENCCVT_HXX //autogen
 #include <tools/tenccvt.hxx>
-#endif
 
-#ifndef _COM_SUN_STAR_FORM_XFORMSSUPPLIER_HPP_
 #include <com/sun/star/form/XFormsSupplier.hpp>
-#endif
-#ifndef _COM_SUN_STAR_DRAWING_XDRAWPAGESUPPLIER_HPP_
 #include <com/sun/star/drawing/XDrawPageSupplier.hpp>
-#endif
-#ifndef _FMTFLD_HXX //autogen
 #include <fmtfld.hxx>
-#endif
-#ifndef _CHARFMT_HXX //autogen
 #include <charfmt.hxx>
-#endif
-#ifndef _HINTS_HXX
 #include <hints.hxx>
-#endif
-#ifndef _DOCTXM_HXX
 #include <doctxm.hxx>
-#endif
-#ifndef _SWMODULE_HXX //autogen
 #include <swmodule.hxx>
-#endif
-#ifndef _DCONTACT_HXX //autogen
 #include <dcontact.hxx>
-#endif
 
-#ifndef _HORIORNT_HXX
 #include <horiornt.hxx>
-#endif
 
-#ifndef _DOC_HXX
 #include <doc.hxx>
-#endif
-#ifndef _DFLYOBJ_HXX
 #include <dflyobj.hxx>
-#endif
-#ifndef _VIEWOPT_HXX
 #include <viewopt.hxx>
-#endif
-#ifndef _SW3IO_HXX
 #include <sw3io.hxx>
-#endif
-#ifndef _SW3IMP_HXX
 #include <sw3imp.hxx>
-#endif
-#ifndef _SW3MARKS_HXX
 #include <sw3marks.hxx>
-#endif
-#ifndef _SHELLIO_HXX
 #include <shellio.hxx>
-#endif
-#ifndef _PAGEDESC_HXX
 #include <pagedesc.hxx>
-#endif
-#ifndef _MDIEXP_HXX
 #include <mdiexp.hxx>
-#endif
-#ifndef _POOLFMT_HXX
 #include <poolfmt.hxx>
-#endif
-#ifndef _CRYPTER_HXX
 #include <crypter.hxx>
-#endif
-#ifndef _DBFLD_HXX
 #include <dbfld.hxx>
-#endif
-#ifndef _EXPFLD_HXX
 #include <expfld.hxx>
-#endif
-#ifndef _NDOLE_HXX
 #include <ndole.hxx>
-#endif
-#ifndef _DRAWDOC_HXX
 #include <drawdoc.hxx>
-#endif
 
-#ifndef _SWDOCSH_HXX //autogen wg. SwDocShell
 #include <docsh.hxx>
-#endif
-#ifndef _SWFLTOPT_HXX
 #include <swfltopt.hxx>
-#endif
 
-#ifndef _SWSWERROR_H
 #include <swerror.h>
-#endif
-#ifndef _STATSTR_HRC
 #include <statstr.hrc>
-#endif
-#ifndef _POOLFMT_HRC
 #include <poolfmt.hrc>
-#endif
-#ifndef _FMTINFMT_HXX
 #include <fmtinfmt.hxx>
-#endif
-#ifndef _SWSTYLENAMEMAPPER_HXX
 #include <SwStyleNameMapper.hxx>
-#endif
 namespace binfilter {
 
 using namespace ::com::sun::star;
@@ -180,9 +101,9 @@ static Sw3IoImp* pCurIosys;					// fuer non-poolable Attrs
 static sal_uInt32 nFltFlags = 0;
 
 
-sal_Char __FAR_DATA SW3HEADER[] = "SW3HDR";		// 3.0/3.1 Header
-sal_Char __FAR_DATA SW4HEADER[] = "SW4HDR";		// 4.0 Header
-sal_Char __FAR_DATA SW5HEADER[] = "SW5HDR";		// 5.0 Header
+sal_Char SW3HEADER[] = "SW3HDR";		// 3.0/3.1 Header
+sal_Char SW4HEADER[] = "SW4HDR";		// 4.0 Header
+sal_Char SW5HEADER[] = "SW5HDR";		// 5.0 Header
 
 // TODOs fuer 6.0-FF
 // - Record-Laengen > 16MB richtig handeln.
@@ -205,7 +126,7 @@ public:
 
     sal_Bool Insert( ULONG nKey, sal_uInt32 p )
     {
-        return Table::Insert( nKey, (void*)p );
+        return Table::Insert( nKey, (void*)(sal_uIntPtr)p );
     }
 
     sal_uInt32 GetObject( ULONG nPos ) const
@@ -217,29 +138,25 @@ public:
 
 //////////////////////////////////////////////////////////////////////////////
 
-/*  */
-
 /*N*/ Sw3ExportInfo::~Sw3ExportInfo()
 /*N*/ {
 /*N*/ 	delete pTblLineBoxFmtNames40;
 /*N*/ }
 
-/*  */
-
-
 /*N*/ Sw3IoImp::Sw3IoImp( Sw3Io& r )
-/*N*/ 		: rIo( r ), pDoc( NULL ),
-/*N*/ 		aDefWordDelim( SW_MOD()->GetDocStatWordDelim() ),
-/*N*/ 		N_DOC( String::CreateFromAscii( "StarWriterDocument" ) ),
-/*N*/ 		N_PAGESTYLES( String::CreateFromAscii( "SwPageStyleSheets" ) ),
-/*N*/ 		N_NUMRULES( String::CreateFromAscii( "SwNumRules" ) ),
-/*N*/ 		N_DRAWING( String::CreateFromAscii( DRAWING_STREAM_NAME ) ),
-/*N*/ 		N_PICTURES( String::CreateFromAscii( "EmbeddedPictures" ) ),
-/*N*/ 		N_BLOCKDIR( String::CreateFromAscii( "DocumentList" ) ),
-/*N*/ 		sStarSymbol( "StarSymbol", sizeof("StarSymbol")-1, RTL_TEXTENCODING_ASCII_US ),
-/*N*/ 		sOpenSymbol( "OpenSymbol", sizeof("OpenSymbol")-1, RTL_TEXTENCODING_ASCII_US ),
-/*N*/ 		sStarBats( "StarBats", sizeof("StarBats")-1, RTL_TEXTENCODING_ASCII_US ),
-/*N*/ 		sStarMath( "StarMath", sizeof("StarMath")-1, RTL_TEXTENCODING_ASCII_US )
+/*N*/ 		: aDefWordDelim( SW_MOD()->GetDocStatWordDelim() )
+/*N*/ 		, N_DOC( String::CreateFromAscii( "StarWriterDocument" ) )
+/*N*/ 		, N_PAGESTYLES( String::CreateFromAscii( "SwPageStyleSheets" ) )
+/*N*/ 		, N_NUMRULES( String::CreateFromAscii( "SwNumRules" ) )
+/*N*/ 		, N_DRAWING( String::CreateFromAscii( DRAWING_STREAM_NAME ) )
+/*N*/ 		, N_PICTURES( String::CreateFromAscii( "EmbeddedPictures" ) )
+/*N*/ 		, N_BLOCKDIR( String::CreateFromAscii( "DocumentList" ) )
+/*N*/ 		, sStarSymbol( "StarSymbol", sizeof("StarSymbol")-1, RTL_TEXTENCODING_ASCII_US )
+/*N*/ 		, sOpenSymbol( "OpenSymbol", sizeof("OpenSymbol")-1, RTL_TEXTENCODING_ASCII_US )
+/*N*/ 		, sStarBats( "StarBats", sizeof("StarBats")-1, RTL_TEXTENCODING_ASCII_US )
+/*N*/ 		, sStarMath( "StarMath", sizeof("StarMath")-1, RTL_TEXTENCODING_ASCII_US )
+/*N*/ 		, rIo( r )
+/*N*/ 		, pDoc( NULL )
 /*N*/ {
 /*N*/ 	bNormal		= sal_True;
 /*N*/ 	bTxtColls 	=
@@ -272,7 +189,7 @@ public:
 /*N*/ 	hBatsFontConv = 0;
         hMathFontConv = 0;
 /*N*/ 	Reset();
-/*N*/ 
+/*N*/
 /*N*/ 	{
 /*N*/ 		const sal_Char* aNames[1] = { "Writer/SW3Imp" };
 /*N*/ 		sal_uInt32 aVal[1];
@@ -323,7 +240,7 @@ public:
 /*N*/ 	pStrm = 0;	// wg. Assert in IsSw.*Export
 /*N*/ 	Reset2();
 /*N*/ 	nGblFlags	= SW3F_NODRAWING;
-/*N*/ 
+/*N*/
 /*N*/ #ifdef DBG_UTIL
 /*N*/ 	delete pRefSdrObjects;
 /*N*/ 	pRefSdrObjects = 0;
@@ -353,16 +270,16 @@ public:
 /*N*/ 	else if( pRoot.Is() )
 /*N*/ 		eSrcSet = GetSOStoreTextEncoding( eSrcSet, pRoot->GetVersion() );
 /*N*/ 	nVersion	= SWG_VERSION;
-/*N*/ 
+/*N*/
 /*N*/ 	aRecTypes.Remove( 0, aRecTypes.Count() );
 /*N*/ 	aRecSizes.Remove( 0, aRecSizes.Count() );
 /*N*/ 	aValPositions.Remove( 0, aValPositions.Count() );
 /*N*/ 	eStartNodeType = SwNormalStartNode;
-/*N*/ 
+/*N*/
 /*N*/ 	aINetFldText.Erase();
 /*N*/ 	pFmtINetFmt = 0;
 /*N*/ 	bDrawFmtSkipped = sal_False;
-/*N*/ 
+/*N*/
 /*N*/ 	memset( cPasswd, 0, 16 );
 /*N*/ 	aStringPool.Clear();
 /*N*/ 	if( pExportInfo && pExportInfo->pTblLineBoxFmtNames40 )
@@ -372,16 +289,16 @@ public:
 /*N*/ 	}
 /*N*/ 	// Hier ggf das Passwort neu setzen
 /*N*/ 	SetPasswd();
-/*N*/ 
+/*N*/
 /*N*/ 	delete pRecSizes;
 /*N*/ 	pRecSizes = 0;
-/*N*/ 
+/*N*/
 /*N*/ 	delete pAuthorityMap;
 /*N*/ 	pAuthorityMap = 0;
-/*N*/ 
+/*N*/
 /*N*/ 	delete pSectionDepths;
 /*N*/ 	pSectionDepths = 0;
-/*N*/ 
+/*N*/
 /*N*/ 	if( hBatsFontConv )
 /*N*/ 	{
 /*N*/ 		DestroyFontToSubsFontConverter( hBatsFontConv );
@@ -397,14 +314,14 @@ public:
 #ifdef DBG_UTIL
 /*N*/ sal_Bool Sw3IoImp::IsSw40Export() const
 /*N*/ {
-/*N*/ 	ASSERT( !pStrm || pStrm->GetVersion()==pRoot->GetVersion(),
+/*N*/ 	OSL_ENSURE( !pStrm || pStrm->GetVersion()==pRoot->GetVersion(),
 /*N*/ 			"Fileformat-Version am Stream stimmt nicht." );
 /*N*/ 	return pRoot->GetVersion() == SOFFICE_FILEFORMAT_40;
 /*N*/ }
 
 /*N*/ sal_Bool Sw3IoImp::IsSw31Or40Export() const
 /*N*/ {
-/*N*/ 	ASSERT( !pStrm || pStrm->GetVersion()==pRoot->GetVersion(),
+/*N*/ 	OSL_ENSURE( !pStrm || pStrm->GetVersion()==pRoot->GetVersion(),
 /*N*/ 			"Fileformat-Version am Stream stimmt nicht." );
 /*N*/ 	return pRoot->GetVersion() <= SOFFICE_FILEFORMAT_40;
 /*N*/ }
@@ -414,7 +331,7 @@ public:
 /*N*/ {
 /*N*/ 	nRes = nCode ? nCode : ERR_SWG_FILE_FORMAT_ERROR;
 /*N*/ }
- 
+
 /*N*/ void Sw3IoImp::Warning( ULONG nCode )
 /*N*/ {
 /*N*/ 	nWarn = nCode ? nCode : WARN_SWG_FEATURES_LOST;
@@ -449,15 +366,15 @@ public:
 /*N*/ {
 /*N*/ 	if( !pDoc->GetDrawModel() )
 /*N*/ 		return;
-/*N*/ 
+/*N*/
 /*N*/ 	const SwSpzFrmFmts* pFlys = pDoc->GetSpzFrmFmts();
 /*N*/ 	sal_uInt16 nArrLen = pFlys->Count();
-/*N*/ 
+/*N*/
 /*N*/ 	SdrPage *pPage = pDoc->GetDrawModel()->GetPage( 0 );
-/*N*/ 	ASSERT( !pHiddenDrawObjs, "hidden obj list exists" );
+/*N*/ 	OSL_ENSURE( !pHiddenDrawObjs, "hidden obj list exists" );
 /*N*/ 	delete pHiddenDrawObjs;
 /*N*/ 	pHiddenDrawObjs = 0;
-/*N*/ 
+/*N*/
 /*N*/ 	sal_uInt16 nCount = pPage->GetObjCount();
 /*N*/ 	nHiddenDrawObjs = nCount;
 /*N*/ 	for( sal_uInt16 i=0; i<nArrLen; i++ )
@@ -465,26 +382,26 @@ public:
 /*N*/ 		const SwFrmFmt* pFmt = (*pFlys)[ i ];
 /*N*/ 		if( RES_DRAWFRMFMT != pFmt->Which() )
 /*N*/ 			continue;
-/*N*/ 
+/*N*/
 /*N*/ 		SwClientIter aIter( *(SwFrmFmt*)pFmt );
 /*N*/ 		if( aIter.First( TYPE(SwDrawContact) ) )
 /*N*/ 		{
 /*N*/ 			SdrObject *pObj = ((SwDrawContact*)aIter())->GetMaster();
-/*N*/ 
+/*N*/
 /*N*/ 			// Nowadays, all objects have to be in a page, while in earlier
 /*N*/ 			// version, hidden objects were not in the page.
-/*N*/ 			ASSERT( pObj->GetPage(), "draw objects have to be in a page" );
+/*N*/ 			OSL_ENSURE( pObj->GetPage(), "draw objects have to be in a page" );
 /*N*/ 			if( !pObj->GetPage() )
 /*N*/ 				pPage->InsertObject( pObj );
 /*N*/ 		}
 /*N*/ 	}
 /*N*/ 	if( nHiddenDrawObjs == pPage->GetObjCount() )
 /*N*/ 		nHiddenDrawObjs = ULONG_MAX;
-/*N*/ 
+/*N*/
 /*N*/ 	for( sal_uInt16 j=0; j<nCount; j++ )
 /*N*/ 	{
 /*N*/ 		SdrObject *pObj = pPage->GetObj( j );
-/*N*/ 
+/*N*/
 /*N*/ 		SdrLayerID nLayerId = pObj->GetLayer();
 /*N*/ 		if( !pDoc->IsVisibleLayerId( nLayerId ) )
 /*N*/ 		{
@@ -503,7 +420,7 @@ public:
 /*N*/ 	{
 /*N*/ 		if( pDoc->GetDrawModel() )
 /*N*/ 		{
-/*N*/ 			SdrPage *pPage = pDoc->GetDrawModel()->GetPage( 0 );
+/*N*/ 			pDoc->GetDrawModel()->GetPage( 0 );
 /*N*/ 			SwHiddenDrawObjList_Impl::const_iterator aIter = pHiddenDrawObjs->begin();
 /*N*/ 			while( aIter != pHiddenDrawObjs->end() )
 /*N*/ 			{
@@ -517,7 +434,7 @@ public:
 /*N*/ 		delete pHiddenDrawObjs;
 /*N*/ 		pHiddenDrawObjs = 0;
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	if( ULONG_MAX != nHiddenDrawObjs )
 /*N*/ 	{
 /*N*/ 		if( pDoc->GetDrawModel() )
@@ -527,7 +444,7 @@ public:
 /*N*/ 			while( nPos > nHiddenDrawObjs )
 /*N*/ 				pPage->RemoveObject( --nPos );
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		nHiddenDrawObjs = ULONG_MAX;
 /*N*/ 	}
 /*N*/ }
@@ -544,7 +461,7 @@ public:
 /*N*/ {
 /*N*/ 	if( !rDoc.GetDrawModel() )
 /*N*/ 		return sal_False;
-/*N*/ 
+/*N*/
 /*N*/ 	const SdrPage *pPage = rDoc.GetDrawModel()->GetPage( 0 );
 /*N*/ 	for ( sal_uInt32 i = 0; i < pPage->GetObjCount(); i++ )
 /*N*/ 	{
@@ -553,26 +470,26 @@ public:
 /*N*/ 			 !pObj->ISA(SwFlyDrawObj) )
 /*N*/ 			return sal_True;
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	SwDocShell *pDocSh = rDoc.GetDocShell();
 /*N*/ 	if( !pDocSh )
 /*N*/ 		return sal_False;
-/*N*/ 
+/*N*/
 /*N*/ 	Reference< drawing::XDrawPageSupplier > xDPSupp( pDocSh->GetBaseModel(),
 /*N*/ 													 UNO_QUERY );
-/*N*/ 	ASSERT( xDPSupp.is(), "XDrawPageSupplier missing" );
-/*N*/ 
+/*N*/ 	OSL_ENSURE( xDPSupp.is(), "XDrawPageSupplier missing" );
+/*N*/
 /*N*/ 	Reference< drawing::XDrawPage >  xDrawPage = xDPSupp->getDrawPage();
-/*N*/ 	ASSERT( xDrawPage.is(), "XDrawPage missing" );
+/*N*/ 	OSL_ENSURE( xDrawPage.is(), "XDrawPage missing" );
 /*N*/ 	if( !xDrawPage.is() )
 /*N*/ 		return sal_False;
-/*N*/ 
+/*N*/
 /*N*/ 	Reference< form::XFormsSupplier > xFormsSupplier( xDrawPage, UNO_QUERY );
-/*N*/ 	ASSERT( xFormsSupplier.is(), "XFormsSupplier missing" );
-/*N*/ 
+/*N*/ 	OSL_ENSURE( xFormsSupplier.is(), "XFormsSupplier missing" );
+/*N*/
 /*N*/ 	Reference< container::XNameContainer > xForms = xFormsSupplier->getForms();
-/*N*/ 	ASSERT( xForms.is(), "XForms missing" );
-/*N*/ 
+/*N*/ 	OSL_ENSURE( xForms.is(), "XForms missing" );
+/*N*/
 /*N*/ 	return xForms->hasElements();
 /*N*/ }
 
@@ -593,41 +510,41 @@ public:
 /*N*/ 	else
 /*N*/ 		nMode |= STREAM_NOCREATE;
 /*N*/ 	Reset();
-/*N*/ 
+/*N*/
 /*N*/ 	pCurIosys = this;
-/*N*/ 
+/*N*/
 /*N*/ 	if( !pRoot.Is() || pRoot->GetError() != SVSTREAM_OK )
 /*N*/ 		return sal_False;
-/*N*/ 
+/*N*/
 /*N*/ 	// Der Doc-Teil kann Storage oder Stream sein!
 /*N*/ 	// Der DocStream fehlt natuerlich auch bei Textbausteinen
 /*N*/ 	if( !bBlock )
 /*N*/ 	{
-/*N*/ 		ASSERT( !pRoot->IsContained( N_DOC ) || pRoot->IsStream( N_DOC ), "Beta1-Docs werden nicht unterstuetzt" );
+/*N*/ 		OSL_ENSURE( !pRoot->IsContained( N_DOC ) || pRoot->IsStream( N_DOC ), "Beta1-Docs werden nicht unterstuetzt" );
 /*N*/ 		if( pRoot->IsStorage( N_DOC ) )
 /*N*/ 		{
 /*N*/ 			nRes = ERR_SWG_READ_ERROR;
 /*N*/ 			return sal_False;
 /*N*/ 		}
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	long nFFVersion = pRoot->GetVersion();
-/*N*/ 	ASSERT( nFFVersion == SOFFICE_FILEFORMAT_31 ||
+/*N*/ 	OSL_ENSURE( nFFVersion == SOFFICE_FILEFORMAT_31 ||
 /*N*/ 			nFFVersion == SOFFICE_FILEFORMAT_40 ||
 /*N*/ 			nFFVersion == SOFFICE_FILEFORMAT_50,
 /*N*/ 			"Am Root-Storage ist keine FF-Version gesetzt!" );
-/*N*/ 
+/*N*/
 /*N*/ 	// Solange wie noch ein Flag fuer den 3.1-Export haben, muessen wir
 /*N*/ 	// es auch noch setzen. Der Sw3Writer macht das nicht mehr fuer uns.
 /*N*/ 	if( bRdWr && nFFVersion == SOFFICE_FILEFORMAT_31 )
 /*N*/ 		SetSw31Export( sal_True );
-/*N*/ 
+/*N*/
 /*N*/ 	// Wenn eine 3.1-Clipboard-ID gesetzt ist, die Fileformat-Version
 /*N*/ 	// auf 3.1 setzten.
 /*N*/ 	if( SOT_FORMATSTR_ID_STARWRITER_30 == pRoot->GetFormat() &&
 /*N*/ 		nFFVersion != SOFFICE_FILEFORMAT_31 )
 /*N*/ 	{
-/*?*/ 		ASSERT( nFFVersion == SOFFICE_FILEFORMAT_31,
+/*?*/ 		OSL_ENSURE( nFFVersion == SOFFICE_FILEFORMAT_31,
 /*?*/ 				"Fileformat-Version auf 3.1 umgesetzt" );
 /*?*/ 		pRoot->SetVersion( SOFFICE_FILEFORMAT_31 );
 /*?*/ 		nFFVersion = SOFFICE_FILEFORMAT_31;
@@ -637,7 +554,7 @@ public:
 /*N*/ 			   SOT_FORMATSTR_ID_STARWRITERWEB_40 == pRoot->GetFormat() ) &&
 /*N*/ 			 nFFVersion != SOFFICE_FILEFORMAT_40 )
 /*N*/ 	{
-/*?*/ 		ASSERT( nFFVersion == SOFFICE_FILEFORMAT_40,
+/*?*/ 		OSL_ENSURE( nFFVersion == SOFFICE_FILEFORMAT_40,
 /*?*/ 				"Fileformat-Version auf 4.0 umgesetzt" );
 /*?*/ 		pRoot->SetVersion( SOFFICE_FILEFORMAT_40 );
 /*?*/ 		nFFVersion = SOFFICE_FILEFORMAT_40;
@@ -647,18 +564,18 @@ public:
 /*N*/ 			   SOT_FORMATSTR_ID_STARWRITERWEB_50 == pRoot->GetFormat() ) &&
 /*N*/ 			 nFFVersion != SOFFICE_FILEFORMAT_50 )
 /*N*/ 	{
-/*?*/ 		ASSERT( nFFVersion == SOFFICE_FILEFORMAT_50,
+/*?*/ 		OSL_ENSURE( nFFVersion == SOFFICE_FILEFORMAT_50,
 /*?*/ 				"Fileformat-Version auf 5.0 umgesetzt" );
 /*?*/ 		pRoot->SetVersion( SOFFICE_FILEFORMAT_50 );
 /*?*/ 		nFFVersion = SOFFICE_FILEFORMAT_50;
 /*N*/ 	}
-/*N*/ 
-/*N*/ 
+/*N*/
+/*N*/
 /*N*/ 	// The drawing layer stream will be opened for reading if it exists only
 /*N*/ 	// and for writing if it contains some (non virtual) objects or forms.
 /*N*/ 	sal_Bool bDraw = bRdWr && bUseDrawStream && pDoc->GetDrawModel() &&
 /*N*/ 				 lcl_sw3io_doesDrawingLayerNeedSaving( *pDoc );
-/*N*/ 
+/*N*/
 /*N*/ 	sal_Bool bPresent = pRoot->IsStream( N_DRAWING );
 /*N*/ 	if( bDraw || ( !bRdWr && bPresent ) )
 /*N*/ 	{
@@ -671,7 +588,7 @@ public:
 /*?*/ 			pRoot->Remove( N_DRAWING );
 /*N*/ 		pDrawing.Clear();
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	// Absatzvorlagen
 /*N*/ 	if( bRdWr || pRoot->IsStream( SfxStyleSheetBasePool::GetStreamName() ) )
 /*N*/ 		pStyles = pRoot->OpenStream
@@ -703,20 +620,20 @@ public:
 /*N*/ 		// saving files.
 /*N*/ 		if( pDrawing.Is() )
 /*N*/ 			pDrawing->SetVersion( nFFVersion );
-/*N*/ 
+/*N*/
 /*N*/ 		pStyles->SetVersion( nFFVersion );
 /*N*/ 		if( pNumRules.Is() )
 /*N*/ 		{
 /*N*/ 			pNumRules->SetVersion( nFFVersion );
 /*N*/ 			pNumRules->SetStreamCharSet( eSrcSet );
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		pPageStyles->SetVersion( nFFVersion );
 /*N*/ 		pPageStyles->SetStreamCharSet( eSrcSet );
-/*N*/ 
+/*N*/
 /*N*/ 		pContents->SetVersion( nFFVersion );
 /*N*/ 		pContents->SetStreamCharSet( eSrcSet );
-/*N*/ 
+/*N*/
 /*N*/ 		if( bRdWr )
 /*N*/ 		{
 /*N*/ 			sal_uInt16 nComprMode = COMPRESSMODE_NONE;
@@ -737,17 +654,11 @@ public:
 /*N*/ 				pContents->SetCompressMode( nComprMode );
 /*N*/ 			}
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		// Exort-Information anlegen
 /*N*/ 		delete pExportInfo;
 /*N*/ 		if( bRdWr && nFFVersion <= SOFFICE_FILEFORMAT_40 )
 /*N*/ 			pExportInfo = new Sw3ExportInfo;
-/*N*/ 		// Falls noch keine Marks gesammelt wurden, ist jetzt die Zeit!
-/*N*/ 		// MIB 11.12.96: Es werden jetzt text::Bookmarks gesammelt, wenn sie
-/*N*/ 		// benoetigt werden und auch nur noch die, die benoetigt werden.
-/*N*/ 		// Das ist sauberer!
-/*N*/ //		if( !pMarks && bRdWr )
-/*N*/ //			CollectMarks( NULL, sal_False );
 /*N*/ 		bOut = bRdWr;
 /*N*/ 		return sal_True;
 /*N*/ 	}
@@ -774,7 +685,7 @@ public:
 /*N*/ 	// Nach dem Einlesen alle nicht benutzten Marks loeschen
 /*N*/ 	// (kann auch nach dem Schreiben passieren, ist egal)
 /*N*/ 	CleanupMarks();
-/*N*/ 
+/*N*/
 /*N*/ 	// Brauchen wir nicht mehr
 /*N*/ 	delete pExportInfo; pExportInfo = NULL;
 /*N*/ 	delete pTOXs; pTOXs = NULL;
@@ -784,7 +695,7 @@ public:
 /*N*/ 	delete pBookmarks; pBookmarks = NULL;
 /*N*/ 	delete p30OLENodes; p30OLENodes = NULL;
 /*N*/ 	delete pTblLineBoxFmts; pTblLineBoxFmts = NULL;
-/*N*/ 
+/*N*/
 /*N*/ 	// der Returncode sollte so bleiben, wie er ist
 /*N*/ 	sal_uInt32 n = nRes;
 /*N*/ 	Reset();
@@ -810,7 +721,7 @@ public:
 /*N*/ {
 /*N*/ 	sal_Bool bRes = sal_True;
 /*N*/ 	sal_uInt16 nLvl = aRecTypes.Count();
-/*N*/ 	ASSERT( nLvl == aRecSizes.Count(), "OpenRec: falscher Level" );
+/*N*/ 	OSL_ENSURE( nLvl == aRecSizes.Count(), "OpenRec: falscher Level" );
 /*N*/ 	sal_uInt32 nPos = pStrm->Tell();
 /*N*/ 	if( bOut )
 /*N*/ 	{
@@ -833,7 +744,7 @@ public:
 /*?*/           if( nTmp != SAL_MAX_UINT32 )
 /*?*/               nSize = nTmp;
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		aRecSizes.Insert( nPos + nSize, nLvl );
 /*N*/ 		if( !nVal || cRecTyp != cType )
 /*N*/ 		{
@@ -841,8 +752,8 @@ public:
 /*N*/ 			// fix #24089#: Ein 0-Record-Header ist in jedem Fall
 /*N*/ 			// ein Formatfehler und sollte nicht zu einer Endlos-Schleife
 /*N*/ 			// fuehren
-/*?*/ 			ASSERT( nVal, "OpenRec: Record-Header ist 0" );
-/*?*/ 			ASSERT( cRecTyp == cType,
+/*?*/ 			OSL_ENSURE( nVal, "OpenRec: Record-Header ist 0" );
+/*?*/ 			OSL_ENSURE( cRecTyp == cType,
 /*?*/ 					"OpenRec: Falscher Block-Header" );
 /*?*/ 		 	Error();
 /*?*/ 			aRecTypes[nLvl] = SWG_EOF;
@@ -875,12 +786,12 @@ public:
 /*N*/ void Sw3IoImp::CloseRec( sal_uInt8 cType )
 /*N*/ {
 /*N*/ 	sal_uInt16 nLvl = aRecTypes.Count();
-/*N*/ 	ASSERT( nLvl == aRecSizes.Count(), "CloseRec: falscher Level" );
-/*N*/ 	ASSERT( nLvl, "CloseRec: keine Schachtelung" );
+/*N*/ 	OSL_ENSURE( nLvl == aRecSizes.Count(), "CloseRec: falscher Level" );
+/*N*/ 	OSL_ENSURE( nLvl, "CloseRec: keine Schachtelung" );
 /*N*/ 	if( nLvl )
 /*N*/ 	{
 /*N*/ 		nLvl--;
-/*N*/ 		ASSERT( cType == aRecTypes[nLvl],
+/*N*/ 		OSL_ENSURE( cType == aRecTypes[nLvl],
 /*N*/ 				"CloseRec: Falscher Block-Header" );
 /*N*/ 		sal_uInt32 nPos = pStrm->Tell();
 /*N*/ 		if( bOut )
@@ -909,7 +820,7 @@ public:
 /*N*/ 		else
 /*N*/ 		{
 /*N*/ 			sal_uInt32 n = aRecSizes[nLvl];
-/*N*/ 			ASSERT( n >= nPos, "CloseRec: zu viele Daten gelesen" );
+/*N*/ 			OSL_ENSURE( n >= nPos, "CloseRec: zu viele Daten gelesen" );
 /*N*/ 			if( n != nPos )
 /*N*/ 			{
 /*?*/ 				pStrm->Seek( n );
@@ -929,7 +840,7 @@ public:
 /*?*/ 				 	Error( ERR_SWG_READ_ERROR );
 /*N*/ 			}
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		aRecTypes.Remove( nLvl, 1 );
 /*N*/ 		aRecSizes.Remove( nLvl, 1 );
 /*N*/ 	}
@@ -953,7 +864,7 @@ sal_uInt32 Sw3IoImp::GetRecordSize( sal_uInt32 nPos )
     {
         nRet = pRecSizes->GetObject( nTablePos );
     }
-    ASSERT( nRet != SAL_MAX_UINT32, "Record-Size nicht gefunden" );
+    OSL_ENSURE( nRet != SAL_MAX_UINT32, "Record-Size nicht gefunden" );
 
     return nRet;
 }
@@ -977,7 +888,7 @@ void Sw3IoImp::FlushRecSizes()
 /*N*/ 		if( nEndPos > nPos )
 /*N*/ 			n = nEndPos - nPos;
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	return n;
 /*N*/ }
 
@@ -1020,8 +931,8 @@ void Sw3IoImp::FlushRecSizes()
 
 void Sw3IoImp::InRecSizes( ULONG nRecPos )
 {
-    ASSERT( !pRecSizes, "RecSize-Tabelle existiert noch" );
-    ASSERT( nRecPos, "Keine Position der RecSize-Tabelle" );
+    OSL_ENSURE( !pRecSizes, "RecSize-Tabelle existiert noch" );
+    OSL_ENSURE( nRecPos, "Keine Position der RecSize-Tabelle" );
 
     if( nRecPos )
     {
@@ -1059,7 +970,7 @@ ULONG Sw3IoImp::OutRecSizes()
     if( pRecSizes )
     {
         sal_uInt32 nCount = pRecSizes->Count();
-        ASSERT( nCount, "RecSize-Tabelle ist leer" );
+        OSL_ENSURE( nCount, "RecSize-Tabelle ist leer" );
 
         if( (nCount*8 + 4) > MAX_SMALL_RECSIZE )
         {
@@ -1103,7 +1014,7 @@ ULONG Sw3IoImp::OutRecSizes()
 
 /*N*/ void Sw3IoImp::CloseFlagRec()
 /*N*/ {
-/*N*/ 	ASSERT( pStrm->Tell() <= nFlagRecEnd, "Zu viele Binaerdaten gelesen" );
+/*N*/ 	OSL_ENSURE( pStrm->Tell() <= nFlagRecEnd, "Zu viele Binaerdaten gelesen" );
 /*N*/ 	if( pStrm->Tell() != nFlagRecEnd )
 /*N*/ 		Warning(),
 /*?*/ 		pStrm->Seek( nFlagRecEnd );
@@ -1126,7 +1037,7 @@ ULONG Sw3IoImp::OutRecSizes()
 /*N*/ void Sw3IoImp::CloseValuePos16( sal_uInt16 nVal )
 /*N*/ {
 /*N*/ 	sal_uInt16 nLvl = aValPositions.Count();
-/*N*/ 	ASSERT( nLvl, "Unterlauf ValuePos-Stack" );
+/*N*/ 	OSL_ENSURE( nLvl, "Unterlauf ValuePos-Stack" );
 /*N*/ 	if( nLvl )
 /*N*/ 	{
 /*N*/ 		nLvl--;
@@ -1155,7 +1066,7 @@ ULONG Sw3IoImp::OutRecSizes()
 /*N*/ void Sw3IoImp::CloseValuePos32( sal_uInt32 nVal )
 /*N*/ {
 /*N*/ 	sal_uInt16 nLvl = aValPositions.Count();
-/*N*/ 	ASSERT( nLvl, "Unterlauf ValuePos-Stack" );
+/*N*/ 	OSL_ENSURE( nLvl, "Unterlauf ValuePos-Stack" );
 /*N*/ 	if( nLvl )
 /*N*/ 	{
 /*N*/ 		nLvl--;
@@ -1206,23 +1117,23 @@ ULONG Sw3IoImp::OutRecSizes()
 /*N*/ 	sal_uInt32 n32;
 /*N*/ 	sal_uInt16 n16;
 /*N*/ 	sal_uInt8 n8;
-/*N*/ 
+/*N*/
 /*N*/ 	rStrm >> n8;
 /*N*/ 	if( (n8 & 0x80) == 0x00 )
 /*N*/ 	{
 /*N*/ 		// 0x0www wwww
 /*N*/ 		// --> 0x0000 0000  0000 0000  0000 0000  0www wwww
-/*N*/ 
+/*N*/
 /*N*/ 		n32 = (sal_uInt32)(n8 & 0x7F);
 /*N*/ 	}
 /*N*/ 	else if( (n8 & 0xC0) == 0x80 )
 /*N*/ 	{
 /*N*/ 		// 0x10xx xxxx  wwww wwww
 /*N*/ 		// --> 0x0000 0000  0000 0000  00xx xxxx  wwww wwww
-/*N*/ 
+/*N*/
 /*?*/ 		n32 = (sal_uInt32)(n8 & 0x3F);
 /*?*/ 		n32 <<= 8;
-/*?*/ 
+/*?*/
 /*?*/ 		rStrm >> n8;
 /*?*/ 		n32 += (sal_uInt32)n8;
 /*?*/ 	}
@@ -1230,10 +1141,10 @@ ULONG Sw3IoImp::OutRecSizes()
 /*?*/ 	{
 /*?*/ 		// 0x110y yyyy  wwww wwww  xxxx xxxx
 /*?*/ 		// --> 0x0000 0000  000y yyyy  xxxx xxxx  wwww wwww
-/*?*/ 
+/*?*/
 /*?*/ 		n32 = (sal_uInt32)(n8 & 0x1F);
 /*?*/ 		n32 <<= 16;
-/*?*/ 
+/*?*/
 /*?*/ 		rStrm >> n16;
 /*?*/ 		n32 += (sal_uInt32)n16;
 /*?*/ 	}
@@ -1241,14 +1152,14 @@ ULONG Sw3IoImp::OutRecSizes()
 /*?*/ 	{
 /*?*/ 		// 0x1110 zzzz  yyyy yyyy  wwww wwww  xxxx xxxx
 /*?*/ 		// --> 0x0000 zzzz  yyyy yyyy  xxxx xxxx  wwww wwww
-/*?*/ 
+/*?*/
 /*?*/ 		n32 = (sal_uInt32)(n8 & 0x0F);
 /*?*/ 		n32 <<= 8;
-/*?*/ 
+/*?*/
 /*?*/ 		rStrm >> n8;
 /*?*/ 		n32 += (sal_uInt32)n8;
 /*?*/ 		n32 <<= 16;
-/*?*/ 
+/*?*/
 /*?*/ 		rStrm >> n16;
 /*?*/ 		n32 += (sal_uInt32)n16;
 /*?*/ 	}
@@ -1260,10 +1171,9 @@ ULONG Sw3IoImp::OutRecSizes()
 /*?*/ 	}
 /*?*/ 	else
 /*?*/ 	{
-/*?*/ //	 	Error( ERR_SWG_READ_ERROR );
 /*?*/ 		n32 = 0xABADCAFE;
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	return (sal_uInt32)n32;
 /*N*/ }
 
@@ -1273,14 +1183,14 @@ ULONG Sw3IoImp::OutRecSizes()
 /*N*/ 	{
 /*N*/ 		// 0w0000 0000  0000 0000  0000 0000  0www wwww
 /*N*/ 		// -> 0w0www wwww
-/*N*/ 
+/*N*/
 /*N*/ 		rStrm << (sal_uInt8)n32;
 /*N*/ 	}
 /*N*/ 	else if( n32 < 0x00004000 )
 /*N*/ 	{
 /*N*/ 		// 0x0000 0000  0000 0000  00xx xxxx  wwww wwww
 /*N*/ 		// --> 0x10xx xxxx  wwww wwww
-/*N*/ 
+/*N*/
 /*?*/ 		n32 |= 0x00008000;
 /*?*/ 		rStrm << (sal_uInt8)(n32 >> 8);
 /*?*/ 		rStrm << (sal_uInt8)n32;
@@ -1289,7 +1199,7 @@ ULONG Sw3IoImp::OutRecSizes()
 /*?*/ 	{
 /*?*/ 		// 0x110y yyyy  xxxx xxxx  wwww wwww
 /*?*/ 		// --> 0x0000 0000  000y yyyy  wwww wwww  xxxx xxxx
-/*?*/ 
+/*?*/
 /*?*/ 		n32 |= 0x00C00000;
 /*?*/ 		rStrm << (sal_uInt8)(n32 >> 16);
 /*?*/ 		rStrm << (sal_uInt16)n32;
@@ -1298,7 +1208,7 @@ ULONG Sw3IoImp::OutRecSizes()
 /*?*/ 	{
 /*?*/ 		// 0x1110 zzzz  yyyy yyyy  xxxx xxxx  wwww wwww
 /*?*/ 		// --> 0x0000 zzzz  yyyy yyyy  wwww wwww  xxxx xxxx
-/*?*/ 
+/*?*/
 /*?*/ 		n32 |= 0xE0000000;
 /*?*/ 		rStrm << (sal_uInt8)(n32 >> 24);
 /*?*/ 		rStrm << (sal_uInt8)(n32 >> 16);
@@ -1308,7 +1218,7 @@ ULONG Sw3IoImp::OutRecSizes()
 /*?*/ 	{
 /*?*/ 		// zzzz zzzz  yyyy yyyy  xxxx xxxx  wwww wwww
 /*?*/ 		// --> 0x1111 00000  wwww wwww  xxxx xxxx  yyyy yyyy  zzzz zzzz
-/*?*/ 
+/*?*/
 /*?*/ 		rStrm << (sal_uInt8)0xF0;
 /*?*/ 		rStrm << (sal_uInt32)n32;
 /*N*/ 	}
@@ -1330,7 +1240,7 @@ ULONG Sw3IoImp::OutRecSizes()
 /*N*/ 						 n1, n2, pDoc->GetDocShell() );
 /*N*/ 	}
 /*N*/ }
-/*N*/ 
+/*N*/
 /*N*/ void Sw3IoImp::ClosePercentBar()
 /*N*/ {
 /*N*/ 	if( !bBlock )
@@ -1339,7 +1249,6 @@ ULONG Sw3IoImp::OutRecSizes()
 
 /*N*/ void Sw3IoImp::SetPercentBar( sal_uInt32 n )
 /*N*/ {
-/*N*/ 	//ASSERT( pStrm!=pContents || (n-nCurPercent)<1024, "SetPercentBar zu lange nicht mehr aufgerufen!" );
 /*N*/ 	if( !bBlock && (pStrm == &pContents ) && 	// nicht fuer SwPageStyles
 /*N*/ 		( n > nCurPercent ) && ( n <= nEndPercent ) )
 /*N*/ 		::binfilter::SetProgressState( nCurPercent = n, pDoc->GetDocShell() );
@@ -1361,16 +1270,14 @@ ULONG Sw3IoImp::OutRecSizes()
 /*N*/ #endif
 /*N*/ 			)
 /*N*/ 	{
-/*N*/ 		// gar kein Drawing-Stream da!
-/*N*/ //		nGblFlags |= SW3F_NODRAWING;
 /*N*/ 		return;
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	// Wenn der erste Stream gelesen wird, kann es noch keine RecSizes geben
-/*N*/ 	ASSERT( !HasRecSizes(), "Hier darf es noch keine RecSizes geben" );
+/*N*/ 	OSL_ENSURE( !HasRecSizes(), "Hier darf es noch keine RecSizes geben" );
 /*N*/ 	if( HasRecSizes() )
             FlushRecSizes();
-/*N*/ 
+/*N*/
 /*N*/ 	pDrawing->Seek( 0L );
 /*N*/ 	pDrawing->SetBufferSize( SW3_BSR_DRAWING );
 /*N*/ 	SdrModel* pModel = NULL;
@@ -1398,14 +1305,16 @@ ULONG Sw3IoImp::OutRecSizes()
 /*?*/           SdrPage* pPage = pModel->GetPage( 0 );
 /*?*/           pPage->RecalcObjOrdNums();
 /*?*/           nZOrderOff = pPage->GetObjCount();
-/*?*/ 
+/*?*/
 /*?*/           for( sal_uInt32 n = pInsPage->GetObjCount(); n--; )
 /*?*/           {
 /*?*/               SdrObject* pObj = pInsPage->RemoveObject( 0 );
 /*?*/               if( pObj )
 /*?*/                   pPage->InsertObject( pObj );
 /*?*/               else
-/*?*/                   ASSERT( !this, "wo ist das DrawObject?" );
+                    {
+/*?*/                   OSL_ENSURE( !this, "wo ist das DrawObject?" );
+                    }
 /*?*/           }
 /*?*/       }
 /*?*/       delete pInsModel;
@@ -1420,7 +1329,7 @@ ULONG Sw3IoImp::OutRecSizes()
 /*N*/ 	{
 /*N*/ 		pModel = pDoc->MakeDrawModel();
 /*N*/ 		SfxItemPool *pDrawPool = pModel->GetItemPool().GetSecondaryPool();
-/*N*/ 		ASSERT( pDrawPool, "DrawPool not found" );
+/*N*/ 		OSL_ENSURE( pDrawPool, "DrawPool not found" );
 /*N*/ 		pDrawPool->Load( *pDrawing );
 /*N*/ 		if( pDrawing->GetError() == SVSTREAM_OK )
 /*N*/ 		{
@@ -1469,15 +1378,8 @@ ULONG Sw3IoImp::OutRecSizes()
 /*N*/ 	{
 /*N*/ 		sal_uInt32 n;
 /*N*/ 		*pDrawing >> n;
-// Nowadays all objects remain in the page, but might be in different layers
-//		if( !pDrawing->IsEof() && pModel )
-//		{
-//			sal_uInt32 nCount = pModel->GetPage( 0 )->GetObjCount();
-//			if( n <= nCount )
-//				nHiddenDrawObjs = nCount - n;
-//		}
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	CheckIoError( pDrawing );
 /*N*/ 	pDrawing->SetBufferSize( 0 );
 /*N*/ }
@@ -1510,7 +1412,7 @@ ULONG Sw3IoImp::OutRecSizes()
 /*N*/ {
 /*N*/ 	if( !pNumRules.Is() )
 /*N*/ 		return;
-/*N*/ 
+/*N*/
 /*N*/ 	pNumRules->Seek( 0L );
 /*N*/ 	pNumRules->SetBufferSize( SW3_BSR_NUMRULES );
 /*N*/ 	SvStream* pOld = pStrm;
@@ -1572,14 +1474,14 @@ const int RES_POOLCOLL_HTML_DT_40 = 0x3007;
 /*?*/ 		case RES_POOLCOLL_HTML_XMP_40:
 /*?*/ 			nId |= USER_FMT;
 /*?*/ 			break;
-/*?*/ 
+/*?*/
 /*?*/ 		case RES_POOLCOLL_HTML_HR_40:	nId = RES_POOLCOLL_HTML_HR; break;
 /*?*/ 		case RES_POOLCOLL_HTML_H6_40:	nId = RES_POOLCOLL_HEADLINE6; break;
 /*?*/ 		case RES_POOLCOLL_HTML_DD_40:	nId = RES_POOLCOLL_HTML_DD; break;
 /*?*/ 		case RES_POOLCOLL_HTML_DT_40:	nId = RES_POOLCOLL_HTML_DT; break;
 /*N*/ 		}
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	return nId;
 /*N*/ }
 
@@ -1595,7 +1497,7 @@ const int RES_POOLCOLL_HTML_DT_40 = 0x3007;
 /*?*/ 		case RES_POOLCOLL_HEADLINE6:nId = RES_POOLCOLL_HTML_H6_40; break;
 /*?*/ 		case RES_POOLCOLL_HTML_DD:	nId = RES_POOLCOLL_HTML_DD_40; break;
 /*?*/ 		case RES_POOLCOLL_HTML_DT:	nId = RES_POOLCOLL_HTML_DT_40; break;
-/*N*/ 
+/*N*/
 /*N*/ 		//JP 05.05.98: im 3.1/4.0 war ein Bug im sw3style bei der Abfrage
 /*N*/ 		//				ob die PoolID einer Zeichenvorlage eine Benutzer-
 /*N*/ 		//				definierte ID ist. Alles zwischen
@@ -1608,14 +1510,14 @@ const int RES_POOLCOLL_HTML_DT_40 = 0x3007;
 /*N*/ 			  nId = USHRT_MAX;
 /*N*/ 		}
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	return nId;
 /*N*/ }
 
 
 // Sammeln der Strings am Doc. Es werden alle Strings aus benannten
 // Formaten, Collections und PageDescs gesammelt. Weiter wird allen
-// Auto-Frameformaten eine Extension im Namen verpaát, weil die Namen
+// Auto-Frameformaten eine Extension im Namen verpasst, weil die Namen
 // nicht eindeutig sind.
 
 /*N*/ void Sw3StringPool::Setup( SwDoc& rDoc, long nFFVersion,
@@ -1623,13 +1525,13 @@ const int RES_POOLCOLL_HTML_DT_40 = 0x3007;
 /*N*/ {
 /*N*/ 	Clear();
 /*N*/ 	nExpFFVersion = nFFVersion;
-/*N*/ 
+/*N*/
 /*N*/ 	// Das Written-Flag wird gleich mit geknackt!
 /*N*/ 	// Das ist wichtig, da Formate (theoretisch) in verschiedenen
 /*N*/ 	// Streams landen koennen.
 /*N*/ 	SwMsgPoolItem aMsgHint( RES_RESET_FMTWRITTEN );
 /*N*/ 	rDoc.GetDfltFrmFmt()->Modify( &aMsgHint, &aMsgHint );
-/*N*/ 
+/*N*/
 /*N*/ 	bFixed = sal_False;
 /*N*/ 	// Defaultformate:
 /*N*/ 	Setup( rDoc, *rDoc.GetDfltFrmFmt() );
@@ -1652,7 +1554,6 @@ const int RES_POOLCOLL_HTML_DT_40 = 0x3007;
 /*N*/ 		// Autoformate in dieser Liste muessen mit einer
 /*N*/ 		// Extension versehen werden!
 /*N*/ 		sal_uInt16 nFmtId =  0;
-/*N*/ 		const String& rName = rFmt.GetName();
 /*N*/ 		// TODO: unicode: correct?
 /*N*/ 		if( rFmt.IsAuto() ) 		// Autoformat
 /*N*/ 			nFmtId = Count()+1; //++nId;
@@ -1675,7 +1576,7 @@ const int RES_POOLCOLL_HTML_DT_40 = 0x3007;
 /*N*/ 		const SwPageDesc& rPg = rDoc.GetPageDesc( n );
 /*N*/ 		Add( rPg.GetName(), rPg.GetPoolFmtId() );
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	if( nExpFFVersion <= SOFFICE_FILEFORMAT_40 )
 /*N*/ 	{
 /*N*/ 		Add( String::CreateFromAscii(sSW3IO_FixedField), USHRT_MAX );
@@ -1683,7 +1584,7 @@ const int RES_POOLCOLL_HTML_DT_40 = 0x3007;
 /*N*/ 	}
 /*N*/     /* #108791# */
 /*N*/     Add( String::CreateFromAscii(sSW3IO_DropDownField), USHRT_MAX );
-/*N*/ 
+/*N*/
 /*N*/ 	// fix #26064#: Namen der 3 Label Numernkreise: Hier wird zusaetzlich
 /*N*/ 	// noch die Pool-Id des dazugehoerigen Formats gespeichert
 /*N*/ 	{
@@ -1691,7 +1592,7 @@ const int RES_POOLCOLL_HTML_DT_40 = 0x3007;
 /*N*/ 		String aTable( SW_RES(STR_POOLCOLL_LABEL_TABLE) );
 /*N*/ 		String aFrame( SW_RES(STR_POOLCOLL_LABEL_FRAME) );
 /*N*/ 		String aDrawing( SW_RES(STR_POOLCOLL_LABEL_DRAWING) );
-/*N*/ 
+/*N*/
 /*N*/ 		for( n = 0; n < INIT_FLDTYPES; n++ )
 /*N*/ 		{
 /*N*/ 			SwFieldType *pFldType = (*rDoc.GetFldTypes())[n];
@@ -1711,12 +1612,12 @@ const int RES_POOLCOLL_HTML_DT_40 = 0x3007;
 /*N*/ 							nPoolId = RES_POOLCOLL_LABEL_FRAME;
 /*N*/ 						else if( aDrawing == rName )
 /*N*/ 							nPoolId = RES_POOLCOLL_LABEL_DRAWING;
-/*N*/ 
+/*N*/
 /*N*/ 						Add( rName, nPoolId );
 /*N*/ 					}
 /*N*/ 				}
 /*N*/ 				break;
-/*N*/ 
+/*N*/
 /*N*/ 				case RES_DBSETNUMBERFLD:
 /*N*/ 				case RES_DBNUMSETFLD:
 /*N*/ 				case RES_DBNEXTSETFLD:
@@ -1724,7 +1625,7 @@ const int RES_POOLCOLL_HTML_DT_40 = 0x3007;
 /*N*/ 				if( nExpFFVersion > SOFFICE_FILEFORMAT_31 )
 /*N*/ 				{
 /*N*/ 					SwClientIter aIter( *pFldType );
-/*N*/ 
+/*N*/
 /*N*/ 					for( SwFmtFld* pFmtFld = (SwFmtFld*)aIter.First( TYPE(SwFmtFld) );
 /*N*/ 						pFmtFld; pFmtFld = (SwFmtFld*)aIter.Next() )
 /*N*/ 					{
@@ -1741,7 +1642,7 @@ const int RES_POOLCOLL_HTML_DT_40 = 0x3007;
 /*N*/ 				}
 /*N*/ 				break;
 /*N*/ 			}
-/*N*/ 
+/*N*/
 /*N*/ 		}
 /*N*/ 	}
 /*N*/ 	// Namen benutzerdefinierter Felder
@@ -1751,7 +1652,7 @@ const int RES_POOLCOLL_HTML_DT_40 = 0x3007;
 /*N*/ 		for( n = INIT_FLDTYPES; n < nArrLen; n++ )
 /*N*/ 		{
 /*N*/ 			SwFieldType *pFldType = (*rDoc.GetFldTypes())[n];
-/*N*/ 
+/*N*/
 /*N*/ 			switch (pFldType->Which())
 /*N*/ 			{
 /*N*/ 				case RES_DBFLD:
@@ -1765,24 +1666,24 @@ const int RES_POOLCOLL_HTML_DT_40 = 0x3007;
 /*N*/ 						Add( sDBName, IDX_NOCONV_FF );
 /*N*/ 					}
 /*N*/ 					break;
-/*N*/ 
+/*N*/
 /*N*/ 				default:
 /*N*/ 					Add( pFldType->GetName(), USHRT_MAX );
 /*N*/ 					break;
 /*N*/ 			}
 /*N*/ 		}
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	// Ab dem 5.0-FF stehen auch die Benutzer-definierten Verzeichnisnamen
 /*N*/ 	// im String-Pool
 /*N*/ 	if( nExpFFVersion > SOFFICE_FILEFORMAT_40 )
 /*N*/ 	{
 /*N*/ 		const SwSectionFmts& rSectFmts = rDoc.GetSections();
-/*N*/ 		for( sal_uInt16 n = rSectFmts.Count(); n; )
+/*N*/ 		for( sal_uInt16 nn = rSectFmts.Count(); nn; )
 /*N*/ 		{
 /*N*/ 			const SwTOXType* pType;
 /*N*/ 			const SwTOXBaseSection *pTOXBaseSect;
-/*N*/ 			const SwSectionFmt* pSectFmt = rSectFmts[ --n ];
+/*N*/ 			const SwSectionFmt* pSectFmt = rSectFmts[ --nn ];
 /*N*/ 			const SwSection* pSect = pSectFmt->GetSection();
 /*N*/ 			if( pSect && TOX_CONTENT_SECTION == pSect->GetType() &&
 /*N*/ 				pSect->GetFmt() && pSectFmt->GetSectionNode() &&
@@ -1832,7 +1733,7 @@ const int RES_POOLCOLL_HTML_DT_40 = 0x3007;
 /*?*/ 						{
 /*?*/ 							String aName = rStyleNames.GetToken( 0,
 /*?*/ 												TOX_STYLE_DELIMITER, nStrPos );
-/*?*/ 							ASSERT( aName.Len(), "empty style name" );
+/*?*/ 							OSL_ENSURE( aName.Len(), "empty style name" );
 /*?*/ 							if( aName.Len() )
 /*?*/ 								SetupTxtCollByName( rDoc, aName );
 /*?*/ 						}
@@ -1852,6 +1753,8 @@ const int RES_POOLCOLL_HTML_DT_40 = 0x3007;
 /*?*/ 				case TOX_TABLES:
 /*?*/ 					nPoolId = RES_POOLCOLL_LABEL_TABLE;
 /*?*/ 					break;
+                                default:
+                                    break;
 /*N*/ 				}
 /*N*/ 				if( USHRT_MAX != nPoolId )
 /*N*/ 				{
@@ -1863,14 +1766,14 @@ const int RES_POOLCOLL_HTML_DT_40 = 0x3007;
 /*N*/ 					pTOXBaseSect->GetMainEntryCharStyle();
 /*N*/ 				if( rMainStyle.Len() )
 /*N*/ 				{
-/*?*/ 					sal_uInt16 nPoolId = SwStyleNameMapper::GetPoolIdFromUIName( rMainStyle,
+/*?*/ 					sal_uInt16 nPoolId2 = SwStyleNameMapper::GetPoolIdFromUIName( rMainStyle,
 /*?*/ 													 GET_POOLID_CHRFMT );
-/*N*/ 					Add( rMainStyle, nPoolId );
+/*N*/ 					Add( rMainStyle, nPoolId2 );
 /*N*/ 				}
 /*N*/ 			}
 /*N*/ 		}
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	const SwTOXMark* pItem;
 /*N*/ 	nArrLen = nExpFFVersion > SOFFICE_FILEFORMAT_40
 /*N*/ 			? rDoc.GetAttrPool().GetItemCount( RES_TXTATR_TOXMARK )
@@ -1888,7 +1791,7 @@ const int RES_POOLCOLL_HTML_DT_40 = 0x3007;
 /*N*/ 			}
 /*N*/ 		}
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	const SwFmtINetFmt* pINetFmt;
 /*N*/ 	nArrLen = nExpFFVersion > SOFFICE_FILEFORMAT_31
 /*N*/ 			? rDoc.GetAttrPool().GetItemCount( RES_TXTATR_INETFMT )
@@ -1904,11 +1807,11 @@ const int RES_POOLCOLL_HTML_DT_40 = 0x3007;
 /*?*/ 				Add( pINetFmt->GetVisitedFmt(), pINetFmt->GetVisitedFmtId() );
 /*N*/ 		}
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	// Seit der 5.0 gibt es Redlines. Die Autoren stehen dann im String-Pool
 /*N*/ 	if( nExpFFVersion > SOFFICE_FILEFORMAT_40 )
 /*N*/ 		SetupRedlines( rDoc );
-/*N*/ 
+/*N*/
 /*N*/ 	// Beim 3.1/4.0-Export standen die Tabellen-Line/Box-Formate noch
 /*N*/ 	// im FrmFmt-Array und wurden ueber den String-Pool dort eingetragen.
 /*N*/ 	// Deshalb muessen sie jetzt auch dort eingetragen werden. Die
@@ -1920,14 +1823,14 @@ const int RES_POOLCOLL_HTML_DT_40 = 0x3007;
 /*N*/ 	{
 /*N*/ 		if( !pExportInfo->pTblLineBoxFmtNames40 )
 /*N*/ 			pExportInfo->pTblLineBoxFmtNames40 = new SvStringsDtor;
-/*N*/ 
+/*N*/
 /*N*/ 		SvStringsDtor *pNames = pExportInfo->pTblLineBoxFmtNames40;
 /*N*/ 		if( pNames->Count() )
 /*?*/ 			pNames->DeleteAndDestroy( 0, pNames->Count() );
-/*N*/ 
+/*N*/
 /*N*/ 		Sw3FrmFmts *pFmts = pExportInfo->pTblLineBoxFmts40;
-/*N*/ 		sal_uInt16 nArrLen = pFmts->Count();
-/*N*/ 		for( n=0; n<nArrLen; n++ )
+/*N*/ 		sal_uInt16 nArrLen2 = pFmts->Count();
+/*N*/ 		for( n=0; n<nArrLen2; n++ )
 /*N*/ 		{
 /*N*/ 			// TODO: unicode: currect?
 /*N*/ 			String * pName = new String( (*pFmts)[n]->GetName() );
@@ -1936,7 +1839,7 @@ const int RES_POOLCOLL_HTML_DT_40 = 0x3007;
 /*N*/ 			pNames->Insert( pName, pNames->Count() );
 /*N*/ 		}
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	// Und danach darf nix mehr in den Pool hinein!
 /*N*/ 	bFixed = sal_True;
 /*N*/ }
@@ -1946,7 +1849,7 @@ const int RES_POOLCOLL_HTML_DT_40 = 0x3007;
 /*N*/ 	Clear();
 /*N*/ 	nExpFFVersion = nFFVersion;
 /*N*/ 	bFixed = sal_False;
-/*N*/ 
+/*N*/
 /*N*/ 	// Die Namen von Zeichenvorlagen werden benoetigt, weil in den
 /*N*/ 	// Numerierungen auuf sie verwiesen werden kann.
 /*N*/ 	sal_uInt16 nArrLen = rDoc.GetCharFmts()->Count();
@@ -1954,7 +1857,7 @@ const int RES_POOLCOLL_HTML_DT_40 = 0x3007;
         sal_uInt16 n;
 /*N*/ 	for( n = 1; n < nArrLen; n++ )
 /*N*/ 		Setup( rDoc, *(*rDoc.GetCharFmts())[ n ] );
-/*N*/ 
+/*N*/
 /*N*/ 	// Die Namen der Numerierungen werden sowieso benoetigt.
 /*N*/ 	nArrLen = rDoc.GetNumRuleTbl().Count();
 /*N*/ 	for( n=0; n<nArrLen; n++ )
@@ -1962,12 +1865,12 @@ const int RES_POOLCOLL_HTML_DT_40 = 0x3007;
 /*N*/ 		const SwNumRule *pNumRule = rDoc.GetNumRuleTbl()[n];
 /*N*/ 		Add( pNumRule->GetName(), pNumRule->GetPoolFmtId() );
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	// Und die Outline-Numerierung hat auch einen Namen.
 /*N*/ 	const SwNumRule *pOutline = rDoc.GetOutlineNumRule();
 /*N*/ 	if( pOutline )
 /*N*/ 		Add( pOutline->GetName(), pOutline->GetPoolFmtId() );
-/*N*/ 
+/*N*/
 /*N*/ 	// Und danach darf nix mehr in den Pool hinein!
 /*N*/ 	bFixed = sal_True;
 /*N*/ }
@@ -2034,13 +1937,12 @@ const int RES_POOLCOLL_HTML_DT_40 = 0x3007;
 /*N*/ 	// Das Written-Flag wird gleich mit geknackt!
 /*N*/ 	// Das ist wichtig, da Formate (theoretisch) in verschiedenen
 /*N*/ 	// Streams landen koennen.
-/*N*/ 	ASSERT( !rFmt.IsWritten(), "Written-Flag am Format ist gesetzt" );
-/*N*/ //	((SwFmt&)rFmt).ResetWritten();
-/*N*/ 
+/*N*/ 	OSL_ENSURE( !rFmt.IsWritten(), "Written-Flag am Format ist gesetzt" );
+/*N*/
 /*N*/ 	String aName( rFmt.GetName() );
 /*N*/ 	if( nId )
 /*N*/ 	{
-/*N*/ 		ASSERT( nId==Count()+1, "id ungleich String-Pool-Pos" );
+/*N*/ 		OSL_ENSURE( nId==Count()+1, "id ungleich String-Pool-Pos" );
 /*N*/ 		aName += EXT_SEPARATOR, aName += String::CreateFromInt32(nId);
 /*N*/ 		// Kein SetName() wg. Assert
 /*N*/ 		(String&)((SwFmt&)rFmt).GetName() = aName;
@@ -2058,7 +1960,7 @@ const int RES_POOLCOLL_HTML_DT_40 = 0x3007;
 /*N*/ {
 /*N*/ 	if( !rName.Len() )
 /*N*/ 		return;
-/*N*/ 
+/*N*/
 /*N*/ 	const SwTxtFmtColl *pColl = rDoc.FindTxtFmtCollByName( rName );
 /*N*/ 	sal_uInt16 nPoolId = pColl ? pColl->GetPoolFmtId()
 /*N*/ 						   : SwStyleNameMapper::GetPoolIdFromUIName( rName, GET_POOLID_TXTCOLL );
@@ -2068,11 +1970,11 @@ const int RES_POOLCOLL_HTML_DT_40 = 0x3007;
 /*N*/ sal_uInt16 Sw3StringPool::Add( const String& r, sal_uInt16 n, sal_Bool bDontSearch )
 /*N*/ {
 /*N*/ 	sal_uInt16 i = bDontSearch ? aPool.Count() : 0;
-/*N*/ 
-/*N*/ 	ASSERT( nExpFFVersion, "String-Pool: FF-Version nicht gesetzt" );
+/*N*/
+/*N*/ 	OSL_ENSURE( nExpFFVersion, "String-Pool: FF-Version nicht gesetzt" );
 /*N*/ 	if( nExpFFVersion <= SOFFICE_FILEFORMAT_40 && n && n<IDX_SPEC_VALUE )
 /*N*/ 		n = ConvertToOldPoolId( n, nExpFFVersion );
-/*N*/ 
+/*N*/
 /*N*/ 	for( ; i < aPool.Count(); i++ )
 /*N*/ 	{
 /*N*/ 		const Sw3String* p3Str = aPool.GetObject( i );
@@ -2087,7 +1989,7 @@ const int RES_POOLCOLL_HTML_DT_40 = 0x3007;
 /*N*/ 	}
 /*N*/ 	else
 /*N*/ 	{
-/*?*/ 		ASSERT( !bFixed, "String nicht im Pool eingetragen" );
+/*?*/ 		OSL_ENSURE( !bFixed, "String nicht im Pool eingetragen" );
 /*?*/ 		return IDX_NO_VALUE;
 /*N*/ 	}
 /*N*/ }
@@ -2095,10 +1997,10 @@ const int RES_POOLCOLL_HTML_DT_40 = 0x3007;
 
 /*N*/ sal_uInt16 Sw3StringPool::Find( const String& r, sal_uInt16 nPoolId )
 /*N*/ {
-/*N*/ 	ASSERT( nExpFFVersion, "String-Pool: FF-Version nicht gesetzt" );
+/*N*/ 	OSL_ENSURE( nExpFFVersion, "String-Pool: FF-Version nicht gesetzt" );
 /*N*/ 	if( nExpFFVersion  <= SOFFICE_FILEFORMAT_40 && nPoolId && nPoolId<IDX_SPEC_VALUE )
 /*N*/ 		nPoolId = ConvertToOldPoolId( nPoolId, nExpFFVersion );
-/*N*/ 
+/*N*/
 /*N*/ 	xub_StrLen nOff = r.Search( EXT_SEPARATOR );
 /*N*/ 	if( nOff != STRING_NOTFOUND )
 /*N*/ 	{
@@ -2109,9 +2011,9 @@ const int RES_POOLCOLL_HTML_DT_40 = 0x3007;
 /*N*/ 			if( nPoolId == p3Str->GetPoolId() && r==*p3Str )
 /*N*/ 				return nPos;
 /*N*/ 		}
-/*N*/ 		ASSERT( !this, "String-Pool-Position ungueltig" );
+/*N*/ 		OSL_ENSURE( !this, "String-Pool-Position ungueltig" );
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	xub_StrLen nLen = r.Len();
 /*N*/ 	for( sal_uInt16 i = 0; i < aPool.Count(); i++ )
 /*N*/ 	{
@@ -2129,7 +2031,7 @@ const int RES_POOLCOLL_HTML_DT_40 = 0x3007;
 /*N*/ 					break;
 /*N*/ 				}
 /*N*/ 			}
-/*N*/ 
+/*N*/
 /*N*/ 			if( bFound )
 /*N*/ 				return i;
 /*N*/ 		}
@@ -2143,7 +2045,7 @@ const int RES_POOLCOLL_HTML_DT_40 = 0x3007;
 /*N*/ 	{
 /*N*/ 		if( i < aPool.Count() )
 /*N*/ 			return *aPool.GetObject( i );
-/*N*/ 		ASSERT( !this, "String-Index nicht im Stringpool" );
+/*N*/ 		OSL_ENSURE( !this, "String-Index nicht im Stringpool" );
 /*N*/ 	}
 /*N*/ 	return aEmpty;
 /*N*/ }
@@ -2154,7 +2056,7 @@ const int RES_POOLCOLL_HTML_DT_40 = 0x3007;
 /*N*/ 	{
 /*N*/ 		if( i < aPool.Count() )
 /*N*/ 			return aPool.GetObject( i )->GetPoolId();
-/*N*/ 		ASSERT( !this, "String-Index nicht im Stringpool" );
+/*N*/ 		OSL_ENSURE( !this, "String-Index nicht im Stringpool" );
 /*N*/ 	}
 /*N*/ 	return 0;
 /*N*/ }
@@ -2163,7 +2065,7 @@ const int RES_POOLCOLL_HTML_DT_40 = 0x3007;
 
 /*N*/ void Sw3StringPool::SetCachedFmt( sal_uInt16 i, SwFmt *pFmt )
 /*N*/ {
-/*N*/ 	ASSERT( i < IDX_SPEC_VALUE && i < aPool.Count(),
+/*N*/ 	OSL_ENSURE( i < IDX_SPEC_VALUE && i < aPool.Count(),
 /*N*/ 			"SetCachedFmt fuer ungueltigen Index" );
 /*N*/ 	if( i < IDX_SPEC_VALUE && i < aPool.Count() )
 /*N*/ 		aPool.GetObject( i )->SetCachedFmt( pFmt );
@@ -2177,7 +2079,7 @@ const int RES_POOLCOLL_HTML_DT_40 = 0x3007;
 /*N*/ 	{
 /*N*/ 		if( i < aPool.Count() )
 /*N*/ 			return aPool.GetObject( i )->GetCachedFmt();
-/*N*/ 		ASSERT( !this, "String-Index nicht im Stringpool" );
+/*N*/ 		OSL_ENSURE( !this, "String-Index nicht im Stringpool" );
 /*N*/ 	}
 /*N*/ 	return 0;
 /*N*/ }
@@ -2221,7 +2123,7 @@ void Sw3StringPool::LoadOld( SvStream& r )
 /*N*/ 	sal_uInt16 n;
 /*N*/ 	String s;
 /*N*/ 	r >> cSet >> n;
-/*N*/ 
+/*N*/
 /*N*/ 	// MIB 8.4.97: Datenbank-Felder enthalten ein 0xff, das auf keinen
 /*N*/ 	// Fall mit konvertiert werden darf. Wir erkennen sie am Wert
 /*N*/ 	// IDX_NOCONV_FF.
@@ -2237,7 +2139,7 @@ void Sw3StringPool::LoadOld( SvStream& r )
 /*N*/ 			s = Sw3IoImp::ConvertStringNoDbDelim( s8, eSrcEnc );
 /*N*/ 		else
 /*N*/ 			s = String( s8, eSrcEnc );
-/*N*/ 
+/*N*/
 /*N*/ 		// Ggf. alte Pool-Ids auf neue mappen.
 /*N*/ 		if( nSVersion < SWG_HTMLCOLLCHG && nId && nId < IDX_SPEC_VALUE )
 /*N*/ 		{
@@ -2254,36 +2156,15 @@ void Sw3StringPool::LoadOld( SvStream& r )
 /*N*/ 			}
 /*N*/ 			nId = ConvertFromOldPoolId( nId, nSVersion );
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		// Id und ist PoolFormat ?
 /*N*/ 		if( nId && !(USER_FMT & nId))
 /*N*/ 			SwStyleNameMapper::FillUIName( nId, s );     // dann String vom Pool erfragen
-/*N*/ 
+/*N*/
 /*N*/ 		Sw3String* p = new Sw3String( s, nId );
 /*N*/ 		aPool.Insert( p, aPool.Count() );
 /*N*/ 	}
 /*N*/ 	bFixed = sal_True;
-/*N*/ }
-
-/*N*/ void Sw3StringPool::Store( SvStream& r )
-/*N*/ {
-/*N*/ 	ASSERT( nExpFFVersion==r.GetVersion(),
-/*N*/ 			"Sw3StringPool::Store: FF-Version am Stream stimmt nicht" );
-/*N*/ 	rtl_TextEncoding eSrcEnc = r.GetStreamCharSet();
-/*N*/ 	sal_uInt16 n = aPool.Count();
-/*N*/ 	r << (sal_uInt8) eSrcEnc
-/*N*/ 	  << (sal_uInt16) n;
-/*N*/ 	for( sal_uInt16 i = 0; i < n; i++ )
-/*N*/ 	{
-/*N*/ 		Sw3String* p = aPool.GetObject( i );
-/*N*/ 		sal_uInt16 nId = (sal_uInt16) p->GetPoolId();
-/*N*/ 		r << nId;
-/*N*/ 		if( nId == IDX_NOCONV_FF )
-/*N*/ 			r.WriteByteString( Sw3IoImp::ConvertStringNoDbDelim(
-/*N*/ 										(const String&)*p, eSrcEnc ) );
-/*N*/ 		else
-/*N*/ 			r.WriteByteString( (const String&)*p, eSrcEnc );
-/*N*/ 	}
 /*N*/ }
 
 /*N*/ void Sw3StringPool::Clear()
@@ -2297,7 +2178,7 @@ void Sw3StringPool::LoadOld( SvStream& r )
 /*N*/ {
 /*N*/ 	return ConvertStringNoDelim( rStr, DB_DELIM, '\xff', eSource );
 /*N*/ }
-/*N*/ 
+/*N*/
 /*N*/ String Sw3IoImp::ConvertStringNoDbDelim( const ByteString& rStr,
 /*N*/ 										 rtl_TextEncoding eSource )
 /*N*/ {
@@ -2317,16 +2198,16 @@ void Sw3StringPool::LoadOld( SvStream& r )
 /*N*/ 		nPos = rStr.Search( cSrcDelim, nStart );
 /*N*/ 		if( STRING_NOTFOUND == nPos )
 /*N*/ 			nPos = rStr.Len();
-/*N*/ 
+/*N*/
 /*N*/ 		if( nStart > 0 )
 /*N*/ 			sDest += cDelim;
-/*N*/ 
+/*N*/
 /*N*/ 		if( nPos > nStart )
 /*N*/ 			sDest += ByteString( rStr.Copy( nStart, nPos-nStart ), eSource );
 /*N*/ 		nStart = nPos+1;
 /*N*/ 	}
 /*N*/ 	while( nPos < rStr.Len() );
-/*N*/ 
+/*N*/
 /*N*/ 	return sDest;
 /*N*/ }
 
@@ -2343,16 +2224,16 @@ void Sw3StringPool::LoadOld( SvStream& r )
 /*N*/ 		nPos = rStr.Search( cSrcDelim, nStart );
 /*N*/ 		if( STRING_NOTFOUND == nPos )
 /*N*/ 			nPos = rStr.Len();
-/*N*/ 
+/*N*/
 /*N*/ 		if( nStart > 0 )
 /*N*/ 			sDest += cDelim;
-/*N*/ 
+/*N*/
 /*N*/ 		if( nPos > nStart )
 /*N*/ 			sDest += String( rStr.Copy( nStart, nPos-nStart ), eSource );
 /*N*/ 		nStart = nPos+1;
 /*N*/ 	}
 /*N*/ 	while( nPos < rStr.Len() );
-/*N*/ 
+/*N*/
 /*N*/ 	return sDest;
 /*N*/ }
 
@@ -2403,27 +2284,25 @@ void Sw3StringPool::LoadOld( SvStream& r )
 /*?*/ 		ConnectPageDescAttrs();
 /*N*/ 	// Temporaere Namenserweiterungen entfernen
 /*N*/ 	aStringPool.RemoveExtensions( *pDoc );
-/*N*/ 
+/*N*/
 /*N*/ 	rtl_TextEncoding eSysEnc = gsl_getSystemTextEncoding();
 /*N*/ 	if( eSysEnc != eSrcSet )
 /*N*/ 	{
 /*N*/ 		// Bug 9714: Der CharSet an den Fonts muss geaendert werden, wenn
 /*N*/ 		// es der globale CharSet ist
 /*N*/ 		ChangeFontItemCharSet();
-/*N*/ 
+/*N*/
 /*N*/ 		SvxFontItem *pItem = (SvxFontItem*) pDoc->GetAttrPool().GetPoolDefaultItem(RES_CHRATR_FONT);
 /*N*/ 		if( pItem && pItem->GetCharSet() == eSrcSet )
 /*N*/ 			pItem->GetCharSet() = eSysEnc;
 /*N*/ 	}
 /*N*/ 	ConvertFmtsToStarSymbol();
-/*N*/ 
+/*N*/
 /*N*/ 	// Unbenutzte SwDrawFlyObjs aus dem Drawing Layer entfernen
 /*N*/ 	// Dies sind vor allem jene, die vor dem Speichern in den
 /*N*/ 	// Seitenkoepfen auftraten
 /*N*/ 	if ( pDoc->GetDrawModel() )
 /*N*/ 	{
-/*N*/ //		if( nHiddenDrawObjs != ULONG_MAX )
-/*N*/ //			RemoveHiddenDrawObjs();
 /*N*/ 		SdrPage* pPage = pDoc->GetDrawModel()->GetPage( 0 );
 /*N*/ 		sal_uInt32 i = 0;
 /*N*/ 		while( i < pPage->GetObjCount() )
@@ -2438,17 +2317,16 @@ void Sw3StringPool::LoadOld( SvStream& r )
 /*N*/ 				i++;
 /*N*/ 		}
 /*N*/ 	}
-/*N*/ 
-/*N*/ 	//if( nVersion < SWG_DBTABLE )
+/*N*/
 /*N*/ 	if( !IsVersion( SWG_DBTABLE, SWG_EXPORT31, SWG_DESKTOP40 ) )
 /*N*/ 		pDoc->SetInitDBFields(sal_True);
-/*N*/ 
+/*N*/
 /*N*/ 	// Unbenutzte DB-Feldtypen loeschen
 /*N*/ 	const SwFldTypes *pFldTypes = pDoc->GetFldTypes();
 /*N*/ 	sal_uInt16 i = INIT_FLDTYPES;
-/*N*/ 
+/*N*/
 /*N*/ 	SwFieldType* pFnd;
-/*N*/ 
+/*N*/
 /*N*/ 	while (i < pFldTypes->Count())
 /*N*/ 	{
 /*N*/ 		if (RES_DBFLD == (pFnd = pFldTypes->GetObject(i))->Which() &&
@@ -2459,7 +2337,7 @@ void Sw3StringPool::LoadOld( SvStream& r )
 /*N*/ 		else
 /*N*/ 			i++;
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	// Unbenutzte automatische NumRules loeschen.
 /*N*/ 	// Kann hier geschehen, denn der NumRules-Stream wird nur bei normalen
 /*N*/ 	// Dokumenten und beim Laden von NumRules und beim Laden von
@@ -2480,15 +2358,15 @@ void Sw3StringPool::LoadOld( SvStream& r )
 /*N*/ #endif
 /*N*/ 			pDoc->DelNumRule( pInfo->GetNewName() );
 /*N*/ #ifdef DBG_UTIL
-/*N*/ 			ASSERT( pDoc->GetNumRuleTbl().Count() == nCount-1,
+/*N*/ 			OSL_ENSURE( pDoc->GetNumRuleTbl().Count() == nCount-1,
 /*N*/ 					"unbenutzte NumRule wurde nicht geloescht" );
 /*N*/ #endif
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		aNumRuleInfos.Remove( (sal_uInt16)0, 1 );
 /*N*/ 		delete pInfo;
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	CleanupRedlines();
 /*N*/ }
 
@@ -2506,7 +2384,7 @@ void Sw3StringPool::LoadOld( SvStream& r )
 /*N*/ 	if( pCrypter )
 /*N*/ 	{
 /*?*/       sal_Char buf[ 17 ];
-/*?*/       snprintf( buf, sizeof(buf), "%08lx%08lx", nDate, nTime );
+/*?*/       snprintf( buf, sizeof(buf), "%08"SAL_PRIxUINT32"%08"SAL_PRIxUINT32, nDate, nTime );
 /*?*/       ByteString aTest( buf );
 /*?*/       pCrypter->Encrypt( aTest );
 /*?*/       return sal_Bool( !memcmp( cPasswd, aTest.GetBuffer(), PASSWDLEN ) );
@@ -2524,7 +2402,7 @@ void Sw3StringPool::LoadOld( SvStream& r )
 /*N*/ 	{
 /*?*/       pCrypter = new Crypter( pRoot->GetKey() );
 /*?*/       sal_Char buf[ 17 ];
-/*?*/       snprintf( buf, sizeof(buf), "%08lx%08lx", nDate, nTime );
+/*?*/       snprintf( buf, sizeof(buf), "%08"SAL_PRIxUINT32"%08"SAL_PRIxUINT32, nDate, nTime );
 /*?*/       ByteString aTest( buf );
 /*?*/       pCrypter->Encrypt( aTest );
 /*?*/       memcpy( cPasswd, aTest.GetBuffer(), aTest.Len() );
@@ -2540,15 +2418,15 @@ void Sw3StringPool::LoadOld( SvStream& r )
 
 /*N*/ void Sw3IoImp::RemoveUnusedObjects()
 /*N*/ {
-/*N*/ 	ASSERT( nVersion<=SWG_SHORTFIELDS && bNormal && !bInsert,
+/*N*/ 	OSL_ENSURE( nVersion<=SWG_SHORTFIELDS && bNormal && !bInsert,
 /*N*/ 			"ungueltiger Aufruf von RomoveUnusedObjects" );
-/*N*/ 
+/*N*/
 /*N*/ 	if( pDoc->GetPersist()->GetObjectList() )
 /*N*/ 	{
 /*N*/ 		SvPersistRef rpDoc( pDoc->GetPersist() );
 /*N*/ 		SvInfoObject* pIO = NULL;
 /*N*/ 		String aObjName;
-/*N*/ 
+/*N*/
 /*N*/ 		// alle Objekte in SvPersist betrachten
 /*N*/ 		for( sal_uInt32 i=0; i < rpDoc->GetObjectList()->Count(); i++ )
 /*N*/ 		{
@@ -2584,3 +2462,5 @@ void Sw3StringPool::LoadOld( SvStream& r )
 
 
 }
+
+/* vim:set shiftwidth=4 softtabstop=4 expandtab: */

@@ -1,7 +1,8 @@
+/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -25,79 +26,50 @@
  *
  ************************************************************************/
 
-#ifndef  _TOOLS_DEBUG_HXX
 #include <tools/debug.hxx>
-#endif
 
-#ifndef _UTL_STREAM_WRAPPER_HXX_
 #include <unotools/streamwrap.hxx>
-#endif
 
-#ifndef _SFX_XMLVERSION_HXX
 #include <xmlversion.hxx>
-#endif
 
-#ifndef  _XMLOFF_XMLMETAE_HXX
 #include <bf_xmloff/xmlmetae.hxx>
-#endif
 
-#ifndef  _XMLOFF_XMLKYWD_HXX
 #include <bf_xmloff/xmlkywd.hxx>
-#endif
 
-#ifndef  _COMPHELPER_PROCESSFACTORY_HXX_
 #include <comphelper/processfactory.hxx>
-#endif
 
-#ifndef  _COM_SUN_STAR_IO_XACTIVEDATASOURCE_HPP_
 #include <com/sun/star/io/XActiveDataSource.hpp>
-#endif
-#ifndef  _COM_SUN_STAR_IO_XOUTPUTSTREAM_HPP_
 #include <com/sun/star/io/XOutputStream.hpp>
-#endif
 
-#ifndef  _COM_SUN_STAR_UTIL_DATETIME_HPP_
 #include <com/sun/star/util/DateTime.hpp>
-#endif
 
-#ifndef  _COM_SUN_STAR_XML_SAX_INPUTSOURCE_HPP_
 #include <com/sun/star/xml/sax/InputSource.hpp>
-#endif
-#ifndef  _COM_SUN_STAR_XML_SAX_XPARSER_HPP_
 #include <com/sun/star/xml/sax/XParser.hpp>
-#endif
 
-#ifndef _SFXDOCFILE_HXX
 #include <docfile.hxx>
-#endif
 
-#ifndef _LEGACYBINFILTERMGR_HXX
-#include <legacysmgr/legacy_binfilters_smgr.hxx>	//STRIP002 
-#endif
+#include <legacysmgr/legacy_binfilters_smgr.hxx>
 
-#ifndef _XMLOFF_NMSPMAP_HXX
 #include <bf_xmloff/nmspmap.hxx>
-#endif
 
-#ifndef _XMLOFF_XMLNMSPE_HXX
 #include <bf_xmloff/xmlnmspe.hxx>
-#endif
 
 namespace binfilter {
 
 using namespace ::com::sun::star::xml::sax;
 using namespace ::com::sun::star::uno;
 using namespace ::com::sun::star;
-using namespace ::rtl;
+
+using rtl::OUString;
 
 // ------------------------------------------------------------------------
 
-sal_Char __FAR_DATA XMLN_VERSIONSLIST[] = "VersionList.xml";
+sal_Char XMLN_VERSIONSLIST[] = "VersionList.xml";
 
 // ------------------------------------------------------------------------
 
 // #110680#
-/*?*/ SfxXMLVersListImport_Impl::SfxXMLVersListImport_Impl( 
+/*?*/ SfxXMLVersListImport_Impl::SfxXMLVersListImport_Impl(
 /*?*/ 	const ::com::sun::star::uno::Reference< ::com::sun::star::lang::XMultiServiceFactory > xServiceFactory,
 /*?*/ 	SfxVersionTableDtor *pVersions )
 /*?*/ :	SvXMLImport(xServiceFactory),
@@ -113,35 +85,35 @@ sal_Char __FAR_DATA XMLN_VERSIONSLIST[] = "VersionList.xml";
 
 // ------------------------------------------------------------------------
 /*?*/ SvXMLImportContext *SfxXMLVersListImport_Impl::CreateContext(
-/*?*/         sal_uInt16 nPrefix,
+/*?*/         sal_uInt16 nInPrefix,
 /*?*/         const OUString& rLocalName,
 /*?*/         const Reference< XAttributeList > & xAttrList )
 /*?*/ {
 /*?*/     SvXMLImportContext *pContext = 0;
-/*?*/ 
-/*?*/     if ( XML_NAMESPACE_FRAMEWORK == nPrefix &&
+/*?*/
+/*?*/     if ( XML_NAMESPACE_FRAMEWORK == nInPrefix &&
 /*?*/         rLocalName.compareToAscii( sXML_version_list ) == 0 )
 /*?*/     {
-/*?*/         pContext = new SfxXMLVersListContext_Impl( *this, nPrefix, rLocalName, xAttrList );
+/*?*/         pContext = new SfxXMLVersListContext_Impl( *this, nInPrefix, rLocalName, xAttrList );
 /*?*/     }
 /*?*/     else
 /*?*/     {
-/*?*/         pContext = SvXMLImport::CreateContext( nPrefix, rLocalName, xAttrList );
+/*?*/         pContext = SvXMLImport::CreateContext( nInPrefix, rLocalName, xAttrList );
 /*?*/     }
-/*?*/ 
+/*?*/
 /*?*/     return pContext;
 /*?*/ }
-/*?*/ 
+/*?*/
 
 // ------------------------------------------------------------------------
 // ------------------------------------------------------------------------
 
-/*?*/ SfxXMLVersListContext_Impl::SfxXMLVersListContext_Impl( SfxXMLVersListImport_Impl& rImport,
-/*?*/                                         sal_uInt16 nPrefix,
+/*?*/ SfxXMLVersListContext_Impl::SfxXMLVersListContext_Impl( SfxXMLVersListImport_Impl& rInImport,
+/*?*/                                         sal_uInt16 nInPrefix,
 /*?*/                                         const OUString& rLocalName,
-/*?*/                                         const Reference< XAttributeList > & xAttrList )
-/*?*/     : rLocalRef( rImport )
-/*?*/     , SvXMLImportContext( rImport, nPrefix, rLocalName )
+/*?*/                                         const Reference< XAttributeList > & /*xAttrList*/ )
+/*?*/     : SvXMLImportContext( rInImport, nInPrefix, rLocalName )
+/*?*/     , rLocalRef( rInImport )
 /*?*/ {
 /*?*/ }
 
@@ -150,68 +122,68 @@ sal_Char __FAR_DATA XMLN_VERSIONSLIST[] = "VersionList.xml";
 /*?*/ {}
 
 // ------------------------------------------------------------------------
-/*?*/ SvXMLImportContext *SfxXMLVersListContext_Impl::CreateChildContext( sal_uInt16 nPrefix,
+/*?*/ SvXMLImportContext *SfxXMLVersListContext_Impl::CreateChildContext( sal_uInt16 nInPrefix,
 /*?*/                                         const OUString& rLocalName,
 /*?*/                                         const Reference< XAttributeList > & xAttrList )
 /*?*/ {
 /*?*/     SvXMLImportContext *pContext = 0;
-/*?*/ 
-/*?*/     if ( nPrefix == XML_NAMESPACE_FRAMEWORK &&
+/*?*/
+/*?*/     if ( nInPrefix == XML_NAMESPACE_FRAMEWORK &&
 /*?*/          rLocalName.compareToAscii( sXML_version_entry ) == 0)
 /*?*/     {
-/*?*/         pContext = new SfxXMLVersionContext_Impl( rLocalRef, nPrefix, rLocalName, xAttrList );
+/*?*/         pContext = new SfxXMLVersionContext_Impl( rLocalRef, nInPrefix, rLocalName, xAttrList );
 /*?*/     }
 /*?*/     else
 /*?*/     {
-/*?*/         pContext = new SvXMLImportContext( rLocalRef, nPrefix, rLocalName );
+/*?*/         pContext = new SvXMLImportContext( rLocalRef, nInPrefix, rLocalName );
 /*?*/     }
-/*?*/ 
+/*?*/
 /*?*/     return pContext;
 /*?*/ }
 
 // ------------------------------------------------------------------------
 // ------------------------------------------------------------------------
 
-/*?*/ SfxXMLVersionContext_Impl::SfxXMLVersionContext_Impl( SfxXMLVersListImport_Impl& rImport,
+/*?*/ SfxXMLVersionContext_Impl::SfxXMLVersionContext_Impl( SfxXMLVersListImport_Impl& rInImport,
 /*?*/                                         sal_uInt16 nPref,
 /*?*/                                         const OUString& rLocalName,
 /*?*/                                         const Reference< XAttributeList > & xAttrList )
-/*?*/     : rLocalRef( rImport )
-/*?*/     , SvXMLImportContext( rImport, nPref, rLocalName )
+/*?*/     : SvXMLImportContext( rInImport, nPref, rLocalName )
+/*?*/     , rLocalRef( rInImport )
 /*?*/ {
 /*?*/     sal_Int16 nAttrCount = xAttrList.is() ? xAttrList->getLength() : 0;
-/*?*/ 
+/*?*/
 /*?*/     if ( !nAttrCount )
 /*?*/         return;
-/*?*/ 
+/*?*/
 /*?*/     SfxVersionInfo *pInfo = new SfxVersionInfo;
-/*?*/ 
+/*?*/
 /*?*/     for ( sal_Int16 i=0; i < nAttrCount; i++ )
 /*?*/     {
-/*?*/         OUString        aLocalName;
+/*?*/         OUString        aLclLocalName;
 /*?*/         const OUString& rAttrName   = xAttrList->getNameByIndex( i );
-/*?*/         sal_uInt16      nPrefix     = rImport.GetNamespaceMap().GetKeyByAttrName( rAttrName, &aLocalName );
-/*?*/ 
-/*?*/         if ( XML_NAMESPACE_FRAMEWORK == nPrefix )
+/*?*/         sal_uInt16      nLclPrefix     = rInImport.GetNamespaceMap().GetKeyByAttrName( rAttrName, &aLclLocalName );
+/*?*/
+/*?*/         if ( XML_NAMESPACE_FRAMEWORK == nLclPrefix )
 /*?*/         {
-/*?*/             if ( aLocalName.compareToAscii( sXML_title ) == 0 )
+/*?*/             if ( aLclLocalName.compareToAscii( sXML_title ) == 0 )
 /*?*/             {
 /*?*/                 const OUString& rAttrValue = xAttrList->getValueByIndex( i );
 /*?*/                 pInfo->aName = rAttrValue;
 /*?*/             }
-/*?*/             else if ( aLocalName.compareToAscii( sXML_comment ) == 0 )
+/*?*/             else if ( aLclLocalName.compareToAscii( sXML_comment ) == 0 )
 /*?*/             {
 /*?*/                 const OUString& rAttrValue = xAttrList->getValueByIndex( i );
 /*?*/                 pInfo->aComment = rAttrValue;
 /*?*/             }
-/*?*/             else if ( aLocalName.compareToAscii( sXML_creator ) == 0 )
+/*?*/             else if ( aLclLocalName.compareToAscii( sXML_creator ) == 0 )
 /*?*/             {
 /*?*/                 const OUString& rAttrValue = xAttrList->getValueByIndex( i );
 /*?*/                 pInfo->aCreateStamp.SetName( rAttrValue );
 /*?*/             }
 /*?*/         }
-/*?*/         else if ( ( XML_NAMESPACE_DC == nPrefix ) &&
-/*?*/                   ( aLocalName.compareToAscii( sXML_date_time ) == 0 ) )
+/*?*/         else if ( ( XML_NAMESPACE_DC == nLclPrefix ) &&
+/*?*/                   ( aLclLocalName.compareToAscii( sXML_date_time ) == 0 ) )
 /*?*/         {
 /*?*/             const OUString& rAttrValue = xAttrList->getValueByIndex( i );
 /*?*/             DateTime aTime;
@@ -219,9 +191,9 @@ sal_Char __FAR_DATA XMLN_VERSIONSLIST[] = "VersionList.xml";
 /*?*/                 pInfo->aCreateStamp.SetTime( aTime );
 /*?*/         }
 /*?*/     }
-/*?*/ 
+/*?*/
 /*?*/     SfxVersionTableDtor* pVersion = rLocalRef.GetList();
-/*?*/     pVersion->Insert( pInfo, LIST_APPEND );
+/*?*/     pVersion->push_back( pInfo );
 /*?*/ }
 
 
@@ -236,7 +208,7 @@ sal_Char __FAR_DATA XMLN_VERSIONSLIST[] = "VersionList.xml";
 /*?*/                                 DateTime& rDateTime )
 /*?*/ {
 /*?*/     sal_Bool bSuccess = sal_True;
-/*?*/ 
+/*?*/
 /*?*/     OUString aDateStr, aTimeStr;
 /*?*/     sal_Int32 nPos = rString.indexOf( (sal_Unicode) 'T' );
 /*?*/     if ( nPos >= 0 )
@@ -246,14 +218,14 @@ sal_Char __FAR_DATA XMLN_VERSIONSLIST[] = "VersionList.xml";
 /*?*/     }
 /*?*/     else
 /*?*/         aDateStr = rString;         // no separator: only date part
-/*?*/ 
+/*?*/
 /*?*/     sal_Int32 nYear  = 0;
 /*?*/     sal_Int32 nMonth = 1;
 /*?*/     sal_Int32 nDay   = 1;
 /*?*/     sal_Int32 nHour  = 0;
 /*?*/     sal_Int32 nMin   = 0;
 /*?*/     sal_Int32 nSec   = 0;
-/*?*/ 
+/*?*/
 /*?*/     const sal_Unicode* pStr = aDateStr.getStr();
 /*?*/     sal_Int32 nDateTokens = 1;
 /*?*/     while ( *pStr )
@@ -283,7 +255,7 @@ sal_Char __FAR_DATA XMLN_VERSIONSLIST[] = "VersionList.xml";
 /*?*/             }
 /*?*/         }
 /*?*/     }
-/*?*/ 
+/*?*/
 /*?*/     if ( bSuccess && aTimeStr.getLength() > 0 )         // time is optional
 /*?*/     {
 /*?*/         pStr = aTimeStr.getStr();
@@ -316,11 +288,11 @@ sal_Char __FAR_DATA XMLN_VERSIONSLIST[] = "VersionList.xml";
 /*?*/             }
 /*?*/         }
 /*?*/     }
-/*?*/ 
+/*?*/
 /*?*/     if ( bSuccess )
 /*?*/         rDateTime = DateTime( Date( (USHORT)nDay, (USHORT)nMonth, (USHORT)nYear ),
 /*?*/                               Time( nHour, nMin, nSec ) );
-/*?*/ 
+/*?*/
 /*?*/     return bSuccess;
 /*?*/ }
 
@@ -328,38 +300,38 @@ sal_Char __FAR_DATA XMLN_VERSIONSLIST[] = "VersionList.xml";
 /*N*/ sal_Bool SfxXMLVersList_Impl::ReadInfo( SvStorageRef xRoot, SfxVersionTableDtor *pList )
 /*N*/ {
 /*N*/     sal_Bool bRet = sal_False;
-/*N*/ 
+/*N*/
 /*N*/     const OUString sDocName( RTL_CONSTASCII_USTRINGPARAM( XMLN_VERSIONSLIST ) );
-/*N*/ 
+/*N*/
 /*N*/     if ( xRoot->IsContained ( sDocName ) )
 /*N*/     {
 /*?*/         Reference< lang::XMultiServiceFactory > xServiceFactory =
 /*?*/                 ::legacy_binfilters::getLegacyProcessServiceFactory();
 /*?*/         DBG_ASSERT( xServiceFactory.is(), "XMLReader::Read: got no service manager" );
-/*?*/ 
+/*?*/
 /*?*/         InputSource aParserInput;
 /*?*/         aParserInput.sSystemId = xRoot->GetName();
-/*?*/ 
+/*?*/
 /*?*/         SvStorageStreamRef xDocStream = xRoot->OpenStream( sDocName, STREAM_READ | STREAM_SHARE_DENYWRITE | STREAM_NOCREATE );
 /*?*/         xDocStream->Seek( 0L );
 /*?*/         xDocStream->SetBufferSize( 16*1024 );
 /*?*/         aParserInput.aInputStream = new ::utl::OInputStreamWrapper( *xDocStream );
-/*?*/ 
+/*?*/
 /*?*/         // get parser
 /*?*/         Reference< XInterface > xXMLParser = xServiceFactory->createInstance(
-/*?*/             OUString::createFromAscii("com.sun.star.xml.sax.Parser") );
+/*?*/             OUString( RTL_CONSTASCII_USTRINGPARAM( "com.sun.star.xml.sax.Parser" )) );
 /*?*/         DBG_ASSERT( xXMLParser.is(),
 /*?*/             "XMLReader::Read: com.sun.star.xml.sax.Parser service missing" );
-/*?*/ 
+/*?*/
 /*?*/         // get filter
 /*?*/ 		// #110680#
 /*?*/         // Reference< XDocumentHandler > xFilter = new SfxXMLVersListImport_Impl( pList );
 /*?*/         Reference< XDocumentHandler > xFilter = new SfxXMLVersListImport_Impl( xServiceFactory, pList );
-/*?*/ 
+/*?*/
 /*?*/         // connect parser and filter
 /*?*/         Reference< XParser > xParser( xXMLParser, UNO_QUERY );
 /*?*/         xParser->setDocumentHandler( xFilter );
-/*?*/ 
+/*?*/
 /*?*/         // parse
 /*?*/         try
 /*?*/         {
@@ -370,8 +342,10 @@ sal_Char __FAR_DATA XMLN_VERSIONSLIST[] = "VersionList.xml";
 /*?*/         catch( SAXException&  )      {}
 /*?*/         catch( io::IOException& )    {}
 /*?*/     }
-/*N*/ 
+/*N*/
 /*N*/     return bRet;
 /*N*/ }
 
 }
+
+/* vim:set shiftwidth=4 softtabstop=4 expandtab: */

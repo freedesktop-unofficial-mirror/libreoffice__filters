@@ -1,7 +1,8 @@
+/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -30,30 +31,19 @@
 
 #include <tools/link.hxx>
 #include <tools/string.hxx>
-#include <tools/list.hxx>
 
-#ifndef _COM_SUN_STAR_AWT_IMAGESTATUS_HPP_
 #include <com/sun/star/awt/ImageStatus.hpp>
-#endif
-#ifndef _COM_SUN_STAR_AWT_XIMAGECONSUMER_HPP_
 #include <com/sun/star/awt/XImageConsumer.hpp>
-#endif
-#ifndef _COM_SUN_STAR_AWT_XIMAGEPRODUCER_HPP_
 #include <com/sun/star/awt/XImageProducer.hpp>
-#endif
-#ifndef _COM_SUN_STAR_LANG_XINITIALIZATION_HPP_
 #include <com/sun/star/lang/XInitialization.hpp>
-#endif
 
-#ifndef _CPPUHELPER_WEAK_HXX_
 #include <cppuhelper/weak.hxx>
-#endif
+#include <vector>
 
 
 // -----------------
 // - ImageProducer -
 // -----------------
-
 
 
 class SvStream;
@@ -69,14 +59,14 @@ namespace com { namespace sun { namespace star { namespace io {
 }}}}
 
 
-class ImageProducer :	public ::com::sun::star::awt::XImageProducer, 
-                        public ::com::sun::star::lang::XInitialization, 
+class ImageProducer :	public ::com::sun::star::awt::XImageProducer,
+                        public ::com::sun::star::lang::XInitialization,
                         public ::cppu::OWeakObject
 {
 private:
 
     ::rtl::OUString	maURL;
-    List			maConsList;
+    std::vector< ::com::sun::star::uno::Reference< ::com::sun::star::awt::XImageConsumer > * > maConsList;
     Graphic*		mpGraphic;
     SvStream*		mpStm;
     binfilter::GraphicFilter*	mpFilter;
@@ -119,7 +109,7 @@ public:
     ::com::sun::star::uno::Any					SAL_CALL queryInterface( const ::com::sun::star::uno::Type & rType ) throw(::com::sun::star::uno::RuntimeException);
     void										SAL_CALL acquire() throw()	{ OWeakObject::acquire(); }
     void										SAL_CALL release() throw()	{ OWeakObject::release(); }
-    
+
     // MT: ???
     void			setImage( ::com::sun::star::uno::Reference< ::com::sun::star::io::XInputStream > & rStmRef );
 
@@ -134,3 +124,5 @@ public:
 };
 
 #endif // _PRODUCE_HXX
+
+/* vim:set shiftwidth=4 softtabstop=4 expandtab: */

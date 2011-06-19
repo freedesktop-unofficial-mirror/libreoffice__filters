@@ -1,7 +1,8 @@
+/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -24,10 +25,6 @@
  * for a copy of the LGPLv3 License.
  *
  ************************************************************************/
-// INCLUDE ---------------------------------------------------------------
-
-#ifdef PCH
-#endif
 
 #ifdef _MSC_VER
 #pragma hdrstop
@@ -50,8 +47,8 @@ extern const ScFormulaCell* pLastFormulaTreeTop;	// in cellform.cxx
 // STATIC DATA -----------------------------------------------------------
 
 /*N*/ BOOL ScColumn::bDoubleAlloc = FALSE;	// fuer Import: Groesse beim Allozieren verdoppeln
-/*N*/ 
-/*N*/ 
+/*N*/
+/*N*/
 /*N*/ void ScColumn::Insert( USHORT nRow, ScBaseCell* pNewCell )
 /*N*/ {
 /*N*/ 	BOOL bIsAppended = FALSE;
@@ -104,7 +101,7 @@ extern const ScFormulaCell* pLastFormulaTreeTop;	// in cellform.cxx
 /*N*/ 				}
 /*N*/ 				else
 /*N*/ 					nLimit += COLUMN_DELTA;
-/*N*/ 
+/*N*/
 /*N*/ 				ColEntry* pNewItems = new ColEntry[nLimit];
 /*N*/ 				if (pItems)
 /*N*/ 				{
@@ -172,7 +169,7 @@ extern const ScFormulaCell* pLastFormulaTreeTop;	// in cellform.cxx
 /*N*/ 		}
 /*N*/ 		else
 /*N*/ 			nLimit += COLUMN_DELTA;
-/*N*/ 
+/*N*/
 /*N*/ 		ColEntry* pNewItems = new ColEntry[nLimit];
 /*N*/ 		if (pItems)
 /*N*/ 		{
@@ -221,24 +218,24 @@ extern const ScFormulaCell* pLastFormulaTreeTop;	// in cellform.cxx
 /*N*/ void ScColumn::DeleteRow( USHORT nStartRow, USHORT nSize )
 /*N*/ {
 /*N*/ 	pAttrArray->DeleteRow( nStartRow, nSize );
-/*N*/ 
+/*N*/
 /*N*/ 	if ( !pItems || !nCount )
 /*N*/ 		return ;
-/*N*/ 
+/*N*/
 /*N*/ 	USHORT nFirstIndex;
 /*N*/ 	Search( nStartRow, nFirstIndex );
 /*N*/ 	if ( nFirstIndex >= nCount )
 /*N*/ 		return ;
-/*N*/ 
+/*N*/
 /*N*/ 	BOOL bOldAutoCalc = pDocument->GetAutoCalc();
 /*N*/ 	pDocument->SetAutoCalc( FALSE );	// Mehrfachberechnungen vermeiden
-/*N*/ 
+/*N*/
 /*N*/ 	BOOL bFound=FALSE;
 /*N*/ 	USHORT nEndRow = nStartRow + nSize - 1;
-/*N*/ 	USHORT nStartIndex;
-/*N*/ 	USHORT nEndIndex;
+/*N*/ 	USHORT nStartIndex( 0 );
+/*N*/ 	USHORT nEndIndex(0);
 /*N*/ 	USHORT i;
-/*N*/ 
+/*N*/
 /*N*/ 	for ( i = nFirstIndex; i < nCount && pItems[i].nRow <= nEndRow; i++ )
 /*N*/ 	{
 /*N*/ 		if (!bFound)
@@ -247,7 +244,7 @@ extern const ScFormulaCell* pLastFormulaTreeTop;	// in cellform.cxx
 /*N*/ 			bFound = TRUE;
 /*N*/ 		}
 /*N*/ 		nEndIndex = i;
-/*N*/ 
+/*N*/
 /*N*/ 		ScBaseCell* pCell = pItems[i].pCell;
 /*N*/ 		ScBroadcasterList* pBC = pCell->GetBroadcaster();
 /*N*/ 		if (pBC)
@@ -270,7 +267,7 @@ extern const ScFormulaCell* pLastFormulaTreeTop;	// in cellform.cxx
 /*N*/ 	}
 /*N*/ 	else
 /*N*/ 		i = nFirstIndex;
-/*N*/ 
+/*N*/
 /*N*/ 	ScAddress aAdr( nCol, 0, nTab );
 /*N*/     ScHint aHint( SC_HINT_DATACHANGED, aAdr, NULL );    // only areas (ScBaseCell* == NULL)
 /*N*/     ScAddress& rAddress = aHint.GetAddress();
@@ -313,7 +310,7 @@ extern const ScFormulaCell* pLastFormulaTreeTop;	// in cellform.cxx
 /*N*/         }
 /*N*/         pDocument->AreaBroadcastInRange( aRange, aHint );
 /*N*/     }
-/*N*/ 
+/*N*/
 /*N*/ 	pDocument->SetAutoCalc( bOldAutoCalc );
 /*N*/ }
 
@@ -322,14 +319,13 @@ extern const ScFormulaCell* pLastFormulaTreeTop;	// in cellform.cxx
 /*N*/ {
 /*N*/ 	USHORT nDelCount = 0;
 /*N*/ 	ScBaseCell** ppDelCells = new ScBaseCell*[nEndIndex-nStartIndex+1];
-/*N*/ 
+/*N*/
 /*N*/ 	BOOL bSimple = ((nDelFlag & IDF_CONTENTS) == IDF_CONTENTS);
-/*N*/ 	USHORT i;
-/*N*/ 
+/*N*/
 /*N*/ 		//	Notiz-Zeichenobjekte
 /*N*/ 	if (nDelFlag & IDF_NOTE)
 /*N*/ 	{
-/*N*/ 		for ( i = nStartIndex; i <= nEndIndex; i++ )
+/*N*/ 		for (USHORT i = nStartIndex; i <= nEndIndex; i++ )
 /*N*/ 		{
 /*N*/ 			const ScPostIt*	pNote = pItems[i].pCell->GetNotePtr();
 /*N*/ 			if ( pNote && pNote->IsShown() )
@@ -338,22 +334,22 @@ extern const ScFormulaCell* pLastFormulaTreeTop;	// in cellform.cxx
 /*N*/ 			}
 /*N*/ 		}
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 		//	Broadcaster stehenlassen
 /*N*/ 	if (bSimple)
 /*N*/ 	{
-/*N*/ 		for (i = nStartIndex; i <= nEndIndex && bSimple; i++)
+/*N*/ 		for (USHORT i = nStartIndex; i <= nEndIndex && bSimple; i++)
 /*N*/ 			if (pItems[i].pCell->GetBroadcaster())
 /*N*/ 				bSimple = FALSE;
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/     ScHint aHint( SC_HINT_DYING, ScAddress( nCol, 0, nTab ), NULL );
-/*N*/ 
+/*N*/
 /*N*/ 	if (bSimple)			// Bereich komplett loeschen
 /*N*/ 	{
 /*N*/ 		ScBaseCell* pOldCell;
 /*N*/ 		ScNoteCell* pNoteCell = new ScNoteCell;		// Dummy
-/*N*/ 		for (i = nStartIndex; i <= nEndIndex; i++)
+/*N*/ 		for (USHORT i = nStartIndex; i <= nEndIndex; i++)
 /*N*/ 		{
 /*N*/ 			pOldCell = pItems[i].pCell;
 /*N*/ 			if (pOldCell->GetCellType() == CELLTYPE_FORMULA)		// Formeln spaeter loeschen
@@ -402,8 +398,10 @@ extern const ScFormulaCell* pLastFormulaTreeTop;	// in cellform.cxx
 /*?*/ 					bDelete = ((nDelFlag & IDF_NOTE) != 0) &&
 /*?*/ 								(pOldCell->GetBroadcaster() == NULL);
 /*?*/ 					break;
+/*?*/ 				default:
+/*?*/ 					break;
 /*N*/ 			}
-/*N*/ 
+/*N*/
 /*N*/ 			if (bDelete)
 /*N*/ 			{
 /*N*/ 				ScNoteCell* pNoteCell = NULL;
@@ -423,7 +421,7 @@ extern const ScFormulaCell* pLastFormulaTreeTop;	// in cellform.cxx
 /*N*/ 						pNoteCell->SetBroadcaster(pBC);
 /*N*/ 					}
 /*N*/ 				}
-/*N*/ 
+/*N*/
 /*N*/ 				USHORT nOldRow = pItems[j].nRow;
 /*N*/ 				if (pNoteCell)
 /*N*/ 				{
@@ -462,24 +460,24 @@ extern const ScFormulaCell* pLastFormulaTreeTop;	// in cellform.cxx
 /*N*/ 			}
 /*N*/ 		}
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	// erst Listener abhaengen kann Neuberechnungen sparen
 /*N*/ 	// eventuell werden dabei vorher entstandene NoteCell mitsamt
 /*N*/ 	// ihren Broadcaster deleted!
-/*N*/ 	for (i=0; i<nDelCount; i++)
+/*N*/ 	for (USHORT i=0; i<nDelCount; i++)
 /*N*/ 	{
 /*?*/ 		((ScFormulaCell*) ppDelCells[i])->EndListeningTo( pDocument );
 /*N*/ 	}
 /*N*/ 	// gibts die NoteCell und damit den Broadcaster noch?
 /*N*/ 	// If not, discard them all before broadcasting takes place!
-/*N*/ 	for (i=0; i<nDelCount; i++)
+/*N*/ 	for (USHORT i=0; i<nDelCount; i++)
 /*N*/ 	{
 /*?*/ 		ScFormulaCell* pOldCell = (ScFormulaCell*) ppDelCells[i];
 /*?*/ 		USHORT nIndex;
 /*?*/ 		if ( !Search( pOldCell->aPos.Row(), nIndex ) )
 /*?*/ 			pOldCell->ForgetBroadcaster();
 /*N*/ 	}
-/*N*/ 	for (i=0; i<nDelCount; i++)
+/*N*/ 	for (USHORT i=0; i<nDelCount; i++)
 /*N*/ 	{
 /*?*/ 		ScFormulaCell* pOldCell = (ScFormulaCell*) ppDelCells[i];
 /*?*/         aHint.SetAddress( pOldCell->aPos );
@@ -488,7 +486,7 @@ extern const ScFormulaCell* pLastFormulaTreeTop;	// in cellform.cxx
 /*?*/ 		pOldCell->ForgetBroadcaster();
 /*?*/ 		pOldCell->Delete();
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	delete[] ppDelCells;
 /*N*/ }
 
@@ -496,10 +494,10 @@ extern const ScFormulaCell* pLastFormulaTreeTop;	// in cellform.cxx
 /*N*/ void ScColumn::DeleteArea(USHORT nStartRow, USHORT nEndRow, USHORT nDelFlag)
 /*N*/ {
 /*N*/ 	//	FreeAll darf hier nicht gerufen werden wegen Broadcastern
-/*N*/ 
+/*N*/
 /*N*/ 	//	Attribute erst am Ende, damit vorher noch zwischen Zahlen und Datum
 /*N*/ 	//	unterschieden werden kann (#47901#)
-/*N*/ 
+/*N*/
 /*N*/ 	USHORT nContFlag = nDelFlag & IDF_CONTENTS;
 /*N*/ 	if (pItems && nCount && nContFlag)
 /*N*/ 	{
@@ -508,8 +506,8 @@ extern const ScFormulaCell* pLastFormulaTreeTop;	// in cellform.cxx
 /*N*/ 		else
 /*N*/ 		{
 /*?*/ 			BOOL bFound=FALSE;
-/*?*/ 			USHORT nStartIndex;
-/*?*/ 			USHORT nEndIndex;
+/*?*/ 			USHORT nStartIndex(0);
+/*?*/ 			USHORT nEndIndex(0);
 /*?*/ 			for (USHORT i = 0; i < nCount; i++)
 /*?*/ 				if ((pItems[i].nRow >= nStartRow) && (pItems[i].nRow <= nEndRow))
 /*?*/ 				{
@@ -524,13 +522,13 @@ extern const ScFormulaCell* pLastFormulaTreeTop;	// in cellform.cxx
 /*?*/ 				DeleteRange( nStartIndex, nEndIndex, nContFlag );
 /*N*/ 		}
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	if ( nDelFlag & IDF_EDITATTR )
 /*N*/ 	{
 /*?*/ 		DBG_ASSERT( nContFlag == 0, "DeleteArea: falsche Flags" );
-DBG_BF_ASSERT(0, "STRIP"); //STRIP001 /*?*/ 		RemoveEditAttribs( nStartRow, nEndRow );
+DBG_BF_ASSERT(0, "STRIP");
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	//	Attribute erst hier
 /*N*/ 	if ((nDelFlag & IDF_ATTRIB) == IDF_ATTRIB) pAttrArray->DeleteArea( nStartRow, nEndRow );
 /*N*/ 	else if ((nDelFlag & IDF_ATTRIB) != 0) pAttrArray->DeleteHardAttr( nStartRow, nEndRow );
@@ -548,7 +546,7 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 /*?*/ 		RemoveEditAttribs( nStartRow, nEnd
     //	Notizen muessen aber evtl. noch geloescht werden
 
 /*N*/ ScBaseCell* ScColumn::CloneCell(USHORT nIndex, USHORT nFlags,
-/*N*/ 									ScDocument* pDestDoc, const ScAddress& rDestPos)
+/*N*/ 									ScDocument* pDestDoc, const ScAddress& /*rDestPos*/)
 /*N*/ {
 /*N*/ 	ScBaseCell* pNew = 0;
 /*N*/ 	ScBaseCell* pSource = pItems[nIndex].pCell;
@@ -591,23 +589,23 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 /*?*/ 		RemoveEditAttribs( nStartRow, nEnd
 /*?*/ 				ScFormulaCell* pForm = (ScFormulaCell*)pSource;
 /*?*/ 				if (nFlags & IDF_FORMULA)
 /*?*/ 				{
-DBG_BF_ASSERT(0, "STRIP"); //STRIP001 /*?*/ 					pNew = pForm->Clone( pDestDoc, rDestPos, TRUE );
+DBG_BF_ASSERT(0, "STRIP");
 /*?*/ 				}
 /*?*/ 				else if ( (nFlags & (IDF_VALUE | IDF_DATETIME | IDF_STRING)) &&
 /*?*/ 							!pDestDoc->IsUndo() )
 /*?*/ 				{
 /*?*/ 					//	#48491# ins Undo-Dokument immer nur die Original-Zelle kopieren,
 /*?*/ 					//	aus Formeln keine Value/String-Zellen erzeugen
-/*?*/ 
+/*?*/
 /*?*/ 					USHORT nErr = pForm->GetErrCode();
 /*?*/ 					if ( nErr )
 /*?*/ 					{
 /*?*/ 						//	Fehler werden immer mit "Zahlen" kopiert
 /*?*/ 						//	(Das ist hiermit willkuerlich so festgelegt)
-/*?*/ 
+/*?*/
 /*?*/ 						if ( nFlags & IDF_VALUE )
 /*?*/ 						{
-DBG_BF_ASSERT(0, "STRIP"); //STRIP001 /*?*/ 							ScFormulaCell* pErrCell = new ScFormulaCell( pDestDoc, rDestPos );
+DBG_BF_ASSERT(0, "STRIP");
 /*?*/ 						}
 /*?*/ 					}
 /*?*/ 					else if ( pForm->IsValue() )
@@ -626,7 +624,7 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 /*?*/ 							ScFormulaCell* pErrCell = new
 /*?*/ 							else
 /*?*/ 								bDoIns = (nFlags & IDF_VALUE)!=0;
 /*?*/ 						}
-/*?*/ 
+/*?*/
 /*?*/ 						if (bDoIns)
 /*?*/ 						{
 /*?*/ 							double nVal = pForm->GetValue();
@@ -649,11 +647,13 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 /*?*/ 							ScFormulaCell* pErrCell = new
 /*?*/ 				}
 /*?*/ 			}
 /*?*/ 			break;
+/*?*/ 		default:
+/*?*/ 			break;
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	if ( !pNew && pSource->GetNotePtr() && ( nFlags & IDF_NOTE ) )
 /*?*/ 		pNew = new ScNoteCell(*pSource->GetNotePtr());
-/*N*/ 
+/*N*/
 /*N*/ 	return pNew;
 /*N*/ }
 
@@ -717,7 +717,7 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 /*?*/ 							ScFormulaCell* pErrCell = new
 
 
 //	TRUE = Zahlformat gesetzt
-/*N*/ BOOL ScColumn::SetString( USHORT nRow, USHORT nTab, const String& rString )
+/*N*/ BOOL ScColumn::SetString( USHORT nRow, USHORT nInTab, const String& rString )
 /*N*/ {
 /*N*/ 	BOOL bNumFmtSet = FALSE;
 /*N*/ 	if (VALIDROW(nRow))
@@ -727,7 +727,7 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 /*?*/ 							ScFormulaCell* pErrCell = new
 /*N*/ 		if (rString.Len() > 0)
 /*N*/ 		{
 /*N*/ 			double nVal;
-/*N*/ 			sal_uInt32 nIndex, nOldIndex;
+/*N*/ 			sal_uInt32 nIndex(0), nOldIndex(0);
 /*N*/ 			sal_Unicode cFirstChar;
 /*N*/ 			SvNumberFormatter* pFormatter = pDocument->GetFormatTable();
 /*N*/ 			SfxObjectShell* pDocSh = pDocument->GetDocumentShell();
@@ -747,14 +747,14 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 /*?*/ 							ScFormulaCell* pErrCell = new
 /*N*/ 			{	// waehrend ConvertFrom Import gibt es keine gesetzten Formate
 /*N*/ 				cFirstChar = rString.GetChar(0);
 /*N*/ 			}
-/*N*/ 
+/*N*/
 /*N*/ 			if ( cFirstChar == '=' )
 /*N*/ 			{
 /*?*/ 				if ( rString.Len() == 1 )						// = Text
 /*?*/ 					pNewCell = new ScStringCell( rString );
 /*?*/ 				else											// =Formel
 /*?*/ 					pNewCell = new ScFormulaCell( pDocument,
-/*?*/ 						ScAddress( nCol, nRow, nTab ), rString, 0 );
+/*?*/ 						ScAddress( nCol, nRow, nInTab ), rString, 0 );
 /*N*/ 			}
 /*N*/ 			else if ( cFirstChar == '\'')						// 'Text
 /*?*/ 				pNewCell = new ScStringCell( rString.Copy(1) );
@@ -809,7 +809,7 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 /*?*/ 							ScFormulaCell* pErrCell = new
 /*N*/ 					pNewCell = new ScStringCell( rString );
 /*N*/ 			}
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		if ( bIsLoading && (!nCount || nRow > pItems[nCount-1].nRow) )
 /*N*/ 		{	// Search einsparen und ohne Umweg ueber Insert, Listener aufbauen
 /*N*/ 			// und Broadcast kommt eh erst nach dem Laden
@@ -836,7 +836,7 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 /*?*/ 							ScFormulaCell* pErrCell = new
 /*?*/ 						pOldCell->ForgetBroadcaster();
 /*?*/ 						pLastFormulaTreeTop = 0;	// Err527 Workaround
 /*?*/ 					}
-/*?*/ 
+/*?*/
 /*?*/ 					if ( pOldCell->GetCellType() == CELLTYPE_FORMULA )
 /*?*/ 					{
 /*?*/ 						pOldCell->EndListeningTo( pDocument );
@@ -853,7 +853,7 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 /*?*/ 							ScFormulaCell* pErrCell = new
 /*?*/ 					}
 /*?*/ 					else
 /*?*/ 						pDocument->Broadcast( ScHint( SC_HINT_DATACHANGED,
-/*?*/ 							ScAddress( nCol, nRow, nTab ), pNewCell ) );
+/*?*/ 							ScAddress( nCol, nRow, nInTab ), pNewCell ) );
 /*?*/ 				}
 /*?*/ 				else
 /*?*/ 				{
@@ -865,10 +865,10 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 /*?*/ 							ScFormulaCell* pErrCell = new
 /*N*/ 				Insert(nRow, pNewCell);					// neu eintragen und Broadcast
 /*N*/ 			}
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		//	hier keine Formate mehr fuer Formeln setzen!
 /*N*/ 		//	(werden bei der Ausgabe abgefragt)
-/*N*/ 
+/*N*/
 /*N*/ 	}
 /*N*/ 	return bNumFmtSet;
 /*N*/ }
@@ -917,7 +917,7 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 /*?*/ 							ScFormulaCell* pErrCell = new
 /*N*/ void ScColumn::SetNote( USHORT nRow, const ScPostIt& rNote)
 /*N*/ {
 /*N*/ 	BOOL bEmpty = !rNote.GetText().Len();
-/*N*/ 
+/*N*/
 /*N*/ 	USHORT nIndex;
 /*N*/ 	if (Search(nRow, nIndex))
 /*N*/ 	{
@@ -1009,7 +1009,7 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 /*?*/ 							ScFormulaCell* pErrCell = new
 /*N*/ 		bHasNote = pItems[nIndex].pCell->GetNote(rNote);
 /*N*/ 	else
 /*?*/ 		rNote.Clear();
-/*N*/ 
+/*N*/
 /*N*/ 	return bHasNote;
 /*N*/ }
 
@@ -1059,3 +1059,5 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 /*?*/ 							ScFormulaCell* pErrCell = new
 
 
 }
+
+/* vim:set shiftwidth=4 softtabstop=4 expandtab: */

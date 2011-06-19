@@ -1,7 +1,8 @@
+/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -31,49 +32,18 @@
 #include <memory>
 #include <vector>
 
-#ifndef _CPPUHELPER_WEAKREF_HXX_
 #include <cppuhelper/weakref.hxx>
-#endif
-
-#ifndef _MAPMOD_HXX //autogen
 #include <vcl/mapmod.hxx>
-#endif
-
-#ifndef _SFXLSTNER_HXX //autogen
 #include <bf_svtools/lstner.hxx>
-#endif
-
-#ifndef _SV_TIMER_HXX
 #include <vcl/timer.hxx>
-#endif
 
-#ifndef _SVDSOB_HXX //autogen
 #include "svdsob.hxx"
-#endif
-
-#ifndef _SVDTYPES_HXX
 #include "svdtypes.hxx" // fuer SdrLayerID
-#endif
-
-#ifndef _SVDGLUE_HXX
 #include "svdglue.hxx" // Klebepunkte
-#endif
-
-#ifndef _SVX_XDASH_HXX
 #include "xdash.hxx"
-#endif
-
-#ifndef _XPOLY_HXX
-#include "xpoly.hxx"
-#endif
-
-#ifndef _POLY3D_HXX
 #include "poly3d.hxx"
-#endif
-
-#ifndef _XENUM_HXX
 #include "xenum.hxx"
-#endif
+
 class PolyPolygon;
 namespace binfilter {
 
@@ -88,7 +58,7 @@ class XPolygon;
 ///////////////////////////////////////////////////////////////////////////////
 
 // #100127# Bracket filled shapes with a comment, if recording a Mtf
-class ImpGraphicFill 
+class ImpGraphicFill
 {
 public:
     ImpGraphicFill( const SdrObject& rObj, const ExtOutputDevice& rXOut, const SfxItemSet& rFillItemSet, bool bIsShadow=false );
@@ -144,19 +114,19 @@ private:
 
     @param eBmpRectPoint
     Position of the start point relative to the bitmap
-    
+
  */
 void ImpCalcBmpFillSizes( Size&			   rStartOffset,
                           Size&			   rBmpOutputSize,
-                          const Rectangle& rOutputRect, 
+                          const Rectangle& rOutputRect,
                           const MapMode&   rOutputMapMode,
                           const Bitmap&    rFillBitmap,
-                          const Size&      rBmpSize, 
-                          const Size&      rBmpPerCent, 
+                          const Size&      rBmpSize,
+                          const Size&      rBmpPerCent,
                           const Size&	   rBmpOffPerCent,
-                          BOOL             bBmpLogSize, 
-                          BOOL             bBmpTile, 
-                          BOOL             bBmpStretch, 
+                          BOOL             bBmpLogSize,
+                          BOOL             bBmpTile,
+                          BOOL             bBmpStretch,
                           RECT_POINT       eBmpRectPoint );
 
 
@@ -294,3 +264,5 @@ public:
 
 }//end of namespace binfilter
 #endif // _SVX_SVDOIMP_HXX
+
+/* vim:set shiftwidth=4 softtabstop=4 expandtab: */

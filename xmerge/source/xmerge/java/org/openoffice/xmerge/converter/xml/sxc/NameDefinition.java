@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -56,20 +56,25 @@ public class NameDefinition implements OfficeConstants {
     public NameDefinition() {
 
     }
-    
+
     /**
      * Constructor that takes a <code>Node</code> to build a
      * <code>NameDefinition</code>
      *
-     * @param root XML Node to read from 
+     * @param root XML Node to read from
      */
     public NameDefinition(Node root) {
         readNode(root);
     }
-    
+
     /**
-     * Default Constructor for a <code>NameDefinition</code>
+     * Constructor for a <code>NameDefinition</code>
      *
+     * @param name            Name that identifies the definition
+     * @param definition      The definition itself
+     * @param baseCellAddress The base cell address
+     * @param rangeType       True if definition of range type
+     * @param expressionType  True if definition of expression type
      */
     public NameDefinition(String name, String definition, String
     baseCellAddress, boolean rangeType, boolean expressionType ) {
@@ -79,10 +84,10 @@ public class NameDefinition implements OfficeConstants {
         this.rangeType = rangeType;
         this.expressionType = expressionType;
     }
-    
+
     /**
-     * returns Name of the definition 
-     * 
+     * returns Name of the definition
+     *
      * @return the name which identifies the definition
      */
     public String getName() {
@@ -90,7 +95,7 @@ public class NameDefinition implements OfficeConstants {
         return name;
     }
     /**
-     * sets the definition 
+     * sets the definition
      *
      * @param newDefinition sets the definition
      */
@@ -101,16 +106,16 @@ public class NameDefinition implements OfficeConstants {
     /**
      * Returns the definition itself
      *
-     * @return the definition 
+     * @return the definition
      */
     public String getDefinition() {
-    
+
         return definition;
     }
 
     /**
-     * Returns the base Cell address 
-     * 
+     * Returns the base Cell address
+     *
      * @return the base cell address
      */
     public String getBaseCellAddress() {
@@ -119,29 +124,29 @@ public class NameDefinition implements OfficeConstants {
     }
 
     /**
-     * Tests if definition is of type expression 
+     * Tests if definition is of type expression
      *
      * @return whether or not this name definition is of type expression
      */
     public boolean isExpressionType() {
         return expressionType;
     }
-    
+
     /**
-     * Tests if definition is of type range 
+     * Tests if definition is of type range
      *
-     * @return whether or not this name definition is of type range 
+     * @return whether or not this name definition is of type range
      */
     public boolean isRangeType() {
         return rangeType;
     }
 
     /**
-     * Writes out a content.xml entry for this NameDefinition object 
+     * Writes out a content.xml entry for this NameDefinition object
      *
-     * @param settings a <code>Document</code> object representing the settings.xml 
-     * @param root the root xml node to add to
-     */	
+     * @param doc  A <code>Document</code> object representing the settings.xml
+     * @param root The root xml node to add to
+     */
     public void writeNode(org.w3c.dom.Document doc, Node root) {
 
             if(isRangeType()) {
@@ -153,7 +158,7 @@ public class NameDefinition implements OfficeConstants {
                 namedRangeElement.setAttribute(ATTRIBUTE_TABLE_CELL_RANGE_ADDRESS, getDefinition());
                 root.appendChild(namedRangeElement);
             } else if (isExpressionType()) {
-            
+
                 Debug.log(Debug.TRACE, "Found Expression Name : " + getName());
                 Element namedExpressionElement = (Element) doc.createElement(TAG_TABLE_NAMED_EXPRESSION);
                 namedExpressionElement.setAttribute(ATTRIBUTE_TABLE_NAME, getName());
@@ -165,11 +170,11 @@ public class NameDefinition implements OfficeConstants {
                 Debug.log(Debug.TRACE, "Unknown Name Definition : " + getName());
             }
     }
-    
+
     /**
      * Reads document settings from xml and inits Settings variables
      *
-     * @param root XML Node to read from 
+     * @param root XML Node to read from
      */
     public void readNode(Node root) {
 
@@ -177,7 +182,7 @@ public class NameDefinition implements OfficeConstants {
         NamedNodeMap cellAtt = root.getAttributes();
 
         if (nodeName.equals(TAG_TABLE_NAMED_RANGE)) {
-        
+
             Node tableNameNode =
                 cellAtt.getNamedItem(ATTRIBUTE_TABLE_NAME);
             Node tableBaseCellAddress =
@@ -191,7 +196,7 @@ public class NameDefinition implements OfficeConstants {
             baseCellAddress = tableBaseCellAddress.getNodeValue();
             expressionType = true;
             rangeType = false;
-            
+
         } else if (nodeName.equals(TAG_TABLE_NAMED_EXPRESSION)) {
 
             Node tableNameNode =
@@ -211,5 +216,5 @@ public class NameDefinition implements OfficeConstants {
             Debug.log(Debug.TRACE, "<OTHERS " + XmlUtil.getNodeInfo(root) + " />");
         }
     }
-    
+
 }

@@ -1,7 +1,8 @@
+/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -25,13 +26,11 @@
  *
  ************************************************************************/
 
-#ifndef _XMLOFF_XMLASTPL_IMPL_HXX
 #include "impastpl.hxx"
-#endif
 namespace binfilter {
 
 using namespace std;
-using namespace rtl;
+using ::rtl::OUString;
 
 //#############################################################################
 //
@@ -45,8 +44,9 @@ using namespace rtl;
 
 SvXMLAutoStylePoolParentP_Impl::~SvXMLAutoStylePoolParentP_Impl()
 {
-    while( maPropertiesList.Count() )
-        delete maPropertiesList.Remove( maPropertiesList.Count() -1 );
+    for( size_t i = maPropertiesList.size(); i > 0; )
+        delete maPropertiesList[ --i ];
+    maPropertiesList.clear();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -59,15 +59,15 @@ sal_Bool SvXMLAutoStylePoolParentP_Impl::Add( XMLFamilyData_Impl* pFamilyData, c
 {
     sal_Bool bAdded = sal_False;
 
-    sal_Int32 nProperties = rProperties.size();
-    sal_uInt32 nCount = maPropertiesList.Count();
+    size_t nProperties = rProperties.size();
+    size_t nCount = maPropertiesList.size();
     SvXMLAutoStylePoolPropertiesP_Impl *pProperties = 0;
-    sal_uInt32 i;
+    size_t i;
 
     for( i=0; i < nCount; i++ )
     {
-        SvXMLAutoStylePoolPropertiesP_Impl *pIS = maPropertiesList.GetObject( i );
-        if( nProperties > pIS->GetProperties().size() ) 
+        SvXMLAutoStylePoolPropertiesP_Impl *pIS = maPropertiesList[ i ];
+        if( nProperties > pIS->GetProperties().size() )
         {
             continue;
         }
@@ -75,20 +75,27 @@ sal_Bool SvXMLAutoStylePoolParentP_Impl::Add( XMLFamilyData_Impl* pFamilyData, c
         {
             break;
         }
-        else if( pFamilyData->mxMapper->Equals( pIS->GetProperties(), rProperties ) ) 
+        else if( pFamilyData->mxMapper->Equals( pIS->GetProperties(), rProperties ) )
         {
             pProperties = pIS;
             break;
         }
     }
-    
+
     if( !pProperties )
     {
         pProperties = new SvXMLAutoStylePoolPropertiesP_Impl( pFamilyData, rProperties );
-        maPropertiesList.Insert( pProperties, i );
+        if ( i < maPropertiesList.size() )
+        {
+            SvXMLAutoStylePoolPropertiesPList_Impl::iterator it = maPropertiesList.begin();
+            ::std::advance( it, i );
+            maPropertiesList.insert( it, pProperties );
+        }
+        else
+            maPropertiesList.push_back( pProperties );
         bAdded = sal_True;
     }
-    
+
     rName = pProperties->GetName();
 
     return bAdded;
@@ -103,11 +110,11 @@ OUString SvXMLAutoStylePoolParentP_Impl::Find( const XMLFamilyData_Impl* pFamily
 {
     OUString sName;
     sal_uInt16 nItems = rProperties.size();
-    sal_uInt32 nCount = maPropertiesList.Count();
-    for( sal_uInt32 i=0; i < nCount; i++ )
+    size_t nCount = maPropertiesList.size();
+    for( size_t i=0; i < nCount; i++ )
     {
-        SvXMLAutoStylePoolPropertiesP_Impl *pIS = maPropertiesList.GetObject( i );
-        if( nItems > pIS->GetProperties().size() ) 
+        SvXMLAutoStylePoolPropertiesP_Impl *pIS = maPropertiesList[ i ];
+        if( nItems > pIS->GetProperties().size() )
         {
             continue;
         }
@@ -115,13 +122,13 @@ OUString SvXMLAutoStylePoolParentP_Impl::Find( const XMLFamilyData_Impl* pFamily
         {
             break;
         }
-        else if( pFamilyData->mxMapper->Equals( pIS->GetProperties(), rProperties ) ) 
+        else if( pFamilyData->mxMapper->Equals( pIS->GetProperties(), rProperties ) )
         {
             sName = pIS->GetName();
             break;
         }
     }
-    
+
     return sName;
 }
 
@@ -141,7 +148,9 @@ int SvXMLAutoStylePoolParentPCmp_Impl( const SvXMLAutoStylePoolParentP_Impl& r1,
 // Implementation of sorted list of SvXMLAutoStylePoolParent_Impl-elements
 //
 
-IMPL_CONTAINER_SORT( SvXMLAutoStylePoolParentsP_Impl, 
+IMPL_CONTAINER_SORT( SvXMLAutoStylePoolParentsP_Impl,
                      SvXMLAutoStylePoolParentP_Impl,
                      SvXMLAutoStylePoolParentPCmp_Impl )
 }//end of namespace binfilter
+
+/* vim:set shiftwidth=4 softtabstop=4 expandtab: */

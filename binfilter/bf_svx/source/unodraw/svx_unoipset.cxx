@@ -1,7 +1,8 @@
+/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -25,12 +26,8 @@
  *
  ************************************************************************/
 
-
-
-
-#include <hash_map>
+#include <boost/unordered_map.hpp>
 #include <vector>
-
 
 #include "svxids.hrc"
 #include "unoshprp.hxx"
@@ -43,7 +40,8 @@ namespace binfilter {
 using namespace ::com::sun::star;
 using namespace ::com::sun::star::uno;
 using namespace ::com::sun::star::lang;
-using namespace ::rtl;
+
+using rtl::OUString;
 
 //----------------------------------------------------------------------
 
@@ -72,8 +70,8 @@ public:
 class SvxInfoSetCache
 {
 private:
-    typedef std::hash_map< const SfxItemPropertyMap*, uno::Reference< beans::XPropertySetInfo >,  SfxItemPropertyMapHash > InfoMap;
-    typedef std::hash_map< const SfxItemPropertyMap*, const SfxItemPropertyMap*,  SfxItemPropertyMapHash > PropertyMap;
+    typedef boost::unordered_map< const SfxItemPropertyMap*, uno::Reference< beans::XPropertySetInfo >,  SfxItemPropertyMapHash > InfoMap;
+    typedef boost::unordered_map< const SfxItemPropertyMap*, const SfxItemPropertyMap*,  SfxItemPropertyMapHash > PropertyMap;
 
     InfoMap maInfoMap;
     PropertyMap maPropertyMap;
@@ -128,7 +126,7 @@ uno::Reference< beans::XPropertySetInfo > SvxInfoSetCache::getCachedPropertySetI
        implementation is designed for a limited number of different SfxItemPropertyMap
        pointers */
     DBG_ASSERT( mpGlobalCache->maInfoMap.size() < 200, "WARNING: SvxInfoSetCache::get(), possible cache overflow!" );
-        
+
     return xInfo;
 }
 
@@ -141,7 +139,7 @@ void SvxInfoSetCache::dispose( SvxCachedItemPropertySetInfo* pInfo )
     if( pInfo )
     {
         ::osl::MutexGuard aGuard(maMutex);
-    
+
         InfoMap::iterator aIt(mpGlobalCache->maInfoMap.find(pInfo->getMap()));
         if (aIt != mpGlobalCache->maInfoMap.end())
         {
@@ -213,7 +211,7 @@ const SfxItemPropertyMap* SvxInfoSetCache::getSortedPropertyMap( const SfxItemPr
            pointers */
         DBG_ASSERT( mpGlobalCache->maPropertyMap.size() < 200, "WARNING: SvxInfoSetCache::get(), possible cache overflow!" );
     }
-    
+
     return pSortedMap;
 }
 
@@ -225,8 +223,6 @@ struct SvxIDPropertyCombine
     uno::Any	aAny;
 };
 
-DECLARE_LIST( SvxIDPropertyCombineList, SvxIDPropertyCombine * )//STRIP008 ;
-
 SvxItemPropertySet::SvxItemPropertySet( const SfxItemPropertyMap* pMap, sal_Bool bConvertTwips )
 :	_pMap(SvxInfoSetCache::getSortedPropertyMap(pMap)), mbConvertTwips(bConvertTwips)
 {
@@ -237,12 +233,6 @@ SvxItemPropertySet::SvxItemPropertySet( const SfxItemPropertyMap* pMap, sal_Bool
 //----------------------------------------------------------------------
 SvxItemPropertySet::~SvxItemPropertySet()
 {
-/*
-    if(pItemPool)
-        delete pItemPool;
-    pItemPool = NULL;
-*/
-
     if(pCombiList)
         delete pCombiList;
     pCombiList = NULL;
@@ -251,16 +241,11 @@ SvxItemPropertySet::~SvxItemPropertySet()
 //----------------------------------------------------------------------
 uno::Any* SvxItemPropertySet::GetUsrAnyForID(sal_uInt16 nWID) const
 {
-    if(pCombiList && pCombiList->Count())
+    if( pCombiList && pCombiList->size() )
     {
-        SvxIDPropertyCombine* pActual = pCombiList->First();
-        while(pActual)
-        {
-            if(pActual->nWID == nWID)
-                return &pActual->aAny;
-            pActual = pCombiList->Next();
-
-        }
+        for ( size_t i = 0, n = pCombiList->size(); i < n; ++i )
+            if ( (*pCombiList)[ i ]->nWID == nWID )
+                return &(*pCombiList)[ i ]->aAny;
     }
     return NULL;
 }
@@ -274,7 +259,7 @@ void SvxItemPropertySet::AddUsrAnyForID(const uno::Any& rAny, sal_uInt16 nWID)
     SvxIDPropertyCombine* pNew = new SvxIDPropertyCombine;
     pNew->nWID = nWID;
     pNew->aAny = rAny;
-    pCombiList->Insert(pNew);
+    pCombiList->push_back( pNew );
 }
 
 //----------------------------------------------------------------------
@@ -335,7 +320,7 @@ void SvxItemPropertySet::ObtainSettingsFromPropertySet(SvxItemPropertySet& rProp
     This check is for items that store either metric values if theire positiv
     or percentage if theire negativ.
 */
-sal_Bool SvxUnoCheckForConversion( const SfxItemSet& rSet, sal_Int32 nWID, const uno::Any& rVal )
+sal_Bool SvxUnoCheckForConversion( const SfxItemSet& /*rSet*/, sal_Int32 nWID, const uno::Any& rVal )
 {
     sal_Bool bConvert = sal_True; // the default is that all metric items must be converted
 
@@ -344,7 +329,7 @@ sal_Bool SvxUnoCheckForConversion( const SfxItemSet& rSet, sal_Int32 nWID, const
     case XATTR_FILLBMP_SIZEX:
     case XATTR_FILLBMP_SIZEY:
         {
-            sal_Int32 nValue;
+            sal_Int32 nValue(0);
             if( rVal >>= nValue )
                 bConvert = nValue > 0;
             break;
@@ -366,7 +351,7 @@ uno::Any SvxItemPropertySet::getPropertyValue( const SfxItemPropertyMap* pMap, c
     const SfxPoolItem* pItem = 0;
     SfxItemPool* pPool = rSet.GetPool();
 
-    SfxItemState eState = rSet.GetItemState( pMap->nWID, pMap->nWID != SDRATTR_XMLATTRIBUTES, &pItem );
+    rSet.GetItemState( pMap->nWID, pMap->nWID != SDRATTR_XMLATTRIBUTES, &pItem );
 
     if( NULL == pItem && pPool )
     {
@@ -391,7 +376,7 @@ uno::Any SvxItemPropertySet::getPropertyValue( const SfxItemPropertyMap* pMap, c
             {
                 if( SvxUnoCheckForConversion( rSet, pMap->nWID, aVal ) )
                     SvxUnoConvertToMM( eMapUnit, aVal );
-            }			
+            }
         }
         // convert typeless SfxEnumItem to enum type
         else if ( pMap->pType->getTypeClass() == uno::TypeClass_ENUM &&
@@ -405,7 +390,7 @@ uno::Any SvxItemPropertySet::getPropertyValue( const SfxItemPropertyMap* pMap, c
     }
     else
     {
-        DBG_ERROR( "No SfxPoolItem found for property!" );
+        OSL_FAIL( "No SfxPoolItem found for property!" );
     }
 
     return aVal;
@@ -428,7 +413,7 @@ void SvxItemPropertySet::setPropertyValue( const SfxItemPropertyMap* pMap, const
     {
         if( pPool == NULL )
         {
-            DBG_ERROR( "No default item and no pool?" );
+            OSL_FAIL( "No default item and no pool?" );
             return;
         }
 
@@ -449,7 +434,7 @@ void SvxItemPropertySet::setPropertyValue( const SfxItemPropertyMap* pMap, const
             {
                 if( SvxUnoCheckForConversion( rSet, pMap->nWID, aValue ) )
                     SvxUnoConvertFromMM( eMapUnit, aValue );
-            }			
+            }
         }
 
         pNewItem = pItem->Clone();
@@ -522,7 +507,7 @@ uno::Any SvxItemPropertySet::getPropertyValue( const SfxItemPropertyMap* pMap ) 
         if(pMap->nMemberId & SFX_METRIC_ITEM && eMapUnit != SFX_MAPUNIT_100TH_MM)
         {
             SvxUnoConvertToMM( eMapUnit, aVal );
-        }			
+        }
     }
 
     if ( pMap->pType->getTypeClass() == uno::TypeClass_ENUM &&
@@ -553,7 +538,7 @@ void SvxItemPropertySet::setPropertyValue( const SfxItemPropertyMap* pMap, const
 const SfxItemPropertyMap* SvxItemPropertySet::getPropertyMapEntry(const OUString &rName) const
 {
     const SfxItemPropertyMap* pMap = mpLastMap ? mpLastMap : _pMap;
-    while ( pMap->pName ) 
+    while ( pMap->pName )
     {
         if( rName.equalsAsciiL( pMap->pName, pMap->nNameLen ) )
         {
@@ -627,13 +612,13 @@ void SvxUnoConvertToMM( const SfxMapUnit eSourceMapUnit, ::com::sun::star::uno::
                 rMetric <<= (sal_uInt32)(TWIPS_TO_MM(*(sal_uInt32*)rMetric.getValue()));
                 break;
             default:
-                DBG_ERROR("AW: Missing unit translation to 100th mm!");
+                OSL_FAIL("AW: Missing unit translation to 100th mm!");
             }
             break;
         }
         default:
         {
-            DBG_ERROR("AW: Missing unit translation to 100th mm!");
+            OSL_FAIL("AW: Missing unit translation to 100th mm!");
         }
     }
 }
@@ -665,15 +650,17 @@ void SvxUnoConvertFromMM( const SfxMapUnit eDestinationMapUnit, ::com::sun::star
                     rMetric <<= (sal_uInt32)(MM_TO_TWIPS(*(sal_uInt32*)rMetric.getValue()));
                     break;
                 default:
-                    DBG_ERROR("AW: Missing unit translation to 100th mm!");
+                    OSL_FAIL("AW: Missing unit translation to 100th mm!");
             }
             break;
         }
         default:
         {
-            DBG_ERROR("AW: Missing unit translation to PoolMetrics!");
+            OSL_FAIL("AW: Missing unit translation to PoolMetrics!");
         }
     }
 }
 
 }
+
+/* vim:set shiftwidth=4 softtabstop=4 expandtab: */

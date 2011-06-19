@@ -1,7 +1,8 @@
+/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -25,9 +26,7 @@
  *
  ************************************************************************/
 
-#ifndef _FORBIDDENCHARACTERSTABLE_HXX
 #include "forbiddencharacterstable.hxx"
-#endif
 
 #include "svdetc.hxx"
 #include "svditext.hxx"
@@ -36,61 +35,22 @@
 #include "svdview.hxx"
 #include "svdoutl.hxx"
 
-#ifndef _SV_BMPACC_HXX //autogen
 #include <vcl/bmpacc.hxx>
-#endif
-
-#ifndef _EEITEM_HXX //autogen
 #include <eeitem.hxx>
-#endif
-
-
-
-#ifndef INCLUDED_SVTOOLS_CACHEOPTIONS_HXX
 #include <bf_svtools/cacheoptions.hxx>
-#endif
 
-
-
-
-
-
-
-
-#ifndef _SVX_XFLCLIT_HXX //autogen
 #include "xflclit.hxx"
-#endif
-
-#ifndef _SVX_XFLHTIT_HXX //autogen
 #include "xflhtit.hxx"
-#endif
-
-#ifndef _SVX_XBTMPIT_HXX //autogen
 #include "xbtmpit.hxx"
-#endif
-
-#ifndef _SVX_XFLGRIT_HXX //autogen
 #include "xflgrit.hxx"
-#endif
-
-#ifndef _SVDOOLE2_HXX //autogen
 #include "svdoole2.hxx"
-#endif
 
-
-
-#ifndef INCLUDED_SVTOOLS_SYSLOCALE_HXX
 #include <bf_svtools/syslocale.hxx>
-#endif
 
-// #97870# 
-#ifndef _SVX_XFLBCKIT_HXX
+// #97870#
 #include "xflbckit.hxx"
-#endif
 
-#ifndef _B3D_B3DCOLOR_HXX
 #include <bf_goodies/b3dcolor.hxx>
-#endif
 
 namespace binfilter {
 
@@ -126,15 +86,15 @@ namespace binfilter {
 /*N*/ :	Container( 0 )
 /*N*/ {
 /*N*/ 	SvtCacheOptions aCacheOptions;
-/*N*/ 
+/*N*/
 /*N*/ 	nSize = aCacheOptions.GetDrawingEngineOLE_Objects();
 /*N*/ 	pTimer = new AutoTimer();
 /*N*/     Link aLink = LINK(this, OLEObjCache, UnloadCheckHdl);
-/*N*/ 
+/*N*/
 /*N*/     pTimer->SetTimeoutHdl(aLink);
 /*N*/     pTimer->SetTimeout(20000);
 /*N*/     pTimer->Start();
-/*N*/ 
+/*N*/
 /*N*/ 	aLink.Call(pTimer);
 /*N*/ }
 
@@ -153,19 +113,19 @@ namespace binfilter {
 /*N*/ 	{
 /*?*/ 		// Eintraege reduzieren
 /*?*/ 		ULONG nIndex = Count() - 1;
-/*?*/ 
+/*?*/
 /*?*/ 		for (ULONG i = nIndex; i + 1 >= nSize; i--)
 /*?*/ 		{
 /*?*/ 			// Pruefen, ob Objekte entfernt werden koennen
 /*?*/ 			SdrOle2Obj* pCacheObj = (SdrOle2Obj*) GetObject(i);
-/*?*/ 
+/*?*/
 /*?*/ 			if ( pCacheObj != pObj &&  UnloadObj(pCacheObj) )
 /*?*/ 			{
 /*?*/ 			 	Remove(i);
 /*?*/ 			}
 /*?*/ 		}
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	// Objekt ggf. entfernen und an erster Position einfuegen
 /*N*/ 	Remove(pObj);
 /*N*/ 	Insert(pObj, (ULONG) 0L);
@@ -179,45 +139,45 @@ namespace binfilter {
 /*N*/ BOOL OLEObjCache::UnloadObj(SdrOle2Obj* pObj)
 /*N*/ {
 /*N*/ 	BOOL bUnloaded = FALSE;
-/*N*/ 
+/*N*/
 /*N*/ 	if (pObj)
 /*N*/ 	{
 /*N*/ 		BOOL bVisible = FALSE;
 /*N*/   		SdrViewIter aIter(pObj);
 /*N*/     	SdrView* pView = aIter.FirstView();
-/*N*/ 
+/*N*/
 /*N*/     	while (!bVisible && pView!=NULL)
 /*N*/ 		{
 /*?*/         	bVisible = !pView->IsGrafDraft();
-/*?*/ 
+/*?*/
 /*?*/ 			if (!bVisible)
 /*?*/ 				pView = aIter.NextView();
 /*N*/     	}
-/*N*/ 
+/*N*/
 /*N*/ 		if (!bVisible)
 /*N*/ 			bUnloaded = pObj->Unload();
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	return bUnloaded;
 /*N*/ }
 
-/*N*/ IMPL_LINK(OLEObjCache, UnloadCheckHdl, AutoTimer*, pTim)
+/*N*/ IMPL_LINK(OLEObjCache, UnloadCheckHdl, AutoTimer*, EMPTYARG)
 /*N*/ {
 /*N*/ 	if (nSize <= Count())
 /*N*/ 	{
 /*?*/ 		// Eintraege reduzieren
 /*?*/ 		ULONG nIndex = Count() - 1;
-/*?*/ 
+/*?*/
 /*?*/ 		for (ULONG i = nIndex; i + 1 >= nSize; i--)
 /*?*/ 		{
 /*?*/ 			// Pruefen, ob Objekte entfernt werden koennen
 /*?*/ 			SdrOle2Obj* pCacheObj = (SdrOle2Obj*) GetObject(i);
-/*?*/ 
+/*?*/
 /*?*/ 			if ( UnloadObj(pCacheObj) )
 /*?*/ 				Remove(i);
 /*?*/ 		}
 /*?*/ 	}
-/*N*/ 
+/*N*/
 /*N*/     return 0;
 /*N*/ }
 
@@ -266,7 +226,7 @@ namespace binfilter {
 
 /*?*/ class ImpClipMerk {
 /*?*/ 	Region aClip;
-/*?*/ 	FASTBOOL   bClip;
+/*?*/ 	bool   bClip;
 /*?*/ public:
 /*?*/ 	ImpClipMerk(const OutputDevice& rOut): aClip(rOut.GetClipRegion()),bClip(rOut.IsClipRegion()) {}
 /*?*/ 	void Restore(OutputDevice& rOut)
@@ -280,7 +240,7 @@ namespace binfilter {
 /*?*/ 		if (pMtf!=NULL) pMtf->Pause(FALSE);
 /*?*/ 	}
 /*?*/ };
-/*?*/ 
+/*?*/
 /*?*/ class ImpColorMerk {
 /*?*/ 	Color aLineColor;
 /*?*/ 	Color aFillColor;
@@ -292,27 +252,27 @@ namespace binfilter {
 /*?*/ 		aFillColor( rOut.GetFillColor() ),
 /*?*/ 		aBckgrdColor( rOut.GetBackground().GetColor() ),
 /*?*/ 		aFont (rOut.GetFont()) {}
-/*?*/ 
+/*?*/
 /*?*/ 	ImpColorMerk(const OutputDevice& rOut, USHORT nMode)
 /*?*/ 	{
 /*?*/ 		if ( (nMode & SDRHDC_SAVEPEN) == SDRHDC_SAVEPEN )
 /*?*/ 			aLineColor = rOut.GetLineColor();
-/*?*/ 
+/*?*/
 /*?*/ 		if ( (nMode & SDRHDC_SAVEBRUSH) == SDRHDC_SAVEBRUSH)
 /*?*/ 		{
 /*?*/ 			aFillColor = rOut.GetFillColor();
 /*?*/ 			aBckgrdColor = rOut.GetBackground().GetColor();
 /*?*/ 		}
-/*?*/ 
+/*?*/
 /*?*/ 		if ( (nMode & SDRHDC_SAVEFONT) == SDRHDC_SAVEFONT)
 /*?*/ 			aFont=rOut.GetFont();
 /*?*/ 	}
-/*?*/ 
+/*?*/
 /*?*/ 	void Restore(OutputDevice& rOut, USHORT nMode=SDRHDC_SAVEPENANDBRUSHANDFONT)
 /*?*/ 	{
 /*?*/ 		if ( (nMode & SDRHDC_SAVEPEN) == SDRHDC_SAVEPEN)
 /*?*/ 			rOut.SetLineColor( aLineColor );
-/*?*/ 
+/*?*/
 /*?*/ 		if ( (nMode & SDRHDC_SAVEBRUSH) == SDRHDC_SAVEBRUSH)
 /*?*/ 		{
 /*?*/ 			rOut.SetFillColor( aFillColor );
@@ -326,11 +286,11 @@ namespace binfilter {
 /*?*/ 			}
 /*?*/ 		}
 /*?*/ 	}
-/*?*/ 
+/*?*/
 /*?*/ 	const Color& GetLineColor() const { return aLineColor; }
 /*?*/ };
 
-/*N*/ ImpSdrHdcMerk::ImpSdrHdcMerk(const OutputDevice& rOut, USHORT nNewMode, FASTBOOL bAutoMerk):
+/*N*/ ImpSdrHdcMerk::ImpSdrHdcMerk(const OutputDevice& rOut, USHORT nNewMode, bool bAutoMerk):
 /*N*/ 	pFarbMerk(NULL),
 /*N*/ 	pClipMerk(NULL),
 /*N*/ 	pLineColorMerk(NULL),
@@ -346,45 +306,15 @@ namespace binfilter {
 /*N*/ 	if (pLineColorMerk !=NULL) delete pLineColorMerk;
 /*N*/ }
 
-/*N*/ void ImpSdrHdcMerk::Save(const OutputDevice& rOut)
-/*N*/ {
-/*N*/ 	if (pFarbMerk!=NULL)
-/*N*/ 	{
-/*N*/ 		delete pFarbMerk;
-/*N*/ 		pFarbMerk=NULL;
-/*N*/ 	}
-/*N*/ 	if (pClipMerk!=NULL)
-/*N*/ 	{
-/*N*/ 		delete pClipMerk;
-/*N*/ 		pClipMerk=NULL;
-/*N*/ 	}
-/*N*/ 	if (pLineColorMerk !=NULL)
-/*N*/ 	{
-/*N*/ 		delete pLineColorMerk ;
-/*N*/ 		pLineColorMerk =NULL;
-/*N*/ 	}
-/*N*/ 	if ((nMode & SDRHDC_SAVECLIPPING) ==SDRHDC_SAVECLIPPING)
-/*N*/ 		pClipMerk=new ImpClipMerk(rOut);
-/*N*/ 
-/*N*/ 	USHORT nCol=nMode & SDRHDC_SAVEPENANDBRUSHANDFONT;
-/*N*/ 
-/*N*/ 	if (nCol==SDRHDC_SAVEPEN)
-/*N*/ 		pLineColorMerk=new Color( rOut.GetLineColor() );
-/*N*/ 	else if (nCol==SDRHDC_SAVEPENANDBRUSHANDFONT)
-/*N*/ 		pFarbMerk=new ImpColorMerk(rOut);
-/*N*/ 	else if (nCol!=0)
-/*N*/ 		pFarbMerk=new ImpColorMerk(rOut,nCol);
-/*N*/ }
-
 /*N*/ void ImpSdrHdcMerk::Restore(OutputDevice& rOut, USHORT nMask) const
 /*N*/ {
 /*N*/ 	nMask&=nMode; // nur restaurieren, was auch gesichert wurde
-/*N*/ 
+/*N*/
 /*N*/ 	if ((nMask & SDRHDC_SAVECLIPPING) ==SDRHDC_SAVECLIPPING && pClipMerk!=NULL)
 /*N*/ 		pClipMerk->Restore(rOut);
-/*N*/ 
+/*N*/
 /*N*/ 	USHORT nCol=nMask & SDRHDC_SAVEPENANDBRUSHANDFONT;
-/*N*/ 
+/*N*/
 /*N*/ 	if (nCol==SDRHDC_SAVEPEN)
 /*N*/ 	{
 /*N*/ 		if (pLineColorMerk!=NULL)
@@ -422,13 +352,13 @@ namespace binfilter {
 /*N*/ 		if (rLink.IsSet()) {
 /*N*/ 			aList.Insert(new Link(rLink),nPos);
 /*N*/ 		} else {
-/*N*/ 			DBG_ERROR("SdrLinkList::InsertLink(): Versuch, einen nicht gesetzten Link einzufuegen");
+/*N*/ 			OSL_FAIL("SdrLinkList::InsertLink(): Versuch, einen nicht gesetzten Link einzufuegen");
 /*N*/ 		}
 /*N*/ 	} else {
-/*N*/ 		DBG_ERROR("SdrLinkList::InsertLink(): Link schon vorhanden");
+/*N*/ 		OSL_FAIL("SdrLinkList::InsertLink(): Link schon vorhanden");
 /*N*/ 	}
 /*N*/ }
-/*N*/ 
+/*N*/
 /*N*/ void SdrLinkList::RemoveLink(const Link& rLink)
 /*N*/ {
 /*N*/ 	unsigned nFnd=FindEntry(rLink);
@@ -436,42 +366,42 @@ namespace binfilter {
 /*N*/ 		Link* pLink=(Link*)aList.Remove(nFnd);
 /*N*/ 		delete pLink;
 /*N*/ 	} else {
-/*N*/ 		DBG_ERROR("SdrLinkList::RemoveLink(): Link nicht gefunden");
+/*N*/ 		OSL_FAIL("SdrLinkList::RemoveLink(): Link nicht gefunden");
 /*N*/ 	}
 /*N*/ }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // #98988# Re-implement GetDraftFillColor(...)
 
-/*N*/ FASTBOOL GetDraftFillColor(const SfxItemSet& rSet, Color& rCol)
+/*N*/ bool GetDraftFillColor(const SfxItemSet& rSet, Color& rCol)
 /*N*/ {
 /*N*/ 	XFillStyle eFill=((XFillStyleItem&)rSet.Get(XATTR_FILLSTYLE)).GetValue();
-/*N*/ 	FASTBOOL bRetval(FALSE);
-/*N*/ 
-/*N*/ 	switch(eFill) 
+/*N*/ 	bool bRetval(FALSE);
+/*N*/
+/*N*/ 	switch(eFill)
 /*N*/ 	{
-/*N*/ 		case XFILL_SOLID: 
+/*N*/ 		case XFILL_SOLID:
 /*N*/ 		{
-/*N*/ 			rCol = ((XFillColorItem&)rSet.Get(XATTR_FILLCOLOR)).GetValue(); 
+/*N*/ 			rCol = ((XFillColorItem&)rSet.Get(XATTR_FILLCOLOR)).GetValue();
 /*N*/ 			bRetval = TRUE;
-/*N*/ 			
+/*N*/
 /*N*/ 			break;
 /*N*/ 		}
-/*N*/ 		case XFILL_HATCH: 
+/*N*/ 		case XFILL_HATCH:
 /*N*/ 		{
 /*?*/ 			Color aCol1(((XFillHatchItem&)rSet.Get(XATTR_FILLHATCH)).GetValue().GetColor());
 /*?*/ 			Color aCol2(COL_WHITE);
-/*?*/ 			
+/*?*/
 /*?*/ 			// #97870# when hatch background is activated, use object fill color as hatch color
 /*?*/ 			sal_Bool bFillHatchBackground = ((const XFillBackgroundItem&)(rSet.Get(XATTR_FILLBACKGROUND))).GetValue();
 /*?*/ 			if(bFillHatchBackground)
 /*?*/ 			{
 /*?*/ 				aCol2 = ((const XFillColorItem&)(rSet.Get(XATTR_FILLCOLOR))).GetValue();
 /*?*/ 			}
-/*?*/ 
+/*?*/
 /*?*/ 			((B3dColor&)rCol).CalcMiddle(aCol1, aCol2);
 /*?*/ 			bRetval = TRUE;
-/*?*/ 			
+/*?*/
 /*?*/ 			break;
 /*N*/ 		}
 /*N*/ 		case XFILL_GRADIENT: {
@@ -480,10 +410,10 @@ namespace binfilter {
 /*N*/ 			Color aCol2(rGrad.GetEndColor());
 /*N*/ 			((B3dColor&)rCol).CalcMiddle(aCol1, aCol2);
 /*N*/ 			bRetval = TRUE;
-/*N*/ 
+/*N*/
 /*N*/ 			break;
 /*N*/ 		}
-/*N*/ 		case XFILL_BITMAP: 
+/*N*/ 		case XFILL_BITMAP:
 /*N*/ 		{
 /*?*/ 			const Bitmap& rBitmap = ((XFillBitmapItem&)rSet.Get(XATTR_FILLBITMAP)).GetValue().GetBitmap();
 /*?*/ 			const Size aSize(rBitmap.GetSizePixel());
@@ -491,7 +421,7 @@ namespace binfilter {
 /*?*/ 			const sal_uInt32 nHeight = aSize.Height();
 /*?*/ 			Bitmap aBitmap(rBitmap);
 /*?*/ 			BitmapReadAccess* pAccess = aBitmap.AcquireReadAccess();
-/*?*/ 
+/*?*/
 /*?*/ 			if(pAccess && nWidth > 0 && nHeight > 0)
 /*?*/ 			{
 /*?*/ 				sal_uInt32 nRt(0L);
@@ -501,40 +431,42 @@ namespace binfilter {
 /*?*/ 				const sal_uInt32 nXStep((nWidth > nMaxSteps) ? nWidth / nMaxSteps : 1L);
 /*?*/ 				const sal_uInt32 nYStep((nHeight > nMaxSteps) ? nHeight / nMaxSteps : 1L);
 /*?*/ 				sal_uInt32 nAnz(0L);
-/*?*/ 
+/*?*/
 /*?*/ 				for(sal_uInt32 nY(0L); nY < nHeight; nY += nYStep)
 /*?*/ 				{
 /*?*/ 					for(sal_uInt32 nX(0L); nX < nWidth; nX += nXStep)
 /*?*/ 					{
-/*?*/ 						const BitmapColor& rCol = (pAccess->HasPalette())
+/*?*/ 						const BitmapColor& rLclCol = (pAccess->HasPalette())
 /*?*/ 							? pAccess->GetPaletteColor((BYTE)pAccess->GetPixel(nY, nX))
 /*?*/ 							: pAccess->GetPixel(nY, nX);
 /*?*/ 
-/*?*/ 						nRt += rCol.GetRed(); 
-/*?*/ 						nGn += rCol.GetGreen(); 
-/*?*/ 						nBl += rCol.GetBlue();
+/*?*/ 						nRt += rLclCol.GetRed();
+/*?*/ 						nGn += rLclCol.GetGreen();
+/*?*/ 						nBl += rLclCol.GetBlue();
 /*?*/ 						nAnz++;
 /*?*/ 					}
 /*?*/ 				}
-/*?*/ 
+/*?*/
 /*?*/ 				nRt /= nAnz;
 /*?*/ 				nGn /= nAnz;
 /*?*/ 				nBl /= nAnz;
-/*?*/ 
+/*?*/
 /*?*/ 				rCol = Color(UINT8(nRt), UINT8(nGn), UINT8(nBl));
-/*?*/ 
+/*?*/
 /*?*/ 				bRetval = TRUE;
 /*?*/ 			}
-/*?*/ 			
+/*?*/
 /*?*/ 			if(pAccess)
 /*?*/ 			{
 /*?*/ 				aBitmap.ReleaseAccess(pAccess);
 /*?*/ 			}
-/*?*/ 			
+/*?*/
 /*?*/ 			break;
 /*?*/ 		}
+            case XFILL_NONE:
+                break;
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	return bRetval;
 /*N*/ }
 
@@ -549,7 +481,7 @@ namespace binfilter {
 /*N*/ 	aMapFraction(1,1)
 /*N*/ {
 /*N*/ }
-/*N*/ 
+/*N*/
 /*N*/ SdrEngineDefaults& SdrEngineDefaults::GetDefaults()
 /*N*/ {
 /*N*/ 	SdrGlobalData& rGlobalData=GetSdrGlobalData();
@@ -566,43 +498,7 @@ namespace binfilter {
 
 /*N*/ SdrOutliner* SdrMakeOutliner( USHORT nOutlinerMode, SdrModel* pModel )
 /*N*/ {
-/*N*/ 	SdrEngineDefaults& rDefaults = SdrEngineDefaults::GetDefaults();
-
-/*
-    MapUnit  eUn( (pMod==NULL) ? rDefaults.eMapUnit : pMod->GetScaleUnit());
-    Fraction aFr( *((pMod==NULL) ? &rDefaults.aMapFraction : &pMod->GetScaleFraction()));
-
-    if ( pMod->GetRefDevice() )
-        pOutl->SetRefDevice( pMod->GetRefDevice() );
-    else
-    {
-        MapMode aMapMode(eUn,Point(0,0),aFr,aFr);
-        pOutl->SetRefMapMode( aMapMode );
-    }
-
-    SfxItemSet aSet(pOutl->GetEmptyItemSet());
-    aSet.Put(SvxFontItem(rDefaults.eFontFamily, rDefaults.aFontName, String(), PITCH_DONTKNOW, gsl_getSystemTextEncoding() ) );
-    aSet.Put(SvxColorItem(rDefaults.aFontColor));
-    ULONG nHgt=rDefaults.nFontHeight;
-    FASTBOOL bDifUn=(eUn!=rDefaults.eMapUnit); // different MapUnits
-    FASTBOOL bDifFr=(aFr!=rDefaults.aMapFraction); // different MapFractions
-    if (bDifUn || bDifFr) { // Wenn pMod!=NULL und pMod->Map!=rDef.Map
-        long nTmpLong=long(nHgt); // caasting im Ctor bringt unter MSVC sehr merkwuerdige Fehlermeldungen
-        BigInt aHgt1(nTmpLong); // umrechnen von DefMap in ModMap
-        FrPair aUnitMul(GetMapFactor(rDefaults.eMapUnit,eUn));
-
-        if (bDifUn) aHgt1*=aUnitMul.Y().GetNumerator();
-        if (bDifFr) aHgt1*=aFr.GetNumerator();
-        if (bDifFr) aHgt1*=rDefaults.aMapFraction.GetDenominator();
-        if (bDifUn) aHgt1/=aUnitMul.Y().GetDenominator();
-        if (bDifFr) aHgt1/=aFr.GetDenominator();
-        if (bDifFr) aHgt1/=rDefaults.aMapFraction.GetNumerator();
-
-        nHgt=ULONG(long(aHgt1));
-    }
-    aSet.Put(SvxFontHeightItem(nHgt));
-    pOutl->SetDefaults(aSet);
-*/
+/*N*/ 	/*SdrEngineDefaults& rDefaults =*/ SdrEngineDefaults::GetDefaults();
 
 /*N*/ 	SfxItemPool* pPool = &pModel->GetItemPool();
 /*N*/ 	SdrOutliner* pOutl = new SdrOutliner( pPool, nOutlinerMode );
@@ -612,7 +508,7 @@ namespace binfilter {
 /*N*/ 	pOutl->SetForbiddenCharsTable( pModel->GetForbiddenCharsTable() );
 /*N*/ 	pOutl->SetAsianCompressionMode( pModel->GetCharCompressType() );
 /*N*/ 	pOutl->SetKernAsianPunctuation( pModel->IsKernAsianPunctuation() );
-/*N*/ 
+/*N*/
 /*N*/ 	return pOutl;
 /*N*/ }
 
@@ -636,18 +532,20 @@ namespace binfilter {
 /*N*/ ResMgr* ImpGetResMgr()
 /*N*/ {
 /*N*/ 	SdrGlobalData& rGlobalData = GetSdrGlobalData();
-/*N*/ 
+/*N*/
 /*N*/ 	if(!rGlobalData.pResMgr)
 /*N*/ 	{
 /*N*/ #ifndef SVX_LIGHT
-/*N*/ 		ByteString aName("bf_svx");			//STRIP005
+/*N*/ 		ByteString aName("bf_svx");
 /*N*/ #else
-/*N*/ 		ByteString aName("bf_svl");			//STRIP005
+/*N*/ 		ByteString aName("bf_svl");
 /*N*/ #endif
 /*N*/ 		rGlobalData.pResMgr =
 /*N*/             ResMgr::CreateResMgr( aName.GetBuffer(), Application::GetSettings().GetUILocale() );
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	return rGlobalData.pResMgr;
 /*N*/ }
 }
+
+/* vim:set shiftwidth=4 softtabstop=4 expandtab: */

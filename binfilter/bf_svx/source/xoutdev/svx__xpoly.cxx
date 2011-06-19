@@ -1,7 +1,8 @@
+/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -25,7 +26,6 @@
  *
  ************************************************************************/
 
-//#include <math.h>
 #include <string.h>
 #include <tools/stream.hxx>
 
@@ -35,9 +35,7 @@
 
 #include "xoutx.hxx"
 #include "xpolyimp.hxx"
-#ifndef _OSL_ENDIAN_H_
 #include <osl/endian.h>
-#endif
 namespace binfilter {
 
 #define GLOBALOVERFLOW
@@ -49,22 +47,18 @@ namespace binfilter {
 |*
 |*    ImpXPolygon::ImpXPolygon()
 |*
-|*    Beschreibung
-|*    Ersterstellung    08.11.94
-|*    Letzte Aenderung  12.01.95 ESO
-|*
 *************************************************************************/
 
-/*N*/ ImpXPolygon::ImpXPolygon( USHORT nInitSize, USHORT nResize )
+/*N*/ ImpXPolygon::ImpXPolygon( USHORT nInitSize, USHORT nInResize )
 /*N*/ {
 /*N*/ 	pPointAry               = NULL;
 /*N*/ 	pFlagAry                = NULL;
 /*N*/ 	bDeleteOldPoints        = FALSE;
 /*N*/ 	nSize                   = 0;
-/*N*/ 	ImpXPolygon::nResize    = nResize;
+/*N*/ 	nResize                 = nInResize;
 /*N*/ 	nPoints                 = 0;
 /*N*/ 	nRefCount               = 1;
-/*N*/ 
+/*N*/
 /*N*/ 	Resize( nInitSize );
 /*N*/ }
 
@@ -72,26 +66,22 @@ namespace binfilter {
 |*
 |*    ImpXPolygon::ImpXPolygon()
 |*
-|*    Beschreibung
-|*    Ersterstellung    08.11.94
-|*    Letzte Aenderung  12.01.95 ESO
-|*
 *************************************************************************/
 
 /*N*/ ImpXPolygon::ImpXPolygon( const ImpXPolygon& rImpXPoly )
 /*N*/ {
 /*N*/ 	( (ImpXPolygon&) rImpXPoly ).CheckPointDelete();
-/*N*/ 
+/*N*/
 /*N*/ 	pPointAry               = NULL;
 /*N*/ 	pFlagAry                = NULL;
 /*N*/ 	bDeleteOldPoints        = FALSE;
 /*N*/ 	nSize                   = 0;
-/*N*/ 	ImpXPolygon::nResize    = rImpXPoly.nResize;
+/*N*/ 	nResize                 = rImpXPoly.nResize;
 /*N*/ 	nPoints                 = 0;
 /*N*/ 	nRefCount               = 1;
-/*N*/ 
+/*N*/
 /*N*/ 	Resize( rImpXPoly.nSize );
-/*N*/ 
+/*N*/
 /*N*/ 	// Kopieren
 /*N*/ 	nPoints = rImpXPoly.nPoints;
 /*N*/ 	memcpy( pPointAry, rImpXPoly.pPointAry, nSize*sizeof( Point ) );
@@ -101,10 +91,6 @@ namespace binfilter {
 /*************************************************************************
 |*
 |*    ImpXPolygon::~ImpXPolygon()
-|*
-|*    Beschreibung
-|*    Ersterstellung    08.11.94
-|*    Letzte Aenderung  12.01.95 ESO
 |*
 *************************************************************************/
 
@@ -120,13 +106,10 @@ namespace binfilter {
 |*
 |*    ImpXPolygon::operator==()
 |*
-|*    Ersterstellung    Joe 26-09-95
-|*    Letzte Aenderung
-|*
 *************************************************************************/
 
 
-/*N*/ FASTBOOL ImpXPolygon::operator==(const ImpXPolygon& rImpXPoly) const
+/*N*/ bool ImpXPolygon::operator==(const ImpXPolygon& rImpXPoly) const
 /*N*/ {
 /*N*/ 	return nPoints==rImpXPoly.nPoints &&
 /*N*/ 		   (nPoints==0 ||
@@ -145,8 +128,6 @@ namespace binfilter {
 |*    Damit wird verhindert, dass bei XPoly[n] = XPoly[0] durch ein
 |*    Resize der fuer den rechten Ausdruck verwendete Point-Array
 |*    vorzeitig geloescht wird.
-|*    Ersterstellung    08.11.94
-|*    Letzte Aenderung  12.01.95 ESO
 |*
 *************************************************************************/
 
@@ -154,13 +135,13 @@ namespace binfilter {
 /*N*/ {
 /*N*/ 	if( nNewSize == nSize )
 /*N*/ 		return;
-/*N*/ 
+/*N*/
 /*N*/ 	BYTE*   pOldFlagAry  = pFlagAry;
 /*N*/ 	USHORT  nOldSize     = nSize;
-/*N*/ 
+/*N*/
 /*N*/ 	CheckPointDelete();
 /*N*/ 	pOldPointAry = pPointAry;
-/*N*/ 
+/*N*/
 /*N*/ 	// Neue Groesse auf vielfaches von nResize runden, sofern Objekt
 /*N*/ 	// nicht neu angelegt wurde (nSize != 0)
 /*N*/ 	if ( nSize != 0 && nNewSize > nSize )
@@ -172,11 +153,11 @@ namespace binfilter {
 /*N*/ 	nSize     = nNewSize;
 /*N*/ 	pPointAry = (Point*)new char[ nSize*sizeof( Point ) ];
 /*N*/ 	memset( pPointAry, 0, nSize*sizeof( Point ) );
-/*N*/ 
+/*N*/
 /*N*/ 	// Flag Array erzeugen
 /*N*/ 	pFlagAry = new BYTE[ nSize ];
 /*N*/ 	memset( pFlagAry, 0, nSize );
-/*N*/ 
+/*N*/
 /*N*/ 	// Eventuell umkopieren
 /*N*/ 	if( nOldSize )
 /*N*/ 	{
@@ -189,7 +170,7 @@ namespace binfilter {
 /*N*/ 		{
 /*N*/ 			memcpy( pPointAry, pOldPointAry, nSize*sizeof( Point ) );
 /*N*/ 			memcpy( pFlagAry, pOldFlagAry, nSize );
-/*N*/ 
+/*N*/
 /*N*/ 			// Anzahl der gueltigen Punkte anpassen
 /*N*/ 			if( nPoints > nSize )
 /*N*/ 				nPoints = nSize;
@@ -205,25 +186,19 @@ namespace binfilter {
 |*
 |*    ImpXPolygon::InsertSpace()
 |*
-|*    Beschreibung
-|*    Ersterstellung    08.11.94
-|*    Letzte Aenderung  29.03.95 ESO
-|*
 *************************************************************************/
 
 /*N*/ void ImpXPolygon::InsertSpace( USHORT nPos, USHORT nCount )
 /*N*/ {
-/*N*/ 	USHORT nOldSize = nSize;
-/*N*/ 
 /*N*/ 	CheckPointDelete();
-/*N*/ 
+/*N*/
 /*N*/ 	if ( nPos > nPoints )
 /*N*/ 		nPos = nPoints;
-/*N*/ 
+/*N*/
 /*N*/ 	// Wenn Polygon zu klein dann groesser machen
 /*N*/ 	if( (nPoints + nCount) > nSize )
 /*N*/ 		Resize( nPoints + nCount );
-/*N*/ 
+/*N*/
 /*N*/ 	// Wenn nicht hinter dem letzten Punkt eingefuegt wurde,
 /*N*/ 	// den Rest nach hinten schieben
 /*N*/ 	if( nPos < nPoints )
@@ -235,7 +210,7 @@ namespace binfilter {
 /*N*/ 	}
 /*N*/ 	memset( &pPointAry[nPos], 0, nCount * sizeof( Point ) );
 /*N*/ 	memset( &pFlagAry [nPos], 0, nCount );
-/*N*/ 
+/*N*/
 /*N*/ 	nPoints += nCount;
 /*N*/ }
 
@@ -244,20 +219,16 @@ namespace binfilter {
 |*
 |*    ImpXPolygon::Remove()
 |*
-|*    Beschreibung
-|*    Ersterstellung    08.11.94
-|*    Letzte Aenderung  12.01.94 ESO
-|*
 *************************************************************************/
 
 /*N*/ void ImpXPolygon::Remove( USHORT nPos, USHORT nCount )
 /*N*/ {
 /*N*/ 	CheckPointDelete();
-/*N*/ 
+/*N*/
 /*N*/ 	if( (nPos + nCount) <= nPoints )
 /*N*/ 	{
 /*N*/ 		USHORT nMove = nPoints - nPos - nCount;
-/*N*/ 
+/*N*/
 /*N*/ 		if( nMove )
 /*N*/ 		{
 /*?*/ 			memmove( &pPointAry[nPos], &pPointAry[nPos+nCount],
@@ -275,10 +246,6 @@ namespace binfilter {
 |*
 |*    XPolygon::XPolygon()
 |*
-|*    Beschreibung
-|*    Ersterstellung    08.11.94
-|*    Letzte Aenderung  08.11.94
-|*
 *************************************************************************/
 
 /*N*/ XPolygon::XPolygon( USHORT nSize, USHORT nResize )
@@ -290,10 +257,6 @@ namespace binfilter {
 /*************************************************************************
 |*
 |*    XPolygon::XPolygon()
-|*
-|*    Beschreibung
-|*    Ersterstellung    08.11.94
-|*    Letzte Aenderung  08.11.94
 |*
 *************************************************************************/
 
@@ -309,19 +272,17 @@ namespace binfilter {
 |*    XPolygon::XPolygon()
 |*
 |*    XPolygon aus einem Standardpolygon erstellen
-|*    Ersterstellung    18.01.95 ESO
-|*    Letzte Aenderung  18.01.95 ESO
 |*
 *************************************************************************/
 
 /*N*/ XPolygon::XPolygon( const Polygon& rPoly )
 /*N*/ {
 /*N*/ 	DBG_CTOR(XPolygon,NULL);
-/*N*/ 
+/*N*/
 /*N*/ 	USHORT nSize = rPoly.GetSize();
 /*N*/ 	pImpXPolygon = new ImpXPolygon( nSize );
 /*N*/ 	pImpXPolygon->nPoints = nSize;
-/*N*/ 
+/*N*/
 /*N*/ 	for( USHORT i = 0; i < nSize;  i++ )
 /*N*/ 	{
 /*N*/ 		pImpXPolygon->pPointAry[i] = rPoly[i];
@@ -334,8 +295,6 @@ namespace binfilter {
 |*    XPolygon::XPolygon()
 |*
 |*    Rechteck (auch mit abgerundeten Ecken) als Bezierpolygon erzeugen
-|*    Ersterstellung    09.01.95 ESO
-|*    Letzte Aenderung  09.01.95 ESO
 |*
 *************************************************************************/
 
@@ -345,22 +304,22 @@ namespace binfilter {
 /*N*/ 	pImpXPolygon = new ImpXPolygon(17);
 /*N*/ 	long nWh = (rRect.GetWidth()  - 1) / 2;
 /*N*/ 	long nHh = (rRect.GetHeight() - 1) / 2;
-/*N*/ 
+/*N*/
 /*N*/ 	if ( nRx > nWh )    nRx = nWh;
 /*N*/ 	if ( nRy > nHh )    nRy = nHh;
-/*N*/ 
+/*N*/
 /*N*/ 	// Rx negativ, damit Umlauf im Uhrzeigersinn erfolgt
 /*N*/ 	nRx = -nRx;
-/*N*/ 
+/*N*/
 /*N*/ 	// Faktor fuer Kontrollpunkte der Bezierkurven: 8/3 * (sin(45g) - 0.5)
 /*N*/ 	long    nXHdl = (long)(0.552284749 * nRx);
 /*N*/ 	long    nYHdl = (long)(0.552284749 * nRy);
 /*N*/ 	USHORT  nPos = 0;
-/*N*/ 
+/*N*/
 /*N*/ 	if ( nRx && nRy )
 /*N*/ 	{
 /*N*/ 		Point aCenter;
-/*N*/ 
+/*N*/
 /*N*/ 		for (USHORT nQuad = 0; nQuad < 4; nQuad++)
 /*N*/ 		{
 /*N*/ 			switch ( nQuad )
@@ -404,8 +363,6 @@ namespace binfilter {
 |*    XPolygon::XPolygon()
 |*
 |*    Ellipsen(bogen) als Bezierpolygon erzeugen
-|*    Ersterstellung    09.01.95
-|*    Letzte Aenderung  09.01.95
 |*
 *************************************************************************/
 
@@ -414,17 +371,17 @@ namespace binfilter {
 /*N*/ {
 /*N*/ 	DBG_CTOR(XPolygon,NULL);
 /*N*/ 	pImpXPolygon = new ImpXPolygon(17);
-/*N*/ 
+/*N*/
 /*N*/ 	nStartAngle %= 3600;
 /*N*/ 	if ( nEndAngle > 3600 ) nEndAngle %= 3600;
 /*N*/ 	BOOL bFull = (nStartAngle == 0 && nEndAngle == 3600);
-/*N*/ 
+/*N*/
 /*N*/ 	// Faktor fuer Kontrollpunkte der Bezierkurven: 8/3 * (sin(45g) - 0.5)
 /*N*/ 	long    nXHdl = (long)(0.552284749 * nRx);
 /*N*/ 	long    nYHdl = (long)(0.552284749 * nRy);
 /*N*/ 	USHORT  nPos = 0;
 /*N*/ 	BOOL    bLoopEnd = FALSE;
-/*N*/ 
+/*N*/
 /*N*/ 	do
 /*N*/ 	{
 /*N*/ 		USHORT nA1, nA2;
@@ -435,13 +392,13 @@ namespace binfilter {
 /*N*/ 		nPos += 3;
 /*N*/ 		if ( !bLoopEnd )
 /*N*/ 			pImpXPolygon->pFlagAry[nPos] = (BYTE) XPOLY_SMOOTH;
-/*N*/ 
+/*N*/
 /*N*/ 	} while ( !bLoopEnd );
-/*N*/ 
+/*N*/
 /*N*/ 	// Wenn kein Vollkreis, dann ggf. Enden mit Mittelpunkt verbinden
 /*N*/ 	if ( !bFull && bClose )
 /*N*/ 		pImpXPolygon->pPointAry[++nPos] = rCenter;
-/*N*/ 
+/*N*/
 /*N*/ 	if ( bFull )
 /*N*/ 	{
 /*N*/ 		pImpXPolygon->pFlagAry[0   ] = (BYTE) XPOLY_SMOOTH;
@@ -453,10 +410,6 @@ namespace binfilter {
 /*************************************************************************
 |*
 |*    XPolygon::~XPolygon()
-|*
-|*    Beschreibung
-|*    Ersterstellung    08.11.94
-|*    Letzte Aenderung  08.11.94
 |*
 *************************************************************************/
 
@@ -474,8 +427,6 @@ namespace binfilter {
 |*    XPolygon::CheckReference()
 |*
 |*    Referenzzaehler desImpXPoly pruefen und ggf. von diesem abkoppeln
-|*    Ersterstellung    17.01.95 ESO
-|*    Letzte Aenderung  17.01.95 ESO
 |*
 *************************************************************************/
 
@@ -492,10 +443,6 @@ namespace binfilter {
 |*
 |*    XPolygon::SetSize()
 |*
-|*    Beschreibung
-|*    Ersterstellung    08.11.94
-|*    Letzte Aenderung  08.11.94
-|*
 *************************************************************************/
 
 /*N*/ void XPolygon::SetSize( USHORT nNewSize )
@@ -506,22 +453,7 @@ namespace binfilter {
 
 /*************************************************************************
 |*
-|*    XPolygon::GetSize()
-|*
-|*    Beschreibung
-|*    Ersterstellung    08.11.94
-|*    Letzte Aenderung  12.01.95 ESO
-|*
-*************************************************************************/
-
-
-/*************************************************************************
-|*
 |*    XPolygon::SetPointCount()
-|*
-|*    Beschreibung
-|*    Ersterstellung    08.11.94
-|*    Letzte Aenderung  12.01.95 ESO
 |*
 *************************************************************************/
 
@@ -529,10 +461,10 @@ namespace binfilter {
 /*N*/ {
 /*N*/ 	pImpXPolygon->CheckPointDelete();
 /*N*/ 	CheckReference();
-/*N*/ 
+/*N*/
 /*N*/ 	if( pImpXPolygon->nSize < nPoints )
 /*?*/ 		pImpXPolygon->Resize( nPoints );
-/*N*/ 
+/*N*/
 /*N*/ 	if ( nPoints < pImpXPolygon->nPoints )
 /*N*/ 	{
 /*N*/ 		USHORT nSize = pImpXPolygon->nPoints - nPoints;
@@ -546,10 +478,6 @@ namespace binfilter {
 |*
 |*    XPolygon::GetPointCount()
 |*
-|*    Beschreibung
-|*    Ersterstellung    08.11.94
-|*    Letzte Aenderung  12.01.95 ESO
-|*
 *************************************************************************/
 
 /*N*/ USHORT XPolygon::GetPointCount() const
@@ -561,10 +489,6 @@ namespace binfilter {
 /*************************************************************************
 |*
 |*    XPolygon::Insert()
-|*
-|*    Beschreibung
-|*    Ersterstellung    08.11.94
-|*    Letzte Aenderung  08.11.94
 |*
 *************************************************************************/
 
@@ -579,33 +503,7 @@ namespace binfilter {
 
 /*************************************************************************
 |*
-|*    XPolygon::Insert()
-|*
-|*    Beschreibung
-|*    Ersterstellung    08.11.94
-|*    Letzte Aenderung  08.11.94
-|*
-*************************************************************************/
-
-
-/*************************************************************************
-|*
-|*    XPolygon::Insert()
-|*
-|*    Beschreibung
-|*    Ersterstellung    08.11.94
-|*    Letzte Aenderung  08.11.94
-|*
-*************************************************************************/
-
-
-/*************************************************************************
-|*
 |*    XPolygon::Remove()
-|*
-|*    Beschreibung
-|*    Ersterstellung    08.11.94
-|*    Letzte Aenderung  08.11.94
 |*
 *************************************************************************/
 
@@ -619,19 +517,15 @@ namespace binfilter {
 |*
 |*    XPolygon::Move()
 |*
-|*    Beschreibung
-|*    Ersterstellung    09.11.94
-|*    Letzte Aenderung  09.11.94
-|*
 *************************************************************************/
 
 /*N*/ void XPolygon::Move( long nHorzMove, long nVertMove )
 /*N*/ {
 /*N*/ 	if ( !nHorzMove && !nVertMove )
 /*N*/ 		return;
-/*N*/ 
+/*N*/
 /*N*/ 	CheckReference();
-/*N*/ 
+/*N*/
 /*N*/ 	// Punkte verschieben
 /*N*/ 	USHORT nCount = pImpXPolygon->nPoints;
 /*N*/ 	for ( USHORT i = 0; i < nCount; i++ )
@@ -646,65 +540,27 @@ namespace binfilter {
 |*
 |*    XPolygon::GetBoundRect()
 |*
-|*    Beschreibung
-|*    Ersterstellung    09.11.94
-|*    Letzte Aenderung  12.01.95 ESO
-|*
 *************************************************************************/
 
 /*N*/ Rectangle XPolygon::GetBoundRect(OutputDevice *pOut) const
 /*N*/ {
 /*N*/ 	pImpXPolygon->CheckPointDelete();
-/*N*/ 
+/*N*/
 /*N*/ 	Rectangle aRect(XOutCalcXPolyExtent(*this, pOut));
 
-//  USHORT  nCount = pImpXPolygon->nPoints;
-//  if( !nCount )
-//      return Rectangle();
-
-//  Polygon aPoly = XOutCreatePolygon(*this, pOut);
-//  Rectangle aRect = aPoly.GetBoundRect();
-/*
-    if ( pOut == NULL )
-    {
-        BOOL bHasBezier = FALSE;
-
-        for (USHORT i = 0; i < nCount; i++)
-        {
-            if ( pImpXPolygon->pFlagAry[i] == (BYTE) XPOLY_CONTROL )
-            {
-                bHasBezier = TRUE;
-                i = nCount;
-            }
-        }
-        if ( bHasBezier )
-        {   // Breite und Hoehe um 1 Prozent erweitern, um Differenzen zur
-            // ungenauen Bezierberechnung (wg. fehlendem OutputDevice) auszugleichen
-            long nWDiff = aRect.GetWidth()  / 200;
-            long nHDiff = aRect.GetHeight() / 200;
-            aRect.Left()   -= nWDiff;
-            aRect.Right()  += nWDiff;
-            aRect.Top()    -= nHDiff;
-            aRect.Bottom() += nHDiff;
-        }
-    }
-*/  return aRect;
+        return aRect;
 /*N*/ }
 
 /*************************************************************************
 |*
 |*    XPolygon::operator[]()
 |*
-|*    Beschreibung
-|*    Ersterstellung    08.11.94
-|*    Letzte Aenderung  12.01.95
-|*
 *************************************************************************/
 
 /*N*/ const Point& XPolygon::operator[]( USHORT nPos ) const
 /*N*/ {
 /*N*/ 	DBG_ASSERT(nPos < pImpXPolygon->nPoints, "Ungueltiger Index bei const-Arrayzugriff auf XPolygon");
-/*N*/ 
+/*N*/
 /*N*/ 	pImpXPolygon->CheckPointDelete();
 /*N*/ 	return pImpXPolygon->pPointAry[nPos];
 /*N*/ }
@@ -713,17 +569,13 @@ namespace binfilter {
 |*
 |*    XPolygon::operator[]()
 |*
-|*    Beschreibung
-|*    Ersterstellung    08.11.94
-|*    Letzte Aenderung  12.01.95 ESO
-|*
 *************************************************************************/
 
 /*N*/ Point& XPolygon::operator[]( USHORT nPos )
 /*N*/ {
 /*N*/ 	pImpXPolygon->CheckPointDelete();
 /*N*/ 	CheckReference();
-/*N*/ 
+/*N*/
 /*N*/ 	if( nPos >= pImpXPolygon->nSize )
 /*N*/ 	{
 /*N*/ 		DBG_ASSERT(pImpXPolygon->nResize, "Ungueltiger Index bei Arrayzugriff auf XPolygon");
@@ -731,7 +583,7 @@ namespace binfilter {
 /*N*/ 	}
 /*N*/ 	if( nPos >= pImpXPolygon->nPoints )
 /*N*/ 		pImpXPolygon->nPoints = nPos + 1;
-/*N*/ 
+/*N*/
 /*N*/ 	return pImpXPolygon->pPointAry[nPos];
 /*N*/ }
 
@@ -740,22 +592,20 @@ namespace binfilter {
 |*    XPolygon::operator=()
 |*
 |*    Beschreibung      Zuweisungsoperator
-|*    Ersterstellung    ESO 22.11.94
-|*    Letzte Aenderung  ESO 12.01.95
 |*
 *************************************************************************/
 
 /*N*/ XPolygon& XPolygon::operator=( const XPolygon& rXPoly )
 /*N*/ {
 /*N*/ 	pImpXPolygon->CheckPointDelete();
-/*N*/ 
+/*N*/
 /*N*/ 	rXPoly.pImpXPolygon->nRefCount++;
-/*N*/ 
+/*N*/
 /*N*/ 	if( pImpXPolygon->nRefCount > 1 )
 /*N*/ 		pImpXPolygon->nRefCount--;
 /*N*/ 	else
 /*N*/ 		delete pImpXPolygon;
-/*N*/ 
+/*N*/
 /*N*/ 	pImpXPolygon = rXPoly.pImpXPolygon;
 /*N*/ 	return *this;
 /*N*/ }
@@ -765,8 +615,6 @@ namespace binfilter {
 |*    XPolygon::operator==()
 |*
 |*    Beschreibung      Gleichheitsoperator
-|*    Ersterstellung    ESO 22.11.94
-|*    Letzte Aenderung  Joe 26.09.95
 |*
 *************************************************************************/
 
@@ -782,8 +630,6 @@ namespace binfilter {
 |*    XPolygon::operator!=()
 |*
 |*    Beschreibung      Ungleichheitsoperator
-|*    Ersterstellung    ESO 22.11.94
-|*    Letzte Aenderung  Joe 26.09.95
 |*
 *************************************************************************/
 
@@ -799,8 +645,6 @@ namespace binfilter {
 |*    XPolygon::GetFlags()
 |*
 |*    Flags fuer den Punkt an der Position nPos zurueckgeben
-|*    Ersterstellung    ESO 11.11.94
-|*    Letzte Aenderung  ESO 12.01.95
 |*
 *************************************************************************/
 
@@ -815,8 +659,6 @@ namespace binfilter {
 |*    XPolygon::SetFlags()
 |*
 |*    Flags fuer den Punkt an der Position nPos setzen
-|*    Ersterstellung    ESO 11.11.94
-|*    Letzte Aenderung  ESO 12.01.95
 |*
 *************************************************************************/
 
@@ -832,8 +674,6 @@ namespace binfilter {
 |*    XPolygon::IsControl()
 |*
 |*    Kurzform zur Abfrage des CONTROL-Flags
-|*    Ersterstellung    ESO 09.01.95
-|*    Letzte Aenderung  ESO 12.01.95
 |*
 *************************************************************************/
 
@@ -844,33 +684,9 @@ namespace binfilter {
 
 /*************************************************************************
 |*
-|*    XPolygon::IsSmooth()
-|*
-|*    Kurzform zur Abfrage von SMOOTH- und SYMMTR-Flag
-|*    Ersterstellung    ESO 18.04.95
-|*    Letzte Aenderung  ESO 18.04.95
-|*
-*************************************************************************/
-
-
-/*************************************************************************
-|*
-|*    XPolygon::CalcDistance()
-|*
-|*    Abstand zwischen zwei Punkten berechnen
-|*    Ersterstellung    ESO 09.01.95
-|*    Letzte Aenderung  ESO 09.01.95
-|*
-*************************************************************************/
-
-
-/*************************************************************************
-|*
 |*    XPolygon::SubdivideBezier()
 |*
 |*    Bezierkurve unterteilen
-|*    Ersterstellung    ESO 09.01.95
-|*    Letzte Aenderung  ESO 09.01.95
 |*
 *************************************************************************/
 
@@ -884,7 +700,7 @@ namespace binfilter {
 /*N*/ 	double  fU3 = fU * fU2;
 /*N*/ 	USHORT  nIdx = nPos;
 /*N*/ 	short   nPosInc, nIdxInc;
-/*N*/ 
+/*N*/
 /*N*/ 	if ( bCalcFirst )
 /*N*/ 	{
 /*N*/ 		nPos += 3;
@@ -929,7 +745,7 @@ namespace binfilter {
 /*N*/ 	Point* pPoints = pImpXPolygon->pPointAry;
 /*N*/ 	pPoints[nFirst  ] = rCenter;
 /*N*/ 	pPoints[nFirst+3] = rCenter;
-/*N*/ 
+/*N*/
 /*N*/ 	if ( nQuad == 1 || nQuad == 2 )
 /*N*/ 	{
 /*N*/ 		nRx   = -nRx; nXHdl = -nXHdl;
@@ -938,7 +754,7 @@ namespace binfilter {
 /*N*/ 	{
 /*N*/ 		nRy   = -nRy; nYHdl = -nYHdl;
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	if ( nQuad == 0 || nQuad == 2 )
 /*N*/ 	{
 /*N*/ 		pPoints[nFirst].X() += nRx; pPoints[nFirst+3].Y() += nRy;
@@ -949,7 +765,7 @@ namespace binfilter {
 /*N*/ 	}
 /*N*/ 	pPoints[nFirst+1] = pPoints[nFirst];
 /*N*/ 	pPoints[nFirst+2] = pPoints[nFirst+3];
-/*N*/ 
+/*N*/
 /*N*/ 	if ( nQuad == 0 || nQuad == 2 )
 /*N*/ 	{
 /*N*/ 		pPoints[nFirst+1].Y() += nYHdl; pPoints[nFirst+2].X() += nXHdl;
@@ -975,66 +791,21 @@ namespace binfilter {
 /*N*/ 	USHORT nStPrev = nStart;
 /*N*/ 	USHORT nMax = (nStart / 900 + 1) * 900;
 /*N*/ 	USHORT nMin = nMax - 900;
-/*N*/ 
+/*N*/
 /*N*/ 	if ( nEnd >= nMax || nEnd <= nStart )   nA2 = 900;
 /*N*/ 	else                                    nA2 = nEnd - nMin;
 /*N*/ 	nA1 = nStart - nMin;
 /*N*/ 	nStart = nMax;
-/*N*/ 
+/*N*/
 /*N*/ 	// TRUE zurueck, falls letztes Segment berechnet wurde
 /*N*/ 	return (nStPrev < nEnd && nStart >= nEnd);
 /*N*/ }
 
 /*************************************************************************
 |*
-|*    XPolygon::CalcSmoothJoin()
-|*
-|*    glatten Uebergang zu einer Bezierkurve berechnen, indem der
-|*    entsprechende Punkt auf die Verbindungslinie von zwei anderen
-|*    Punkten projiziert wird
-|*     Center = End- bzw. Anfangspunkt der Bezierkurve
-|*     Drag   = der bewegte Punkt, der die Verschiebung von Pnt vorgibt
-|*     Pnt    = der zu modifizierende Punkt
-|*    Wenn Center am Anfang bzw. Ende des Polygons liegt, wird Pnt
-|*    auf die entgegengesetzte Seite verlegt
-|*    Ersterstellung    ESO 09.01.95
-|*    Letzte Aenderung  ESO 18.04.95
-|*
-\************************************************************************/
-
-
-/*************************************************************************
-|*
-|*    XPolygon::CalcTangent()
-|*
-|*    Tangente fuer den Uebergang zwischen zwei Bezierkurven berechnen
-|*     Center = End- bzw. Anfangspunkt der Bezierkurven
-|*     Prev   = vorheriger Zugpunkt
-|*     Next   = naechster Zugpunkt
-|*    Ersterstellung    ESO 09.01.95
-|*    Letzte Aenderung  ESO 18.04.95
-|*
-\************************************************************************/
-
-
-/*************************************************************************
-|*
-|*    XPolygon::PointsToBezier()
-|*
-|*    wandelt vier Polygonpunkte in eine Bezierkurve durch diese Punkte um
-|*    Ersterstellung    ESO 09.01.95
-|*    Letzte Aenderung  ESO 09.01.95
-|*
-\************************************************************************/
-
-
-/*************************************************************************
-|*
 |*    XPolygon::Translate()
 |*
 |*    Polygon auf den uebergebenen Punkt verschieben
-|*    Ersterstellung    ESO 17.01.95
-|*    Letzte Aenderung  ESO 17.01.95
 |*
 *************************************************************************/
 
@@ -1042,9 +813,9 @@ namespace binfilter {
 /*N*/ {
 /*N*/ 	pImpXPolygon->CheckPointDelete();
 /*N*/ 	CheckReference();
-/*N*/ 
+/*N*/
 /*N*/ 	USHORT nPntCnt = pImpXPolygon->nPoints;
-/*N*/ 
+/*N*/
 /*N*/ 	for (USHORT i = 0; i < nPntCnt; i++)
 /*N*/ 		pImpXPolygon->pPointAry[i] += rTrans;
 /*N*/ }
@@ -1055,8 +826,6 @@ namespace binfilter {
 |*
 |*    Alle Punkte um den Punkt rCenter drehen, Sinus und Cosinus
 |*    muessen uebergeben werden
-|*    Ersterstellung    ESO 09.01.95
-|*    Letzte Aenderung  ESO 17.01.95
 |*
 *************************************************************************/
 
@@ -1064,16 +833,16 @@ namespace binfilter {
 /*N*/ {
 /*N*/ 	pImpXPolygon->CheckPointDelete();
 /*N*/ 	CheckReference();
-/*N*/ 
+/*N*/
 /*N*/ 	long nX;
 /*N*/ 	long nY;
 /*N*/ 	long nNewX;
 /*N*/ 	long nNewY;
 /*N*/ 	long nCenterX = rCenter.X();
 /*N*/ 	long nCenterY = rCenter.Y();
-/*N*/ 
+/*N*/
 /*N*/ 	USHORT nPntCnt = pImpXPolygon->nPoints;
-/*N*/ 
+/*N*/
 /*N*/ 	for (USHORT i = 0; i < nPntCnt; i++)
 /*N*/ 	{
 /*N*/ 		Point *pPt = &(pImpXPolygon->pPointAry[i]);
@@ -1083,20 +852,6 @@ namespace binfilter {
 /*N*/ 		nNewY = -(long)floor(fSin * nX - fCos * nY + 0.5);
 /*N*/ 		pPt->X() = nNewX + nCenterX;
 /*N*/ 		pPt->Y() = nNewY + nCenterY;
-/*N*/ 
-    /* und so stand das in einem anderen File auf T:
-       dass ich am 29-11-1995 gegettet habe. Joe M.
-    USHORT nPntCnt = pImpXPolygon->nPoints;
-
-    for (USHORT i = 0; i < nPntCnt; i++)
-    {
-        Point P = pImpXPolygon->pPointAry[i] - rCenter;
-        long X = P.X();
-        long Y = P.Y();
-        P.X() =  (long)floor(fCos * X + fSin * Y + 0.5);
-        P.Y() = -(long)floor(fSin * X - fCos * Y + 0.5);
-        pImpXPolygon->pPointAry[i] = P + rCenter;
-    */
 /*N*/ 	}
 /*N*/ }
 
@@ -1106,15 +861,13 @@ namespace binfilter {
 |*
 |*    Alle Punkte um den Punkt rCenter mit dem Winkel nAngle drehen
 |*    Winkel in 10tel Grad, Wertebereich 0 - 3600
-|*    Ersterstellung    ESO 17.01.95
-|*    Letzte Aenderung  ESO 17.01.95
 |*
 *************************************************************************/
 
 /*N*/ void XPolygon::Rotate(const Point& rCenter, USHORT nAngle)
 /*N*/ {
 /*N*/ 	nAngle %= 3600;
-/*N*/ 
+/*N*/
 /*N*/ 	if ( nAngle != 0 )
 /*N*/ 	{
 /*N*/ 		double fAngle = F_PI * nAngle / 1800;
@@ -1129,8 +882,6 @@ namespace binfilter {
 |*    XPolygon::Scale()
 |*
 |*    XPolygon in X- und/oder Y-Richtung skalieren
-|*    Ersterstellung    ESO 01.02.95
-|*    Letzte Aenderung  ESO 01.02.95
 |*
 *************************************************************************/
 
@@ -1138,9 +889,9 @@ namespace binfilter {
 /*N*/ {
 /*N*/ 	pImpXPolygon->CheckPointDelete();
 /*N*/ 	CheckReference();
-/*N*/ 
+/*N*/
 /*N*/ 	USHORT nPntCnt = pImpXPolygon->nPoints;
-/*N*/ 
+/*N*/
 /*N*/ 	for (USHORT i = 0; i < nPntCnt; i++)
 /*N*/ 	{
 /*N*/ 		Point& rPnt = pImpXPolygon->pPointAry[i];
@@ -1155,8 +906,6 @@ namespace binfilter {
 |*
 |*    XPolygon in X-Richtung um einen beliebigen Winkel kippen,
 |*    bezogen auf eine Referenz-Y-Koordinate
-|*    Ersterstellung    ESO 01.02.95
-|*    Letzte Aenderung  ESO 01.02.95
 |*
 *************************************************************************/
 
@@ -1164,9 +913,9 @@ namespace binfilter {
 /*N*/ {
 /*N*/ 	pImpXPolygon->CheckPointDelete();
 /*N*/ 	CheckReference();
-/*N*/ 
+/*N*/
 /*N*/ 	USHORT nPntCnt = pImpXPolygon->nPoints;
-/*N*/ 
+/*N*/
 /*N*/ 	for (USHORT i = 0; i < nPntCnt; i++)
 /*N*/ 	{
 /*N*/ 		Point& rPnt = pImpXPolygon->pPointAry[i];
@@ -1178,55 +927,16 @@ namespace binfilter {
 
 /*************************************************************************
 |*
-|*    XPolygon::SlantY()
-|*
-|*    XPolygon in Y-Richtung um einen beliebigen Winkel kippen,
-|*    bezogen auf eine Referenz-X-Koordinate
-|*    Ersterstellung    ESO 01.02.95
-|*    Letzte Aenderung  ESO 01.02.95
-|*
-*************************************************************************/
-
-
-/*************************************************************************
-|*
-|*    XPolygon::Distort()
-|*
-|*    XPolygon verzerren, indem die Koordinaten relativ zu einem
-|*    Referenzrechteck in ein beliebiges Viereck skaliert werden
-|*    Zuordnung der Viereck-Punkte im Polygon zum Referenzrechteck:
-|*    0: links oben      0----1
-|*    1: rechts oben     |    |
-|*    2: rechts unten    3----2
-|*    3: links unten
-|*    Ersterstellung    ESO 07.07.95
-|*    Letzte Aenderung  ESO 07.07.95
-|*
-*************************************************************************/
-
-
-/*************************************************************************
-|*
-|* Bestimme den linken, unteren Punkt des Polygons und richte das
-|* Polygon so aus, dass dieser Punkt auf dem Index 0 liegt
-|*
-\************************************************************************/
-
-
-/*************************************************************************
-|*
 |*    XPolygon::operator>>()
 |*
 |*    Beschreibung      Stream-Leseoperator
-|*    Ersterstellung    ESO 04.04.95
-|*    Letzte Aenderung  ESO 04.04.95
 |*
 *************************************************************************/
 
 /*N*/ SvStream& operator>>( SvStream& rIStream, XPolygon& rXPoly )
 /*N*/ {
 /*N*/ 	DBG_CHKOBJ( &rXPoly, XPolygon, NULL );
-/*N*/ 
+/*N*/
 /*N*/ 	USHORT          i;
 /*N*/ 	USHORT          nStart;
 /*N*/ 	USHORT          nCurPoints;
@@ -1237,9 +947,9 @@ namespace binfilter {
 /*N*/ 	short           nShortY;
 /*N*/ 	long            nLongX;
 /*N*/ 	long            nLongY;
-/*N*/ 
+/*N*/
 /*N*/ 	rXPoly.pImpXPolygon->CheckPointDelete();
-/*N*/ 
+/*N*/
 /*N*/ 	// Anzahl der Punkte einlesen und Array erzeugen
 /*N*/ 	rIStream >> nReadPoints;
 /*N*/ 	nMerkPoints=nReadPoints;
@@ -1249,7 +959,7 @@ namespace binfilter {
 /*N*/ 		// dass beim Lesen Informationsverlusst aufgetreten ist !!!!!
 /*N*/ 	}
 /*N*/ 	rXPoly.pImpXPolygon->nPoints = nMerkPoints;
-/*N*/ 
+/*N*/
 /*N*/ 	if ( rXPoly.pImpXPolygon->nRefCount != 1 )
 /*N*/ 	{
 /*?*/ 		if ( rXPoly.pImpXPolygon->nRefCount )
@@ -1258,7 +968,7 @@ namespace binfilter {
 /*N*/ 	}
 /*N*/ 	else
 /*N*/ 		rXPoly.pImpXPolygon->Resize( nMerkPoints );
-/*N*/ 
+/*N*/
 /*N*/ 	// Je nach CompressMode das Polygon einlesen
 /*N*/ 	if ( rIStream.GetCompressMode() == COMPRESSMODE_FULL )
 /*N*/ 	{
@@ -1266,7 +976,7 @@ namespace binfilter {
 /*?*/ 		while ( i < nReadPoints )
 /*?*/ 		{
 /*?*/ 			rIStream >> bShort >> nCurPoints;
-/*?*/ 
+/*?*/
 /*?*/ 			if ( bShort )
 /*?*/ 			{
 /*?*/ 				for ( nStart = i; i < nStart+nCurPoints; i++ )
@@ -1328,7 +1038,7 @@ namespace binfilter {
         // Kontrollpunkte am Ende entfernen (kann auftreten bei truncate wg. 64k-Grenze!)
 /*?*/ 		rXPoly.Remove(USHORT(rXPoly.GetPointCount()-1),1);
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	return rIStream;
 /*N*/ }
 
@@ -1337,26 +1047,24 @@ namespace binfilter {
 |*    XPolygon::operator<<()
 |*
 |*    Beschreibung      Stream-Schreiboperator
-|*    Ersterstellung    ESO 04.04.95
-|*    Letzte Aenderung  ESO 04.04.95
 |*
 *************************************************************************/
 
 /*N*/ SvStream& operator<<( SvStream& rOStream, const XPolygon& rXPoly )
 /*N*/ {
 /*N*/ 	DBG_CHKOBJ( &rXPoly, XPolygon, NULL );
-/*N*/ 
+/*N*/
 /*N*/ 	unsigned char   bShort;
 /*N*/ 	unsigned char   bCurShort;
 /*N*/ 	USHORT          nStart;
 /*N*/ 	USHORT          i;
 /*N*/ 	USHORT          nPoints = rXPoly.GetPointCount();
-/*N*/ 
+/*N*/
 /*N*/ 	rXPoly.pImpXPolygon->CheckPointDelete();
-/*N*/ 
+/*N*/
 /*N*/ 	// Anzahl der Punkte rausschreiben
 /*N*/ 	rOStream << nPoints;
-/*N*/ 
+/*N*/
 /*N*/ 	// Je nach CompressMode das Polygon rausschreiben
 /*N*/ 	if ( rOStream.GetCompressMode() == COMPRESSMODE_FULL )
 /*N*/ 	{
@@ -1364,7 +1072,7 @@ namespace binfilter {
 /*?*/ 		while ( i < nPoints )
 /*?*/ 		{
 /*?*/ 			nStart = i;
-/*?*/ 
+/*?*/
 /*?*/ 			// Feststellen, welcher Typ geschrieben werden soll
 /*?*/ 			if ( ((rXPoly.pImpXPolygon->pPointAry[nStart].X() >= SHRT_MIN) &&
 /*?*/ 				  (rXPoly.pImpXPolygon->pPointAry[nStart].X() <= SHRT_MAX)) &&
@@ -1383,7 +1091,7 @@ namespace binfilter {
 /*?*/ 					bCurShort = TRUE;
 /*?*/ 				else
 /*?*/ 					bCurShort = FALSE;
-/*?*/ 
+/*?*/
 /*?*/ 				// Wenn sich die Werte in einen anderen Bereich begeben,
 /*?*/ 				// muessen wir neu rausschreiben
 /*?*/ 				if ( bCurShort != bShort )
@@ -1391,12 +1099,12 @@ namespace binfilter {
 /*?*/ 					bShort = bCurShort;
 /*?*/ 					break;
 /*?*/ 				}
-/*?*/ 
+/*?*/
 /*?*/ 				i++;
 /*?*/ 			}
-/*?*/ 
+/*?*/
 /*?*/ 			rOStream << bShort << (USHORT)(i-nStart);
-/*?*/ 
+/*?*/
 /*?*/ 			if ( bShort )
 /*?*/ 			{
 /*?*/ 				for( ; nStart < i; nStart++ )
@@ -1435,10 +1143,10 @@ namespace binfilter {
 /*N*/ 		else if ( nPoints )
 /*N*/ 			rOStream.Write( rXPoly.pImpXPolygon->pPointAry, nPoints*sizeof(Point) );
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	if ( nPoints )
 /*N*/ 		rOStream.Write( rXPoly.pImpXPolygon->pFlagAry, nPoints );
-/*N*/ 
+/*N*/
 /*N*/ 	return rOStream;
 /*N*/ }
 
@@ -1452,24 +1160,16 @@ namespace binfilter {
 |*    ImpXPolyPolygon::ImpXPolyPolygon()
 |*
 |*    Beschreibung      Erzeugt das XPolygon-Array
-|*    Ersterstellung    CL 09.11.94
-|*    Letzte Aenderung  MM 09.11.94
 |*
 *************************************************************************/
 
-/*N*/ ImpXPolyPolygon::ImpXPolyPolygon( const ImpXPolyPolygon& rImpXPolyPoly ) :
-/*N*/ 					 aXPolyList( rImpXPolyPoly.aXPolyList )
-/*N*/ {
-/*N*/ 	nRefCount = 1;
-/*N*/ 
-/*N*/ 	// Einzelne Elemente duplizieren
-/*N*/ 	XPolygon* pXPoly = aXPolyList.First();
-/*N*/ 	while ( pXPoly )
-/*N*/ 	{
-/*N*/ 		aXPolyList.Replace( new XPolygon( *(aXPolyList.GetCurObject()) ) );
-/*N*/ 		pXPoly = aXPolyList.Next();
-/*N*/ 	}
-/*N*/ }
+ImpXPolyPolygon::ImpXPolyPolygon( const ImpXPolyPolygon& rImpXPolyPoly )
+    : aXPolyList( rImpXPolyPoly.aXPolyList )
+{
+    nRefCount = 1;
+    for ( size_t i = 0, n = aXPolyList.size(); i < n; ++i )
+        aXPolyList[ i ] = new XPolygon( *aXPolyList[ i ] );
+}
 
 
 /*************************************************************************
@@ -1477,56 +1177,32 @@ namespace binfilter {
 |*    ImpXPolyPolygon::~ImpXPolyPolygon()
 |*
 |*    Beschreibung      Loescht das Polygon-Array
-|*    Ersterstellung    CL 09.06.93
-|*    Letzte Aenderung  CL 09.06.93
 |*
 *************************************************************************/
 
-/*N*/ ImpXPolyPolygon::~ImpXPolyPolygon()
-/*N*/ {
-/*N*/ 	XPolygon* pXPoly = aXPolyList.First();
-/*N*/ 	while( pXPoly )
-/*N*/ 	{
-/*N*/ 		delete pXPoly;
-/*N*/ 		pXPoly = aXPolyList.Next();
-/*N*/ 	}
-/*N*/ }
-
-/*************************************************************************
-|*
-|*    ImpXPolyPolygon::operator==()
-|*
-|*    Ersterstellung    Joe 26-09-95
-|*    Letzte Aenderung
-|*
-*************************************************************************/
-
-
+ImpXPolyPolygon::~ImpXPolyPolygon()
+{
+    for (size_t i = 0, n = aXPolyList.size(); i < n; ++i )
+        delete aXPolyList[ i ];
+    aXPolyList.clear();
+}
 
 /*************************************************************************
 |*
 |*    XPolyPolygon::XPolyPolygon()
 |*
-|*    Beschreibung      POLY.SDW
-|*    Ersterstellung    CL 27.01.93
-|*    Letzte Aenderung  CL 27.01.93
-|*
 *************************************************************************/
 
-/*N*/ XPolyPolygon::XPolyPolygon( USHORT nInitSize, USHORT nResize )
-/*N*/ {
-/*N*/ 	DBG_CTOR(XPolyPolygon,NULL);
-/*N*/ 	pImpXPolyPolygon = new ImpXPolyPolygon( nInitSize, nResize );
-/*N*/ }
+XPolyPolygon::XPolyPolygon( USHORT /* nInitSize */, USHORT /* nResize */ )
+{
+    DBG_CTOR(XPolyPolygon,NULL);
+    pImpXPolyPolygon = new ImpXPolyPolygon();
+}
 
 
 /*************************************************************************
 |*
 |*    XPolyPolygon::XPolyPolygon()
-|*
-|*    Beschreibung      POLY.SDW
-|*    Ersterstellung    CL 27.01.93
-|*    Letzte Aenderung  CL 27.01.93
 |*
 *************************************************************************/
 
@@ -1534,16 +1210,12 @@ namespace binfilter {
 /*N*/ {
 /*N*/ 	DBG_CTOR(XPolyPolygon,NULL);
 /*N*/ 	pImpXPolyPolygon = new ImpXPolyPolygon;
-/*N*/ 	pImpXPolyPolygon->aXPolyList.Insert( new XPolygon( rXPoly ) );
+/*N*/ 	pImpXPolyPolygon->aXPolyList.push_back( new XPolygon( rXPoly ) );
 /*N*/ }
 
 /*************************************************************************
 |*
 |*    XPolyPolygon::XPolyPolygon()
-|*
-|*    Beschreibung      POLY.SDW
-|*    Ersterstellung    CL 27.01.93
-|*    Letzte Aenderung  CL 27.01.93
 |*
 *************************************************************************/
 
@@ -1559,8 +1231,6 @@ namespace binfilter {
 |*    XPolyPolygon::XPolyPolygon()
 |*
 |*    XPolyPolygon aus einen Standard-PolyPolygon erzeugen
-|*    Ersterstellung    18.01.95 ESO
-|*    Letzte Aenderung  18.01.95 ESO
 |*
 *************************************************************************/
 
@@ -1568,19 +1238,14 @@ namespace binfilter {
 /*N*/ {
 /*N*/ 	DBG_CTOR(XPolyPolygon,NULL);
 /*N*/ 	pImpXPolyPolygon = new ImpXPolyPolygon;
-/*N*/ 
-/*N*/ 	for (USHORT i = 0; i < rPolyPoly.Count(); i++)
-/*N*/ 		pImpXPolyPolygon->aXPolyList.Insert(
-/*N*/ 									new XPolygon(rPolyPoly.GetObject(i)) );
+/*N*/
+/*N*/ 	for ( size_t i = 0; i < rPolyPoly.Count(); i++ )
+/*N*/ 		pImpXPolyPolygon->aXPolyList.push_back( new XPolygon( rPolyPoly[ i ] ) );
 /*N*/ }
 
 /*************************************************************************
 |*
 |*    XPolyPolygon::~XPolyPolygon()
-|*
-|*    Beschreibung      POLY.SDW
-|*    Ersterstellung    CL 27.01.93
-|*    Letzte Aenderung  CL 27.01.93
 |*
 *************************************************************************/
 
@@ -1598,8 +1263,6 @@ namespace binfilter {
 |*    XPolygon::CheckReference()
 |*
 |*    Referenzzaehler desImpXPolyPoly pruefen und ggf. von diesem abkoppeln
-|*    Ersterstellung    18.01.95 ESO
-|*    Letzte Aenderung  18.01.95 ESO
 |*
 *************************************************************************/
 
@@ -1616,77 +1279,37 @@ namespace binfilter {
 |*
 |*    XPolyPolygon::Insert()
 |*
-|*    Beschreibung      POLY.SDW
-|*    Ersterstellung    CL 27.01.93
-|*    Letzte Aenderung  CL 27.01.93
-|*
 *************************************************************************/
 
-/*N*/ void XPolyPolygon::Insert( const XPolygon& rXPoly, USHORT nPos )
-/*N*/ {
-/*N*/ 	CheckReference();
-/*N*/ 	XPolygon* pXPoly = new XPolygon( rXPoly );
-/*N*/ 	pImpXPolyPolygon->aXPolyList.Insert( pXPoly, nPos );
-/*N*/ }
-
-/*************************************************************************
-|*
-|*    XPolyPolygon::Insert()
-|*
-|*    saemtliche XPolygone aus einem XPolyPolygon einfuegen
-|*    Ersterstellung    18.01.95 ESO
-|*    Letzte Aenderung  18.01.95 ESO
-|*
-*************************************************************************/
-
-
-/*************************************************************************
-|*
-|*    XPolyPolygon::Remove()
-|*
-|*    Beschreibung      POLY.SDW
-|*    Ersterstellung    CL 27.01.93
-|*    Letzte Aenderung  CL 27.01.93
-|*
-*************************************************************************/
-
-
-
-/*************************************************************************
-|*
-|*    XPolyPolygon::Replace()
-|*
-|*    Beschreibung      POLY.SDW
-|*    Ersterstellung    CL 27.01.93
-|*    Letzte Aenderung  CL 27.01.93
-|*
-*************************************************************************/
-
-
+void XPolyPolygon::Insert( const XPolygon& rXPoly, USHORT nPos )
+{
+    CheckReference();
+    XPolygon* pXPoly = new XPolygon( rXPoly );
+    if ( nPos < pImpXPolyPolygon->aXPolyList.size() )
+    {
+        XPolygonList::iterator it = pImpXPolyPolygon->aXPolyList.begin();
+        ::std::advance( it, nPos );
+        pImpXPolyPolygon->aXPolyList.insert( it, pXPoly );
+    }
+    else
+        pImpXPolyPolygon->aXPolyList.push_back( pXPoly );
+}
 
 /*************************************************************************
 |*
 |*    XPolyPolygon::GetObject()
 |*
-|*    Beschreibung      POLY.SDW
-|*    Ersterstellung    CL 27.01.93
-|*    Letzte Aenderung  CL 27.01.93
-|*
 *************************************************************************/
 
 /*N*/ const XPolygon& XPolyPolygon::GetObject( USHORT nPos ) const
 /*N*/ {
-/*N*/ 	return *(pImpXPolyPolygon->aXPolyList.GetObject( nPos ));
+/*N*/ 	return *( pImpXPolyPolygon->aXPolyList[ nPos ] );
 /*N*/ }
 
 
 /*************************************************************************
 |*
 |*    XPolyPolygon::Clear()
-|*
-|*    Beschreibung      POLY.SDW
-|*    Ersterstellung    CL 27.01.93
-|*    Letzte Aenderung  TH 17.10.94
 |*
 *************************************************************************/
 
@@ -1699,13 +1322,9 @@ namespace binfilter {
 /*N*/ 	}
 /*N*/ 	else
 /*N*/ 	{
-/*N*/ 		XPolygon* pXPoly = pImpXPolyPolygon->aXPolyList.First();
-/*N*/ 		while( pXPoly )
-/*N*/ 		{
-/*N*/ 			delete pXPoly;
-/*N*/ 			pXPoly = pImpXPolyPolygon->aXPolyList.Next();
-/*N*/ 		}
-/*N*/ 		pImpXPolyPolygon->aXPolyList.Clear();
+            for ( size_t i = 0, n = pImpXPolyPolygon->aXPolyList.size(); i < n; ++i )
+                delete pImpXPolyPolygon->aXPolyList[ i ];
+            pImpXPolyPolygon->aXPolyList.clear();
 /*N*/ 	}
 /*N*/ }
 
@@ -1714,15 +1333,11 @@ namespace binfilter {
 |*
 |*    XPolyPolygon::Count()
 |*
-|*    Beschreibung
-|*    Ersterstellung    CL 27.01.93
-|*    Letzte Aenderung  CL 27.01.93
-|*
 *************************************************************************/
 
 /*N*/ USHORT XPolyPolygon::Count() const
 /*N*/ {
-/*N*/ 	return (USHORT)(pImpXPolyPolygon->aXPolyList.Count());
+/*N*/ 	return (USHORT)(pImpXPolyPolygon->aXPolyList.size());
 /*N*/ }
 
 
@@ -1730,52 +1345,42 @@ namespace binfilter {
 |*
 |*    XPolyPolygon::Move()
 |*
-|*    Beschreibung      POLY.SDW
-|*    Ersterstellung    TH 04.10.94
-|*    Letzte Aenderung  TH 04.10.94
-|*
 *************************************************************************/
 
-/*N*/ void XPolyPolygon::Move( long nHorzMove, long nVertMove )
-/*N*/ {
-/*N*/ 	// Diese Abfrage sollte man fuer die DrawEngine durchfuehren
-/*N*/ 	if ( !nHorzMove && !nVertMove )
-/*N*/ 		return;
-/*N*/ 
-/*N*/ 	// Referenzcounter beruecksichtigen
-/*N*/ 	CheckReference();
-/*N*/ 
-/*N*/ 	// Punkte verschieben
-/*N*/ 	XPolygon* pXPoly = pImpXPolyPolygon->aXPolyList.First();
-/*N*/ 	while( pXPoly )
-/*N*/ 	{
-/*N*/ 		pXPoly->Move( nHorzMove, nVertMove );
-/*N*/ 		pXPoly = pImpXPolyPolygon->aXPolyList.Next();
-/*N*/ 	}
-/*N*/ }
+void XPolyPolygon::Move( long nHorzMove, long nVertMove )
+{
+    // Diese Abfrage sollte man fuer die DrawEngine durchfuehren
+    if ( !nHorzMove && !nVertMove )
+        return;
+
+    // Referenzcounter beruecksichtigen
+    CheckReference();
+
+    // Punkte verschieben
+    for ( size_t i = 0, n = pImpXPolyPolygon->aXPolyList.size(); i < n; ++i )
+    {
+        XPolygon* pXPoly = pImpXPolyPolygon->aXPolyList[ i ];
+        pXPoly->Move( nHorzMove, nVertMove );
+    }
+}
 
 /*************************************************************************
 |*
 |*    XPolyPolygon::GetBoundRect()
 |*
-|*    Beschreibung      POLY.SDW
-|*    Ersterstellung    TH 04.10.94
-|*    Letzte Aenderung  TH 04.10.94
-|*
 *************************************************************************/
 
 /*N*/ Rectangle XPolyPolygon::GetBoundRect(OutputDevice* pOut) const
 /*N*/ {
-/*N*/ 	USHORT    nXPoly = (USHORT)pImpXPolyPolygon->aXPolyList.Count();
+/*N*/ 	size_t nXPoly = pImpXPolyPolygon->aXPolyList.size();
 /*N*/ 	Rectangle aRect;
-/*N*/ 
-/*N*/ 	for ( USHORT n = 0; n < nXPoly; n++ )
+/*N*/
+/*N*/ 	for ( size_t n = 0; n < nXPoly; n++ )
 /*N*/ 	{
-/*N*/ 		const XPolygon* pXPoly = pImpXPolyPolygon->aXPolyList.GetObject( n );
-/*N*/ 
+/*N*/ 		const XPolygon* pXPoly = pImpXPolyPolygon->aXPolyList[ n ];
 /*N*/ 		aRect.Union( pXPoly->GetBoundRect(pOut) );
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	return aRect;
 /*N*/ }
 
@@ -1784,81 +1389,47 @@ namespace binfilter {
 |*
 |*    XPolyPolygon::operator[]()
 |*
-|*    Beschreibung      POLY.SDW
-|*    Ersterstellung    TH 28.10.94
-|*    Letzte Aenderung  TH 28.10.94
-|*
 *************************************************************************/
 
 /*N*/ XPolygon& XPolyPolygon::operator[]( USHORT nPos )
 /*N*/ {
 /*N*/ 	CheckReference();
-/*N*/ 	return *(pImpXPolyPolygon->aXPolyList.GetObject( nPos ));
+/*N*/ 	return *( pImpXPolyPolygon->aXPolyList[ nPos ] );
 /*N*/ }
 
 /*************************************************************************
 |*
 |*    XPolyPolygon::operator=()
 |*
-|*    Beschreibung      POLY.SDW
-|*    Ersterstellung    CL 27.01.93
-|*    Letzte Aenderung  CL 27.01.93
-|*
 *************************************************************************/
 
 /*N*/ XPolyPolygon& XPolyPolygon::operator=( const XPolyPolygon& rXPolyPoly )
 /*N*/ {
 /*N*/ 	rXPolyPoly.pImpXPolyPolygon->nRefCount++;
-/*N*/ 
+/*N*/
 /*N*/ 	if( pImpXPolyPolygon->nRefCount > 1 )
 /*N*/ 		pImpXPolyPolygon->nRefCount--;
 /*N*/ 	else
 /*N*/ 		delete pImpXPolyPolygon;
-/*N*/ 
+/*N*/
 /*N*/ 	pImpXPolyPolygon = rXPolyPoly.pImpXPolyPolygon;
 /*N*/ 	return *this;
 /*N*/ }
-
-
-/*************************************************************************
-|*
-|*    XPolyPolygon::operator==()
-|*
-|*    Beschreibung      POLY.SDW
-|*    Ersterstellung    CL  27.01.93
-|*    Letzte Aenderung  Joe 27.01.93
-|*
-*************************************************************************/
-
-
-
-/*************************************************************************
-|*
-|*    XPolyPolygon::operator!=()
-|*
-|*    Beschreibung      POLY.SDW
-|*    Ersterstellung    CL  27.01.93
-|*    Letzte Aenderung  Joe 27.01.93
-|*
-*************************************************************************/
-
 
 /*************************************************************************
 |*
 |*    XPolyPolygon::Translate()
 |*
 |*    Alle Polygone auf den uebergebenen Punkt verschieben
-|*    Ersterstellung    ESO 25.01.95
-|*    Letzte Aenderung  ESO 25.01.95
 |*
 *************************************************************************/
 
 /*N*/ void XPolyPolygon::Translate(const Point& rTrans)
 /*N*/ {
 /*N*/ 	CheckReference();
-/*N*/ 
+/*N*/
 /*N*/ 	for (USHORT i = 0; i < Count(); i++)
-/*N*/ 		pImpXPolyPolygon->aXPolyList.GetObject(i)->Translate(rTrans);
+/*N*/ 		pImpXPolyPolygon->aXPolyList[ i ]->Translate(rTrans);
 /*N*/ }
 
 /*************************************************************************
@@ -1867,17 +1438,15 @@ namespace binfilter {
 |*
 |*    Alle Polygone um den Punkt rCenter drehen, Sinus und Cosinus
 |*    muessen uebergeben werden
-|*    Ersterstellung    ESO 25.01.95
-|*    Letzte Aenderung  ESO 25.01.95
 |*
 *************************************************************************/
 
 /*N*/ void XPolyPolygon::Rotate(const Point& rCenter, double fSin, double fCos)
 /*N*/ {
 /*N*/ 	CheckReference();
-/*N*/ 
+/*N*/
 /*N*/ 	for (USHORT i = 0; i < Count(); i++)
-/*N*/ 		pImpXPolyPolygon->aXPolyList.GetObject(i)->Rotate(rCenter, fSin, fCos);
+/*N*/ 		pImpXPolyPolygon->aXPolyList[ i ]->Rotate(rCenter, fSin, fCos);
 /*N*/ }
 
 /*************************************************************************
@@ -1890,32 +1459,18 @@ namespace binfilter {
 
 /*************************************************************************
 |*
-|*    XPolyPolygon::Rotate()
-|*
-|*    Alle Poylgone um den Punkt rCenter mit dem Winkel nAngle drehen
-|*    Winkel in 10tel Grad, Wertebereich 0 - 3600
-|*    Ersterstellung    ESO 25.01.95
-|*    Letzte Aenderung  ESO 25.01.95
-|*
-*************************************************************************/
-
-
-/*************************************************************************
-|*
 |*    XPolyPolygon::Scale()
 |*
 |*    Alle Polygone in X- und/oder Y-Richtung skalieren
-|*    Ersterstellung    ESO 01.02.95
-|*    Letzte Aenderung  ESO 01.02.95
 |*
 *************************************************************************/
 
 /*N*/ void XPolyPolygon::Scale(double fSx, double fSy)
 /*N*/ {
 /*N*/ 	CheckReference();
-/*N*/ 
+/*N*/
 /*N*/ 	for (USHORT i = 0; i < Count(); i++)
-/*N*/ 		pImpXPolyPolygon->aXPolyList.GetObject(i)->Scale(fSx, fSy);
+/*N*/ 		pImpXPolyPolygon->aXPolyList[ i ]->Scale(fSx, fSy);
 /*N*/ }
 
 /*************************************************************************
@@ -1924,79 +1479,45 @@ namespace binfilter {
 |*
 |*    Alle Polygone in X-Richtung um einen beliebigen Winkel kippen,
 |*    bezogen auf eine Referenz-Y-Koordinate
-|*    Ersterstellung    ESO 01.02.95
-|*    Letzte Aenderung  ESO 01.02.95
 |*
 *************************************************************************/
 
 /*N*/ void XPolyPolygon::SlantX(long nYRef, double fSin, double fCos)
 /*N*/ {
 /*N*/ 	CheckReference();
-/*N*/ 
+/*N*/
 /*N*/ 	for (USHORT i = 0; i < Count(); i++)
-/*N*/ 		pImpXPolyPolygon->aXPolyList.GetObject(i)->SlantX(nYRef, fSin, fCos);
+/*N*/ 		pImpXPolyPolygon->aXPolyList[ i ]->SlantX(nYRef, fSin, fCos);
 /*N*/ }
-
-/*************************************************************************
-|*
-|*    XPolyPolygon::SlantY()
-|*
-|*    Alle Polygone in Y-Richtung um einen beliebigen Winkel kippen,
-|*    bezogen auf eine Referenz-X-Koordinate
-|*    Ersterstellung    ESO 01.02.95
-|*    Letzte Aenderung  ESO 01.02.95
-|*
-*************************************************************************/
-
-
-/*************************************************************************
-|*
-|*    XPolygon::Distort()
-|*
-|*    XPolygon verzerren, indem die Koordinaten relativ zu einem
-|*    Referenzrechteck in ein beliebiges Viereck skaliert werden
-|*    Zuordnung der Viereck-Punkte im Polygon zum Referenzrechteck:
-|*    0: links oben      0----1
-|*    1: rechts oben     |    |
-|*    2: rechts unten    3----2
-|*    3: links unten
-|*    Ersterstellung    ESO 07.07.95
-|*    Letzte Aenderung  ESO 07.07.95
-|*
-*************************************************************************/
-
-
 
 /*************************************************************************
 |*
 |*    XPolyPolygon::operator>>()
 |*
 |*    Beschreibung      Stream-Leseoperator
-|*    Ersterstellung    ESO 04.04.95
-|*    Letzte Aenderung  Joe 10.10.95  64k Begrenzung
 |*
 *************************************************************************/
 
 /*N*/ SvStream& operator>>( SvStream& rIStream, XPolyPolygon& rXPolyPoly )
 /*N*/ {
 /*N*/ 	DBG_CHKOBJ( &rXPolyPoly, XPolyPolygon, NULL );
-/*N*/ 
+/*N*/
 /*N*/ 	XPolygon* pXPoly;
-/*N*/ 
+/*N*/
 /*N*/ 	// Anzahl der Polygone einlesen
 /*N*/ 	USHORT nXPolyCount;
 /*N*/ 	rIStream >> nXPolyCount;
-/*N*/ 
-/*N*/ 	FASTBOOL bTruncated=FALSE;
+/*N*/
+/*N*/ 	bool bTruncated=FALSE;
 /*N*/ 	ULONG nAllPointCount=0; // Gesamtanzahl der Punkte mitzaehlen
-/*N*/ 
+/*N*/
 /*N*/ 	if ( rXPolyPoly.pImpXPolyPolygon->nRefCount > 1 ) {
 /*?*/ 		rXPolyPoly.pImpXPolyPolygon->nRefCount--;
 /*N*/ 	} else {
 /*N*/ 		delete rXPolyPoly.pImpXPolyPolygon;
 /*N*/ 	}
-/*N*/ 	rXPolyPoly.pImpXPolyPolygon = new ImpXPolyPolygon( nXPolyCount );
-/*N*/ 
+/*N*/ 	rXPolyPoly.pImpXPolyPolygon = new ImpXPolyPolygon();
+/*N*/
 /*N*/ 	while (nXPolyCount>0) {
 /*N*/ 		pXPoly = new XPolygon;
 /*N*/ 		rIStream >> *pXPoly;
@@ -2008,16 +1529,11 @@ namespace binfilter {
 /*?*/ 				pXPoly->Remove(nPos,nDel);
 /*?*/ 				bTruncated=TRUE; // Alle nachfolgenden Polygone werden ignoriert
 /*N*/ 			}
-/*N*/ 			rXPolyPoly.pImpXPolyPolygon->aXPolyList.Insert( pXPoly, LIST_APPEND );
+/*N*/ 			rXPolyPoly.pImpXPolyPolygon->aXPolyList.push_back( pXPoly );
 /*N*/ 		} else {
 /*?*/ 			delete pXPoly;
 /*N*/ 		}
 /*N*/ 		nXPolyCount--;
-/*N*/ 	}
-/*N*/ 
-/*N*/ 	if (bTruncated) {
-        // hier koennte man ein Flag am Stream setzen um zu vermerken
-        // dass beim Lesen Informationsverlusst aufgetreten ist !!!!!
 /*N*/ 	}
 
 /*N*/ 	return rIStream;
@@ -2028,29 +1544,25 @@ namespace binfilter {
 |*    XPolyPolygon::operator<<()
 |*
 |*    Beschreibung      Stream-Schreiboperator
-|*    Ersterstellung    ESO 04.04.95
-|*    Letzte Aenderung  ESO 04.04.95
 |*
 *************************************************************************/
 
-/*N*/ SvStream& operator<<( SvStream& rOStream, const XPolyPolygon& rXPolyPoly )
-/*N*/ {
-/*N*/ 	DBG_CHKOBJ( &rXPolyPoly, XPolyPolygon, NULL );
-/*N*/ 
-/*N*/ 	// Anzahl der Polygone rausschreiben
-/*N*/ 	rOStream << rXPolyPoly.Count();
-/*N*/ 
-/*N*/ 	// Die einzelnen Polygone ausgeben
-/*N*/ 	XPolygon* pXPoly = rXPolyPoly.pImpXPolyPolygon->aXPolyList.First();
-/*N*/ 
-/*N*/ 	while( pXPoly )
-/*N*/ 	{
-/*N*/ 		rOStream << *pXPoly;
-/*N*/ 		pXPoly = rXPolyPoly.pImpXPolyPolygon->aXPolyList.Next();
-/*N*/ 	}
-/*N*/ 
-/*N*/ 	return rOStream;
-/*N*/ }
+SvStream& operator<<( SvStream& rOStream, const XPolyPolygon& rXPolyPoly )
+{
+    DBG_CHKOBJ( &rXPolyPoly, XPolyPolygon, NULL );
 
+    // Anzahl der Polygone rausschreiben
+    rOStream << rXPolyPoly.Count();
+
+    // Die einzelnen Polygone ausgeben
+    for ( size_t i = 0, n = rXPolyPoly.Count(); i < n; ++i )
+    {
+        XPolygon* pXPoly = rXPolyPoly.pImpXPolyPolygon->aXPolyList[ i ];
+        rOStream << *pXPoly;
+    }
+    return rOStream;
+}
 
 }
+
+/* vim:set shiftwidth=4 softtabstop=4 expandtab: */

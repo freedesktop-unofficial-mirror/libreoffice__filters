@@ -1,7 +1,8 @@
+/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -28,27 +29,21 @@
 #ifndef _XMLEXP_HXX
 #define _XMLEXP_HXX
 
-#ifndef _XMLOFF_XMLEXP_HXX
 #include <bf_xmloff/xmlexp.hxx>
-#endif
 
-#ifndef _XMLITMAP_HXX
 #include "xmlitmap.hxx"
-#endif
-#ifndef _UNIVERSALL_REFERENCE_HXX
 #include <bf_xmloff/uniref.hxx>
-#endif
-#ifndef _XMLOFF_XMLTOKEN_HXX
 #include <bf_xmloff/xmltoken.hxx>
-#endif
+#include <vector>
+
 namespace binfilter {
 
 class SwPaM;
 class SwFmt;
 class SwFrmFmt;
-class SvXMLUnitConverter; 
-class SvXMLAutoStylePoolP; 
-class XMLPropertySetMapper; 
+class SvXMLUnitConverter;
+class SvXMLAutoStylePoolP;
+class XMLPropertySetMapper;
 
 class SvXMLExportItemMapper;
 
@@ -57,12 +52,12 @@ class SwTableLines;
 class SwTableBox;
 class SwXMLTableColumn_Impl;
 class SwXMLTableLines_Impl;
-class SwXMLTableLinesCache_Impl;
 class SwXMLTableColumnsSortByWidth_Impl;
 class SwXMLTableFrmFmtsSort_Impl;
 class SwXMLTableInfo_Impl;
 class SwTableNode;
 
+typedef ::std::vector< SwXMLTableLines_Impl* > SwXMLTableLinesCache_Impl;
 
 #ifndef XML_PROGRESS_REF_NOT_SET
 #define XML_PROGRESS_REF_NOT_SET ((sal_Int32)-1)
@@ -155,14 +150,14 @@ public:
 
 #ifdef XML_CORE_API
     // #110680#
-    SwXMLExport( 
+    SwXMLExport(
         const ::com::sun::star::uno::Reference< ::com::sun::star::lang::XMultiServiceFactory > xServiceFactory,
         const ::com::sun::star::uno::Reference< ::com::sun::star::frame::XModel > & rModel,
-        SwPaM& rPaM, 
+        SwPaM& rPaM,
         const ::rtl::OUString& rFileName,
         const ::com::sun::star::uno::Reference< ::com::sun::star::xml::sax::XDocumentHandler > & rHandler,
         const ::com::sun::star::uno::Reference< ::com::sun::star::document::XGraphicObjectResolver > &,
-        sal_Bool bExpWholeDoc, 
+        sal_Bool bExpWholeDoc,
         sal_Bool bExpFirstTableOnly,
         sal_Bool bShowProgr );
 #endif
@@ -192,7 +187,7 @@ public:
     virtual sal_Int64 SAL_CALL getSomething( const ::com::sun::star::uno::Sequence< sal_Int8 >& aIdentifier ) throw(::com::sun::star::uno::RuntimeException);
 
     // XServiceInfo (override parent method)
-    ::rtl::OUString SAL_CALL getImplementationName() 
+    ::rtl::OUString SAL_CALL getImplementationName()
         throw( ::com::sun::star::uno::RuntimeException );
 };
 
@@ -205,3 +200,4 @@ inline const SvXMLUnitConverter& SwXMLExport::GetTwipUnitConverter() const
 } //namespace binfilter
 #endif	//  _XMLEXP_HXX
 
+/* vim:set shiftwidth=4 softtabstop=4 expandtab: */

@@ -1,7 +1,8 @@
+/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -34,7 +35,6 @@
 #include <bf_svtools/rectitem.hxx>
 #include <tools/urlobj.hxx>
 #include <bf_basic/sbmeth.hxx>
-#include <bf_basic/basmgr.hxx>
 #include <bf_basic/sbxcore.hxx>
 #include <bf_basic/sbx.hxx>
 #include <bf_svtools/stritem.hxx>
@@ -80,9 +80,8 @@ TYPEINIT1(SfxUsrAnyItem, SfxPoolItem);
 /*N*/   aValue = rAny;
 /*N*/ }
 
-/*N*/ int SfxUsrAnyItem::operator==( const SfxPoolItem &rItem ) const
+/*N*/ int SfxUsrAnyItem::operator==( const SfxPoolItem & /*rItem*/ ) const
 /*N*/ {
-/*N*/ //   return rItem.ISA( SfxUsrAnyItem ) && ((SfxUsrAnyItem&)rItem).aValue == aValue;
 /*N*/   return sal_False;
 /*N*/ }
 
@@ -522,7 +521,7 @@ static const String sUnpacked  = String::CreateFromAscii( "Unpacked" );
 /*N*/                         if (bOK)
 /*N*/                             rSet.Put( SfxStringItem( SID_DOCINFO_TITLE, sVal ) );
 /*N*/                      }
-/*N*/ 
+/*N*/
 /*N*/             }
 /*N*/         }
 /*N*/     }
@@ -533,7 +532,7 @@ static const String sUnpacked  = String::CreateFromAscii( "Unpacked" );
 /*N*/ {
 /*N*/     // find number of properties to avoid permanent reallocations in the sequence
 /*N*/     sal_Int32 nProps=0;
-/*N*/ 
+/*N*/
 /*N*/         // special treatment for slots that are *not* meant to be recorded as slots (except SaveAs/To)
 /*N*/         if ( nSlotId == SID_OPENDOC || nSlotId == SID_SAVEASDOC )
 /*N*/         {
@@ -630,19 +629,19 @@ static const String sUnpacked  = String::CreateFromAscii( "Unpacked" );
 /*N*/                 nAdditional++;
 /*N*/             if ( rSet.GetItemState( SID_DOCINFO_TITLE ) == SFX_ITEM_SET )
 /*N*/                 nAdditional++;
-/*N*/ 
+/*N*/
 /*N*/             // consider additional arguments
 /*N*/             nProps += nAdditional;
 /*N*/         }
-/*N*/ 
+/*N*/
 /*N*/     if ( !nProps )
 /*N*/         return;
-/*N*/ 
+/*N*/
 /*N*/     // convert every item into a property
 /*N*/     ::com::sun::star::uno::Sequence< ::com::sun::star::beans::PropertyValue> aSequ( nProps );
 /*N*/     ::com::sun::star::beans::PropertyValue *pValue = aSequ.getArray();
 /*N*/     nProps = 0;
-/*N*/ 
+/*N*/
 /*N*/         if ( nSlotId == SID_OPENDOC || nSlotId == SID_SAVEASDOC )
 /*N*/         {
 /*N*/             const SfxPoolItem *pItem=0;
@@ -852,7 +851,7 @@ static const String sUnpacked  = String::CreateFromAscii( "Unpacked" );
 /*N*/                 pValue[nProps].Name = sJumpMark;
 /*N*/                 pValue[nProps++].Value <<= (  ::rtl::OUString(((SfxStringItem*)pItem)->GetValue())  );
 /*N*/             }
-/*N*/ 
+/*N*/
 /*N*/             if ( rSet.GetItemState( SID_CHARSET, sal_False, &pItem ) == SFX_ITEM_SET )
 /*N*/             {
 /*N*/                 pValue[nProps].Name = sCharacterSet;
@@ -879,7 +878,7 @@ static const String sUnpacked  = String::CreateFromAscii( "Unpacked" );
 /*N*/                 pValue[nProps++].Value <<= ( ::rtl::OUString(((SfxStringItem*)pItem)->GetValue()) );
 /*N*/             }
 /*N*/         }
-/*N*/ 
+/*N*/
 /*N*/     rArgs = aSequ;
 /*N*/ }
 
@@ -887,65 +886,14 @@ static const String sUnpacked  = String::CreateFromAscii( "Unpacked" );
 
 extern "C" {
 
-/*N*/ 
-/*N*/ sal_Bool SAL_CALL sfx2_component_writeInfo(	void*	pServiceManager	,
-/*N*/ 										void*	pRegistryKey	)
-/*N*/ {
-/*N*/ 	::com::sun::star::uno::Reference< ::com::sun::star::registry::XRegistryKey >		xKey( reinterpret_cast< ::com::sun::star::registry::XRegistryKey* >( pRegistryKey ) )	;
-/*N*/ 
-/*N*/     // Eigentliche Implementierung und ihre Services registrieren
-/*N*/     ::rtl::OUString aImpl;
-/*N*/     ::rtl::OUString aTempStr;
-/*N*/     ::rtl::OUString aKeyStr;
-/*N*/     Reference< XRegistryKey > xNewKey;
-/*N*/     Reference< XRegistryKey > xLoaderKey;
-/*N*/ 
-/*N*/     // global app event broadcaster
-/*N*/     aImpl = ::rtl::OUString(RTL_CONSTASCII_USTRINGPARAM("/"));
-/*N*/     aImpl += SfxGlobalEvents_Impl::impl_getStaticImplementationName();
-/*N*/ 
-/*N*/     aTempStr = aImpl;
-/*N*/     aTempStr += ::rtl::OUString(RTL_CONSTASCII_USTRINGPARAM("/UNO/SERVICES"));
-/*N*/     xNewKey = xKey->createKey( aTempStr );
-/*N*/     xNewKey->createKey( ::rtl::OUString::createFromAscii("com.sun.star.frame.GlobalEventBroadcaster") );
-/*N*/ 
-/*N*/     // standalone document info
-/*N*/     aImpl = ::rtl::OUString(RTL_CONSTASCII_USTRINGPARAM("/"));
-/*N*/     aImpl += SfxStandaloneDocumentInfoObject::impl_getStaticImplementationName();
-/*N*/ 
-/*N*/     aTempStr = aImpl;
-/*N*/     aTempStr += ::rtl::OUString(RTL_CONSTASCII_USTRINGPARAM("/UNO/SERVICES"));
-/*N*/     xNewKey = xKey->createKey( aTempStr );
-/*N*/     xNewKey->createKey( ::rtl::OUString::createFromAscii("com.sun.star.document.StandaloneDocumentInfo") );
-/*N*/ 
-/*N*/ 	// script library container service
-/*N*/     aImpl = ::rtl::OUString(RTL_CONSTASCII_USTRINGPARAM("/"));
-/*N*/     aImpl += SfxScriptLibraryContainer::impl_getStaticImplementationName();
-/*N*/ 
-/*N*/     aTempStr = aImpl;
-/*N*/     aTempStr += ::rtl::OUString(RTL_CONSTASCII_USTRINGPARAM("/UNO/SERVICES"));
-/*N*/     xNewKey = xKey->createKey( aTempStr );
-/*N*/     xNewKey->createKey( ::rtl::OUString::createFromAscii("com.sun.star.script.ScriptLibraryContainer") );
-/*N*/ 
-/*N*/ 	// dialog library container service
-/*N*/     aImpl = ::rtl::OUString(RTL_CONSTASCII_USTRINGPARAM("/"));
-/*N*/     aImpl += SfxDialogLibraryContainer::impl_getStaticImplementationName();
-/*N*/ 
-/*N*/     aTempStr = aImpl;
-/*N*/     aTempStr += ::rtl::OUString(RTL_CONSTASCII_USTRINGPARAM("/UNO/SERVICES"));
-/*N*/     xNewKey = xKey->createKey( aTempStr );
-/*N*/     xNewKey->createKey( ::rtl::OUString::createFromAscii("com.sun.star.script.DialogLibraryContainer") );
-/*N*/ 
-/*N*/ 	return sal_True;
-/*N*/ }
-/*N*/ 
-/*N*/ void* SAL_CALL sfx2_component_getFactory(	const	sal_Char*	pImplementationName	,
+/*N*/
+/*N*/ SAL_DLLPUBLIC_EXPORT void* SAL_CALL sfx2_component_getFactory(	const	sal_Char*	pImplementationName	,
 /*N*/ 												void*		pServiceManager		,
-/*N*/ 												void*		pRegistryKey		)
+/*N*/ 												void*		/*pRegistryKey*/		)
 /*N*/ {
 /*N*/ 	// Set default return value for this operation - if it failed.
 /*N*/ 	void* pReturn = NULL ;
-/*N*/ 
+/*N*/
 /*N*/ 	if	(
 /*N*/ 			( pImplementationName	!=	NULL ) &&
 /*N*/ 			( pServiceManager		!=	NULL )
@@ -985,16 +933,16 @@ extern "C" {
 /*N*/ {
 /*N*/ 	rProperties = rProps;
 /*N*/ }
-/*N*/ 
+/*N*/
 /*N*/ ::com::sun::star::uno::Sequence< ::com::sun::star::beans::PropertyValue > SAL_CALL
 /*N*/ 	FilterOptionsContinuation::getFilterOptions()
 /*N*/ 		throw (::com::sun::star::uno::RuntimeException)
 /*N*/ {
 /*N*/ 	return rProperties;
 /*N*/ }
-/*N*/ 
+/*N*/
 /*N*/ //=========================================================================
-/*N*/ 
+/*N*/
 /*N*/ RequestFilterOptions::RequestFilterOptions( ::com::sun::star::uno::Reference< ::com::sun::star::frame::XModel > rModel,
 /*N*/ 							  ::com::sun::star::uno::Sequence< ::com::sun::star::beans::PropertyValue > rProperties )
 /*N*/ {
@@ -1004,23 +952,23 @@ extern "C" {
 /*N*/                                                        				  temp2,
 /*N*/ 																	  rModel,
 /*N*/ 																	  rProperties );
-/*N*/ 
+/*N*/
 /*N*/    	m_aRequest <<= aOptionsRequest;
-/*N*/ 
+/*N*/
 /*N*/       m_pAbort  = new comphelper::OInteractionAbort;
 /*N*/    	m_pOptions = new FilterOptionsContinuation;
-/*N*/ 
+/*N*/
 /*N*/    	m_lContinuations.realloc( 2 );
 /*N*/    	m_lContinuations[0] = ::com::sun::star::uno::Reference< ::com::sun::star::task::XInteractionContinuation >( m_pAbort  );
 /*N*/    	m_lContinuations[1] = ::com::sun::star::uno::Reference< ::com::sun::star::task::XInteractionContinuation >( m_pOptions );
 /*N*/ }
-/*N*/ 
+/*N*/
 /*N*/ ::com::sun::star::uno::Any SAL_CALL RequestFilterOptions::getRequest()
 /*N*/ 		throw( ::com::sun::star::uno::RuntimeException )
 /*N*/ {
 /*N*/ 	return m_aRequest;
 /*N*/ }
-/*N*/ 
+/*N*/
 /*N*/ ::com::sun::star::uno::Sequence< ::com::sun::star::uno::Reference< ::com::sun::star::task::XInteractionContinuation > >
 /*N*/ 	SAL_CALL RequestFilterOptions::getContinuations()
 /*N*/ 		throw( ::com::sun::star::uno::RuntimeException )
@@ -1028,3 +976,5 @@ extern "C" {
 /*N*/ 	return m_lContinuations;
 /*N*/ }
 }
+
+/* vim:set shiftwidth=4 softtabstop=4 expandtab: */

@@ -1,7 +1,8 @@
+/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -220,7 +221,7 @@ void SAL_CALL LayoutNodeContext::endFastElement( ::sal_Int32 )
 }
 
 /** convert the XML tag to a variable index in the array
- * @param aTag the tag, wihout namespace
+ * @param aTag the tag, without namespace
  * @return the variable index. -1 is an error
  */
 sal_Int32 LayoutNodeContext::tagToVarIdx( sal_Int32 aTag )
@@ -354,3 +355,5 @@ LayoutNodeContext::createFastChildContext( ::sal_Int32 aElement,
 
 
 } }
+
+/* vim:set shiftwidth=4 softtabstop=4 expandtab: */

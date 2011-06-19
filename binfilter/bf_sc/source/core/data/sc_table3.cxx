@@ -1,7 +1,8 @@
+/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -25,9 +26,6 @@
  *
  ************************************************************************/
 
-#ifdef PCH
-#endif
-
 #ifdef _MSC_VER
 #pragma hdrstop
 #endif
@@ -38,9 +36,7 @@
 #include <unotools/textsearch.hxx>
 #include <unotools/collatorwrapper.hxx>
 #include <stdlib.h>
-#ifndef _UNOTOOLS_TRANSLITERATIONWRAPPER_HXX
 #include <unotools/transliterationwrapper.hxx>
-#endif
 
 #include "scitems.hxx"
 #include "cell.hxx"
@@ -67,7 +63,7 @@ struct ScSortInfo
     DECL_FIXEDMEMPOOL_NEWDEL( ScSortInfo );
 };
 /*N*/ const USHORT nMemPoolSortInfo = (0x8000 - 64) / sizeof(ScSortInfo);
-/*N*/ IMPL_FIXEDMEMPOOL_NEWDEL( ScSortInfo, nMemPoolSortInfo, nMemPoolSortInfo )//STRIP008 ;
+/*N*/ IMPL_FIXEDMEMPOOL_NEWDEL( ScSortInfo, nMemPoolSortInfo, nMemPoolSortInfo )
 
 // END OF STATIC DATA -----------------------------------------------------
 
@@ -83,7 +79,7 @@ struct ScSortInfo
 /*N*/ {
 /*N*/ 	if ( pSortCollator )
 /*N*/ 	{
-DBG_BF_ASSERT(0, "STRIP"); //STRIP001 /*?*/ 		if ( !IsSortCollatorGlobal() )
+DBG_BF_ASSERT(0, "STRIP");
 /*N*/ 	}
 /*N*/ }
 
@@ -124,16 +120,16 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 /*?*/ 		if ( !IsSortCollatorGlobal() )
 /*N*/ {
 /*N*/ 	if (!rParam.GetEntry(0).bDoQuery)
 /*N*/ 		return TRUE;
-/*N*/ 
+/*N*/
 /*N*/ 	//---------------------------------------------------------------
-/*N*/ 
+/*N*/
 /*N*/ 	const USHORT nFixedBools = 32;
 /*N*/ 	BOOL aBool[nFixedBools];
 /*N*/     BOOL aTest[nFixedBools];
 /*N*/ 	USHORT nEntryCount = rParam.GetEntryCount();
 /*N*/     BOOL* pPasst = ( nEntryCount <= nFixedBools ? &aBool[0] : new BOOL[nEntryCount] );
 /*N*/     BOOL* pTest = ( nEntryCount <= nFixedBools ? &aTest[0] : new BOOL[nEntryCount] );
-/*N*/ 
+/*N*/
 /*N*/ 	short	nPos = -1;
 /*N*/ 	USHORT	i	 = 0;
 /*N*/ 	BOOL	bMatchWholeCell = pDocument->GetDocOptions().IsMatchWholeCell();
@@ -141,17 +137,17 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 /*?*/ 		if ( !IsSortCollatorGlobal() )
 /*N*/ 		ScGlobal::pCollator);
 /*N*/     ::utl::TransliterationWrapper* pTransliteration = (rParam.bCaseSens ?
 /*N*/         ScGlobal::pCaseTransliteration : ScGlobal::pTransliteration);
-/*N*/ 
+/*N*/
 /*N*/ 	while ( (i < nEntryCount) && rParam.GetEntry(i).bDoQuery )
 /*N*/ 	{
 /*N*/ 		ScQueryEntry& rEntry = rParam.GetEntry(i);
 /*N*/         // we can only handle one single direct query
 /*N*/         if ( !pCell || i > 0 )
 /*?*/             pCell = GetCell( rEntry.nField, nRow );
-/*N*/ 
+/*N*/
 /*N*/ 		BOOL bOk = FALSE;
 /*N*/         BOOL bTestEqual = FALSE;
-/*N*/ 
+/*N*/
 /*N*/ 		if ( pSpecial && pSpecial[i] )
 /*N*/ 		{
 /*?*/ 			if (rEntry.nVal == SC_EMPTYFIELDS)
@@ -176,7 +172,7 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 /*?*/ 		if ( !IsSortCollatorGlobal() )
 /*?*/                     default:
 /*?*/                         nCellVal = 0.0;
 /*N*/                 }
-/*N*/ 
+/*N*/
 /*N*/             }
 /*N*/             else
 /*?*/                 nCellVal = GetValue( rEntry.nField, nRow );
@@ -204,6 +200,8 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 /*?*/ 		if ( !IsSortCollatorGlobal() )
 /*?*/ 				case SC_NOT_EQUAL :
 /*?*/                     bOk = !::rtl::math::approxEqual( nCellVal, rEntry.nVal );
 /*?*/ 					break;
+/*?*/ 				default :
+/*?*/ 					break;
 /*N*/ 			}
 /*N*/ 		}
 /*N*/ 		else if ( (rEntry.eOp == SC_EQUAL || rEntry.eOp == SC_NOT_EQUAL)
@@ -222,7 +220,7 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 /*?*/ 		if ( !IsSortCollatorGlobal() )
 /*N*/             }
 /*N*/             else
 /*?*/                 GetInputString( rEntry.nField, nRow, aCellStr );
-/*N*/ 
+/*N*/
 /*N*/             BOOL bRealRegExp = (rParam.bRegExp && ((rEntry.eOp == SC_EQUAL)
 /*N*/                 || (rEntry.eOp == SC_NOT_EQUAL)));
 /*N*/             BOOL bTestRegExp = (pbTestEqualCondition && rParam.bRegExp
@@ -285,11 +283,13 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 /*?*/ 		if ( !IsSortCollatorGlobal() )
 /*?*/                             if ( bOk && pbTestEqualCondition && !bTestEqual )
 /*?*/                                 bTestEqual = (nCompare == 0);
 /*?*/ 							break;
+/*?*/ 						default :
+/*?*/ 							break;
 /*?*/ 					}
 /*N*/ 				}
 /*N*/ 			}
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		if (nPos == -1)
 /*N*/ 		{
 /*N*/ 			nPos++;
@@ -312,13 +312,13 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 /*?*/ 		if ( !IsSortCollatorGlobal() )
 /*N*/ 		}
 /*N*/ 		i++;
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	for ( i=1; (short)i <= nPos; i++ )
 /*N*/     {
 /*?*/ 		pPasst[0] = pPasst[0] || pPasst[i];
 /*?*/         pTest[0] = pTest[0] || pTest[i];
 /*N*/     }
-/*N*/ 
+/*N*/
 /*N*/ 	BOOL bRet = pPasst[0];
 /*N*/ 	if ( pPasst != &aBool[0] )
 /*?*/ 		delete [] pPasst;
@@ -326,7 +326,7 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 /*?*/ 		if ( !IsSortCollatorGlobal() )
 /*N*/         *pbTestEqualCondition = pTest[0];
 /*N*/     if ( pTest != &aTest[0] )
 /*?*/         delete [] pTest;
-/*N*/ 
+/*N*/
 /*N*/ 	return bRet;
 /*N*/ }
 
@@ -334,10 +334,10 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 /*?*/ 		if ( !IsSortCollatorGlobal() )
 
 
 
-/*N*/ BOOL ScTable::CreateQueryParam(USHORT nCol1, USHORT nRow1, USHORT nCol2, USHORT nRow2, ScQueryParam& rQueryParam)
+/*N*/ BOOL ScTable::CreateQueryParam(USHORT, USHORT, USHORT, USHORT, ScQueryParam&)
 /*N*/ {
-DBG_BF_ASSERT(0, "STRIP"); //STRIP001 //STRIP001 	USHORT i, nCount;
-return FALSE;//STRIP001 	return bValid;
+DBG_BF_ASSERT(0, "STRIP");
+return FALSE;
 /*N*/ }
 
 
@@ -347,21 +347,21 @@ return FALSE;//STRIP001 	return bValid;
 /*N*/ long ScTable::GetCellCount() const
 /*N*/ {
 /*N*/ 	long nCellCount = 0;
-/*N*/ 
+/*N*/
 /*N*/ 	for ( USHORT nCol=0; nCol<=MAXCOL; nCol++ )
 /*N*/ 		nCellCount += aCol[nCol].GetCellCount();
-/*N*/ 
+/*N*/
 /*N*/ 	return nCellCount;
 /*N*/ }
 
 /*N*/ long ScTable::GetWeightedCount() const
 /*N*/ {
 /*N*/ 	long nCellCount = 0;
-/*N*/ 
+/*N*/
 /*N*/ 	for ( USHORT nCol=0; nCol<=MAXCOL; nCol++ )
 /*N*/ 		if ( aCol[nCol].GetCellCount() )					// GetCellCount ist inline
 /*N*/ 			nCellCount += aCol[nCol].GetWeightedCount();
-/*N*/ 
+/*N*/
 /*N*/ 	return nCellCount;
 /*N*/ }
 
@@ -372,9 +372,9 @@ return FALSE;//STRIP001 	return bValid;
 /*N*/ 	//	Cursor neben einer Markierung nicht beruecksichtigen:
 /*N*/ 	//!	nur noch MarkData uebergeben, Cursorposition ggf. hineinselektieren!!!
 /*N*/ 	BOOL bSingle = ( rMark.IsMarked() || !rMark.IsMultiMarked() );
-/*N*/ 
+/*N*/
 /*N*/ 	// Mehrfachselektion:
-/*N*/ 
+/*N*/
 /*N*/ 	USHORT nCol;
 /*N*/ 	if ( rMark.IsMultiMarked() )
 /*N*/ 		for (nCol=0; nCol<=MAXCOL && !rData.bError; nCol++)
@@ -382,9 +382,9 @@ return FALSE;//STRIP001 	return bValid;
 /*N*/ 				aCol[nCol].UpdateSelectionFunction( rMark, rData, pRowFlags,
 /*N*/ 													bSingle && ( nCol >= nStartCol && nCol <= nEndCol ),
 /*N*/ 													nStartRow, nEndRow );
-/*N*/ 
+/*N*/
 /*N*/ 	//	Einfachselektion (oder Cursor) nur wenn nicht negativ (und s.o.):
-/*N*/ 
+/*N*/
 /*N*/ 	if ( bSingle && !rMark.IsMarkNegative() )
 /*N*/ 		for (nCol=nStartCol; nCol<=nEndCol && !rData.bError; nCol++)
 /*N*/ 			if ( !pColFlags || !( pColFlags[nCol] & CR_HIDDEN ) )
@@ -393,7 +393,7 @@ return FALSE;//STRIP001 	return bValid;
 
 /*N*/ void ScTable::FindConditionalFormat( ULONG nKey, ScRangeList& rList )
 /*N*/ {
-/*N*/ 	USHORT nStartRow, nEndRow;
+/*N*/ 	USHORT nStartRow(0), nEndRow(0);
 /*N*/ 	for (USHORT nCol=0; nCol<=MAXCOL; nCol++)
 /*N*/ 	{
 /*N*/ 		ScAttrIterator* pIter = aCol[nCol].CreateAttrIterator( 0, MAXCOL );
@@ -412,3 +412,5 @@ return FALSE;//STRIP001 	return bValid;
 
 
 }
+
+/* vim:set shiftwidth=4 softtabstop=4 expandtab: */

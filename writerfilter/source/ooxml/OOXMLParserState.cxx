@@ -1,7 +1,8 @@
+/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -41,7 +42,7 @@ OOXMLParserState::OOXMLParserState() :
     mbInSectionGroup(false),
     mbInParagraphGroup(false),
     mbInCharacterGroup(false),
-    mbLastParagraphInSection(false), 
+    mbLastParagraphInSection(false),
     mbForwardEvents(true),
     mnContexts(0),
     mnHandle(0),
@@ -91,7 +92,7 @@ bool OOXMLParserState::isInCharacterGroup() const
 void OOXMLParserState::setInCharacterGroup(bool bInCharacterGroup)
 {
     mbInCharacterGroup = bInCharacterGroup;
-} 
+}
 
 void OOXMLParserState::setForwardEvents(bool bForwardEvents)
 {
@@ -127,12 +128,12 @@ OOXMLDocument * OOXMLParserState::getDocument() const
     return mpDocument;
 }
 
-void OOXMLParserState::setXNoteId(const rtl::OUString & rId)
+void OOXMLParserState::setXNoteId(const sal_Int32 nId)
 {
-    mpDocument->setXNoteId(rId);
+    mpDocument->setXNoteId(nId);
 }
 
-const rtl::OUString & OOXMLParserState::getXNoteId() const
+sal_Int32 OOXMLParserState::getXNoteId() const
 {
     return mpDocument->getXNoteId();
 }
@@ -154,7 +155,7 @@ void OOXMLParserState::resolveCharacterProperties(Stream & rStream)
         mpCharacterProps.reset(new OOXMLPropertySetImpl());
 
 #ifdef DEBUG_PROPERTIES
-        debug_logger->endElement("resolveCharacterProperties");
+        debug_logger->endElement();
 #endif
     }
 }
@@ -171,37 +172,37 @@ void OOXMLParserState::setCharacterProperties
 void OOXMLParserState::setCellProperties
 (OOXMLPropertySet::Pointer_t pProps)
 {
-    if (mCellProps.size() > 0)
+    if (!mCellProps.empty())
     {
         OOXMLPropertySet::Pointer_t & rCellProps = mCellProps.top();
-        
+
         if (rCellProps.get() == NULL)
             rCellProps = pProps;
-        else 
+        else
             rCellProps->add(pProps);
     }
 }
-    
+
 void OOXMLParserState::setRowProperties
 (OOXMLPropertySet::Pointer_t pProps)
 {
-    if (mRowProps.size() > 0)
+    if (!mRowProps.empty())
     {
         OOXMLPropertySet::Pointer_t & rRowProps = mRowProps.top();
-        
+
         if (rRowProps.get() == NULL)
             rRowProps = pProps;
-        else 
+        else
             rRowProps->add(pProps);
     }
 }
 
 void OOXMLParserState::resolveCellProperties(Stream & rStream)
 {
-    if (mCellProps.size() > 0)
+    if (!mCellProps.empty())
     {
         OOXMLPropertySet::Pointer_t & rCellProps = mCellProps.top();
-        
+
         if (rCellProps.get() != NULL)
         {
             rStream.props(rCellProps);
@@ -212,10 +213,10 @@ void OOXMLParserState::resolveCellProperties(Stream & rStream)
 
 void OOXMLParserState::resolveRowProperties(Stream & rStream)
 {
-    if (mRowProps.size() > 0)
+    if (!mRowProps.empty())
     {
         OOXMLPropertySet::Pointer_t & rRowProps = mRowProps.top();
-        
+
         if (rRowProps.get() != NULL)
         {
             rStream.props(rRowProps);
@@ -226,10 +227,10 @@ void OOXMLParserState::resolveRowProperties(Stream & rStream)
 
 void OOXMLParserState::resolveTableProperties(Stream & rStream)
 {
-    if (mTableProps.size() > 0)
+    if (!mTableProps.empty())
     {
         OOXMLPropertySet::Pointer_t & rTableProps = mTableProps.top();
-        
+
         if (rTableProps.get() != NULL)
         {
             rStream.props(rTableProps);
@@ -241,10 +242,10 @@ void OOXMLParserState::resolveTableProperties(Stream & rStream)
 void OOXMLParserState::setTableProperties
 (OOXMLPropertySet::Pointer_t pProps)
 {
-    if (mTableProps.size() > 0)
+    if (!mTableProps.empty())
     {
         OOXMLPropertySet::Pointer_t & rTableProps = mTableProps.top();
-        if (rTableProps.get() == NULL) 
+        if (rTableProps.get() == NULL)
             rTableProps = pProps;
         else
             rTableProps->add(pProps);
@@ -256,12 +257,12 @@ void OOXMLParserState::startTable()
     OOXMLPropertySet::Pointer_t pCellProps;
     OOXMLPropertySet::Pointer_t pRowProps;
     OOXMLPropertySet::Pointer_t pTableProps;
-    
+
     mCellProps.push(pCellProps);
     mRowProps.push(pRowProps);
     mTableProps.push(pTableProps);
 }
-    
+
 void OOXMLParserState::endTable()
 {
     mCellProps.pop();
@@ -274,22 +275,17 @@ void OOXMLParserState::incContextCount()
     mnContexts++;
 }
 
-#ifdef DEBUG
+#if OSL_DEBUG_LEVEL > 1
 unsigned int OOXMLParserState::getContextCount() const
 {
     return mnContexts;
 }
 
-string OOXMLParserState::toString() const
+void OOXMLParserState::dumpXml( const TagLogger::Pointer_t& pLogger )
 {
-    return toTag()->toString();
-}
+    pLogger->startElement("parserstate");
 
-XMLTag::Pointer_t OOXMLParserState::toTag() const
-{
-    XMLTag::Pointer_t pTag(new XMLTag("parserstate"));
-
-    string sTmp; 
+    string sTmp;
 
     if (isInSectionGroup())
         sTmp += "s";
@@ -305,20 +301,18 @@ XMLTag::Pointer_t OOXMLParserState::toTag() const
         sTmp += "c";
     else
         sTmp += "-";
-    
+
     if (isForwardEvents())
         sTmp += "f";
     else
         sTmp += "-";
 
-    pTag->addAttr("state", sTmp);
-    pTag->addAttr("XNoteId", 
-                  OUStringToOString(getXNoteId(), 
-                                    RTL_TEXTENCODING_ASCII_US).getStr());
+    pLogger->attribute("state", sTmp);
+    pLogger->attribute("XNoteId", getXNoteId() );
     if (mpCharacterProps != OOXMLPropertySet::Pointer_t())
-        pTag->chars(mpCharacterProps->toString());
+        pLogger->chars(mpCharacterProps->toString());
 
-    return pTag;
+    pLogger->endElement();
  }
 
 XPathLogger & OOXMLParserState::getXPathLogger()
@@ -328,3 +322,5 @@ XPathLogger & OOXMLParserState::getXPathLogger()
 #endif
 
 }}
+
+/* vim:set shiftwidth=4 softtabstop=4 expandtab: */

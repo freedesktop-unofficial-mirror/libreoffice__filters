@@ -1,7 +1,8 @@
+/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -28,7 +29,6 @@
 #define _SFX_APPDATA_HXX
 
 #include <tools/link.hxx>
-#include <tools/list.hxx>
 #include <bf_svtools/lstner.hxx>
 #include <vcl/timer.hxx>
 #include <tools/string.hxx>
@@ -74,7 +74,7 @@ namespace sfx2 { namespace appl { class ImeStatusWindow; } }
 // SfxAppData_Impl
 //=========================================================================
 
-class SfxAppData_Impl 
+class SfxAppData_Impl
 {
 public:
     IndexBitSet                         aIndexBitSet;           // for counting noname documents
@@ -116,3 +116,4 @@ public:
 #endif // #ifndef _SFX_APPDATA_HXX
 
 
+/* vim:set shiftwidth=4 softtabstop=4 expandtab: */

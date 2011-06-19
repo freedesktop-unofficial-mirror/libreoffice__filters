@@ -1,7 +1,8 @@
+/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -25,18 +26,12 @@
  *
  ************************************************************************/
 
-#ifndef _SVXIDS_HRC
 #include <bf_svx/svxids.hrc>
-#endif
 
 
-#ifndef _RTL_USTRBUF_HXX_
 #include <rtl/ustrbuf.hxx>
-#endif
 
-#ifndef _SD_UNOKYWDS_HXX_
 #include "unokywds.hxx"
-#endif
 
 #include <vector>
 
@@ -61,7 +56,7 @@ using namespace ::std;
 |*
 \************************************************************************/
 
-FrameView::FrameView(SdDrawDocument* pDrawDoc, FrameView* pFrameView )
+FrameView::FrameView(SdDrawDocument* pDrawDoc )
 : SdrView(pDrawDoc, (OutputDevice*) NULL)
 , nRefCount(0)
 , nPresViewShellId(SID_VIEWSHELL0)
@@ -78,20 +73,6 @@ FrameView::FrameView(SdDrawDocument* pDrawDoc, FrameView* pFrameView )
     SetFrameDragSingles( TRUE );
     SetSlidesPerRow(4);
 
-    if( NULL == pFrameView )
-    {
-        SdDrawDocShell* pDocShell = pDrawDoc->GetDocSh();
-
-        if ( pDocShell )
-        {
-            /**********************************************************************
-            * Das Dokument wurde geladen, ist eine FrameView vorhanden?
-            **********************************************************************/
-            ULONG nSdViewShellCount = 0;
-            SdDrawDocument* pDoc = pDocShell->GetDoc();
-        }
-    }
-
         aVisibleLayers.SetAll();
         aPrintableLayers.SetAll();
         SetGridCoarse( Size( 1000, 1000 ) );
@@ -107,11 +88,7 @@ FrameView::FrameView(SdDrawDocument* pDrawDoc, FrameView* pFrameView )
         eHandoutEditMode = EM_MASTERPAGE;
         bLayerMode = FALSE;
         SetEliminatePolyPoints(FALSE);
-
-        {
-            bool bUseContrast = Application::GetSettings().GetStyleSettings().GetHighContrastMode();
-            nDrawMode = bUseContrast ? OUTPUT_DRAWMODE_CONTRAST : OUTPUT_DRAWMODE_COLOR;
-        }
+        nDrawMode = OUTPUT_DRAWMODE_COLOR;
         nPreviewDrawMode = nDrawMode;
         bShowPreviewInPageMode = FALSE;
         bShowPreviewInMasterPageMode = TRUE;
@@ -126,10 +103,10 @@ FrameView::FrameView(SdDrawDocument* pDrawDoc, FrameView* pFrameView )
         }
 
         SfxObjectShell* pObjShell = pDrawDoc->GetObjectShell();
-        sal_Bool bReadOnly = sal_False;
+        sal_Bool bLclReadOnly = sal_False;
         if( pObjShell )
-            bReadOnly = pObjShell->IsReadOnly();
-        if( bReadOnly )
+            bLclReadOnly = pObjShell->IsReadOnly();
+        if( bLclReadOnly )
             bInitDesignMode = sal_False;
         SetDesignMode( bInitDesignMode );
 
@@ -373,7 +350,7 @@ EditMode FrameView::GetViewShEditMode(PageKind eKind)
 static OUString createHelpLinesString( const SdrHelpLineList& rHelpLines )
 {
     OUStringBuffer aLines;
- 
+
     const USHORT nCount = rHelpLines.GetCount();
     for( USHORT nHlpLine = 0; nHlpLine < nCount; nHlpLine++ )
     {
@@ -397,7 +374,7 @@ static OUString createHelpLinesString( const SdrHelpLineList& rHelpLines )
                 aLines.append( (sal_Int32)rPos.Y() );
                 break;
             default:
-                DBG_ERROR( "Unsupported helpline Kind!" );
+                OSL_FAIL( "Unsupported helpline Kind!" );
         }
     }
 
@@ -405,7 +382,7 @@ static OUString createHelpLinesString( const SdrHelpLineList& rHelpLines )
 }
 
 #define addValue( n, v ) push_back( std::pair< OUString, Any >( OUString( RTL_CONSTASCII_USTRINGPARAM( n ) ), v ) )
-void FrameView::WriteUserDataSequence ( ::com::sun::star::uno::Sequence < ::com::sun::star::beans::PropertyValue >& rValues, sal_Bool bBrowse )
+void FrameView::WriteUserDataSequence ( ::com::sun::star::uno::Sequence < ::com::sun::star::beans::PropertyValue >& rValues, sal_Bool /*bBrowse*/ )
 {
     std::vector< std::pair< OUString, Any > > aUserData;
 
@@ -457,12 +434,12 @@ void FrameView::WriteUserDataSequence ( ::com::sun::star::uno::Sequence < ::com:
     aUserData.addValue( sUNO_View_EditModeHandout, makeAny( (sal_Int32)GetViewShEditMode( PK_HANDOUT ) ) );
 
     {
-        const Rectangle aVisArea = GetVisArea();
+        const Rectangle aLclVisArea = GetVisArea();
 
-        aUserData.addValue( sUNO_View_VisibleAreaTop, makeAny( (sal_Int32)aVisArea.Top() ) );
-        aUserData.addValue( sUNO_View_VisibleAreaLeft, makeAny( (sal_Int32)aVisArea.Left() ) );
-        aUserData.addValue( sUNO_View_VisibleAreaWidth, makeAny( (sal_Int32)aVisArea.GetWidth() ) );
-        aUserData.addValue( sUNO_View_VisibleAreaHeight, makeAny( (sal_Int32)aVisArea.GetHeight() ) );
+        aUserData.addValue( sUNO_View_VisibleAreaTop, makeAny( (sal_Int32)aLclVisArea.Top() ) );
+        aUserData.addValue( sUNO_View_VisibleAreaLeft, makeAny( (sal_Int32)aLclVisArea.Left() ) );
+        aUserData.addValue( sUNO_View_VisibleAreaWidth, makeAny( (sal_Int32)aLclVisArea.GetWidth() ) );
+        aUserData.addValue( sUNO_View_VisibleAreaHeight, makeAny( (sal_Int32)aLclVisArea.GetHeight() ) );
     }
 
     aUserData.addValue( sUNO_View_GridCoarseWidth, makeAny( (sal_Int32)GetGridCoarse().Width() ) );
@@ -484,7 +461,7 @@ void FrameView::WriteUserDataSequence ( ::com::sun::star::uno::Sequence < ::com:
     PropertyValue* pValue = &(rValues.getArray()[nOldLength]);
 
     std::vector< std::pair< OUString, Any > >::iterator aIter( aUserData.begin() );
-    for( ; aIter != aUserData.end(); aIter++, pValue++ )
+    for( ; aIter != aUserData.end(); ++aIter, ++pValue )
     {
         pValue->Name = (*aIter).first;
         pValue->Value = (*aIter).second;
@@ -497,11 +474,11 @@ void FrameView::WriteUserDataSequence ( ::com::sun::star::uno::Sequence < ::com:
      const sal_Unicode * pStr = rLines.getStr();
      SdrHelpLine aNewHelpLine;
      ::rtl::OUStringBuffer sBuffer;
- 
+
      while( *pStr )
      {
          Point aPoint;
- 
+
          switch( *pStr )
          {
          case (sal_Unicode)'P':
@@ -514,19 +491,19 @@ void FrameView::WriteUserDataSequence ( ::com::sun::star::uno::Sequence < ::com:
              aNewHelpLine.SetKind( SDRHELPLINE_HORIZONTAL );
              break;
          default:
-             DBG_ERROR( "syntax error in snap lines settings string" );
+             OSL_FAIL( "syntax error in snap lines settings string" );
              return;
          }
- 
+
          pStr++;
- 
+
          while( (*pStr >= sal_Unicode('0') && *pStr <= sal_Unicode('9')) || (*pStr == '+') || (*pStr == '-') )
          {
              sBuffer.append( *pStr++ );
          }
- 
+
          sal_Int32 nValue = sBuffer.makeStringAndClear().toInt32();
- 
+
          if( aNewHelpLine.GetKind() == SDRHELPLINE_HORIZONTAL )
          {
              aPoint.Y() = nValue;
@@ -534,43 +511,43 @@ void FrameView::WriteUserDataSequence ( ::com::sun::star::uno::Sequence < ::com:
          else
          {
              aPoint.X() = nValue;
- 
+
              if( aNewHelpLine.GetKind() == SDRHELPLINE_POINT )
              {
                  if( *pStr++ != ',' )
                      return;
- 
+
                  while( (*pStr >= sal_Unicode('0') && *pStr <= sal_Unicode('9')) || (*pStr == '+') || (*pStr == '-')  )
                  {
                      sBuffer.append( *pStr++ );
                  }
- 
+
                  aPoint.Y() = sBuffer.makeStringAndClear().toInt32();
- 
+
              }
          }
- 
+
          aNewHelpLine.SetPos( aPoint );
          rHelpLines.Insert( aNewHelpLine );
      }
  }
 
-/*?*/ void FrameView::ReadUserDataSequence ( const ::com::sun::star::uno::Sequence < ::com::sun::star::beans::PropertyValue >& rSequence, sal_Bool bBrowse )
+/*?*/ void FrameView::ReadUserDataSequence ( const ::com::sun::star::uno::Sequence < ::com::sun::star::beans::PropertyValue >& rSequence, sal_Bool /*bBrowse*/ )
 /*?*/ {
 /*?*/ 		const sal_Int32 nLength = rSequence.getLength();
      if (nLength)
      {
-         sal_Bool bBool;
-         sal_Int32 nInt32;
-         sal_Int16 nInt16;
+         sal_Bool bBool = sal_False;
+         sal_Int32 nInt32 = 0;
+         sal_Int16 nInt16 = 0;
          ::rtl::OUString aString;
- 
+
          sal_Int32 aSnapGridWidthXNum = GetSnapGridWidthX().GetNumerator();
          sal_Int32 aSnapGridWidthXDom = GetSnapGridWidthX().GetDenominator();
- 
+
          sal_Int32 aSnapGridWidthYNum = GetSnapGridWidthY().GetNumerator();
          sal_Int32 aSnapGridWidthYDom = GetSnapGridWidthY().GetDenominator();
- 
+
          const ::com::sun::star::beans::PropertyValue *pValue = rSequence.getConstArray();
          for (sal_Int16 i = 0 ; i < nLength; i++, pValue++ )
          {
@@ -697,47 +674,47 @@ void FrameView::WriteUserDataSequence ( ::com::sun::star::uno::Sequence < ::com:
              }
              else if (pValue->Name.equalsAsciiL( RTL_CONSTASCII_STRINGPARAM( sUNO_View_VisibleAreaTop ) ) )
              {
-                 sal_Int32 nTop;
+                 sal_Int32 nTop = 0;
                  if( pValue->Value >>= nTop )
                  {
-                     Rectangle aVisArea( GetVisArea() );
-                     aVisArea.nBottom += nTop - aVisArea.nTop;
-                     aVisArea.nTop = nTop;
-                     SetVisArea( aVisArea );
+                     Rectangle aLclVisArea( GetVisArea() );
+                     aLclVisArea.nBottom += nTop - aLclVisArea.nTop;
+                     aLclVisArea.nTop = nTop;
+                     SetVisArea( aLclVisArea );
                  }
              }
              else if (pValue->Name.equalsAsciiL( RTL_CONSTASCII_STRINGPARAM( sUNO_View_VisibleAreaLeft ) ) )
              {
-                 sal_Int32 nLeft;
+                 sal_Int32 nLeft = 0;
                  if( pValue->Value >>= nLeft )
                  {
-                     Rectangle aVisArea( GetVisArea() );
-                     aVisArea.nRight += nLeft - aVisArea.nLeft;
-                     aVisArea.nLeft = nLeft;
-                     SetVisArea( aVisArea );
+                     Rectangle aLclVisArea( GetVisArea() );
+                     aLclVisArea.nRight += nLeft - aLclVisArea.nLeft;
+                     aLclVisArea.nLeft = nLeft;
+                     SetVisArea( aLclVisArea );
                  }
              }
              else if (pValue->Name.equalsAsciiL( RTL_CONSTASCII_STRINGPARAM( sUNO_View_VisibleAreaWidth ) ) )
              {
-                 sal_Int32 nWidth;
+                 sal_Int32 nWidth = 0;
                  if( pValue->Value >>= nWidth )
                  {
-                     Rectangle aVisArea( GetVisArea() );
-                     aVisArea.nRight = aVisArea.nLeft + nWidth - 1;
-                     SetVisArea( aVisArea );
+                     Rectangle aLclVisArea( GetVisArea() );
+                     aLclVisArea.nRight = aLclVisArea.nLeft + nWidth - 1;
+                     SetVisArea( aLclVisArea );
                  }
              }
              else if (pValue->Name.equalsAsciiL( RTL_CONSTASCII_STRINGPARAM( sUNO_View_VisibleAreaHeight ) ) )
              {
-                 sal_Int32 nHeight;
+                 sal_Int32 nHeight = 0;
                  if( pValue->Value >>= nHeight )
                  {
-                     Rectangle aVisArea( GetVisArea() );
-                     aVisArea.nBottom = nHeight + aVisArea.nTop - 1;
-                     SetVisArea( aVisArea );
+                     Rectangle aLclVisArea( GetVisArea() );
+                     aLclVisArea.nBottom = nHeight + aLclVisArea.nTop - 1;
+                     SetVisArea( aLclVisArea );
                  }
              }
- 
+
              else if (pValue->Name.equalsAsciiL( RTL_CONSTASCII_STRINGPARAM( sUNO_View_GridIsVisible ) ) )
              {
                  if( pValue->Value >>= bBool )
@@ -745,7 +722,7 @@ void FrameView::WriteUserDataSequence ( ::com::sun::star::uno::Sequence < ::com:
                      SetGridVisible( bBool );
                  }
              }
- 
+
              else if (pValue->Name.equalsAsciiL( RTL_CONSTASCII_STRINGPARAM( sUNO_View_IsSnapToGrid ) ) )
              {
                  if( pValue->Value >>= bBool )
@@ -934,11 +911,13 @@ void FrameView::WriteUserDataSequence ( ::com::sun::star::uno::Sequence < ::com:
                  SetLockedLayers( aSetOfBytes );
              }
          }
- 
+
          const Fraction aSnapGridWidthX( aSnapGridWidthXNum, aSnapGridWidthXDom );
          const Fraction aSnapGridWidthY( aSnapGridWidthYNum, aSnapGridWidthYDom );
- 
+
          SetSnapGridWidth( aSnapGridWidthX, aSnapGridWidthY );
      }
 }
 } //namespace binfilter
+
+/* vim:set shiftwidth=4 softtabstop=4 expandtab: */

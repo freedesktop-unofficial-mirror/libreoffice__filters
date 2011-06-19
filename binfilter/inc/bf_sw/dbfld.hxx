@@ -1,7 +1,8 @@
+/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -30,9 +31,7 @@
 #include <bf_svtools/bf_solar.h>
 
 #include "fldbas.hxx"
-#ifndef _SWDBDATA_HXX
 #include <swdbdata.hxx>
-#endif
 namespace binfilter {
 
 class SwDoc;
@@ -100,9 +99,6 @@ public:
 
     // fuer Berechnungen in Ausdruecken
     void                ChgValue( double d, BOOL bVal );
-
-    // Evaluierung ueber den DBMgr String rauspulen
-    void                Evaluate();
 
     // Evaluierung fuer Kopf und Fusszeilen
     void 			    ChangeExpansion( const SwFrm*, const SwTxtFld* );
@@ -340,3 +336,5 @@ inline void	SwDBSetNumberField::SetSetNumber(long nNum)
 
 } //namespace binfilter
 #endif // _DBFLD_HXX
+
+/* vim:set shiftwidth=4 softtabstop=4 expandtab: */

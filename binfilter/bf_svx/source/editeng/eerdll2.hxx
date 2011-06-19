@@ -1,7 +1,8 @@
+/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -29,10 +30,10 @@
 #define _EERDLL2_HXX
 
 #include <forbiddencharacterstable.hxx>
-#include <vos/ref.hxx>
+#include <rtl/ref.hxx>
 namespace binfilter {
 
-class SfxPoolItem; 
+class SfxPoolItem;
 class SvxAutoCorrect;
 
 class GlobalEditData
@@ -43,7 +44,7 @@ private:
 
     Link			aGetAutoCorrectHdl;
 
-    vos::ORef<SvxForbiddenCharactersTable>	xForbiddenCharsTable;
+    rtl::Reference<SvxForbiddenCharactersTable>	xForbiddenCharsTable;
 
 public:
                     GlobalEditData();
@@ -55,11 +56,12 @@ public:
     void			SetGetAutoCorrectHdl( const Link& rHdl ) { aGetAutoCorrectHdl = rHdl; }
     SvxAutoCorrect*	GetAutoCorrect() const { return (SvxAutoCorrect*) aGetAutoCorrectHdl.Call( NULL ); }
 
-    vos::ORef<SvxForbiddenCharactersTable>	GetForbiddenCharsTable();
-    void			SetForbiddenCharsTable( vos::ORef<SvxForbiddenCharactersTable> xForbiddenChars ) { xForbiddenCharsTable = xForbiddenChars; }
+    rtl::Reference<SvxForbiddenCharactersTable>	GetForbiddenCharsTable();
+    void			SetForbiddenCharsTable( rtl::Reference<SvxForbiddenCharactersTable> xForbiddenChars ) { xForbiddenCharsTable = xForbiddenChars; }
 };
 
 
 }//end of namespace binfilter
 #endif //_EERDLL2_HXX
 
+/* vim:set shiftwidth=4 softtabstop=4 expandtab: */

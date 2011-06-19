@@ -1,7 +1,8 @@
+/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -40,39 +41,32 @@ namespace binfilter {
 /*N*/ 	: aBulSize( -1, -1)
 /*N*/ {
 /*N*/ 	DBG_CTOR( Paragraph, 0 );
-/*N*/ 
+/*N*/
 /*N*/     DBG_ASSERT( ( nDDepth < SVX_MAX_NUM ) || ( nDDepth == 0xFFFF ), "Paragraph-CTOR: nDepth invalid!" );
-/*N*/ 
+/*N*/
 /*N*/ 	nDepth = nDDepth;
 /*N*/ 	nFlags = 0;
 /*N*/ 	bVisible = TRUE;
 /*N*/ }
 
 
-/*N*/ Paragraph::~Paragraph()
-/*N*/ {
-/*N*/ 	DBG_DTOR( Paragraph, 0 );
-/*N*/ }
+Paragraph::~Paragraph()
+{
+    DBG_DTOR( Paragraph, 0 );
+}
 
-/*N*/ void ParagraphList::Clear( BOOL bDestroyParagraphs )
-/*N*/ {
-/*N*/ 	if ( bDestroyParagraphs )
-/*N*/ 	{
-/*N*/ 		for ( ULONG n = GetParagraphCount(); n; )
-/*N*/ 		{
-/*N*/ 			Paragraph* pPara = GetParagraph( --n );
-/*N*/ 			delete pPara;
-/*N*/ 		}
-/*N*/ 	}
-/*N*/ 	List::Clear();
-/*N*/ }
-
-
-
-
-
-
-
+void ParagraphList::Clear( BOOL bDestroyParagraphs )
+{
+    if ( bDestroyParagraphs )
+    {
+        for ( ULONG n = GetParagraphCount(); n; )
+        {
+            Paragraph* pPara = GetParagraph( --n );
+            delete pPara;
+        }
+    }
+    aList.clear();
+}
 
 
 /*NBFF*/ Paragraph* ParagraphList::GetParent( Paragraph* pParagraph, USHORT& rRelPos ) const
@@ -86,10 +80,12 @@ namespace binfilter {
 /*NBFF*/ 			rRelPos++;
 /*NBFF*/ 		pPrev = GetParagraph( --n );
 /*NBFF*/ 	}
-/*NBFF*/ 
+/*NBFF*/
 /*NBFF*/ 	return pPrev;
 /*NBFF*/ }
 
 
 
 }
+
+/* vim:set shiftwidth=4 softtabstop=4 expandtab: */

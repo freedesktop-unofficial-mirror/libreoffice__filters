@@ -1,7 +1,8 @@
+/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -24,9 +25,6 @@
  * for a copy of the LGPLv3 License.
  *
  ************************************************************************/
-
-#ifdef PCH
-#endif
 
 #ifdef _MSC_VER
 #pragma hdrstop
@@ -107,9 +105,9 @@ ScSpew ScInterpreter::theSpew;
 
 void ScInterpreter::ReplaceCell( ScAddress& rPos )
 {
-    ScInterpreterTableOpParams* pTOp = pDok->aTableOpList.First();
-    while (pTOp)
+    for ( size_t i = 0, n = pDok->aTableOpList.size(); i < n; ++i )
     {
+        ScInterpreterTableOpParams* pTOp = pDok->aTableOpList[ i ];
         if ( rPos == pTOp->aOld1 )
         {
             rPos = pTOp->aNew1;
@@ -120,8 +118,6 @@ void ScInterpreter::ReplaceCell( ScAddress& rPos )
             rPos = pTOp->aNew2;
             return ;
         }
-        else
-            pTOp = pDok->aTableOpList.Next();
     }
 }
 
@@ -129,9 +125,9 @@ void ScInterpreter::ReplaceCell( ScAddress& rPos )
 void ScInterpreter::ReplaceCell( USHORT& rCol, USHORT& rRow, USHORT& rTab )
 {
     ScAddress aCellPos( rCol, rRow, rTab );
-    ScInterpreterTableOpParams* pTOp = pDok->aTableOpList.First();
-    while (pTOp)
+    for ( size_t i = 0, n = pDok->aTableOpList.size(); i < n; ++i )
     {
+        ScInterpreterTableOpParams* pTOp = pDok->aTableOpList[ i ];
         if ( aCellPos == pTOp->aOld1 )
         {
             rCol = pTOp->aNew1.Col();
@@ -146,8 +142,6 @@ void ScInterpreter::ReplaceCell( USHORT& rCol, USHORT& rRow, USHORT& rTab )
             rTab = pTOp->aNew2.Tab();
             return ;
         }
-        else
-            pTOp = pDok->aTableOpList.Next();
     }
 }
 
@@ -158,14 +152,13 @@ BOOL ScInterpreter::IsTableOpInRange( const ScRange& rRange )
         return FALSE;	// not considered to be a range in TableOp sense
 
     // we can't replace a single cell in a range
-    ScInterpreterTableOpParams* pTOp = pDok->aTableOpList.First();
-    while (pTOp)
+    for ( size_t i = 0, n = pDok->aTableOpList.size(); i < n; ++i )
     {
+        ScInterpreterTableOpParams* pTOp = pDok->aTableOpList[ i ];
         if ( rRange.In( pTOp->aOld1 ) )
             return TRUE;
         if ( rRange.In( pTOp->aOld2 ) )
             return TRUE;
-        pTOp = pDok->aTableOpList.Next();
     }
     return FALSE;
 }
@@ -265,23 +258,6 @@ ULONG ScInterpreter::GetCellNumberFormat( const ScAddress& rPos, const ScBaseCel
 /*N*/ 			break;
 /*N*/ 			case  CELLTYPE_STRING:
 /*N*/ 			case  CELLTYPE_EDIT:
-/*?*/ #if 0
-/*?*/ // Xcl does it, but SUM(A1:A2) differs from A1+A2. No good.
-/*?*/ 			{
-/*?*/ 				String aStr;
-/*?*/ 				if ( eType == CELLTYPE_STRING )
-/*?*/ 					((ScStringCell*)pCell)->GetString( aStr );
-/*?*/ 				else
-/*?*/ 					((ScEditCell*)pCell)->GetString( aStr );
-/*?*/ 				ULONG nFIndex = 0;					// damit default Land/Spr.
-/*?*/ 				if ( !pFormatter->IsNumberFormat( aStr, nFIndex, fValue ) )
-/*?*/ 				{
-/*?*/ 					SetError(errNoValue);
-/*?*/ 					fValue = 0.0;
-/*?*/ 				}
-/*?*/ 			}
-/*?*/ 			break;
-/*?*/ #endif
 /*N*/ 			default:
 /*N*/                 SetError(errCellNoValue);
 /*N*/ 				fValue = 0.0;
@@ -804,13 +780,13 @@ void ScInterpreter::PopSingleRef(USHORT& rCol, USHORT &rRow, USHORT& rTab)
                 rTab = aPos.Tab() + rRef.nRelTab;
             else
                 rTab = rRef.nTab;
-            if( rCol < 0 || rCol > MAXCOL || rRef.IsColDeleted() )
+            if( rCol > MAXCOL || rRef.IsColDeleted() )
                 SetError( errNoRef ), rCol = 0;
-            if( rRow < 0 || rRow > MAXROW || rRef.IsRowDeleted() )
+            if( rRow > MAXROW || rRef.IsRowDeleted() )
                 SetError( errNoRef ), rRow = 0;
-            if( rTab < 0 || rTab >= pDok->GetTableCount() || rRef.IsTabDeleted() )
+            if( rTab >= pDok->GetTableCount() || rRef.IsTabDeleted() )
                 SetError( errNoRef ), rTab = 0;
-            if ( pDok->aTableOpList.Count() > 0 )
+            if ( !pDok->aTableOpList.empty() )
                 ReplaceCell( rCol, rRow, rTab );
             return;
         }
@@ -852,7 +828,7 @@ void ScInterpreter::PopSingleRef(USHORT& rCol, USHORT &rRow, USHORT& rTab)
 /*N*/ 			if( nTab < 0 || nTab >= pDok->GetTableCount() || rRef.IsTabDeleted() )
 /*N*/ 				SetError( errNoRef ), nTab = 0;
 /*N*/ 			rAdr.Set( (USHORT)nCol, (USHORT)nRow, (USHORT)nTab );
-/*N*/ 			if ( pDok->aTableOpList.Count() > 0 )
+/*N*/ 			if ( !pDok->aTableOpList.empty() )
 /*?*/ 				ReplaceCell( rAdr );
 /*N*/ 			return;
 /*N*/ 		}
@@ -891,11 +867,11 @@ void ScInterpreter::PopSingleRef(USHORT& rCol, USHORT &rRow, USHORT& rTab)
 /*N*/ 					rTab1 = aPos.Tab() + rRef.nRelTab;
 /*N*/ 				else
 /*N*/ 					rTab1 = rRef.nTab;
-/*N*/ 				if( rCol1 < 0 || rCol1 > MAXCOL || rRef.IsColDeleted() )
+/*N*/ 				if( rCol1 > MAXCOL || rRef.IsColDeleted() )
 /*N*/ 					SetError( errNoRef ), rCol1 = 0;
-/*N*/ 				if( rRow1 < 0 || rRow1 > MAXROW || rRef.IsRowDeleted() )
+/*N*/ 				if( rRow1 > MAXROW || rRef.IsRowDeleted() )
 /*N*/ 					SetError( errNoRef ), rRow1 = 0;
-/*N*/ 				if( rTab1 < 0 || rTab1 >= nMaxTab || rRef.IsTabDeleted() )
+/*N*/ 				if( rTab1 >= nMaxTab || rRef.IsTabDeleted() )
 /*N*/ 					SetError( errNoRef ), rTab1 = 0;
 /*N*/ 			}
 /*N*/ 			{
@@ -912,14 +888,14 @@ void ScInterpreter::PopSingleRef(USHORT& rCol, USHORT &rRow, USHORT& rTab)
 /*N*/ 					rTab2 = aPos.Tab() + rRef.nRelTab;
 /*N*/ 				else
 /*N*/ 					rTab2 = rRef.nTab;
-/*N*/ 				if( rCol2 < 0 || rCol2 > MAXCOL || rRef.IsColDeleted() )
+/*N*/ 				if( rCol2 > MAXCOL || rRef.IsColDeleted() )
 /*N*/ 					SetError( errNoRef ), rCol2 = 0;
-/*N*/ 				if( rRow2 < 0 || rRow2 > MAXROW || rRef.IsRowDeleted() )
+/*N*/ 				if( rRow2 > MAXROW || rRef.IsRowDeleted() )
 /*N*/ 					SetError( errNoRef ), rRow2 = 0;
-/*N*/ 				if( rTab2 < 0 || rTab2 >= nMaxTab || rRef.IsTabDeleted() )
+/*N*/ 				if( rTab2 >= nMaxTab || rRef.IsTabDeleted() )
 /*N*/ 					SetError( errNoRef ), rTab2 = 0;
 /*N*/ 			}
-/*N*/ 			if ( pDok->aTableOpList.Count() > 0 && !bDontCheckForTableOp )
+/*N*/ 			if ( !pDok->aTableOpList.empty() && !bDontCheckForTableOp )
 /*N*/ 			{
 /*?*/ 				ScRange aRange( rCol1, rRow1, rTab1, rCol2, rRow2, rTab2 );
 /*?*/ 				if ( IsTableOpInRange( aRange ) )
@@ -991,7 +967,7 @@ void ScInterpreter::PopSingleRef(USHORT& rCol, USHORT &rRow, USHORT& rTab)
 /*N*/ 					SetError( errNoRef ), nTab = 0;
 /*N*/ 				rRange.aEnd.Set( (USHORT)nCol, (USHORT)nRow, (USHORT)nTab );
 /*N*/ 			}
-/*N*/ 			if ( pDok->aTableOpList.Count() > 0 && !bDontCheckForTableOp )
+/*N*/ 			if ( !pDok->aTableOpList.empty() && !bDontCheckForTableOp )
 /*N*/ 			{
 /*?*/ 				if ( IsTableOpInRange( rRange ) )
 /*?*/ 					SetError( errIllegalParameter );
@@ -1377,7 +1353,7 @@ BOOL ScInterpreter::DoubleRefToPosSingleRef( const ScRange& rRange, ScAddress& r
 /*N*/  	{
 /*N*/  		ScBaseCell* pCell;
 /*N*/  		ScQueryCellIterator aCellIter(pDok, nTab, aQueryParam);
-/*N*/  		if (pCell = aCellIter.GetFirst())
+/*N*/  		if ( (pCell = aCellIter.GetFirst() ) )
 /*N*/  		{
 /*N*/  			if (aCellIter.GetNext())
 /*N*/  				SetIllegalArgument();
@@ -1465,7 +1441,7 @@ BOOL ScInterpreter::DoubleRefToPosSingleRef( const ScRange& rRange, ScAddress& r
 /*?*/ 			sal_Char*	pStr[MAXFUNCPARAM];
 /*?*/ 			BYTE*		pCellArr[MAXFUNCPARAM];
 /*?*/ 			short		i;
-/*?*/ 
+/*?*/
 /*?*/ 			for (i = 0; i < MAXFUNCPARAM; i++)
 /*?*/ 			{
 /*?*/ 				eParamType[i] = pFuncData->GetParamType(i);
@@ -1474,10 +1450,10 @@ BOOL ScInterpreter::DoubleRefToPosSingleRef( const ScRange& rRange, ScAddress& r
 /*?*/ 				pStr[i] = NULL;
 /*?*/ 				pCellArr[i] = NULL;
 /*?*/ 			}
-/*?*/ 
+/*?*/
 /*?*/ 			for (i = nParamCount; (i > 0) && (nGlobalError == 0); i--)
 /*?*/ 			{
-/*?*/ 				BYTE nStackType = GetStackType();
+/*?*/ 				GetStackType();
 /*?*/ 				switch (eParamType[i])
 /*?*/ 				{
 /*?*/ 					case PTR_DOUBLE :
@@ -1540,7 +1516,7 @@ BOOL ScInterpreter::DoubleRefToPosSingleRef( const ScRange& rRange, ScAddress& r
 /*?*/ 			}
 /*?*/ 			while ( i-- )
 /*?*/ 				Pop();		// im Fehlerfall (sonst ist i==0) Parameter wegpoppen
-/*?*/ 
+/*?*/
 /*?*/ 			if (nGlobalError == 0)
 /*?*/ 			{
 /*?*/ 				if ( pFuncData->GetAsyncType() == NONE )
@@ -1620,7 +1596,7 @@ BOOL ScInterpreter::DoubleRefToPosSingleRef( const ScRange& rRange, ScAddress& r
 /*?*/ 						SetNoValue();
 /*?*/ 				}
 /*?*/ 			}
-/*?*/ 
+/*?*/
 /*?*/ 			for (i = 0; i < MAXFUNCPARAM; i++)
 /*?*/ 			{
 /*?*/ 				delete[] pStr[i];
@@ -1638,12 +1614,12 @@ BOOL ScInterpreter::DoubleRefToPosSingleRef( const ScRange& rRange, ScAddress& r
 /*N*/ 	else if ( ( aUnoName = ScGlobal::GetAddInCollection()->FindFunction(aFuncName, FALSE) ).Len()  )
 /*N*/ 	{
 /*N*/ 		//	bLocalFirst=FALSE in FindFunction, cFunc should be the stored internal name
-/*N*/ 
+/*N*/
 /*N*/ 		ScUnoAddInCall aCall( *ScGlobal::GetAddInCollection(), aUnoName, nParamCount );
-/*N*/ 
+/*N*/
 /*N*/ 		if ( !aCall.ValidParamCount() )
 /*N*/ 			SetError( errIllegalParameter );
-/*N*/ 
+/*N*/
 /*N*/ 		if ( aCall.NeedsCaller() && !GetError() )
 /*N*/ 		{
 /*N*/ 			SfxObjectShell* pShell = pDok->GetDocumentShell();
@@ -1656,15 +1632,15 @@ BOOL ScInterpreter::DoubleRefToPosSingleRef( const ScRange& rRange, ScAddress& r
 /*?*/ 									new ScDocOptionsObj( pDok->GetDocOptions() ) ) );
 /*N*/ 			}
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		short nPar = nParamCount;
 /*N*/ 		while ( nPar && !GetError() )
 /*N*/ 		{
 /*N*/ 			--nPar;		// 0 .. (nParamCount-1)
-/*N*/ 
+/*N*/
 /*N*/ 			ScAddInArgumentType eType = aCall.GetArgType( nPar );
 /*N*/ 			BYTE nStackType = GetStackType();
-/*N*/ 
+/*N*/
 /*N*/ 			uno::Any aParam;
 /*N*/ 			switch (eType)
 /*N*/ 			{
@@ -1679,15 +1655,15 @@ BOOL ScInterpreter::DoubleRefToPosSingleRef( const ScRange& rRange, ScAddress& r
 /*N*/ 							SetError(errIllegalArgument);
 /*N*/ 					}
 /*N*/ 					break;
-/*N*/ 
+/*N*/
 /*?*/ 				case SC_ADDINARG_DOUBLE:
 /*?*/ 					aParam <<= (double) GetDouble();
 /*?*/ 					break;
-/*?*/ 
+/*?*/
 /*?*/ 				case SC_ADDINARG_STRING:
 /*?*/ 					aParam <<= ::rtl::OUString( GetString() );
 /*?*/ 					break;
-/*?*/ 
+/*?*/
 /*?*/ 				case SC_ADDINARG_INTEGER_ARRAY:
 /*?*/ 					switch( nStackType )
 /*?*/ 					{
@@ -1726,7 +1702,7 @@ BOOL ScInterpreter::DoubleRefToPosSingleRef( const ScRange& rRange, ScAddress& r
 /*?*/ 							SetError(errIllegalParameter);
 /*?*/ 					}
 /*?*/ 					break;
-/*?*/ 
+/*?*/
 /*?*/ 				case SC_ADDINARG_DOUBLE_ARRAY:
 /*?*/ 					switch( nStackType )
 /*?*/ 					{
@@ -1757,7 +1733,7 @@ BOOL ScInterpreter::DoubleRefToPosSingleRef( const ScRange& rRange, ScAddress& r
 /*?*/ 							SetError(errIllegalParameter);
 /*?*/ 					}
 /*?*/ 					break;
-/*?*/ 
+/*?*/
 /*?*/ 				case SC_ADDINARG_STRING_ARRAY:
 /*?*/ 					switch( nStackType )
 /*?*/ 					{
@@ -1788,7 +1764,7 @@ BOOL ScInterpreter::DoubleRefToPosSingleRef( const ScRange& rRange, ScAddress& r
 /*?*/ 							SetError(errIllegalParameter);
 /*?*/ 					}
 /*?*/ 					break;
-/*?*/ 
+/*?*/
 /*?*/ 				case SC_ADDINARG_MIXED_ARRAY:
 /*?*/ 					switch( nStackType )
 /*?*/ 					{
@@ -1839,7 +1815,7 @@ BOOL ScInterpreter::DoubleRefToPosSingleRef( const ScRange& rRange, ScAddress& r
 /*?*/ 							SetError(errIllegalParameter);
 /*?*/ 					}
 /*?*/ 					break;
-/*?*/ 
+/*?*/
 /*?*/ 				case SC_ADDINARG_VALUE_OR_ARRAY:
 /*?*/ 					switch( nStackType )
 /*?*/ 					{
@@ -1883,7 +1859,7 @@ BOOL ScInterpreter::DoubleRefToPosSingleRef( const ScRange& rRange, ScAddress& r
 /*?*/ 							SetError(errIllegalParameter);
 /*?*/ 					}
 /*?*/ 					break;
-/*?*/ 
+/*?*/
 /*?*/ 				case SC_ADDINARG_CELLRANGE:
 /*?*/ 					switch( nStackType )
 /*?*/ 					{
@@ -1917,26 +1893,26 @@ BOOL ScInterpreter::DoubleRefToPosSingleRef( const ScRange& rRange, ScAddress& r
 /*?*/ 							SetError(errIllegalParameter);
 /*?*/ 					}
 /*?*/ 					break;
-/*?*/ 
+/*?*/
 /*?*/ 				default:
 /*?*/ 					Pop();
 /*?*/ 					SetError(errIllegalParameter);
 /*N*/ 			}
 /*N*/ 			aCall.SetParam( nPar, aParam );
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		while (nPar--)
 /*?*/ 			Pop();					// in case of error, remove remaining args
-/*N*/ 
+/*N*/
 /*N*/ 		if ( !GetError() )
 /*N*/ 		{
 /*N*/ 			aCall.ExecuteCall();
-/*N*/ 
+/*N*/
 /*N*/ 			if ( aCall.HasVarRes() )						// handle async functions
 /*N*/ 			{
 /*?*/ 				if ( pMyFormulaCell->GetCode()->IsRecalcModeNormal() )
 /*?*/ 					pMyFormulaCell->GetCode()->SetRecalcModeOnLoad();
-/*?*/ 
+/*?*/
 /*?*/ 				uno::Reference<sheet::XVolatileResult> xResult = aCall.GetVarRes();
 /*?*/ 				ScAddInListener* pLis = ScAddInListener::Get( xResult );
 /*?*/ 				if ( !pLis )
@@ -1951,10 +1927,10 @@ BOOL ScInterpreter::DoubleRefToPosSingleRef( const ScRange& rRange, ScAddress& r
 /*?*/ 					if ( !pLis->HasDocument( pDok ) )
 /*?*/ 						pLis->AddDocument( pDok );
 /*?*/ 				}
-/*?*/ 
+/*?*/
 /*?*/ 				aCall.SetResult( pLis->GetResult() );		// use result from async
 /*N*/ 			}
-/*N*/ 
+/*N*/
 /*N*/ 			if ( aCall.GetErrCode() )
 /*N*/ 			{
 /*?*/ 				SetError( aCall.GetErrCode() );
@@ -1963,7 +1939,7 @@ BOOL ScInterpreter::DoubleRefToPosSingleRef( const ScRange& rRange, ScAddress& r
 /*N*/ 			else if ( aCall.HasMatrix() )
 /*N*/ 			{
 /*?*/ 				const ScMatrix*	pLinkMat = aCall.GetMatrix();		// not NULL
-/*?*/ 
+/*?*/
 /*?*/ 				USHORT nC, nR, nMatInd;								// copy matrix result
 /*?*/ 				pLinkMat->GetDimensions(nC, nR);
 /*?*/ 				ScMatrix* pNewMat = GetNewMat( nC, nR, nMatInd );
@@ -2001,29 +1977,29 @@ void ScInterpreter::ScMissing()
 /*N*/ void ScInterpreter::ScMacro()
 /*N*/ {
 /*N*/ 	SbxBase::ResetError();
-/*N*/ 
+/*N*/
 /*N*/ 	BYTE nParamCount = GetByte();
 /*N*/ 	String aMacro( pCur->GetExternal() );
-/*N*/ 
+/*N*/
 /*N*/ 	SfxObjectShell* pDocSh = pDok->GetDocumentShell();
 /*N*/ 	if ( !pDocSh || !pDok->CheckMacroWarn() )
 /*N*/ 	{
 /*N*/ 		SetError( errNoValue );		// ohne DocShell kein CallBasic
 /*N*/ 		return;
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	//	keine Sicherheitsabfrage mehr vorneweg (nur CheckMacroWarn), das passiert im CallBasic
-/*N*/ 
+/*N*/
 /*N*/ 	SfxApplication* pSfxApp = SFX_APP();
 /*N*/ 	pSfxApp->EnterBasicCall();				// Dok-Basic anlegen etc.
-/*N*/ 
+/*N*/
 /*N*/ 	//	Wenn das Dok waehrend eines Basic-Calls geladen wurde,
 /*N*/ 	//	ist das Sbx-Objekt evtl. nicht angelegt (?)
 /*N*/ //	pDocSh->GetSbxObject();
-/*N*/ 
+/*N*/
 /*N*/ 	//	Funktion ueber den einfachen Namen suchen,
 /*N*/ 	//	dann aBasicStr, aMacroStr fuer SfxObjectShell::CallBasic zusammenbauen
-/*N*/ 
+/*N*/
 /*N*/ 	StarBASIC* pRoot = pDocSh->GetBasic();
 /*N*/ 	SbxVariable* pVar = pRoot->Find( aMacro, SbxCLASS_METHOD );
 /*N*/ 	if( !pVar || pVar->GetType() == SbxVOID || !pVar->ISA(SbMethod) )
@@ -2032,7 +2008,7 @@ void ScInterpreter::ScMissing()
 /*?*/ 		pSfxApp->LeaveBasicCall();
 /*?*/ 		return;
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	SbMethod* pMethod = (SbMethod*)pVar;
 /*N*/ 	SbModule* pModule = pMethod->GetModule();
 /*N*/ 	SbxObject* pObject = pModule->GetParent();
@@ -2047,9 +2023,9 @@ void ScInterpreter::ScMissing()
 /*N*/ 		aBasicStr = pObject->GetParent()->GetName();	// Dokumentenbasic
 /*N*/ 	else
 /*?*/ 		aBasicStr = SFX_APP()->GetName();				// Applikationsbasic
-/*N*/ 
+/*N*/
 /*N*/ 	//	Parameter-Array zusammenbauen
-/*N*/ 
+/*N*/
 /*N*/ 	SbxArrayRef refPar = new SbxArray;
 /*N*/ 	BOOL bOk = TRUE;
 /*N*/ 	for( short i = nParamCount; i && bOk ; i-- )
@@ -2117,14 +2093,14 @@ void ScInterpreter::ScMissing()
 /*?*/ 					{
 /*?*/ 						short nIdx[ 2 ];
 /*?*/ 						nIdx[ 0 ] = j+1;
-/*?*/ 						for( USHORT i = 0; i < nC; i++ )
+/*?*/ 						for( USHORT k = 0; k < nC; i++ )
 /*?*/ 						{
-/*?*/ 							nIdx[ 1 ] = i+1;
+/*?*/ 							nIdx[ 1 ] = k+1;
 /*?*/ 							SbxVariable* p = refArray->Get( nIdx );
-/*?*/ 							if (pMat->IsString(i, j))
-/*?*/ 								p->PutString( pMat->GetString(i, j) );
+/*?*/ 							if (pMat->IsString(k, j))
+/*?*/ 								p->PutString( pMat->GetString(k, j) );
 /*?*/ 							else
-/*?*/ 								p->PutDouble( pMat->GetDouble(i, j) );
+/*?*/ 								p->PutDouble( pMat->GetDouble(k, j) );
 /*?*/ 						}
 /*?*/ 					}
 /*?*/ 					pPar->PutObject( refArray );
@@ -2146,7 +2122,7 @@ void ScInterpreter::ScMissing()
 /*N*/ 		ErrCode eRet = pDocSh->CallBasic( aMacroStr, aBasicStr, NULL, refPar, refRes );
 /*N*/ 		pDok->DecMacroInterpretLevel();
 /*N*/ 		pDok->UnlockTable( aPos.Tab() );
-/*N*/ 
+/*N*/
 /*N*/ 		SbxDataType eResType = refRes->GetType();
 /*N*/ 		if ( eRet != ERRCODE_NONE )
 /*N*/ 			SetNoValue();
@@ -2214,7 +2190,7 @@ void ScInterpreter::ScMissing()
 /*N*/ 		if( pVar->GetError() )
 /*?*/ 			SetNoValue();
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	pSfxApp->LeaveBasicCall();
 /*N*/ }
 
@@ -2293,11 +2269,11 @@ void ScInterpreter::ScMissing()
 /*N*/      PopSingleRef( pTableOp->aNew1 );
 /*N*/      PopSingleRef( pTableOp->aOld1 );
 /*N*/      PopSingleRef( pTableOp->aFormulaPos );
-/*N*/  
+/*N*/
 /*N*/      pTableOp->bValid = TRUE;
-/*N*/      pDok->aTableOpList.Insert( pTableOp );
+/*N*/      pDok->aTableOpList.push_back( pTableOp );
 /*N*/      pDok->IncInterpreterTableOpLevel();
-/*N*/  
+/*N*/
 /*N*/      BOOL bReuseLastParams = (pDok->aLastTableOpParams == *pTableOp);
 /*N*/      if ( bReuseLastParams )
 /*N*/      {
@@ -2320,7 +2296,7 @@ void ScInterpreter::ScMissing()
 /*N*/              pDok->SetTableOpDirty( pTableOp->aOld2 );
 /*N*/      }
 /*N*/      pTableOp->bCollectNotifications = FALSE;
-/*N*/  
+/*N*/
 /*N*/      ScBaseCell* pFCell = pDok->GetCell( pTableOp->aFormulaPos );
 /*N*/      if ( pFCell && pFCell->GetCellType() == CELLTYPE_FORMULA )
 /*N*/          ((ScFormulaCell*)pFCell)->SetDirtyVar();
@@ -2332,8 +2308,15 @@ void ScInterpreter::ScMissing()
 /*N*/          GetCellString( aCellString, pFCell );
 /*N*/          PushString( aCellString );
 /*N*/      }
-/*N*/  
-/*N*/      pDok->aTableOpList.Remove( pTableOp );
+/*N*/
+            for ( ScTabOpList::iterator it = pDok->aTableOpList.begin(); it < pDok->aTableOpList.end(); ++it )
+            {
+                if ( *it == pTableOp )
+                {
+                    pDok->aTableOpList.erase( it );
+                    break;
+                }
+            }
 /*N*/      // set dirty again once more to be able to recalculate original
 /*N*/      for ( ::std::vector< ScFormulaCell* >::const_iterator iBroadcast(
 /*N*/                  pTableOp->aNotifiedFormulaCells.begin() );
@@ -2342,17 +2325,17 @@ void ScInterpreter::ScMissing()
 /*N*/      {
 /*N*/          (*iBroadcast)->SetTableOpDirty();
 /*N*/      }
-/*N*/  
+/*N*/
 /*N*/      // save these params for next incarnation
 /*N*/      if ( !bReuseLastParams )
 /*N*/          pDok->aLastTableOpParams = *pTableOp;
-/*N*/  
+/*N*/
 /*N*/      if ( pFCell && pFCell->GetCellType() == CELLTYPE_FORMULA )
 /*N*/      {
 /*N*/          ((ScFormulaCell*)pFCell)->SetDirtyVar();
 /*N*/          ((ScFormulaCell*)pFCell)->GetErrCode();     // recalculate original
 /*N*/      }
-/*N*/  
+/*N*/
 /*N*/      // Reset all dirty flags so next incarnation does really collect all cell
 /*N*/      // pointers during notifications and not just non-dirty ones, which may
 /*N*/      // happen if a formula cell is used by more than one TableOp block.
@@ -2364,7 +2347,7 @@ void ScInterpreter::ScMissing()
 /*N*/          (*iBroadcast2)->ResetTableOpDirtyVar();
 /*N*/      }
 /*N*/      delete pTableOp;
-/*N*/  
+/*N*/
 /*N*/      pDok->DecInterpreterTableOpLevel();
 /*N*/  }
 
@@ -2488,7 +2471,7 @@ void ScInterpreter::ScCalcTeam()
     static BOOL bShown = FALSE;
     if( !bShown )
     {
-        DBG_BF_ASSERT(0, "STRIP"); //STRIP001  ShowTheTeam();
+        DBG_BF_ASSERT(0, "STRIP");
 /*N*/          String aTeam( RTL_CONSTASCII_USTRINGPARAM( "Ballach, Nebel, Rentz, Rathke, Marmion" ) );
 /*N*/  		if ( (GetByte() == 1) && ::rtl::math::approxEqual( GetDouble(), 1996) )
 /*N*/  /*?*/ 			aTeam.AppendAscii( "   (a word with 'B': -Olk, -Nietsch, -Daeumling)" );
@@ -2542,11 +2525,11 @@ void ScInterpreter::ScSpewFunc()
 }
 
 
-/*N*/  
+/*N*/
 /*N*/  //#define SC_INVADER_GPF		// GPF wollen wir nicht :-(
 /*N*/  // zum testen Environment-Variable SC_INVADER_GPF=xxx setzen
-/*N*/  // 08.10.98: wenn PB optpath.cxx gefixt hat geht's wieder
-/*N*/  
+/*N*/  // wenn PB optpath.cxx gefixt hat geht's wieder
+/*N*/
 /*N*/  extern void StartInvader( Window* pParent );	// StarWars, Wrapper in SVX options/optpath.cxx
 /*N*/  extern void Game();						// Froggie
 
@@ -2564,9 +2547,9 @@ void ScInterpreter::ScTTT()
     // Stack aufraeumen
     while ( nParamCount-- )
         Pop();
-    static const sal_Unicode __FAR_DATA sEyes[]		= { ',',';',':','|','8','B', 0 };
-    static const sal_Unicode __FAR_DATA sGoods[]	= { ')',']','}', 0 };
-    static const sal_Unicode __FAR_DATA sBads[]		= { '(','[','{','/', 0 };
+    static const sal_Unicode sEyes[]		= { ',',';',':','|','8','B', 0 };
+    static const sal_Unicode sGoods[]	= { ')',']','}', 0 };
+    static const sal_Unicode sBads[]		= { '(','[','{','/', 0 };
     sal_Unicode aFace[4];
     if ( bOk )
     {
@@ -2589,16 +2572,16 @@ void ScInterpreter::ScTTT()
 
 /*N*/ ScInterpreter::ScInterpreter( ScFormulaCell* pCell, ScDocument* pDoc,
 /*N*/ 		const ScAddress& rPos, ScTokenArray& r ) :
-/*N*/ 	pMyFormulaCell( pCell ),
-/*N*/ 	pDok( pDoc ),
 /*N*/ 	aCode( r ),
 /*N*/ 	aPos( rPos ),
 /*N*/ 	rArr( r ),
-/*N*/ 	bCalcAsShown( pDoc->GetDocOptions().IsCalcAsShown() ),
-/*N*/ 	pFormatter( pDoc->GetFormatTable() )
+/*N*/ 	pDok( pDoc ),
+/*N*/ 	pMyFormulaCell( pCell ),
+/*N*/ 	pFormatter( pDoc->GetFormatTable() ),
+/*N*/ 	bCalcAsShown( pDoc->GetDocOptions().IsCalcAsShown() )
 /*N*/ {
 /*N*/ //	pStack = new ScToken*[ MAXSTACK ];
-/*N*/ 
+/*N*/
 /*N*/ 	BYTE cMatFlag = pMyFormulaCell->GetMatrixFlag();
 /*N*/ 	bMatrixFormula = ( cMatFlag == MM_FORMULA || cMatFlag == MM_FAKE );
 /*N*/ 	if (!bGlobalStackInUse)
@@ -2624,7 +2607,7 @@ void ScInterpreter::ScTTT()
 /*N*/ ScInterpreter::~ScInterpreter()
 /*N*/ {
 /*N*/ //	delete pStack;
-/*N*/ 
+/*N*/
 /*N*/ 	if ( pStackObj == pGlobalStack )
 /*N*/ 		bGlobalStackInUse = FALSE;
 /*N*/ 	else
@@ -2650,7 +2633,7 @@ void ScInterpreter::ScTTT()
 /*N*/ 	USHORT nErrorFunction = 0;
 /*N*/ 	USHORT nErrorFunctionCount = 0;
 /*N*/ 	USHORT nStackBase;
-/*N*/ 
+/*N*/
 /*N*/ 	nGlobError = nGlobalError;
 /*N*/ 	nGlobalError = 0;
 /*N*/ 	nMatCount = 0;
@@ -2665,7 +2648,7 @@ void ScInterpreter::ScTTT()
 /*N*/ 	eResult = svDouble;
 /*N*/ 	glSubTotal = FALSE;
 /*N*/ 	UINT16 nOldOpCode = ocStop;
-/*N*/ 
+/*N*/
     // Once upon a time we used to have FP exceptions on, and there was a
     // Windows printer driver that kept switching off exceptions, so we had to
     // switch them back on again every time. Who knows if there isn't a driver
@@ -2693,14 +2676,14 @@ void ScInterpreter::ScTTT()
 /*N*/ 			// default Funtionsformat, andere werden bei Bedarf gesetzt
 /*N*/ 			nFuncFmtType = NUMBERFORMAT_NUMBER;
 /*N*/ 			nFuncFmtIndex = 0;
-/*N*/ 
+/*N*/
 /*N*/ 			if ( eOp == ocIf || eOp == ocChose )
 /*N*/ 				nStackBase = sp;		// nicht die Jumps vertueddeln
 /*N*/ 			else
 /*N*/ 				nStackBase = sp - pCur->GetParamCount();
 /*N*/ 			if ( nStackBase > sp )
 /*N*/ 				nStackBase = sp;		// underflow?!?
-/*N*/ 
+/*N*/
 /*N*/             switch( eOp )
 /*N*/             {
                 case ocSep:
@@ -3007,7 +2990,7 @@ void ScInterpreter::ScTTT()
                 case ocGame             : ScGame();                     break;
 /*N*/                 default : SetError(errUnknownOpCode); PushInt(0);       break;
 /*N*/             }
-/*N*/ 
+/*N*/
 /*N*/ 			// aeussere Funktion bestimmt das Format eines Ausdrucks
 /*N*/ 			if ( nFuncFmtType != NUMBERFORMAT_UNDEFINED )
 /*N*/ 			{
@@ -3017,7 +3000,7 @@ void ScInterpreter::ScTTT()
 /*N*/ 					nFuncFmtIndex : 0 );
 /*N*/ 			}
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ // Funktionen, die einen Fehlercode auswerten und nGlobalError direkt auf 0 setzen
 /*N*/ // usage: switch( OpCode ) { OCERRFUNCCASE( ++n ) }
 /*N*/ #define CASEOCERRFUNC( statement ) \
@@ -3034,8 +3017,12 @@ void ScInterpreter::ScTTT()
 /*N*/ 	case ocIsValue : \
 /*N*/ 	case ocN : \
 /*N*/ 	case ocType : \
-/*N*/ 		statement;
-/*N*/ 
+/*N*/ 		statement; \
+/*N*/ 	        break; \
+/*N*/ 	default : \
+/*N*/ 		break;
+
+/*N*/
 /*N*/ 		switch ( eOp )
 /*N*/ 		{
 /*N*/ 			CASEOCERRFUNC( ++nErrorFunction )
@@ -3060,19 +3047,19 @@ void ScInterpreter::ScTTT()
 /*?*/ 				{	// Stack abraeumen, geht davon aus, dass jede Funktion
 /*?*/ 					// prinzipiell ein Ergebnis pusht, im Fehlerfall kann dies
 /*?*/ 					// ein zufaelliger Wert sein
-/*?*/ 					const ScToken* pResult = pStack[ sp - 1 ];
+/*?*/ 					const ScToken* pResult2 = pStack[ sp - 1 ];
 /*?*/ 					while ( sp > nStackBase )
 /*?*/ 						Pop();
-/*?*/ 					PushTempToken( *pResult );
+/*?*/ 					PushTempToken( *pResult2 );
 /*?*/ 				}
 /*N*/ 			}
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		nOldOpCode = eOp;
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	// Ende: Returnwert holen
-/*N*/ 
+/*N*/
 /*N*/ 	if( sp )
 /*N*/ 	{
 /*N*/ 		pCur = pStack[ sp-1 ];
@@ -3195,7 +3182,7 @@ void ScInterpreter::ScTTT()
 /*N*/ 	}
 /*N*/ 	else
 /*N*/ 		SetError(errNoCode);
-/*N*/ 
+/*N*/
 /*N*/ 	if (!::rtl::math::isFinite(nResult))
 /*N*/ 	{
 /*N*/         if ( ::rtl::math::isNan( nResult ) )
@@ -3204,7 +3191,7 @@ void ScInterpreter::ScTTT()
 /*N*/             SetError(errIllegalFPOperation);
 /*N*/ 		nResult = 0.0;
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	if( nRetTypeExpr != NUMBERFORMAT_UNDEFINED )
 /*N*/ 	{
 /*N*/ 		nRetFmtType = nRetTypeExpr;
@@ -3220,12 +3207,12 @@ void ScInterpreter::ScTTT()
 /*N*/ 	// nur fuer Waehrungsformate den FormatIndex uebernehmen
 /*N*/ 	if ( nRetFmtType != NUMBERFORMAT_CURRENCY )
 /*N*/ 		nRetFmtIndex = 0;
-/*N*/ 
+/*N*/
 /*N*/ 	// grrr.. EiterZirkel!
 /*N*/ 	// Fehler nur zuruecksetzen wenn nicht errCircularReference ohne Iterationen
 /*N*/ 	if ( nGlobalError || !(rArr.GetError() == errCircularReference && !pDok->GetDocOptions().IsIter()) )
 /*N*/ 		rArr.SetError( nGlobalError );
-/*N*/ 
+/*N*/
 /*N*/ 	if (ppGlobSortArray)
 /*?*/ #ifdef WIN
 /*?*/ 		SvMemFree(*ppGlobSortArray);
@@ -3247,3 +3234,5 @@ void ScInterpreter::ScTTT()
 /*N*/ }
 
 }
+
+/* vim:set shiftwidth=4 softtabstop=4 expandtab: */

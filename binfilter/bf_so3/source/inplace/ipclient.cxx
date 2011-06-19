@@ -1,7 +1,8 @@
+/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -103,7 +104,7 @@ void SvInPlaceClient::TestMemberObjRef( BOOL bFree )
     {
         ByteString aTest = "\t\tGetIPObj() == ";
         aTest.Append( ByteString::CreateFromInt32( (ULONG)(SvObject *)GetIPObj() ) );
-        DBG_TRACE( aTest.GetBuffer() );
+        OSL_TRACE( "%s", aTest.GetBuffer() );
     }
 #endif
 }
@@ -299,12 +300,6 @@ void SvInPlaceClient::InPlaceActivate
     abgebrochen.
 */
 {
-    if( !bActivate )
-    {
-        SvContainerEnvironment * pEnv = GetEnv();
-        pEnv->ResetChilds();
-    }
-
     if( !bActivate && HasViewData() )
         FreeViewData( pData );
 }
@@ -327,14 +322,7 @@ void SvInPlaceClient::UIActivate
         {
             SvInPlaceEnvironment * pActEnv = SOAPP->pUIShowIPEnv;
             SvContainerEnvironment * pEnv = GetEnv();
-            if( pActEnv )
-            {
-                if( !pEnv->IsChild( pActEnv->GetContainerEnv() ) )
-                { // es wurde kein Child aktiviert
-                    pEnv->GetIPEnv()->DoShowIPObj( FALSE );
-                }
-            }
-            else
+            if( !pActEnv )
             {
                 pEnv->GetIPEnv()->DoShowIPObj( FALSE );
                 if( pEnv->GetParent() )
@@ -358,3 +346,5 @@ void SvInPlaceClient::DiscardUndoState()
 
 
 }
+
+/* vim:set shiftwidth=4 softtabstop=4 expandtab: */

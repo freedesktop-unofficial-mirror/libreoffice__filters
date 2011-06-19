@@ -1,7 +1,8 @@
+/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
  /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -97,7 +98,7 @@ void SVGFontExport::implCollectGlyphs()
 
             aVDev.Push();
 
-            for( sal_uInt32 i = 0, nCount = rMtf.GetActionCount(); i < nCount; ++i )
+            for( size_t i = 0, nCount = rMtf.GetActionSize(); i < nCount; ++i )
             {
                 ::rtl::OUString		aText;
                 MetaAction*			pAction = rMtf.GetAction( i );
@@ -109,7 +110,7 @@ void SVGFontExport::implCollectGlyphs()
                     {
                         const MetaTextAction* pA = (const MetaTextAction*) pAction;
                         aText = String( pA->GetText(), pA->GetIndex(), pA->GetLen() );
-                    }			
+                    }
                     break;
 
                     case( META_TEXTRECT_ACTION ):
@@ -212,7 +213,7 @@ void SVGFontExport::implEmbedFont( const Font& rFont )
                     ::rtl::OUString     aFontWeight;
                     ::rtl::OUString     aFontStyle;
                     const Size         aSize( nFontEM, nFontEM );
-                    
+
                     // Font Weight
                     if( aFont.GetWeight() != WEIGHT_NORMAL )
                         aFontWeight = B2UCONST( "bold" );
@@ -248,7 +249,7 @@ void SVGFontExport::implEmbedFont( const Font& rFont )
                             SvXMLElementExport  aExp4( mrExport, XML_NAMESPACE_NONE, "missing-glyph", sal_True, sal_True );
                         }
                     }
-                
+
                     while( aIter != rGlyphSet.end() )
                     {
                         implEmbedGlyph( aVDev, *aIter );
@@ -275,16 +276,15 @@ void SVGFontExport::implEmbedGlyph( OutputDevice& rOut, const ::rtl::OUString& r
 
         if( !rOut.GetTextBoundRect( aBoundRect, rCellStr ) )
             aBoundRect = Rectangle( Point( 0, 0 ), Size( rOut.GetTextWidth( rCellStr ), 0 ) );
-    
+
         mrExport.AddAttribute( XML_NAMESPACE_NONE, "unicode", rCellStr );
-        
+
         if( rCellStr[ 0 ] == nSpace && rCellStr.getLength() == 1 )
             aBoundRect = Rectangle( Point( 0, 0 ), Size( rOut.GetTextWidth( sal_Unicode( ' ' ) ), 0 ) );
-        
+
         mrExport.AddAttribute( XML_NAMESPACE_NONE, "horiz-adv-x", ::rtl::OUString::valueOf( aBoundRect.GetWidth() ) );
 
         const ::rtl::OUString aPathString( SVGActionWriter::GetPathString( aPolyPoly, sal_False ) );
-                
         if( aPathString.getLength() )
         {
             mrExport.AddAttribute( XML_NAMESPACE_NONE, "d", aPathString );
@@ -346,3 +346,5 @@ void SVGFontExport::EmbedFonts()
 
     return aRet;
 }
+
+/* vim:set shiftwidth=4 softtabstop=4 expandtab: */

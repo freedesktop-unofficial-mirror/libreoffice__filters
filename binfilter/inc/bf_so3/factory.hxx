@@ -1,7 +1,8 @@
+/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -30,26 +31,13 @@
 
 #include <bf_svtools/bf_solar.h>
 
-#ifndef _LIST_HXX //autogen
-#include <tools/list.hxx>
-#endif
 #include <bf_so3/so2ref.hxx>
-#ifndef _SFXBRDCST_HXX //autogen
 #include <bf_svtools/brdcst.hxx>
-#endif
-#ifndef _GLOBNAME_HXX //autogen
 #include <tools/globname.hxx>
-#endif
-#ifndef _SOT_FACTORY_HXX
 #include <sot/factory.hxx>
-#endif
-#ifndef _COM_SUN_STAR_DATATRANSFER_XTRANSFERABLE_HPP_
 #include <com/sun/star/datatransfer/XTransferable.hpp>
-#endif
 
-#ifndef INCLUDED_SO3DLLAPI_H
 #include "bf_so3/so3dllapi.h"
-#endif
 
 namespace binfilter {
 class SvObject;
@@ -126,3 +114,5 @@ public:                                                             \
 }
 
 #endif
+
+/* vim:set shiftwidth=4 softtabstop=4 expandtab: */

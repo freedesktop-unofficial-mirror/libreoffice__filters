@@ -1,7 +1,8 @@
+/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -30,7 +31,6 @@
 #endif
 
 #include <stdlib.h>
-//#include <math.h>
 #include <tools/bigint.hxx>
 #include <vcl/virdev.hxx>
 #include <vcl/metaact.hxx>
@@ -84,30 +84,30 @@ namespace binfilter {
 /*N*/ 	nAbsDY.Abs();
 /*N*/ 	BigInt nMax(nAbsDX > nAbsDY ? nAbsDX : nAbsDY);
 /*N*/ 	BigInt nCompare;
-/*N*/ 
+/*N*/
 /*N*/ 	// Kontrollpunkte auf der (unendlichen) Linie durch P3 und P0?
 /*N*/ 	nCompare = DY * BigInt(X1-X0) - DX * BigInt(Y1-Y0);
 /*N*/ 	nCompare.Abs();
 /*N*/ 	if ( nCompare >= nMax )
 /*N*/ 		return FALSE;
-/*N*/ 
+/*N*/
 /*N*/ 	nCompare = DY * BigInt(X2-X0) - DX * BigInt(Y2-Y0);
 /*N*/ 	nCompare.Abs();
 /*N*/ 	if ( nCompare >= nMax )
 /*N*/ 		return FALSE;
-/*N*/ 
+/*N*/
 /*N*/ 	//                                                  ____
 /*N*/ 	// wenn ja, dann pruefen, ob ausserhalb der Strecke P3P0
 /*N*/ 	if ( (X3 < X0 && X0 < X1) || (Y3 < Y0 && Y0 < Y1) ) return FALSE;
 /*N*/ 	if ( (X1 < X0 && X0 < X3) || (Y1 < Y0 && Y0 < Y3) ) return FALSE;
 /*N*/ 	if ( (X0 < X3 && X3 < X1) || (Y0 < Y3 && Y3 < Y1) ) return FALSE;
-/*N*/ 	if ( (X1 < X3 && X3 < X0) || (Y1 < Y3 && Y3 < Y3) ) return FALSE;
-/*N*/ 
+/*N*/ 	if ( (X1 < X3 && X3 < X0) || (Y1 < Y3 && Y3 < Y0) ) return FALSE;
+/*N*/
 /*N*/ 	if ( (X3 < X0 && X0 < X2) || (Y3 < Y0 && Y0 < Y2) ) return FALSE;
 /*N*/ 	if ( (X2 < X0 && X0 < X3) || (Y2 < Y0 && Y0 < Y3) ) return FALSE;
 /*N*/ 	if ( (X0 < X3 && X3 < X2) || (Y0 < Y3 && Y3 < Y2) ) return FALSE;
-/*N*/ 	if ( (X2 < X3 && X3 < X0) || (Y2 < Y3 && Y3 < Y3) ) return FALSE;
-/*N*/ 
+/*N*/ 	if ( (X2 < X3 && X3 < X0) || (Y2 < Y3 && Y3 < Y0) ) return FALSE;
+/*N*/
 /*N*/ 	return TRUE;
 /*N*/ }
 
@@ -122,7 +122,7 @@ namespace binfilter {
 /*N*/ 	// Das Folgende Statement ist Optimierung
 /*N*/ 	if (rRect.IsInside(rBez[0]) && rRect.IsInside(rBez[1]) &&
 /*N*/ 		rRect.IsInside(rBez[2]) && rRect.IsInside(rBez[3])) return;
-/*N*/ 
+/*N*/
 /*N*/ 	if ( nMaxDepth == 0 || IsBezierStraight(rBez) )
 /*N*/ 	{
 /*N*/ 		long nX = rBez[3].X(),
@@ -135,7 +135,7 @@ namespace binfilter {
 /*N*/ 	else
 /*N*/ 	{
 /*N*/ 		XPolygon aSplitBez(4);
-/*N*/ 
+/*N*/
 /*N*/ 		nMaxDepth--;
 /*N*/ 		SplitBezier(rBez, aSplitBez, TRUE);
 /*N*/ 		XOutIterateBezier(aSplitBez, rRect, nMaxDepth);
@@ -149,21 +149,17 @@ namespace binfilter {
 |*
 |*    XOutputDevice::XOutCalcXPolyExtent()
 |*
-|*    Beschreibung
-|*    Ersterstellung    14.08.95 ESO
-|*    Letzte Aenderung  15.08.95 ESO
-|*
 *************************************************************************/
 
 /*N*/ Rectangle XOutCalcXPolyExtent(const XPolygon& rXPoly, OutputDevice* pOut)
 /*N*/ {
 /*N*/ 	if ( rXPoly.GetPointCount() == 0 )
 /*?*/ 		return Rectangle();
-/*N*/ 
+/*N*/
 /*N*/ 	USHORT i;
 /*N*/ 	USHORT nPntMax=rXPoly.GetPointCount()-1;
-/*N*/ 
-/*N*/ 	FASTBOOL bHasBezier=FALSE;
+/*N*/
+/*N*/ 	bool bHasBezier=FALSE;
 /*N*/ 	Rectangle aRect(rXPoly[0],rXPoly[0]);
 /*N*/ 	// zunaechst das Rect der Stuetzstellen (ohne Kontrollpunkte) bestimmen
 /*N*/ 	Point aPt;
@@ -177,7 +173,7 @@ namespace binfilter {
 /*N*/ 		} else bHasBezier=TRUE;
 /*N*/ 	}
 /*N*/ 	if (!bHasBezier) return aRect;
-/*N*/ 
+/*N*/
 /*N*/ 	if (pOut!=NULL)
 /*?*/ 		aRect = pOut->LogicToPixel(aRect);
 /*N*/ 	i=0;
@@ -186,7 +182,7 @@ namespace binfilter {
 /*N*/ 		if ( i <= nPntMax - 3 && rXPoly.GetFlags(i+1) == XPOLY_CONTROL )
 /*N*/ 		{
 /*N*/ 			XPolygon aBez(4);
-/*N*/ 
+/*N*/
 /*N*/ 			if ( pOut )
 /*N*/ 			{
 /*?*/ 				aBez[0] = pOut->LogicToPixel(rXPoly[i]);
@@ -209,7 +205,7 @@ namespace binfilter {
 /*N*/ 			Point aPnt(rXPoly[++i]);
 /*N*/ 			if ( pOut )
 /*?*/ 				aPnt = pOut->LogicToPixel(aPnt);
-/*N*/ 
+/*N*/
 /*N*/ 			aRect.Left()    = Min(aPnt.X(), aRect.Left());
 /*N*/ 			aRect.Right()   = Max(aPnt.X(), aRect.Right());
 /*N*/ 			aRect.Top()     = Min(aPnt.Y(), aRect.Top());
@@ -225,17 +221,13 @@ namespace binfilter {
 |*
 |*    XOutputDevice::CalcBezierStepCount()
 |*
-|*    Beschreibung
-|*    Ersterstellung    08.11.94
-|*    Letzte Aenderung  14.12.94 ESO
-|*
 *************************************************************************/
 
 /*N*/ long XOutCalcBezierStepCount( const XPolygon& rXPoly, USHORT nIndex,
 /*N*/ 							  OutputDevice* pOut, USHORT nRough )
 /*N*/ {
 /*N*/ 	long nSteps;
-/*N*/ 
+/*N*/
 /*N*/ 	if( pOut || nRough )
 /*N*/ 	{
 /*N*/ 		const Point& aPt = rXPoly[ nIndex++ ];
@@ -248,7 +240,7 @@ namespace binfilter {
 /*N*/ 		long nDy2 = Abs( aPt3.Y() - aPt2.Y() ) * 2;
 /*N*/ 		long nDxHndl = Abs( aPt2.X() - aPt1.X() );
 /*N*/ 		long nDyHndl = Abs( aPt2.Y() - aPt1.Y() );
-/*N*/ 
+/*N*/
 /*N*/ 		long nDelta = Max(Max(nDx1, nDy1), Max(nDx2, nDy2));
 /*N*/ 		nDelta = Max(nDelta, Max(nDxHndl, nDyHndl));
 /*N*/ 		if( pOut )
@@ -259,7 +251,7 @@ namespace binfilter {
 /*N*/ 			nSteps = nDelta / 25 + 4;
 /*N*/ 	}
 /*N*/ 	else nSteps = 10;
-/*N*/ 
+/*N*/
 /*N*/ 	return nSteps;
 /*N*/ }
 
@@ -267,10 +259,6 @@ namespace binfilter {
 /*************************************************************************
 |*
 |*    XOutputDevice::CalcBezier()
-|*
-|*    Beschreibung
-|*    Ersterstellung    08.11.94
-|*    Letzte Aenderung  14.12.94 ESO
 |*
 *************************************************************************/
 
@@ -281,16 +269,16 @@ namespace binfilter {
 /*N*/ 	{
 /*N*/ 		return;
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	double nX;
 /*N*/ 	double nY;
 /*N*/ 	double nX0, nX1, nX2, nX3;
 /*N*/ 	double nY0, nY1, nY2, nY3;
-/*N*/ 
+/*N*/
 /*N*/ 	long nDiff = nSteps - 1;
 /*N*/ 	long nDiv = nSteps * nSteps * nSteps;
 /*N*/ 	rPoly[nPolyIndex++] = rXPoly[nBezIndex];
-/*N*/ 
+/*N*/
 /*N*/ 	nX0 = rXPoly[nBezIndex  ].X();
 /*N*/ 	nY0 = rXPoly[nBezIndex++].Y();
 /*N*/ 	nX1 = rXPoly[nBezIndex  ].X() * 3;
@@ -299,11 +287,11 @@ namespace binfilter {
 /*N*/ 	nY2 = rXPoly[nBezIndex++].Y() * 3;
 /*N*/ 	nX3 = rXPoly[nBezIndex  ].X();
 /*N*/ 	nY3 = rXPoly[nBezIndex  ].Y();
-/*N*/ 
+/*N*/
 /*N*/ 	for (long nStep = 1; nStep < nSteps; nStep++, nDiff--, nPolyIndex++)
 /*N*/ 	{
 /*N*/ 		long nAcc = nDiff * nDiff * nDiff;
-/*N*/ 
+/*N*/
 /*N*/ 		nX = nX0 * nAcc;
 /*N*/ 		nY = nY0 * nAcc;
 /*N*/ 		nAcc = nAcc / nDiff * nStep;
@@ -315,7 +303,7 @@ namespace binfilter {
 /*N*/ 		nAcc = nAcc / nDiff * nStep;
 /*N*/ 		nX += nX3 * nAcc;
 /*N*/ 		nY += nY3 * nAcc;
-/*N*/ 
+/*N*/
 /*N*/ 		rPoly[nPolyIndex].X() = (long) (nX / nDiv);
 /*N*/ 		rPoly[nPolyIndex].Y() = (long) (nY / nDiv);
 /*N*/ 	}
@@ -326,10 +314,6 @@ namespace binfilter {
 |*
 |*    XOutputDevice::CreatePolygon()
 |*
-|*    Beschreibung
-|*    Ersterstellung    09.11.94
-|*    Letzte Aenderung  14.12.94
-|*
 *************************************************************************/
 
 /*N*/ Polygon XOutCreatePolygon( const XPolygon& rXPoly, OutputDevice* pOut,
@@ -337,11 +321,11 @@ namespace binfilter {
 /*N*/ {
 /*N*/ 	if ( rXPoly.GetPointCount() == 0 )
 /*N*/ 		return Polygon(0);
-/*N*/ 
+/*N*/
 /*N*/ 	USHORT i = 0;
 /*N*/ 	ULONG  nPolySize = 1;
 /*N*/ 	USHORT nPntMax = rXPoly.GetPointCount()-1;
-/*N*/ 
+/*N*/
 /*N*/ 	while (i<nPntMax) {
 /*N*/ 		if (i+3<=nPntMax && rXPoly.IsControl(i+1)) {
 /*N*/ #ifdef DGB_UTIL
@@ -366,24 +350,24 @@ namespace binfilter {
 /*N*/ 			i++;
 /*N*/ 		}
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	if ( nPolySize > XPOLY_MAXPOINTS )
 /*N*/ 		nPolySize = XPOLY_MAXPOINTS;
-/*N*/ 
+/*N*/
 /*N*/ 	Polygon aPoly( (USHORT) nPolySize );
 /*N*/ 	USHORT  nPolyPos = 0, nPolyPosMax = nPolySize - 1;
-/*N*/     
+/*N*/
 /*N*/     aPoly[ 0 ] = rXPoly[ i = 0 ];
-/*N*/ 
+/*N*/
 /*N*/ 	while( i < nPntMax && nPolyPos < nPolySize )
 /*N*/ 	{
 /*N*/ 		if( i + 3 <= nPntMax && rXPoly.GetFlags( i + 1 ) == XPOLY_CONTROL )
 /*N*/ 		{
 /*N*/ 			USHORT nSteps = (USHORT) XOutCalcBezierStepCount( rXPoly, i, pOut, nRough );
-/*N*/ 			
+/*N*/
 /*N*/             if( nPolyPos + nSteps >= (USHORT) nPolySize )
 /*N*/ 				nSteps = (USHORT)( nPolySize - nPolyPos - 1 );
-/*N*/ 			
+/*N*/
 /*N*/             XOutCalcBezier( rXPoly, i, aPoly, nPolyPos, nSteps );
 /*N*/ 			nPolyPos += (USHORT) nSteps;
 /*N*/ 			i += 3;
@@ -391,11 +375,11 @@ namespace binfilter {
 /*N*/ 		else if( nPolyPos < nPolyPosMax )
 /*N*/ 			aPoly[ ++nPolyPos ] = rXPoly[ ++i ];
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	return aPoly;
 /*N*/ }
 
-/*N*/ Polygon XOutCreatePolygonBezier( const XPolygon& rXPoly, OutputDevice* pOut )
+/*N*/ Polygon XOutCreatePolygonBezier( const XPolygon& rXPoly, OutputDevice* )
 /*N*/ {
 /*N*/ 	sal_uInt16 i, nPtCount = rXPoly.GetPointCount();
 /*N*/ 	Polygon aPoly( nPtCount );
@@ -424,16 +408,16 @@ namespace binfilter {
 /*N*/ 	double  fLength;
 /*N*/ 	long    nLineDx, nLineDy;
 /*N*/ 	long    nDxW, nDyW;
-/*N*/ 
+/*N*/
 /*N*/ 	XLineParam() {}
-/*N*/ 
+/*N*/
 /*N*/ 	void Init(const Point& rP1, const Point& rP2, long nWidth);
 /*N*/ };
 
 /*N*/ void XLineParam::Init(const Point& rP1, const Point& rP2, long nWidth)
 /*N*/ {
 /*N*/ 	double fWidth = 0.0, fRound;
-/*N*/ 
+/*N*/
 /*N*/ 	nPatSeg = -1;
 /*N*/ 	nPatRemain = 0;
 /*N*/ 	bHasJoin = FALSE;
@@ -449,7 +433,7 @@ namespace binfilter {
 /*N*/ 	if ( nLineDx >= 0 ) fRound =  0.5;
 /*N*/ 	else                fRound = -0.5;
 /*N*/ 	nDyW = - (long) (fWidth * nLineDx + fRound);
-/*N*/ 
+/*N*/
 /*N*/ 	aJoin1.X() = rP2.X() + nDxW / 2;
 /*N*/ 	aJoin1.Y() = rP2.Y() + nDyW / 2;
 /*N*/ 	aJoin2 = aJoin1;
@@ -464,8 +448,6 @@ namespace binfilter {
 |*
 |*    Beschreibung      Uebergang zwischen zwei Linien eines Polygons
 |*                      berechnen
-|*    Ersterstellung    02.12.94
-|*    Letzte Aenderung  09.01.95
 |*
 \************************************************************************/
 
@@ -475,8 +457,6 @@ namespace binfilter {
 |*    XOutputDevice::DrawStartEndPoly()
 |*
 |*    Linienanfang- bzw. -endpolygon zeichnen
-|*    Ersterstellung    17.01.95 ESO
-|*    Letzte Aenderung  18.01.95 ESO
 |*
 \************************************************************************/
 
@@ -486,8 +466,6 @@ namespace binfilter {
 |*    XOutputDevice::DrawLineStartEnd()
 |*
 |*    Linienanfang bzw. -ende eines Polygons zeichnen
-|*    Ersterstellung    18.01.95 ESO
-|*    Letzte Aenderung  20.01.95 ESO
 |*
 \************************************************************************/
 
@@ -497,8 +475,6 @@ namespace binfilter {
 |*    XOutputDevice::DrawFatLine()
 |*
 |*    Beschreibung      Dicke Linie mit oder ohne Linienstile zeichnen
-|*    Ersterstellung    28.11.94
-|*    Letzte Aenderung  09.10.95
 |*
 \************************************************************************/
 
@@ -508,8 +484,6 @@ namespace binfilter {
 |*    XOutputDevice::DrawPatternLine()
 |*
 |*    Beschreibung      Haarlinie mit Linienstil zeichnen
-|*    Ersterstellung    13.08.95 ESO
-|*    Letzte Aenderung  14.08.95 ESO
 |*
 \************************************************************************/
 
@@ -519,8 +493,6 @@ namespace binfilter {
 |*    XOutputDevice::DrawLinePolygon()
 |*
 |*    Beschreibung      Polygon-Linie (ggf. mit Linienmuster) zeichnen
-|*    Ersterstellung    28.11.94
-|*    Letzte Aenderung  09.10.95 ESO
 |*
 \************************************************************************/
 
@@ -535,7 +507,7 @@ namespace binfilter {
 /*?*/ 		const BYTE		cTrans = nLineTransparence * 255 / 100;
 /*?*/ 		const Color		aTrans( cTrans, cTrans, cTrans );
 /*?*/ 		Gradient		aTransGradient( GRADIENT_LINEAR, aTrans, aTrans );
-/*?*/ 
+/*?*/
 /*?*/ 		pOut = &aVDev;
 /*?*/ 		aVDev.EnableOutput( FALSE );
 /*?*/ 		aVDev.SetMapMode( pOldOut->GetMapMode() );
@@ -548,9 +520,9 @@ namespace binfilter {
 /*?*/ 		ImpDrawLinePolygon( rPoly, bClosePoly );
 /*?*/ 		aMtf.Stop();
 /*?*/ 		pOut = pOldOut;
-/*?*/ 
+/*?*/
 /*?*/ 		Rectangle aBound;
-/*?*/ 
+/*?*/
 /*?*/ 		for( MetaAction* pAct = aMtf.FirstAction(); pAct; pAct = aMtf.NextAction() )
 /*?*/ 		{
 /*?*/ 			if( pAct->GetType() == META_POLYGON_ACTION )
@@ -564,21 +536,21 @@ namespace binfilter {
 /*?*/ 				aBound.Union( Rectangle( aStart, aEnd ) );
 /*?*/ 			}
 /*?*/ 		}
-/*?*/ 
-/*?*/ 		if( aMtf.GetActionCount() )
+/*?*/
+/*?*/ 		if( aMtf.GetActionSize() )
 /*?*/ 		{
 /*?*/ 			Size		aSizeLog( aBound.GetSize() );
 /*?*/ 			const Size	aMinSizeLog( pOut->PixelToLogic( Size( 1, 1 ) ) );
 /*?*/ 			const Size	aSizePix( pOut->LogicToPixel( aSizeLog ) );
-/*?*/ 
+/*?*/
 /*?*/ 			// watch for minimum width
 /*?*/ 			if( !aSizePix.Width() )
 /*?*/ 				aSizeLog.Width() = aMinSizeLog.Width();
-/*?*/ 
+/*?*/
 /*?*/ 			// watch for minimum width
 /*?*/ 			if( !aSizePix.Height() )
 /*?*/ 				aSizeLog.Height() = aMinSizeLog.Height();
-/*?*/ 
+/*?*/
 /*?*/ 			aMap.SetOrigin( aBound.TopLeft() );
 /*?*/ 			aMtf.SetPrefMapMode( aMap );
 /*?*/ 			aMtf.SetPrefSize( aBound.GetSize() );
@@ -595,15 +567,14 @@ namespace binfilter {
 /*N*/ void XOutputDevice::ImpDrawLinePolygon(const Polygon& rPoly, BOOL bClosePoly)
 /*N*/ {
 /*N*/ 	Polygon         aPoly( rPoly );
-/*N*/ 	const Point*    pNextPoint;
 /*N*/ 	Point           aLineStartPos, aLineEndPos;
 /*N*/ 	XLineParam      aLParam, aStartParam, aEndParam;
 /*N*/ 	USHORT          nPntMax = aPoly.GetSize() - 1;
-/*N*/ 
+/*N*/
 /*N*/ 	if( nPntMax >= 1 )
 /*N*/ 	{
 /*N*/ 		if( bHair || ( ( XLINE_SOLID == eLineStyle ) && ( nLineWidth ==  0 ) ) )
-/*N*/ 		{{DBG_BF_ASSERT(0, "STRIP"); }//STRIP001 
+/*N*/ 		{{DBG_BF_ASSERT(0, "STRIP"); }
 /*N*/ 		}
 /*N*/ 		else if( XLINE_NONE != eLineStyle )
 /*N*/ 		{
@@ -612,28 +583,28 @@ namespace binfilter {
 /*?*/ 			Point		aDiff;
 /*?*/ 			const ULONG	nOldDrawMode = pOut->GetDrawMode();
 /*?*/ 			USHORT		i = 0;
-/*?*/ 
+/*?*/
 /*?*/ 			if( !nLineWidth )
 /*?*/ 			{
 /*?*/ 				aOldLineColor = pOut->GetLineColor();
 /*?*/ 				pOut->SetLineColor( aLineColor );
 /*?*/ 			}
-/*?*/ 
+/*?*/
 /*?*/ 			aOldFillColor = pOut->GetFillColor();
-/*?*/ 
+/*?*/
 /*?*/ 			if( nOldDrawMode & DRAWMODE_WHITEFILL )
 /*?*/ 			{
 /*?*/ 				ULONG nNewDrawMode = nOldDrawMode;
-/*?*/ 
+/*?*/
 /*?*/ 				nNewDrawMode &= ~DRAWMODE_WHITEFILL;
 /*?*/ 				nNewDrawMode |= DRAWMODE_BLACKFILL;
 /*?*/ 				pOut->SetDrawMode( nNewDrawMode );
 /*?*/ 			}
-/*?*/ 
+/*?*/
 /*?*/             if( nOldDrawMode & DRAWMODE_BLACKLINE )
 /*?*/             {
 /*?*/                 const Color aBlack( COL_BLACK );
-/*?*/ 
+/*?*/
 /*?*/                 pOut->SetDrawMode( pOut->GetDrawMode() & (~DRAWMODE_SETTINGSFILL) );
 /*?*/                 pOut->SetFillColor( aBlack );
 /*?*/             }
@@ -646,7 +617,7 @@ namespace binfilter {
 /*?*/             }
 /*?*/             else
 /*?*/                 pOut->SetFillColor( aLineColor );
-/*?*/ 
+/*?*/
 /*?*/ 			// bei einfachen Linien darf das Polygon nicht geschlossen sein (#24000)
 /*?*/ 			if ( aPoly[ nPntMax ] == aPoly[ 0 ] )
 /*?*/ 			{
@@ -658,12 +629,12 @@ namespace binfilter {
 /*?*/ 				else if ( 2 == nPntMax )
 /*?*/ 					bClosePoly = FALSE;
 /*?*/ 			}
-/*?*/ 
+/*?*/
 /*?*/ 			// Linien mit Laenge 0 nicht beruecksichtigen
 /*?*/ 			while ( i < nPntMax )
 /*?*/ 			{
 /*?*/ 				aDiff = aPoly[i+1] - aPoly[0];
-/*?*/ 
+/*?*/
 /*?*/ 				if ( bLineStart && !bClosePoly )
 /*?*/ 				{
 /*?*/ 					long nSqLen = aDiff.X() * aDiff.X() + aDiff.Y() * aDiff.Y();
@@ -684,7 +655,7 @@ namespace binfilter {
 /*?*/ 				i++;
 /*?*/ 			}
 /*?*/ 			USHORT  nLastPnt = nPntMax;
-/*?*/ 
+/*?*/
 /*?*/ 			while ( nPntMax > i )
 /*?*/ 			{
 /*?*/ 				aDiff = aPoly[nPntMax-1] - aPoly[nLastPnt];
@@ -707,7 +678,7 @@ namespace binfilter {
 /*?*/ 					break;
 /*?*/ 				nPntMax--;
 /*?*/ 			}
-/*?*/ 
+/*?*/
 /*?*/ 			if ( bClosePoly )
 /*?*/ 			{
 /*?*/ 				aDiff = aPoly[nPntMax] - aPoly[i];
@@ -715,11 +686,11 @@ namespace binfilter {
 /*?*/ 					nPntMax--;
 /*?*/ 				aLParam.Init(aPoly[nPntMax], aPoly[i], nLineWidth);
 /*?*/ 				if ( nLineWidth > 0 )
-/*?*/ 					{DBG_BF_ASSERT(0, "STRIP");} //STRIP001 CalcFatLineJoin(aPoly[i], aPoly[i+1], aLParam);
+/*?*/ 					{DBG_BF_ASSERT(0, "STRIP");}
 /*?*/ 			}
 /*?*/ 			else
 /*?*/ 				aLParam.Init(aPoly[i], aPoly[i+1], nLineWidth);
-/*?*/ 
+/*?*/
 /*?*/ 			while ( i < nPntMax )
 /*?*/ 			{
 /*?*/ 				USHORT nPos = i + 1;
@@ -730,36 +701,33 @@ namespace binfilter {
 /*?*/ 						break;
 /*?*/ 					nPos++;
 /*?*/ 				}
-/*?*/ 				if ( nPos+1 <= nPntMax )    pNextPoint = &aPoly[nPos+1];
-/*?*/ 				else if ( bClosePoly )      pNextPoint = &aPoly[0];
-/*?*/ 				else                        pNextPoint = NULL;
-/*?*/ 
+/*?*/
 /*?*/ 				if ( nLineWidth > 0 )
-/*?*/ 					{DBG_BF_ASSERT(0, "STRIP"); }//STRIP001 DrawFatLine(aPoly[i], aPoly[i+1], pNextPoint, aLParam);
+/*?*/ 					{DBG_BF_ASSERT(0, "STRIP"); }
 /*?*/ 				else
-/*?*/ 				{DBG_BF_ASSERT(0, "STRIP"); //STRIP001 
+/*?*/ 				{DBG_BF_ASSERT(0, "STRIP");
 /*?*/ 				}
 /*?*/ 				i = nPos;
 /*?*/ 			}
 /*?*/ 			if ( bClosePoly )
 /*?*/ 			{
 /*?*/ 				if ( nLineWidth > 0 )
-/*?*/ 				{DBG_BF_ASSERT(0, "STRIP"); }//STRIP001 	DrawFatLine(aPoly[i], aPoly[0], &aPoly[1], aLParam);
+/*?*/ 				{DBG_BF_ASSERT(0, "STRIP"); }
 /*?*/ 				else
-/*?*/ 				{DBG_BF_ASSERT(0, "STRIP"); //STRIP001 
+/*?*/ 				{DBG_BF_ASSERT(0, "STRIP");
 /*?*/ 				}
 /*?*/ 			}
 /*?*/ 			else
 /*?*/ 			{
 /*?*/ 				if ( bLineStart )
-/*?*/ 					{DBG_BF_ASSERT(0, "STRIP"); }//STRIP001 DrawStartEndPoly(aLineStartPos, aLineStartPoly, aStartParam);
+/*?*/ 					{DBG_BF_ASSERT(0, "STRIP"); }
 /*?*/ 				if ( bLineEnd )
-/*?*/ 					{DBG_BF_ASSERT(0, "STRIP");} //STRIP001 DrawStartEndPoly(aLineEndPos, aLineEndPoly, aEndParam);
+/*?*/ 					{DBG_BF_ASSERT(0, "STRIP");}
 /*?*/ 			}
-/*?*/ 
+/*?*/
 /*?*/ 			if( nLineWidth == 0 )
 /*?*/ 				pOut->SetLineColor( aOldLineColor );
-/*?*/ 
+/*?*/
 /*?*/ 			pOut->SetFillColor( aOldFillColor );
 /*?*/ 			pOut->SetDrawMode( nOldDrawMode );
 /*N*/ 		}
@@ -768,3 +736,5 @@ namespace binfilter {
 
 
 }
+
+/* vim:set shiftwidth=4 softtabstop=4 expandtab: */

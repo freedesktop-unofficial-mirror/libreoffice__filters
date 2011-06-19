@@ -1,7 +1,8 @@
+/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -32,48 +33,28 @@
 
 class SbxArray;
 
-#ifndef _OUTLINER_HXX
 #include <bf_svx/svdoutl.hxx>
-#endif
 
 #include "itempool.hxx"
 
-#ifndef _SVDPAGE_HXX
 #include <bf_svx/svdpage.hxx>
-#endif
 
 #include <bf_svx/svdetc.hxx>
 
-#ifndef _EEITEM_HXX
 #include <bf_svx/eeitem.hxx>
-#endif
-#ifndef _SFXAPP_HXX
 #include <bf_sfx2/app.hxx>
-#endif
 #ifndef _ZFORLIST_HXX
 #ifndef _ZFORLIST_DECLARE_TABLE
 #define _ZFORLIST_DECLARE_TABLE
 #endif
 #include <bf_svtools/zforlist.hxx>
 #endif
-#ifndef _SVDORECT_HXX
 #include <bf_svx/svdorect.hxx>
-#endif
-#ifndef _XLNCLIT_HXX
 #include <bf_svx/xlnclit.hxx>
-#endif
-#ifndef _XLNWTIT_HXX
 #include <bf_svx/xlnwtit.hxx>
-#endif
-#ifndef _XFLCLIT_HXX
 #include <bf_svx/xflclit.hxx>
-#endif
-#ifndef _SCHATTR_HXX
 #include "schattr.hxx"
-#endif
-#ifndef _SCH_MEMCHRT_HXX
 #include "memchrt.hxx"
-#endif
 
 #ifndef _SVX_CHRTITEM_HXX
 #define ITEMID_DOUBLE	        0
@@ -83,9 +64,7 @@ class SbxArray;
 #define ITEMID_CHARTDATADESCR   SCHATTR_DATADESCR_DESCR
 #define ITEMID_LANGUAGE           EE_CHAR_LANGUAGE
 
-#ifndef _SFXENUMITEM_HXX
 #include <bf_svtools/eitem.hxx>
-#endif
 
 #include <bf_svx/chrtitem.hxx>
 #endif
@@ -96,37 +75,23 @@ class SbxArray;
 #include <bf_svx/fontitem.hxx>
 #include <bf_svx/fhgtitem.hxx>
 #include <bf_svx/colritem.hxx>
-#ifndef _SVX_SVXIDS_HRC
 #include <bf_svx/svxids.hrc>
-#endif
-#ifndef INCLUDED_I18NPOOL_LANG_H
 #include <i18npool/lang.h>
-#endif
 
-#ifndef _SVX_XLINEIT0_HXX
 #include <bf_svx/xlineit0.hxx>
-#endif
 
 // header for LinguMgr
-#ifndef _UNO_LINGU_HXX
 #include <bf_svx/unolingu.hxx>
-#endif
 // header for class SvtLinguConfig
-#ifndef _SVTOOLS_LINGUCFG_HXX_
 #include <bf_svtools/lingucfg.hxx>
-#endif
 // header for getProcessServiceFactory
-#ifndef _COMPHELPER_PROCESSFACTORY_HXX_
 #include <comphelper/processfactory.hxx>
-#endif
 
 #ifndef _CHTMODEL_HXX
 #include <chtmodel.hxx>
 #include <globfunc.hxx>
 #endif
-#ifndef _SCHATTR_HXX
 #include "schattr.hxx"
-#endif
 #include "charttyp.hxx"
 
 #include "float.h"
@@ -143,37 +108,16 @@ class SbxArray;
 #include "chtscene.hxx"
 #include "bf_svx/def3d.hxx"
 
-#ifndef _SCH_DOCSHELL_HXX
 #include "docshell.hxx"
-#endif
-#ifndef _COM_SUN_STAR_CHART_CHARTDATACHANGEEVENT_HPP_
 #include <com/sun/star/chart/ChartDataChangeEvent.hpp>
-#endif
-#ifndef _UNO_LINGU_HXX
 #include <bf_svx/unolingu.hxx>
-#endif
-#ifndef _COM_SUN_STAR_LANG_XMULTISERVICEFACTORY_HPP_
 #include <com/sun/star/lang/XMultiServiceFactory.hpp>
-#endif
-#ifndef _COM_SUN_STAR_LINGUISTIC2_XLINGUSERVICEMANAGER_HPP_
 #include <com/sun/star/linguistic2/XLinguServiceManager.hpp>
-#endif
-#ifndef _COM_SUN_STAR_BEANS_XPROPERTYSET_HPP_
 #include <com/sun/star/beans/XPropertySet.hpp>
-#endif
-#ifndef _SVX_LANGITEM_HXX
 #include <bf_svx/langitem.hxx>
-#endif
-#ifndef _XCEPTION_HXX_
-#include <vos/xception.hxx>
-#endif
-#ifndef _UNDO_HXX
 #include <bf_svtools/undo.hxx>
-#endif
 
-#ifndef _LEGACYBINFILTERMGR_HXX
-#include <legacysmgr/legacy_binfilters_smgr.hxx>	//STRIP002 
-#endif
+#include <legacysmgr/legacy_binfilters_smgr.hxx>
 namespace binfilter {
 
 using ::rtl::OUString;
@@ -198,14 +142,39 @@ using namespace ::com::sun::star::linguistic2;
 using namespace ::com::sun::star;
 
 /*N*/ ChartModel::ChartModel( const String& rPalettePath, SfxObjectShell* pDocSh ) :
-/*N*/ 	pChartDataBuffered(NULL),
-/*N*/ 	pAutoPilot(NULL),//#46895#
+/*N*/ 	SdrModel( rPalettePath, NULL, SAL_STATIC_CAST( SvPersist*, pDocSh )),
 /*N*/ 	bClearDepth(FALSE),
 /*N*/ 	bNewOrLoadCompleted(FALSE),//aus SchChartDocument::
+/*N*/ 	pDocShell(pDocSh), //aus SchChartDocument::
+/*N*/ 	bAttrAutoStorage(FALSE),
+/*N*/ 	pChartDataBuffered(NULL),
+/*N*/ 	pChartRefOutDev(NULL),
 /*N*/ 	nChartStatus( CHS_USER_QUERY ),
-/*N*/ 	SdrModel( rPalettePath, NULL, SAL_STATIC_CAST( SvPersist*, pDocSh )),
+/*N*/ 	pAutoPilot(NULL),//#46895#
+/*N*/ 	pSdrObjList(NULL),
+/*N*/ 	bResizePie(TRUE),
+/*N*/ 	nPieRadius(0),
+/*N*/ 	pOwnNumFormatter(FALSE),
+/*N*/ 	pNumFormatter(NULL),
+/*N*/ 	nBarPercentWidth(100),   //#50116#
+/*N*/ 	nNumLinesInColChart(0),   //#50212#
+/*N*/ 	m_nDefaultColorSet(0),  //#50037#
+/*N*/ 	pLogBook(NULL),
 /*N*/ 	aChartRect (Rectangle ()),
 /*N*/ 	aInitialSize (Size ()),
+/*N*/ 	pChItemPool (new SchItemPool),
+/*N*/ 	pScene (0),
+/*N*/ 	aLightVec (new Vector3D (1, 1, 1)), // old: aLightVec (new Vector3D (0, 0, 1)),
+/*N*/ 	pChartData (0),
+/*N*/ 	fMinData (0.0),
+/*N*/ 	fMaxData (0.0),
+/*N*/ 	fAmbientIntensity(0.6),
+/*N*/ 	aAmbientColor(RGBColor(COL_WHITE)),
+/*N*/ 	fSpotIntensity (0.6),
+/*N*/ 	aSpotColor(RGBColor(COL_WHITE)),
+/*N*/ 	eChartStyle (CHSTYLE_2D_COLUMN),
+/*N*/ 	eOldChartStyle (CHSTYLE_3D_XYZSYMBOLS),
+/*N*/ 	pDefaultColors (0),
 /*N*/ 	bTextScalable (TRUE),
 /*N*/ 	bIsCopied (FALSE),
 /*N*/ 	bLegendVisible (TRUE),
@@ -222,19 +191,6 @@ using namespace ::com::sun::star;
 /*N*/ 	bSwitch3DColRow (FALSE), // FG: reiner Zwischenspeicher, damit die ChartScene das nicht als Parameter bekommt
 /*N*/ 							 //     ist immer gleich bSwitchRowCol, das aber wird durchs Chart als Parameter
 /*N*/ 							 //     durchgereicht.
-/*N*/ 	pChItemPool (new SchItemPool),
-/*N*/ 	pScene (0),
-/*N*/ 	aLightVec (new Vector3D (1, 1, 1)), // old: aLightVec (new Vector3D (0, 0, 1)),
-/*N*/ 	pChartData (0),
-/*N*/ 	fMinData (0.0),
-/*N*/ 	fMaxData (0.0),
-/*N*/ 	fAmbientIntensity(0.6),
-/*N*/ 	aAmbientColor(RGBColor(COL_WHITE)),
-/*N*/ 	fSpotIntensity (0.6),
-/*N*/ 	aSpotColor(RGBColor(COL_WHITE)),
-/*N*/ 	eChartStyle (CHSTYLE_2D_COLUMN),
-/*N*/ 	eOldChartStyle (CHSTYLE_3D_XYZSYMBOLS),
-/*N*/ 	pDefaultColors (0),
 /*N*/ 	nMarkLen (100),
 /*N*/ 	nPieHeight (20),
 /*N*/ 	pPieSegOfs (0),
@@ -244,14 +200,14 @@ using namespace ::com::sun::star;
 /*N*/ 	nZAngle (0),
 /*N*/ 	bCanRebuild (TRUE),
 /*N*/ 	bShowMainTitle (TRUE),
-/*N*/ 	aMainTitle (String ()),
 /*N*/ 	bShowSubTitle (FALSE),
-/*N*/ 	aSubTitle (String ()),
 /*N*/ 	bShowXAxisTitle (FALSE),
-/*N*/ 	aXAxisTitle (String ()),
 /*N*/ 	bShowYAxisTitle (FALSE),
-/*N*/ 	aYAxisTitle (String ()),
 /*N*/ 	bShowZAxisTitle (FALSE),
+/*N*/ 	aMainTitle (String ()),
+/*N*/ 	aSubTitle (String ()),
+/*N*/ 	aXAxisTitle (String ()),
+/*N*/ 	aYAxisTitle (String ()),
 /*N*/ 	aZAxisTitle (String ()),
 /*N*/ 	bShowXGridMain (TRUE),
 /*N*/ 	bShowXGridHelp (FALSE),
@@ -259,6 +215,15 @@ using namespace ::com::sun::star;
 /*N*/ 	bShowYGridHelp (FALSE),
 /*N*/ 	bShowZGridMain (FALSE),
 /*N*/ 	bShowZGridHelp (FALSE),
+/*N*/ 	bShowDataDescr(TRUE),
+/*N*/ 	pChartXAxis(NULL),
+/*N*/ 	pChartYAxis(NULL),
+/*N*/ 	pChartZAxis(NULL),
+/*N*/ 	pChartAAxis(NULL),
+/*N*/ 	pChartBAxis(NULL),
+/*N*/ 	pTmpXItems(NULL),
+/*N*/ 	pTmpYItems(NULL),
+/*N*/ 	pTmpZItems(NULL),
 /*N*/ 	eDataDescr (CHDESCR_NONE),
 /*N*/ 	bShowSym (FALSE),
 /*N*/ 	bSwitchData (TRUE),
@@ -266,7 +231,6 @@ using namespace ::com::sun::star;
 /*N*/ 	bShouldBuildChart( TRUE ),
 /*N*/ 	bReadError (FALSE),
 /*N*/ 	mbIsInitialized(FALSE),
-/*N*/ 	pOwnNumFormatter(FALSE),
 /*N*/ 	pOutliner(NULL),
 /*N*/ 		// FG: nMoreData >=12
 /*N*/ 	bFormatXAxisTextInMultipleLinesIfNecessary (TRUE),
@@ -285,10 +249,10 @@ using namespace ::com::sun::star;
 /*N*/ 	aLastDiagramRectangle(-1,-1,-1,-1),
 /*N*/ 	aLegendTopLeft(-1,-1),
 /*N*/ 	aTitleXAxisPosition (-1,-1),
-/*N*/ 	eAdjustXAxesTitle(CHADJUST_TOP_CENTER),
 /*N*/ 	aTitleYAxisPosition(-1,-1),
-/*N*/ 	eAdjustYAxesTitle(CHADJUST_TOP_CENTER),
 /*N*/ 	aTitleZAxisPosition (-1,-1),
+/*N*/ 	eAdjustXAxesTitle(CHADJUST_TOP_CENTER),
+/*N*/ 	eAdjustYAxesTitle(CHADJUST_TOP_CENTER),
 /*N*/ 	eAdjustZAxesTitle(CHADJUST_TOP_CENTER),
 /*N*/ 	bUseRelativePositionsForChartGroups(FALSE),
 /*N*/ 	bAdjustMarginsForLegend(TRUE),
@@ -306,88 +270,66 @@ using namespace ::com::sun::star;
 /*N*/ 	bZAxisTitleHasBeenMoved(FALSE),
 /*N*/ 	aInitialSizefor3d (-1,-1),    // FG: Zwischenspeicher fuer InitalSize (siehe chtmod3d.cxx, Position3DAxisTitles
 /*N*/ 	pTestTextObj(NULL),  //  FG: fuer GetHeightOfnRows, ein Dummy-Textpointer
-/*N*/ 	pLogBook(NULL),
-/*N*/ 	bShowDataDescr(TRUE),
-/*N*/ 
-/*N*/ 	pDocShell(pDocSh), //aus SchChartDocument::
-/*N*/ //  	bFreshLoaded (FALSE),
-/*N*/ 	m_nDefaultColorSet(0),  //#50037#
-/*N*/ 	nBarPercentWidth(100),   //#50116#
-/*N*/ 	nNumLinesInColChart(0),   //#50212#
-/*N*/ 	bAttrAutoStorage(FALSE),
-/*N*/ 	pChartRefOutDev(NULL),
-/*N*/ 	pChartXAxis(NULL),
-/*N*/ 	pChartYAxis(NULL),
-/*N*/ 	pChartZAxis(NULL),
-/*N*/ 	pChartBAxis(NULL),
-/*N*/ 	pChartAAxis(NULL),
-/*N*/ 	pTmpXItems(NULL),
-/*N*/ 	pTmpYItems(NULL),
-/*N*/ 	pTmpZItems(NULL),
-/*N*/ 	pSdrObjList(NULL),
-/*N*/ 	eProjection(PR_PERSPECTIVE),
-/*N*/ 	bResizePie(TRUE),
-/*N*/ 	nPieRadius(0),
-/*N*/ 	pNumFormatter(NULL),
 /*N*/ 	nXLastNumFmt(-1),
 /*N*/ 	nYLastNumFmt(-1),
 /*N*/ 	nBLastNumFmt(-1),
 /*N*/ 	eLanguage( LANGUAGE_SYSTEM ),
 /*N*/ 	eLanguageCJK( LANGUAGE_SYSTEM ),
 /*N*/ 	eLanguageCTL( LANGUAGE_SYSTEM ),
-/*N*/     mpDocStor( NULL ),
+/*N*/ 	eProjection(PR_PERSPECTIVE),
+/*N*/   mpDocStor( NULL ),
 /*N*/ 	m_pUndoActionFromDraw(NULL),
 /*N*/ 	m_bDeleteUndoActionNotificationFromDraw(TRUE)
 /*N*/ {
 /*N*/ 	SdrModel::SetNotifyUndoActionHdl(LINK( this, ChartModel, NotifyUndoActionHdl ));
-/*N*/ 
+/*N*/
 /*N*/     if( pDocSh != NULL )
 /*N*/     {
 /*N*/         // enable swapping of metafiles and bitmaps that
 /*N*/         // might be in a chart as additional objects
 /*N*/         SetSwapGraphics( TRUE );
 /*N*/     }
-/*N*/ 
+/*N*/
 /*N*/ 	aLightVec->Normalize ();
-/*N*/ 
+/*N*/
 /*N*/ 	SetScaleUnit(MAP_100TH_MM);
 /*N*/ 	SetScaleFraction(Fraction(1, 1));
 /*N*/ 	SetDefaultFontHeight(847);     // 24pt
-/*N*/ 
+/*N*/
 /*N*/ 	SfxItemPool* pPool = &GetItemPool();
 /*N*/ 	pPool->SetDefaultMetric(SFX_MAPUNIT_100TH_MM);
 /*N*/ 	pPool->SetPoolDefaultItem( SfxBoolItem(EE_PARA_HYPHENATE, TRUE) );
 /*N*/ 	pPool->SetPoolDefaultItem(Svx3DPercentDiagonalItem (5));
-/*N*/ 
+/*N*/
 /*N*/ 	pOwnNumFormatter = new SvNumberFormatter( ::legacy_binfilters::getLegacyProcessServiceFactory(),
 /*N*/ 											  LANGUAGE_SYSTEM );
 /*N*/ 	pOwnNumFormatter->ChangeStandardPrec( 15 );
-/*N*/ 
+/*N*/
 /*N*/ 	// append pool to end of pool chain
 /*N*/ 	for (;;)
 /*N*/ 	{
 /*N*/ 		SfxItemPool* pSecondary = pPool->GetSecondaryPool();
 /*N*/ 		if (!pSecondary)
 /*N*/ 			break;
-/*N*/ 
+/*N*/
 /*N*/ 		pPool = pSecondary;
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	pPool->SetSecondaryPool(pChItemPool);
-/*N*/ 
+/*N*/
 /*N*/ 	SfxItemPool* pMasterPool = &GetItemPool();
 /*N*/ 	pMasterPool->FreezeIdRanges();
-/*N*/ 
+/*N*/
 /*N*/ 	// get current language
 /*N*/ 	pOutliner = SdrMakeOutliner( OUTLINERMODE_TEXTOBJECT, this);
-/*N*/ 	SdrOutliner& rDrawOutliner = GetDrawOutliner();
-/*N*/ 
+/*N*/ 	GetDrawOutliner();
+/*N*/
 /*N*/ 	try
 /*N*/ 	{
 /*N*/         // set language properties
 /*N*/         SvtLinguConfig aLinguConfig;
 /*N*/         SvtLinguOptions aLinguOptions;
-/*N*/ 
+/*N*/
 /*N*/         if( aLinguConfig.GetOptions( aLinguOptions ) )
 /*N*/         {
 /*N*/             SetLanguage( aLinguOptions.nDefaultLanguage,     EE_CHAR_LANGUAGE );
@@ -397,14 +339,14 @@ using namespace ::com::sun::star;
 /*N*/     }
 /*N*/ 	catch( uno::Exception aEx )
 /*N*/ 	{
-/*N*/ #ifdef DBG_UTIL
+/*N*/ #if OSL_DEBUG_LEVEL > 1
 /*N*/         // convert ::rtl::OUString => tools String => ByteString
 /*N*/         String aStr( aEx.Message );
 /*N*/         ByteString aBStr( aStr, RTL_TEXTENCODING_ASCII_US );
-/*N*/         DBG_ERROR1( "LinguProperties threw exception: %s", aBStr.GetBuffer());
+/*N*/         OSL_TRACE( "LinguProperties threw exception: %s", aBStr.GetBuffer());
 /*N*/ #endif
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	// init item sets for chart objects
 /*N*/ 	pTitleAttr          = new SfxItemSet(*pItemPool, nTitleWhichPairs);
 /*N*/ 	pMainTitleAttr      = new SfxItemSet(*pItemPool, nTitleWhichPairs);
@@ -426,14 +368,14 @@ using namespace ::com::sun::star;
 /*N*/ 	pLegendAttr         = new SfxItemSet(*pItemPool, nLegendWhichPairs);
 /*N*/ 	pChartAttr          = new SfxItemSet(*pItemPool, nChartWhichPairs);
 /*N*/ 	pDummyAttr          = new SfxItemSet(*pItemPool, nRowWhichPairs);
-/*N*/ 
+/*N*/
 /*N*/ 	pStockLineAttr		= new SfxItemSet(*pItemPool, nRowWhichPairs);
 /*N*/ 	pStockLossAttr		= new SfxItemSet(*pItemPool, nRowWhichPairs);
 /*N*/ 	pStockPlusAttr		= new SfxItemSet(*pItemPool, nRowWhichPairs);
-/*N*/ 
+/*N*/
 /*N*/ 	SdrPage* pPage = GetPage(0);
 /*N*/ 	if (pPage) aInitialSize = pPage->GetSize();
-/*N*/ 
+/*N*/
 /*N*/ 	CreateDefaultColors ();
 /*N*/ 	eChartLinePoints[0] =
 /*N*/ 	eChartLinePoints[1] =
@@ -444,19 +386,19 @@ using namespace ::com::sun::star;
 /*N*/ 	eChartLinePoints[6] =
 /*N*/ 	eChartLinePoints[7] =
 /*N*/ 	eChartLinePoints[8] = 0;
-/*N*/ 
+/*N*/
 /*N*/ 	Font aLatinFont( OutputDevice::GetDefaultFont( DEFAULTFONT_LATIN_SPREADSHEET, GetLanguage( EE_CHAR_LANGUAGE ), DEFAULTFONT_FLAGS_ONLYONE ) );
 /*N*/ 	SvxFontItem aSvxFontItem( aLatinFont.GetFamily(), aLatinFont.GetName(), aLatinFont.GetStyleName(), aLatinFont.GetPitch(),
 /*N*/ 		                      aLatinFont.GetCharSet(), EE_CHAR_FONTINFO );
-/*N*/ 
+/*N*/
 /*N*/ 	Font aCJKFont( OutputDevice::GetDefaultFont( DEFAULTFONT_CJK_SPREADSHEET, GetLanguage( EE_CHAR_LANGUAGE_CJK ), DEFAULTFONT_FLAGS_ONLYONE ) );
 /*N*/ 	SvxFontItem aSvxFontItemCJK( aCJKFont.GetFamily(), aCJKFont.GetName(), aCJKFont.GetStyleName(), aCJKFont.GetPitch(),
 /*N*/ 		                         aCJKFont.GetCharSet(), EE_CHAR_FONTINFO_CJK );
-/*N*/ 
+/*N*/
 /*N*/ 	Font aCTLFont( OutputDevice::GetDefaultFont( DEFAULTFONT_CTL_SPREADSHEET, GetLanguage( EE_CHAR_LANGUAGE_CTL ), DEFAULTFONT_FLAGS_ONLYONE ) );
 /*N*/ 	SvxFontItem aSvxFontItemCTL( aCTLFont.GetFamily(), aCTLFont.GetName(), aCTLFont.GetStyleName(), aCTLFont.GetPitch(),
 /*N*/ 		                         aCTLFont.GetCharSet(), EE_CHAR_FONTINFO_CTL );
-/*N*/ 
+/*N*/
 /*N*/ 	// main title
 /*N*/ 	pTitleAttr->Put(aSvxFontItem);
 /*N*/ 	pTitleAttr->Put(SvxFontHeightItem( 459, 100, EE_CHAR_FONTHEIGHT ));	// 13pt
@@ -464,19 +406,17 @@ using namespace ::com::sun::star;
 /*N*/ 	pTitleAttr->Put(SvxFontHeightItem( 459, 100, EE_CHAR_FONTHEIGHT_CJK ));	// 13pt
 /*N*/ 	pTitleAttr->Put(aSvxFontItemCTL);
 /*N*/ 	pTitleAttr->Put(SvxFontHeightItem( 459, 100, EE_CHAR_FONTHEIGHT_CTL ));	// 13pt
-/*N*/     // the font color has 'automatic' as default that should not be overwritten
-/*N*/ // 	pTitleAttr->Put(SvxColorItem(RGBColor(COL_BLACK)));
 /*N*/ 	pTitleAttr->Put(XLineStyleItem(XLINE_NONE));
 /*N*/ 	pTitleAttr->Put(XFillStyleItem(XFILL_NONE));
 /*N*/ 	pTitleAttr->Put(SvxChartTextOrientItem(CHTXTORIENT_AUTOMATIC));
 /*N*/ 	pMainTitleAttr->Put(*pTitleAttr);
-/*N*/ 
+/*N*/
 /*N*/ 	// sub title
 /*N*/ 	pTitleAttr->Put(SvxFontHeightItem( 388, 100, EE_CHAR_FONTHEIGHT ));	// 11pt
 /*N*/ 	pTitleAttr->Put(SvxFontHeightItem( 388, 100, EE_CHAR_FONTHEIGHT_CJK ));	// 11pt
 /*N*/ 	pTitleAttr->Put(SvxFontHeightItem( 388, 100, EE_CHAR_FONTHEIGHT_CTL ));	// 11pt
 /*N*/ 	pSubTitleAttr->Put(*pTitleAttr);
-/*N*/ 
+/*N*/
 /*N*/ 	// axis titles
 /*N*/ 	pTitleAttr->Put(SvxFontHeightItem( 318, 100, EE_CHAR_FONTHEIGHT ));	// 9pt
 /*N*/ 	pTitleAttr->Put(SvxFontHeightItem( 318, 100, EE_CHAR_FONTHEIGHT_CJK ));	// 9pt
@@ -484,25 +424,25 @@ using namespace ::com::sun::star;
 /*N*/ 	pXAxisTitleAttr->Put(*pTitleAttr);
 /*N*/ 	pYAxisTitleAttr->Put(*pTitleAttr);
 /*N*/ 	pZAxisTitleAttr->Put(*pTitleAttr);
-/*N*/ 
+/*N*/
 /*N*/ 	// general axis attributies: are also set in class ChartAxis()
 /*N*/ 	// (BM) => deprecated and therefore removed here
-/*N*/ 
+/*N*/
 /*N*/     Color aAreaBackColor( RGBColor( COL_WHITE ));
 /*N*/ 	pDiagramAreaAttr->Put(XLineStyleItem(XLINE_NONE));
 /*N*/ 	pDiagramAreaAttr->Put(XFillColorItem(String(), aAreaBackColor));
-/*N*/ 
+/*N*/
 /*N*/     // set the page color (in a chart this is the color of the area)
 /*N*/     // at the outliner
 /*N*/     if( pOutliner )
 /*N*/         pOutliner->SetBackgroundColor( aAreaBackColor );
-/*N*/ 
+/*N*/
 /*N*/ 	pDiagramWallAttr->Put(XLineStyleItem(XLINE_NONE));
 /*N*/ 	pDiagramWallAttr->Put(XFillStyleItem(XFILL_NONE));
-/*N*/ 
+/*N*/
 /*N*/ 	pDiagramFloorAttr->Put(XLineStyleItem(XLINE_NONE));
 /*N*/ 	pDiagramFloorAttr->Put(XFillColorItem(String(), Color(153, 153, 153)));
-/*N*/ 
+/*N*/
 /*N*/ 	pLegendAttr->Put(aSvxFontItem);
 /*N*/ 	pLegendAttr->Put(aSvxFontItemCJK);
 /*N*/ 	pLegendAttr->Put(aSvxFontItemCTL);
@@ -510,12 +450,12 @@ using namespace ::com::sun::star;
 /*N*/ 	pLegendAttr->Put(SvxFontHeightItem( 212, 100, EE_CHAR_FONTHEIGHT_CJK ));	// 6pt #72012#
 /*N*/ 	pLegendAttr->Put(SvxFontHeightItem( 212, 100, EE_CHAR_FONTHEIGHT_CTL ));	// 6pt #72012#
 /*N*/ 	pLegendAttr->Put(XFillStyleItem(XFILL_NONE));
-/*N*/ 
+/*N*/
 /*N*/ 	//Todo: ueberpruefen, ob noch korekkt, es wird der default-ChartTyp erzeugt und der
 /*N*/ 	//AttrSet in pChartAttr gesetzt
 /*N*/ 	ChartType aTyp((SvxChartStyle) CHSTYLE_2D_COLUMN);
 /*N*/ 	aTyp.GetAttrSet(pChartAttr);
-/*N*/ 
+/*N*/
 /*N*/ 	// the dummy attribute is (mainly!) used for data row defaults
 /*N*/ 	// so avoid setting (pool) default values here as fixed
 /*N*/ 	pDummyAttr->Put( aSvxFontItem );
@@ -524,30 +464,30 @@ using namespace ::com::sun::star;
 /*N*/ 	pDummyAttr->Put(SvxFontHeightItem( 212, 100, EE_CHAR_FONTHEIGHT ));	// 6pt #72012#
 /*N*/ 	pDummyAttr->Put(SvxFontHeightItem( 212, 100, EE_CHAR_FONTHEIGHT_CJK ));	// 6pt #72012#
 /*N*/ 	pDummyAttr->Put(SvxFontHeightItem( 212, 100, EE_CHAR_FONTHEIGHT_CTL ));	// 6pt #72012#
-/*N*/ 
+/*N*/
 /*N*/ 	// what are these needed for?
 /*N*/ 	pDummyAttr->Put (SfxInt32Item (SCHATTR_DUMMY0, (INT32) eChartStyle));
 /*N*/ 	pDummyAttr->Put (SfxInt32Item (SCHATTR_DUMMY1, 0));
-/*N*/ 
+/*N*/
 /*N*/ 	pStockLossAttr->Put(XFillColorItem(String(), RGBColor(COL_BLACK)));
 /*N*/ 	pStockPlusAttr->Put(XFillColorItem(String(), RGBColor(COL_WHITE)));
-/*N*/ 
+/*N*/
 /*N*/ 	// this test object is for calculating the text height in GetHeightOfnRows
 /*N*/ 	// (chtmode1.cxx) without creating a new object for each call.
 /*N*/ 	pTestTextObj = new SdrRectObj (OBJ_TEXT, Rectangle(0, 0, 10, 10) /*, aTestStr*/);
-/*N*/ 
+/*N*/
 /*N*/ 	//Aus SchChartDocument::
 /*N*/ 	SetStyleSheetPool(new SchStyleSheetPool(*pItemPool));
 /*N*/ 	((SdrOutliner*)pDrawOutliner)->SetStyleSheetPool((SfxStyleSheetPool*)pStyleSheetPool);
 /*N*/ 	pOutliner->SetStyleSheetPool((SfxStyleSheetPool*)pStyleSheetPool);
-/*N*/ 
+/*N*/
 /*N*/ 	// Layer anlegen
-/*N*/ 
+/*N*/
 /*N*/ 	SdrLayerAdmin& rLayerAdmin = GetLayerAdmin();
 /*N*/ 	rLayerAdmin.NewLayer( String( SchResId( STR_LAYOUT )));
 /*N*/ 	rLayerAdmin.NewLayer( String( SchResId( STR_CONTROLS )));
-/*N*/ 
-/*N*/ 
+/*N*/
+/*N*/
 /*N*/ 	//Wichtig! die Achsen muessen jetzt erstellt werden, dies darf erst nach dem
 /*N*/ 	//anlegen des ItemPools und der Defaults passieren!
 /*N*/ 	pChartXAxis = new ChartAxis( this, CHART_AXIS_X, CHAXIS_AXIS_X );
@@ -555,38 +495,38 @@ using namespace ::com::sun::star;
 /*N*/ 	pChartZAxis = new ChartAxis( this, CHART_AXIS_Z, CHAXIS_AXIS_Z );
 /*N*/ 	pChartBAxis = new ChartAxis( this, CHART_AXIS_Y, CHAXIS_AXIS_B );
 /*N*/ 	pChartAAxis = new ChartAxis( this, CHART_AXIS_X, CHAXIS_AXIS_A );
-/*N*/ 
+/*N*/
 /*N*/ 	pChartYAxis->IfNoDataLookAt( CHAXIS_AXIS_B ); //Falls Achse nur ein Spiegelbild ist....
 /*N*/ 	pChartBAxis->IfNoDataLookAt( CHAXIS_AXIS_Y ); //d.h. keine eigenen Datenreihen besitzt
-/*N*/ 
+/*N*/
 /*N*/ 	aBarY1.Assign(this,pChartYAxis);
 /*N*/ 	aBarY2.Assign(this,pChartBAxis);
-/*N*/ 
+/*N*/
 /*N*/ 	pChartXAxis->SetAllAxisAttr(pAxisAttr);
 /*N*/ 	pChartYAxis->SetAllAxisAttr(pAxisAttr);
 /*N*/ 	pChartZAxis->SetAllAxisAttr(pAxisAttr);
 /*N*/ 	pChartAAxis->SetAllAxisAttr(pAxisAttr);
 /*N*/ 	pChartBAxis->SetAllAxisAttr(pAxisAttr);
-/*N*/ 
+/*N*/
 /*N*/ 	pChartXAxis->SetGridAttrList(pYGridMainAttr);//XGrid->YAchse :(  (u.U.)
 /*N*/ 	pChartYAxis->SetGridAttrList(pXGridMainAttr);
-/*N*/ 
+/*N*/
 /*N*/ 	SetNumberFormatter( pOwnNumFormatter );				// sets number formatter also for all axes
-/*N*/ 
+/*N*/
 /*N*/ 	long nTmp=pNumFormatter->GetStandardFormat(NUMBERFORMAT_NUMBER, LANGUAGE_SYSTEM);
 /*N*/ 	SetNumFmt(CHOBJID_DIAGRAM_X_AXIS,nTmp,FALSE);
 /*N*/ 	SetNumFmt(CHOBJID_DIAGRAM_Y_AXIS,nTmp,FALSE);
 /*N*/ 	SetNumFmt(CHOBJID_DIAGRAM_Z_AXIS,nTmp,FALSE);
 /*N*/ 	SetNumFmt(CHOBJID_DIAGRAM_A_AXIS,nTmp,FALSE);
 /*N*/ 	SetNumFmt(CHOBJID_DIAGRAM_B_AXIS,nTmp,FALSE);
-/*N*/ 
+/*N*/
 /*N*/ 	pChartBAxis->ShowAxis(FALSE);
 /*N*/ 	pChartBAxis->ShowDescr(FALSE);
 /*N*/ 	pChartAAxis->ShowAxis(FALSE);
 /*N*/ 	pChartAAxis->ShowDescr(FALSE);
-/*N*/ 
+/*N*/
 /*N*/ 	pSdrObjList=new SdrObjList(this,NULL);
-/*N*/ 
+/*N*/
 /*N*/     // #99528# change auto-font color according to default diagram area
 /*N*/     PageColorChanged( *pDiagramAreaAttr );
 /*N*/ }
@@ -596,40 +536,34 @@ using namespace ::com::sun::star;
 |* Destruktor
 |*
 \************************************************************************/
-/*N*/ void ChartModel::ClearItemSetLists()
-/*N*/ {
-/*N*/ 	long i, nCount;
-/*N*/ 
-/*N*/ 	nCount = aDataRowAttrList.Count();
-/*N*/ 	for (i = 0 ; i < nCount; i++)
-/*N*/ 		delete aDataRowAttrList.GetObject(i);
-/*N*/ 	aDataRowAttrList.Clear();
-/*N*/ 
-/*N*/ 	nCount = aRegressAttrList.Count();
-/*N*/ 	for (i = 0 ; i < nCount; i++)
-/*N*/ 		delete aRegressAttrList.GetObject(i);
-/*N*/ 	aRegressAttrList.Clear();
-/*N*/ 
-/*N*/ 	nCount = aDataPointAttrList.Count();
-/*N*/ 	for (i = 0 ; i < nCount; i++)
-/*N*/ 		delete aDataPointAttrList.GetObject(i);
-/*N*/ 	aDataPointAttrList.Clear();
-/*N*/ 
-/*N*/ 	nCount = aSwitchDataPointAttrList.Count();
-/*N*/ 	for (i = 0 ; i < nCount; i++)
-/*N*/ 		delete aSwitchDataPointAttrList.GetObject(i);
-/*N*/ 	aSwitchDataPointAttrList.Clear();
-/*N*/ 
-/*N*/ 	nCount =  aAverageAttrList.Count();
-/*N*/ 	for (i = 0 ; i < nCount; i++)
-/*N*/ 		delete aAverageAttrList.GetObject(i);
-/*N*/ 	aAverageAttrList.Clear();
-/*N*/ 
-/*N*/ 	nCount =  aErrorAttrList.Count();
-/*N*/ 	for (i = 0 ; i < nCount; i++)
-/*N*/ 		delete aErrorAttrList.GetObject(i);
-/*N*/ 	aErrorAttrList.Clear();
-/*N*/ }
+void ChartModel::ClearItemSetLists()
+{
+    for (size_t i = 0, nCount = aDataRowAttrList.size(); i < nCount; i++)
+        delete aDataRowAttrList[ i ];
+    aDataRowAttrList.clear();
+
+    for (size_t i = 0, nCount = aRegressAttrList.size(); i < nCount; i++)
+        delete aRegressAttrList[ i ];
+    aRegressAttrList.clear();
+
+    for (size_t i = 0, nCount = aDataPointAttrList.size(); i < nCount; i++)
+        delete aDataPointAttrList[ i ];
+    aDataPointAttrList.clear();
+
+    for (size_t i = 0, nCount = aSwitchDataPointAttrList.size(); i < nCount; i++)
+        delete aSwitchDataPointAttrList[ i ];
+    aSwitchDataPointAttrList.clear();
+
+    for (size_t i = 0, nCount = aAverageAttrList.size(); i < nCount; i++)
+        delete aAverageAttrList[ i ];
+    aAverageAttrList.clear();
+
+    for (size_t i = 0, nCount = aErrorAttrList.size(); i < nCount; i++)
+        delete aErrorAttrList[ i ];
+    aErrorAttrList.clear();
+
+}
+
 /*N*/ ChartModel::~ChartModel()
 /*N*/ {
 /*N*/ 	if(pTmpXItems)
@@ -638,12 +572,12 @@ using namespace ::com::sun::star;
 /*N*/ 		delete pTmpYItems;
 /*N*/ 	if(pTmpZItems)
 /*N*/ 		delete pTmpZItems;
-/*N*/ 
+/*N*/
 /*N*/ 	if(pChartRefOutDev)
 /*?*/ 		delete pChartRefOutDev;
-/*N*/ 
+/*N*/
 /*N*/ 	Clear();//aus SchChartDocument::
-/*N*/ 
+/*N*/
 /*N*/ 	delete pTitleAttr;
 /*N*/ 	delete pMainTitleAttr;
 /*N*/ 	delete pSubTitleAttr;
@@ -651,13 +585,13 @@ using namespace ::com::sun::star;
 /*N*/ 	delete pYAxisTitleAttr;
 /*N*/ 	delete pZAxisTitleAttr;
 /*N*/ 	delete pAxisAttr;
-/*N*/ 
+/*N*/
 /*N*/ 	delete pChartXAxis;
 /*N*/ 	delete pChartYAxis;
 /*N*/ 	delete pChartZAxis;
 /*N*/ 	delete pChartAAxis;
 /*N*/ 	delete pChartBAxis;
-/*N*/ 
+/*N*/
 /*N*/ 	delete pGridAttr;
 /*N*/ 	delete pXGridMainAttr;
 /*N*/ 	delete pYGridMainAttr;
@@ -672,20 +606,20 @@ using namespace ::com::sun::star;
 /*N*/ 	delete pChartAttr;
 /*N*/ 	delete pDummyAttr;
 /*N*/ 	delete aLightVec;
-/*N*/ 
+/*N*/
 /*N*/ 	delete pStockLineAttr;
 /*N*/ 	delete pStockLossAttr;
 /*N*/ 	delete pStockPlusAttr;
-/*N*/ 
+/*N*/
 /*N*/ 	DestroyDefaultColors();
 /*N*/ 	delete pOutliner;
 /*N*/ 	ClearItemSetLists();
-/*N*/ 
+/*N*/
 /*N*/ 	// suche nach dem ChartPool in der Poolkette, loesche alle verbindungen
 /*N*/ 	// und vernichte den pool. vorgehen ist unabhaengig von der anzahl
 /*N*/ 	// der vorangehendem pools. [RB]
 /*N*/ 	SfxItemPool* pPool = &GetItemPool();
-/*N*/ 
+/*N*/
 /*N*/ 	for (;;)
 /*N*/ 	{
 /*N*/ 		SfxItemPool* pSecondary = pPool->GetSecondaryPool();
@@ -694,34 +628,34 @@ using namespace ::com::sun::star;
 /*N*/ 			pPool->SetSecondaryPool (NULL);
 /*N*/ 			break;
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		pPool = pSecondary;
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	delete pChItemPool;
-/*N*/ 
+/*N*/
 /*N*/ 	delete pOwnNumFormatter;
-/*N*/ 
+/*N*/
 /*N*/ 	delete[] pPieSegOfs;
-/*N*/ 
+/*N*/
 /*N*/ 	if(pChartData)
 /*N*/ 	{
 /*N*/ 		if(pChartData->DecreaseRefCount())
 /*N*/ 			delete pChartData;
 /*N*/ 		pChartData=NULL;
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	if (pTestTextObj != NULL) delete pTestTextObj;
 /*N*/ 	if (pLogBook) delete pLogBook;
-/*N*/ 
-/*N*/ 
-/*N*/ 
+/*N*/
+/*N*/
+/*N*/
 /*N*/ 	SdrObject *pObj;
 /*N*/ 	while(pSdrObjList->GetObjCount())
-/*?*/ 		if(pObj=pSdrObjList->RemoveObject(0))
+/*?*/ 		if((pObj=pSdrObjList->RemoveObject(0)))
 /*?*/ 			delete	pObj;
 /*N*/ 	delete pSdrObjList;
-/*N*/ 
+/*N*/
 /*N*/ 	if(m_pUndoActionFromDraw) delete m_pUndoActionFromDraw;
 /*N*/ }
 /*************************************************************************
@@ -746,7 +680,7 @@ using namespace ::com::sun::star;
 /*N*/ 	else
 /*N*/ 	{
 /*N*/ 		SetChartData(rData, bNewTitles);
-/*N*/ 
+/*N*/
 /*N*/ 		if( pDocShell &&
 /*N*/ 			pDocShell->ISA( SchChartDocShell ))
 /*N*/ 		{
@@ -758,7 +692,7 @@ using namespace ::com::sun::star;
 /*N*/ 			aEvent.EndRow = 0;
 /*N*/ 			SAL_STATIC_CAST( SchChartDocShell*, pDocShell )->DataModified( aEvent );
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		if(!bDontBuild)
 /*N*/ 			BuildChart(FALSE);
 /*N*/ 		return TRUE;
@@ -778,44 +712,42 @@ using namespace ::com::sun::star;
 /*N*/ 	else
 /*N*/ 	{
 /*N*/ 		bSwitchData = bSwitch;
-/*N*/ 
+/*N*/
 /*N*/ #ifndef NO_56798_FIX //#56798# QuickFix 5.0-Final
 /*N*/ 		if( IsReal3D() )
 /*N*/ 		{
 /*?*/ 			bClearDepth=TRUE;
-/*?*/ 			long i,nORow=aDataRowAttrList.Count();
-/*?*/ 			for(i=0;i<nORow;i++)
-/*?*/ //-/				aDataRowAttrList.GetObject(i)->ClearItem(SID_ATTR_3D_DEPTH);
-/*?*/ 				aDataRowAttrList.GetObject(i)->ClearItem(SDRATTR_3DOBJ_DEPTH);
-/*?*/ 			SfxItemSet	*	pAttributes;
-/*?*/ 			nORow=aDataPointAttrList.Count();
-/*?*/ 			for(i=0;i<nORow;i++)
+/*?*/ 			for( size_t i = 0, nORow = aDataRowAttrList.size(); i < nORow; i++ )
+/*?*/ 				aDataRowAttrList[ i ]->ClearItem(SDRATTR_3DOBJ_DEPTH);
+/*?*/ 			SfxItemSet* pAttributes;
+
+/*?*/ 			for( size_t i = 0, nORow = aDataPointAttrList.size(); i < nORow; i++ )
 /*?*/ 			{
-/*?*/ 				pAttributes = aDataPointAttrList.GetObject(i);
+/*?*/ 				pAttributes = aDataPointAttrList[ i ];
 /*?*/ 				if (pAttributes != NULL)
 /*?*/ 					pAttributes->ClearItem(SDRATTR_3DOBJ_DEPTH);
 /*?*/ 			}
-/*?*/ 			nORow=aSwitchDataPointAttrList.Count();
-/*?*/ 			for(i=0;i<nORow;i++)
+
+/*?*/ 			for( size_t i = 0, nORow = aSwitchDataPointAttrList.size(); i < nORow; i++ )
 /*?*/ 			{
-/*?*/ 				pAttributes = aSwitchDataPointAttrList.GetObject(i);
+/*?*/ 				pAttributes = aSwitchDataPointAttrList[ i ];
 /*?*/ 				if (pAttributes != NULL)
 /*?*/ 					pAttributes->ClearItem(SDRATTR_3DOBJ_DEPTH);
 /*?*/ 			}
 /*N*/ 		}
 /*N*/ #endif
-/*N*/ 
+/*N*/
 /*N*/         // the number of series may change, so the attribute list
 /*N*/         // must be adapted
 /*N*/         InitDataAttrs();
-/*N*/ 
+/*N*/
 /*N*/ 		// BM: #68764#
 /*N*/ 		// if global data descriptions are on transfer them to new rows
 /*N*/ 		if( eDataDescr != CHDESCR_NONE )
 /*N*/ 		{
 /*?*/ 			ChangeDataDescr( eDataDescr, bShowSym, -1, FALSE );
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		BuildChart(FALSE);
 /*N*/ 		return TRUE;
 /*N*/ 	}
@@ -829,7 +761,7 @@ using namespace ::com::sun::star;
         the minimal width (if the given mode is not SETLINES_COMPAT).
         The color depends on the given mode.
         If the chart is a stock chart then all the lines are simply switched
-        off (by setting line style XLINE_NONE).  No other attributes are 
+        off (by setting line style XLINE_NONE).  No other attributes are
         modified.
     @param	nMode	Specifies the line color of each data row.
             SETLINES_COMPAT	and SETLINES_FILLCOLOR set the line color
@@ -842,25 +774,25 @@ using namespace ::com::sun::star;
 /*N*/ {
 /*N*/ 	long	nRow,
 /*N*/ 			nRowCnt;
-/*N*/ 			
+/*N*/
 /*N*/ 	//	The Row count depends (again) on wether the data set is transposed
-/*N*/ 	//	(switched) or not.  Because this returns the wrong value in case of 
+/*N*/ 	//	(switched) or not.  Because this returns the wrong value in case of
 /*N*/ 	//	a pie chart, then we access the raw row count without regarding the
 /*N*/ 	//	transpose switch.
 /*N*/ 	if (IsPieChart())
 /*N*/ 		nRowCnt = GetColCount(); // ChartData()->GetRowCount();
 /*N*/ 	else
 /*N*/ 		nRowCnt = GetRowCount();
-/*N*/ 
-/*N*/     long nUpperIndex = ::std::min( static_cast< ULONG >( nRowCnt ), aDataRowAttrList.Count() );
-/*N*/ 
+/*N*/
+/*N*/     long nUpperIndex = ::std::min( static_cast< ULONG >( nRowCnt ), static_cast <ULONG > (aDataRowAttrList.size() ) );
+/*N*/
 /*N*/     if( nStartIndex < nUpperIndex )
 /*N*/     {
 /*N*/         if (HasStockLines())
 /*N*/         {
 /*N*/             //	Switch off lines for stock charts.
 /*N*/             for( nRow = nStartIndex; nRow < nUpperIndex; nRow++ )
-/*N*/                 aDataRowAttrList.GetObject(nRow)->Put(XLineStyleItem(XLINE_NONE));
+/*N*/                 aDataRowAttrList[ nRow ]->Put(XLineStyleItem(XLINE_NONE));
 /*N*/         }
 /*N*/         else
 /*N*/         {
@@ -875,7 +807,7 @@ using namespace ::com::sun::star;
 /*N*/                 rAttr.Put(XLineColorItem(String(),RGBColor(COL_BLACK)));
 /*N*/                 rAttr.Put(XLineWidthItem (0));
 /*N*/             }
-/*N*/ 
+/*N*/
 /*N*/             //	Set the itemset rAttr to all data rows.  Depending on nMode it is first
 /*N*/             //	modified so that the line color is set to the fill color or the other
 /*N*/             //	way round.
@@ -892,10 +824,10 @@ using namespace ::com::sun::star;
 /*N*/                             rAttr.Put(XLineColorItem(String(),
 /*N*/                                                      ((XFillColorItem &)GetDataRowAttr(nRow).Get(XATTR_FILLCOLOR)).
 /*N*/                                                      GetValue()));
-/*N*/                             aDataRowAttrList.GetObject(nRow)->Put(rAttr);
+/*N*/                             aDataRowAttrList[ nRow ]->Put(rAttr);
 /*N*/                         }
 /*N*/                     break;
-/*N*/ 
+/*N*/
 /*N*/                 case SETLINES_REVERSE:
 /*N*/                     //	Set the fill colors to the former line colors.
 /*?*/                     for( nRow = nStartIndex; nRow < nUpperIndex; nRow++ )
@@ -904,20 +836,20 @@ using namespace ::com::sun::star;
 /*?*/                             rAttr.Put(XFillColorItem(String(),
 /*?*/                                                      ((XLineColorItem &)GetDataRowAttr(nRow).Get(XATTR_LINECOLOR)).
 /*?*/                                                      GetValue()));
-/*?*/                             aDataRowAttrList.GetObject(nRow)->Put(rAttr);
+/*?*/                             aDataRowAttrList[ nRow ]->Put(rAttr);
 /*?*/                         }
 /*?*/                     break;
-/*N*/ 
+/*N*/
 /*N*/                 case SETLINES_BLACK:
 /*N*/                     //	Set the default values to all data rows.
 /*N*/                     for( nRow = nStartIndex; nRow < nUpperIndex; nRow++ )
 /*N*/                     {
-/*N*/                         aDataRowAttrList.GetObject(nRow)->Put(rAttr);
+/*N*/                         aDataRowAttrList[ nRow ]->Put(rAttr);
 /*N*/                     }
 /*N*/                     break;
 /*N*/             }
 /*N*/         }
-/*N*/ 	}	
+/*N*/ 	}
 /*N*/ }
 
 /*************************************************************************
@@ -945,44 +877,44 @@ using namespace ::com::sun::star;
 /*N*/ 		{
 /*N*/ 			mxChartAddIn = NULL;
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		bResizePie=TRUE;
-/*N*/ 
+/*N*/
 /*N*/ 		// OldChartStyle merken
 /*N*/ 		eOldChartStyle = eChartStyle;
-/*N*/ 
+/*N*/
 /*N*/ 		//########### Ab hier werden defaultwerte umgesetzt:######### :
-/*N*/ 
+/*N*/
 /*N*/ 		//Wenn Linien, aber nicht 3D, dann muss evtl. bei
 /*N*/ 		//Typwechsel die Linienfarbe neu defaultet werden!
-/*N*/ 
+/*N*/
 /*N*/ 		long nRefLine=0;//Bei StockChart 3,4 ist die erste Zeile keine Linie
 /*N*/ 		if(GetRowCount()>1)
 /*N*/ 			nRefLine=1;
-/*N*/ 
+/*N*/
 /*N*/         // #101164# a combi chart may contain lines for all but the first series
 /*N*/         if( eOldChartStyle == CHSTYLE_2D_LINE_COLUMN ||
 /*N*/             eOldChartStyle == CHSTYLE_2D_LINE_STACKEDCOLUMN )
 /*N*/             nRefLine = 0;
-/*N*/ 
+/*N*/
 /*N*/ 		BOOL bOldIsLine=IsLine(nRefLine)&& !Is3DChart();//#54870#//Verbund-Charts OK???
 /*N*/ 		BOOL bOldIsStock=HasStockLines();
 /*N*/ 		BOOL bOldIs3D=IsReal3D();
 /*N*/ 		BOOL bOldHadStockBars=HasStockBars();
 /*N*/ 		BOOL bOldXY = IsXYChart();
-/*N*/ 		BOOL bOldNet = IsNetChart();
-/*N*/         BOOL bOldPie = IsPieChart();
-/*N*/         BOOL bOldDonut = IsDonutChart();
-/*N*/ 
+/*N*/ 		IsNetChart();
+/*N*/       BOOL bOldPie = IsPieChart();
+/*N*/       BOOL bOldDonut = IsDonutChart();
+/*N*/
 /*N*/ 		eChartStyle = eStyle;
-/*N*/ 
+/*N*/
 /*N*/ 		BOOL bNewIsLine=IsLine(nRefLine) && !Is3DChart();//#54870#
 /*N*/ 		BOOL bNewIs3D=IsReal3D();
-/*N*/ 
+/*N*/
 /*N*/         // data row attributes are used for data points in a piechart
 /*N*/         // therefore these need to be initialized correctly
 /*N*/         BOOL bMustInitDataAttrs = (bOldPie || IsPieChart() || IsDonutChart() || bOldDonut);
-/*N*/ 
+/*N*/
 /*N*/         if( eStyle == CHSTYLE_3D_PIE )
 /*N*/ 		{
 /*?*/ 			for( short i = 0; i < nPieSegCount; i++ )
@@ -998,7 +930,7 @@ using namespace ::com::sun::star;
 /*?*/                 {
 /*?*/                     pDiagramWallAttr->Put( XFillStyleItem( XFILL_SOLID ));
 /*?*/                     pDiagramWallAttr->Put( XFillColorItem( String(), RGBColor( RGB_COLORDATA( 0xd9, 0xd9, 0xd9 ) )) );
-/*?*/ 
+/*?*/
 /*?*/                     pLegendAttr->Put( XFillStyleItem( XFILL_SOLID ));
 /*?*/                     pLegendAttr->Put( XFillColorItem( String(), RGBColor( RGB_COLORDATA( 0xd9, 0xd9, 0xd9 ) )) );
 /*?*/                 }
@@ -1006,12 +938,12 @@ using namespace ::com::sun::star;
 /*?*/                 {
 /*?*/                     pDiagramWallAttr->Put( XFillStyleItem( XFILL_NONE ));
 /*?*/                     pDiagramWallAttr->Put( XFillColorItem( String(), RGBColor( COL_WHITE )) );
-/*?*/ 
+/*?*/
 /*?*/                     pLegendAttr->Put( XFillStyleItem( XFILL_NONE ));
 /*?*/                     pLegendAttr->Put( XFillColorItem( String(), RGBColor( COL_WHITE )) );
 /*?*/                 }
 /*?*/             }
-/*?*/ 
+/*?*/
 /*?*/             // BM: use gray (15%) background (area) for some charts
 /*?*/             if( HasDefaultGrayArea() != HasDefaultGrayArea( &eOldChartStyle ) )
 /*?*/             {
@@ -1019,27 +951,26 @@ using namespace ::com::sun::star;
 /*?*/                 {
 /*?*/                     pDiagramAreaAttr->Put( XFillStyleItem( XFILL_SOLID ));
 /*?*/                     pDiagramAreaAttr->Put( XFillColorItem( String(), RGBColor( RGB_COLORDATA( 0xd9, 0xd9, 0xd9 ) )) );
-/*?*/ 
+/*?*/
 /*?*/                     pLegendAttr->Put( XFillStyleItem( XFILL_SOLID ));
 /*?*/                     pLegendAttr->Put( XFillColorItem( String(), RGBColor( RGB_COLORDATA( 0xd9, 0xd9, 0xd9 ) )) );
 /*?*/                 }
 /*?*/                 else
 /*?*/                 {
 /*?*/                     pDiagramAreaAttr->Put( XFillColorItem( String(), RGBColor( COL_WHITE )) );
-/*?*/ 
+/*?*/
 /*?*/                     pLegendAttr->Put( XFillStyleItem( XFILL_NONE ));
 /*?*/                     pLegendAttr->Put( XFillColorItem( String(), RGBColor( COL_WHITE )) );
 /*?*/                 }
 /*?*/             }
 /*?*/         }
-/*?*/ 
+/*?*/
 /*N*/         if(bNewIsLine != bOldIsLine)
 /*N*/ 		{
 /*?*/             // map old line colors to new fill colors
 /*?*/             if( bNewIsLine )
 /*?*/             {
 /*?*/                 if( bOldPie )
-/*?*/                     // && GetRowCount() < GetColCount())
 /*?*/                 {
 /*?*/                     InitDataAttrs();
 /*?*/                     bMustInitDataAttrs = FALSE;
@@ -1049,18 +980,13 @@ using namespace ::com::sun::star;
 /*?*/             else
 /*?*/             {
 /*?*/                 if( IsPieChart() )
-/*?*/                     // && GetRowCount() < GetColCount())
 /*?*/                 {
 /*?*/                     InitDataAttrs();
 /*?*/                     bMustInitDataAttrs = FALSE;
 /*?*/                 }
-/*?*/                 // the chart style must be swapped to the old one
-/*?*/                 // temporarily, so that IsLine() works correctly
-/*?*/ //                  eChartStyle = eOldChartStyle;
 /*?*/                 SetupLineColors( SETLINES_BLACK );
-/*?*/ //                  eChartStyle = eStyle;
 /*?*/             }
-/*?*/ 
+/*?*/
 /*?*/ 		}
 
 /*N*/         if( bMustInitDataAttrs )
@@ -1068,89 +994,93 @@ using namespace ::com::sun::star;
 /*?*/             InitDataAttrs();
 /*?*/             bMustInitDataAttrs = FALSE;
 /*N*/         }
-/*N*/ 
+/*N*/
 /*N*/ 		if(bOldXY!=IsXYChart())
 /*N*/ 		{
 /*?*/ 			if(bOldXY)
-/*?*/ 				aDataRowAttrList.GetObject(0)->Put(SfxInt32Item(SCHATTR_AXIS,CHART_AXIS_PRIMARY_Y));//wird evtl. unten geändert, s.u. StockCharts
+/*?*/ 				aDataRowAttrList[ 0 ]->Put(SfxInt32Item(SCHATTR_AXIS,CHART_AXIS_PRIMARY_Y));//wird evtl. unten ge?dert, s.u. StockCharts
 /*?*/ 			else
-/*?*/ 				aDataRowAttrList.GetObject(0)->Put(SfxInt32Item(SCHATTR_AXIS,CHART_AXIS_PRIMARY_X));
-/*?*/ 
+/*?*/ 				aDataRowAttrList[ 0 ]->Put(SfxInt32Item(SCHATTR_AXIS,CHART_AXIS_PRIMARY_X));
+/*?*/
 /*?*/ 			CheckForNewAxisNumFormat();			// BM #59532#
 /*N*/ 		}
-/*N*/ 
-/*N*/ 
-/*N*/         long nRowCnt=aDataRowAttrList.Count();//=GetRowCount();
+/*N*/
+/*N*/
+/*N*/       long nRowCnt = aDataRowAttrList.size();
 /*N*/ 		if( (bOldIsStock && !HasStockLines()) || (bOldIs3D && !bNewIs3D) )
 /*N*/ 		{
                 long n=0;
 /*?*/ 			for(n=0;n<nRowCnt;n++)
-/*?*/ 				aDataRowAttrList.GetObject(n)->Put(XLineStyleItem(XLINE_SOLID));
-/*?*/ 			long nColCnt=aDataPointAttrList.Count();
-/*?*/ 			SfxItemSet	*	pAttributes;
+/*?*/ 				aDataRowAttrList[ n ]->Put(XLineStyleItem(XLINE_SOLID));
+
+/*?*/ 			long nColCnt=aDataPointAttrList.size();
+/*?*/ 			SfxItemSet* pAttributes;
 /*?*/ 			for(n=0;n<nColCnt;n++)
 /*?*/ 			{
-/*?*/ 				pAttributes = aDataPointAttrList.GetObject(n);
+/*?*/ 				pAttributes = aDataPointAttrList[ n ];
 /*?*/ 				if (pAttributes != NULL)
 /*?*/ 					pAttributes->ClearItem(XATTR_LINESTYLE);
 /*?*/ 			}
-/*?*/ 			nColCnt=aSwitchDataPointAttrList.Count();
+
+/*?*/ 			nColCnt=aSwitchDataPointAttrList.size();
 /*?*/ 			for(n=0;n<nColCnt;n++)
 /*?*/ 			{
-/*?*/ 				pAttributes = aSwitchDataPointAttrList.GetObject(n);
+/*?*/ 				pAttributes = aSwitchDataPointAttrList[ n ];
 /*?*/ 				if (pAttributes != NULL)
 /*?*/ 					pAttributes->ClearItem(XATTR_LINESTYLE);
 /*?*/ 			}
 /*?*/ 		}
-/*N*/ 		if(!bOldIsStock && HasStockLines() || (!bOldIs3D && bNewIs3D) )
+/*N*/ 		if( (!bOldIsStock && HasStockLines()) || (!bOldIs3D && bNewIs3D) )
 /*N*/ 		{
                 long n=0;
 /*N*/ 			for(n=0;n<nRowCnt;n++)
-/*N*/ 				aDataRowAttrList.GetObject(n)->Put(XLineStyleItem(XLINE_NONE));
-/*N*/ 			long nColCnt=aDataPointAttrList.Count();
-/*N*/ 			SfxItemSet	*	pAttributes;
+/*N*/ 				aDataRowAttrList[ n ]->Put(XLineStyleItem(XLINE_NONE));
+
+/*N*/ 			long nColCnt=aDataPointAttrList.size();
+/*N*/ 			SfxItemSet* pAttributes;
 /*N*/ 			for(n=0;n<nColCnt;n++)
 /*N*/ 			{
-/*N*/ 				pAttributes = aDataPointAttrList.GetObject(n);
+/*N*/ 				pAttributes = aDataPointAttrList[ n ];
 /*N*/ 				if (pAttributes != NULL)
 /*?*/ 					pAttributes->ClearItem(XATTR_LINESTYLE);
 /*N*/ 			}
-/*N*/ 			nColCnt=aSwitchDataPointAttrList.Count();
+
+/*N*/ 			nColCnt=aSwitchDataPointAttrList.size();
 /*N*/ 			for(n=0;n<nColCnt;n++)
 /*N*/ 			{
-/*N*/ 				pAttributes = aSwitchDataPointAttrList.GetObject(n);
+/*N*/ 				pAttributes = aSwitchDataPointAttrList[ n ];
 /*N*/ 				if (pAttributes != NULL)
 /*?*/ 					pAttributes->ClearItem(XATTR_LINESTYLE);
 /*N*/ 			}
 /*N*/ 		}
-/*N*/ 		if(/*!bOldHadStockBars && */HasStockBars())//Hat Balken im Hintergrund (ab jetzt oder Typ 3 <-> 4, #65070#)
+/*N*/ 		if( HasStockBars() )//Hat Balken im Hintergrund (ab jetzt oder Typ 3 <-> 4, #65070#)
 /*N*/ 		{
 /*?*/ 			if(nRowCnt)
 /*?*/ 			{
-/*?*/ 				aDataRowAttrList.GetObject(0)->Put(SfxInt32Item(SCHATTR_AXIS,CHART_AXIS_PRIMARY_Y));
-/*?*/ 				aDataRowAttrList.GetObject(0)->Put(XLineStyleItem(XLINE_SOLID));
+/*?*/ 				aDataRowAttrList[ 0 ]->Put(SfxInt32Item(SCHATTR_AXIS,CHART_AXIS_PRIMARY_Y));
+/*?*/ 				aDataRowAttrList[ 0 ]->Put(XLineStyleItem(XLINE_SOLID));
 /*?*/ 			}
 /*?*/ 			for(long n=1;n<nRowCnt;n++)
-/*?*/ 				aDataRowAttrList.GetObject(n)->Put(SfxInt32Item(SCHATTR_AXIS,CHART_AXIS_SECONDARY_Y));
+/*?*/ 				aDataRowAttrList[ n ]->Put(SfxInt32Item(SCHATTR_AXIS,CHART_AXIS_SECONDARY_Y));
 /*?*/ 			pChartBAxis->ShowAxis(TRUE);
 /*?*/ 			pChartBAxis->ShowDescr(TRUE);
 /*?*/ 			SfxItemSet aSet(*pItemPool,SCHATTR_AXIS_AUTO_ORIGIN,SCHATTR_AXIS_AUTO_ORIGIN);
 /*?*/ 			aSet.Put(SfxBoolItem(SCHATTR_AXIS_AUTO_ORIGIN,TRUE));
 /*?*/ 			pChartBAxis->SetAttributes(aSet);
-/*?*/ 
+/*?*/
 /*?*/             // #100923#
 /*?*/             SfxItemSet aSet2( *pItemPool, SCHATTR_AXIS_AUTO_ORIGIN, SCHATTR_AXIS_ORIGIN );
 /*?*/             aSet2.Put( SfxBoolItem( SCHATTR_AXIS_AUTO_ORIGIN, FALSE ));
 /*?*/ 			aSet2.Put( SvxDoubleItem( 0.0, SCHATTR_Y_AXIS_ORIGIN ));
 /*?*/             pChartYAxis->SetAttributes( aSet2 );
 /*?*/         }
-/*?*/ 
+/*?*/
 /*N*/ 		if(bOldHadStockBars && !HasStockBars())//hat jetzt keine Balken mehr
 /*?*/ 		{
 /*?*/ 			for(long n=0;n<nRowCnt;n++)
-/*?*/ 				aDataRowAttrList.GetObject(n)->Put(SfxInt32Item(SCHATTR_AXIS,CHART_AXIS_PRIMARY_Y));
+/*?*/ 				aDataRowAttrList[ n ]->Put(SfxInt32Item(SCHATTR_AXIS,CHART_AXIS_PRIMARY_Y));
 /*?*/ 			if(IsXYChart())
-/*?*/ 				aDataRowAttrList.GetObject(0)->Put(SfxInt32Item(SCHATTR_AXIS,CHART_AXIS_PRIMARY_X));
+/*?*/ 				aDataRowAttrList[ 0 ]->Put(SfxInt32Item(SCHATTR_AXIS,CHART_AXIS_PRIMARY_X));
 /*?*/ 			pChartBAxis->ShowAxis(FALSE);
 /*?*/ 			pChartBAxis->ShowDescr(FALSE);
 /*?*/ 		}
@@ -1158,13 +1088,13 @@ using namespace ::com::sun::star;
         // use default position if base type changed
 /*N*/ 		ChartType aOldType( eOldChartStyle );
 /*N*/ 		ChartType aNewType( eChartStyle );
-/*N*/ 
+/*N*/
 /*N*/ 		if( aOldType.GetBaseType() !=
 /*N*/ 			aNewType.GetBaseType() )
 /*N*/ 		{
 /*?*/ 			SetUseRelativePositions( FALSE );
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		Matrix4D aTmp;
 /*N*/ 		aSceneMatrix = aTmp;
 /*N*/ 		if(IsPieChart() && IsReal3D() )
@@ -1175,62 +1105,55 @@ using namespace ::com::sun::star;
 /*N*/ 		}
 /*N*/ 		else if(pScene)
 /*?*/ 			pScene->NbcSetTransform(aSceneMatrix);
-/*N*/ 
-/*N*/ 
+/*N*/
+/*N*/
 /*N*/ 		if( IsReal3D()) //#56798# QuickFix 5.0-Final
 /*N*/ 		{
 /*N*/ 			bClearDepth=TRUE;
-/*N*/ 			ULONG	i, nORow=aDataRowAttrList.Count();
+/*N*/ 			size_t i, nORow=aDataRowAttrList.size();
 /*N*/ 			for(i=0;i<nORow;i++)
 /*N*/ 			{
-/*N*/ //-/				aDataRowAttrList.GetObject(i)->ClearItem(SID_ATTR_3D_DEPTH);
-/*N*/ 				aDataRowAttrList.GetObject(i)->ClearItem( SDRATTR_3DOBJ_DEPTH );
-/*N*/ 				aDataRowAttrList.GetObject(i)->Put( Svx3DDoubleSidedItem( TRUE ));
-/*N*/ 
-/*N*/   				//if(eChartStyle == CHSTYLE_3D_STRIPE || eChartStyle==CHSTYLE_3D_PIE)
-/*N*/ //-/					aDataRowAttrList.GetObject(i)->Put(SfxBoolItem(SID_ATTR_3D_DOUBLE_SIDED,TRUE));
-/*N*/ //  				else
-/*N*/ //-/					aDataRowAttrList.GetObject(i)->Put(SfxBoolItem(SID_ATTR_3D_DOUBLE_SIDED,FALSE));
-/*N*/ //  					aDataRowAttrList.GetObject(i)->Put(Svx3DDoubleSidedItem(FALSE));
+/*N*/ 				aDataRowAttrList[ i ]->ClearItem( SDRATTR_3DOBJ_DEPTH );
+/*N*/ 				aDataRowAttrList[ i ]->Put( Svx3DDoubleSidedItem( TRUE ));
 /*N*/ 			}
-/*N*/ 			nORow=aDataPointAttrList.Count();
-/*N*/ 			SfxItemSet	*	pAttributes;
+/*N*/ 			nORow=aDataPointAttrList.size();
+/*N*/ 			SfxItemSet* pAttributes;
 /*N*/ 			for(i=0;i<nORow;i++)
 /*N*/ 			{
-/*N*/ 				pAttributes = aDataPointAttrList.GetObject(i);
+/*N*/ 				pAttributes = aDataPointAttrList[ i ];
 /*N*/ 				if (pAttributes != NULL)
 /*N*/ 				{
 /*?*/ 					pAttributes->ClearItem( SDRATTR_3DOBJ_DEPTH );
 /*?*/ 					pAttributes->ClearItem( SDRATTR_3DOBJ_DOUBLE_SIDED );
 /*N*/ 				}
 /*N*/ 			}
-/*N*/ 			nORow=aSwitchDataPointAttrList.Count();
+/*N*/ 			nORow=aSwitchDataPointAttrList.size();
 /*N*/ 			for(i=0;i<nORow;i++)
 /*N*/ 			{
-/*N*/ 				pAttributes = aSwitchDataPointAttrList.GetObject(i);
+/*N*/ 				pAttributes = aSwitchDataPointAttrList[ i ];
 /*N*/ 				if (pAttributes != NULL)
 /*N*/ 				{
 /*?*/ 					pAttributes->ClearItem( SDRATTR_3DOBJ_DEPTH );
 /*?*/ 					pAttributes->ClearItem( SDRATTR_3DOBJ_DOUBLE_SIDED );
 /*N*/ 				}
 /*N*/ 			}
-/*N*/ 
+/*N*/
 /*N*/ 			// switch off rounded edges for:
 /*N*/ 			// area charts
 /*N*/ 			Svx3DPercentDiagonalItem aItem(
 /*N*/   				(eStyle == CHSTYLE_3D_AREA || eStyle == CHSTYLE_3D_STACKEDAREA || eStyle == CHSTYLE_3D_PERCENTAREA ||
 /*N*/                     eStyle == CHSTYLE_3D_PIE )
 /*N*/   				? 0 : 5 );
-/*N*/ 
+/*N*/
 /*N*/ 			// item-set for whole chart used if item in series is not set
 /*N*/ 			pDummyAttr->Put( aItem );
-/*N*/ 
-/*N*/   			for( i = 0; i < aDataRowAttrList.Count(); i++ )
-/*N*/   			{
-/*N*/ 				aDataRowAttrList.GetObject( i )->Put( aItem );
-/*N*/   			}
+/*N*/
+/*N*/   		for( i = 0; i < aDataRowAttrList.size(); i++ )
+/*N*/   		{
+/*N*/ 				aDataRowAttrList[ i ]->Put( aItem );
+/*N*/   		}
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		//	If set to xy-chart or certain stock chart variants then turn on
 /*N*/ 		//	automatic calculation of the origin for all y-axes as default.
 /*N*/ 		//	This affects the second y-axis even if it is not (yet) visible.
@@ -1247,37 +1170,14 @@ using namespace ::com::sun::star;
 /*?*/ 			//	visible.
 /*?*/ 			pChartBAxis->SetAttributes (aAutoOrigin);
 /*N*/ 		}
-/*N*/ 			
+/*N*/
 /*N*/ 		SetUseRelativePositions(TRUE);// New arrangement (see SID_NEW_ARRANGEMENT)
 /*N*/ 		eOldChartStyle = eChartStyle;
-/*N*/ 
+/*N*/
 /*N*/ 		//	Set the number of data series that are displayed as lines to a fixed value.
 /*N*/ 		//	This is one for the combined chart types of columns/stacked columns and lines
 /*N*/ 		//	and zero for all other chart types.
-/*N*/ 
-/*N*/         // #103682# this seems not to be necessary.  This method is called on
-/*N*/         // XML-import very early, when the data is 1x1 in size.  The number of
-/*N*/         // lines must be preserved until in the end the original size-data is
-/*N*/         // set.  In all other cases when this method is called, the chart-type
-/*N*/         // itself should handle a value that is too big or small. (Advantage: if
-/*N*/         // you change to bar with no lines and then back, you get the old
-/*N*/         // value).
-/*N*/ // 		switch (eStyle)
-/*N*/ // 		{
-/*N*/ // 			case	CHSTYLE_2D_LINE_COLUMN:
-/*N*/ // 			case	CHSTYLE_2D_LINE_STACKEDCOLUMN:
-/*N*/ //                 {
-/*N*/ //                     long nNumLines = GetNumLinesColChart();
-/*N*/ //                     if( nNumLines < 1 ||
-/*N*/ //                         nNumLines >= GetRowCount() )
-/*N*/ //                         SetNumLinesColChart (1);
-/*N*/ //                 }
-/*N*/ // 				break;
-/*N*/ 				
-/*N*/ // 			default:
-/*N*/ // 				SetNumLinesColChart (0);
-/*N*/ // 		}
-/*N*/ 
+/*N*/
 /*N*/         // #104525# however the default for a combi-chart is one line.  So if
 /*N*/         // the setting is on 0, we have to change it to 1.
 /*N*/         if( ( eStyle == CHSTYLE_2D_LINE_COLUMN
@@ -1286,11 +1186,11 @@ using namespace ::com::sun::star;
 /*N*/         {
 /*?*/             SetNumLinesColChart( 1 );
 /*N*/         }
-/*N*/ 
+/*N*/
 /*N*/         // broadcast UIFeature chang
 /*N*/         // #85069# introduced because the 3d effect flyer has to be disabled for 2d charts
 /*N*/         Broadcast( SfxSimpleHint( SFX_HINT_MODECHANGED ));
-/*N*/ 
+/*N*/
 /*N*/ 		return TRUE;
 /*N*/ 	}
 /*N*/ }
@@ -1310,30 +1210,30 @@ using namespace ::com::sun::star;
 
 /*N*/ void ChartModel::SetLanguage( const LanguageType eLang, const USHORT nId )
 /*N*/ {
-/*N*/ 	BOOL bChanged = FALSE;
-/*N*/ 
+/*N*/ 	BOOL bLclChanged = FALSE;
+/*N*/
 /*N*/ 	if( nId == EE_CHAR_LANGUAGE && eLanguage != eLang )
 /*N*/ 	{
 /*N*/ 		eLanguage = eLang;
-/*N*/ 		bChanged = TRUE;
+/*N*/ 		bLclChanged = TRUE;
 /*N*/ 	}
 /*N*/ 	else if( nId == EE_CHAR_LANGUAGE_CJK && eLanguageCJK != eLang )
 /*N*/ 	{
 /*N*/ 		eLanguageCJK = eLang;
-/*N*/ 		bChanged = TRUE;
+/*N*/ 		bLclChanged = TRUE;
 /*N*/ 	}
 /*N*/ 	else if( nId == EE_CHAR_LANGUAGE_CTL && eLanguageCTL != eLang )
 /*N*/ 	{
 /*N*/ 		eLanguageCTL = eLang;
-/*N*/ 		bChanged = TRUE;
+/*N*/ 		bLclChanged = TRUE;
 /*N*/ 	}
-/*N*/ 
-/*N*/ 	if( bChanged )
+/*N*/
+/*N*/ 	if( bLclChanged )
 /*N*/ 	{
 /*N*/ 		GetDrawOutliner().SetDefaultLanguage( eLang );
 /*N*/ 		pOutliner->SetDefaultLanguage( eLang );
 /*N*/ 		pItemPool->SetPoolDefaultItem( SvxLanguageItem( eLang, nId ) );
-/*N*/ 		SetChanged( bChanged );
+/*N*/ 		SetChanged( bLclChanged );
 /*N*/ 	}
 /*N*/ }
 
@@ -1347,12 +1247,12 @@ using namespace ::com::sun::star;
 /*N*/ LanguageType ChartModel::GetLanguage( const USHORT nId ) const
 /*N*/ {
 /*N*/ 	LanguageType eLangType = eLanguage;
-/*N*/ 
+/*N*/
 /*N*/ 	if( nId == EE_CHAR_LANGUAGE_CJK )
 /*N*/ 		eLangType = eLanguageCJK;
 /*N*/ 	else if( nId == EE_CHAR_LANGUAGE_CTL )
 /*N*/ 		eLangType = eLanguageCTL;
-/*N*/ 
+/*N*/
 /*N*/ 	return eLangType;
 /*N*/ }
 
@@ -1370,3 +1270,5 @@ IMPL_LINK( ChartModel, NotifyUndoActionHdl, SfxUndoAction*, pUndo )
     }
     return 1;
 }}
+
+/* vim:set shiftwidth=4 softtabstop=4 expandtab: */

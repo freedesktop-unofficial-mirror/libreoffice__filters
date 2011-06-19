@@ -1,7 +1,8 @@
+/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -79,7 +80,7 @@ namespace binfilter {
 /*N*/ {
 /*N*/ 	// untransformiertes BoundVolume holen und parent rufen
 /*N*/ 	Volume3D aNewVol = E3dScene::FitInSnapRect();
-/*N*/ 
+/*N*/
 /*N*/ 	// Groesse etwas anpassen, umPlatz am Rand des Charts fu schaffen
 /*N*/ 	aNewVol.MinVec () = Vector3D (
 /*N*/ 		aNewVol.MinVec ().X () * 1.2,
@@ -89,55 +90,10 @@ namespace binfilter {
 /*N*/ 		aNewVol.MaxVec ().X () * 1.2,
 /*N*/ 		aNewVol.MaxVec ().Y () * 1.2,
 /*N*/ 		aNewVol.MaxVec ().Z ());
-/*N*/ 
-/*N*/ 	//pDoc->Position3DAxisTitles(GetLogicRect());
-/*N*/ 
+/*N*/
 /*N*/ 	SetRectsDirty(FALSE);
 /*N*/ 	return aNewVol;
 /*N*/ }
-
-/*************************************************************************
-|*
-|* Zuweisungsoperator
-|*
-\************************************************************************/
-
-
-
-
-/*************************************************************************
-|*
-|* Speichern
-|*
-\************************************************************************/
-
-/*N*/ void ChartScene::WriteData(SvStream& rOut) const
-/*N*/ {
-/*N*/ 	if (rOut.GetVersion() > 3780 && pSub && pSub->GetPage())
-/*N*/ 	{
-/*N*/ 		// FileFormat 5.0
-/*N*/ 		// Die SubList der ChartScene wird nun nicht mehr geschrieben
-/*N*/ 
-/*N*/ 		//pSub->GetPage()->SetObjectsNotPersistent(TRUE);
-/*N*/ 
-/*N*/ 		// Scene schreiben
-/*N*/ 		E3dPolyScene::WriteData(rOut);
-/*N*/ 
-/*N*/ 		//pSub->GetPage()->SetObjectsNotPersistent(FALSE);
-/*N*/ 	}
-/*N*/ 	else
-/*N*/ 	{
-/*N*/ 		// FileFormat 4.0 und aelter
-/*N*/ 		E3dPolyScene::WriteData(rOut);
-/*N*/ 	}
-/*N*/ }
-
-/*************************************************************************
-|*
-|* Laden
-|*
-\************************************************************************/
-
 
 /*************************************************************************
 |*
@@ -146,13 +102,14 @@ namespace binfilter {
 \************************************************************************/
 
 /*N*/ void ChartScene::InsertAllTitleText (DescrList         &rList,
-/*N*/ 									 E3dObject *pGroup,
+/*N*/ 									 E3dObject * /*pGroup*/,
 /*N*/ 									 long              nAxisId)
 /*N*/ {
 /*N*/ 	Rectangle aOldRect;
-/*N*/ 
-/*N*/ 	for (E3dLabelObj *pLabel = rList.First (); pLabel; pLabel = rList.Next ())
-/*N*/ 	{
+/*N*/
+        for ( size_t i = 0, n = rList.size(); i < n; ++i )
+        {
+            E3dLabelObj *pLabel = rList[ i ];
 /*N*/ 		Insert3DObj(pLabel);
 /*N*/ 		pLabel->InsertUserData (new SchAxisId (nAxisId));
 /*N*/ 	}
@@ -162,28 +119,28 @@ namespace binfilter {
 /*N*/ 	const SdrObject* pObj = p3DObj->Get2DLabelObj();
 /*N*/ 	// View- Abmessungen des Labels holen
 /*N*/ 	Rectangle  aRect = pObj->GetLogicRect();
-/*N*/ 
+/*N*/
 /*N*/ 	// Position des Objektes in Weltkoordinaten ermitteln
 /*N*/ 	Vector3D aObjPos = p3DObj->GetFullTransform() * p3DObj->GetPosition();
 /*N*/ 	aObjPos = rCamSet.WorldToViewCoor(aObjPos);
 /*N*/ 	Point aPoint((long)(aObjPos.X() + 0.5), (long)(aObjPos.Y() + 0.5));
-/*N*/ 
+/*N*/
 /*N*/ 	// Relative Position des Labels in View-Koordinaten
 /*N*/ 	Point aRelPosOne = pObj->GetRelativePos();
 /*N*/ 	aRelPosOne += aPoint;
-/*N*/ 
+/*N*/
 /*N*/ 	aRect.SetPos(aRelPosOne);
 /*N*/ 	return aRect;
 /*N*/ }
 
 /*N*/ void ChartScene::ReduceDescrList(DescrList & aList)
 /*N*/ {
-/*N*/ 
+/*N*/
 /*N*/ 	Rectangle aIntersect(0,0,0,0);
 /*N*/ 	Rectangle aPrevRect(0,0,0,0);
 /*N*/ 	Rectangle aNextRect(0,0,0,0);
-/*N*/ 
-/*N*/ 	//Transformation berechnen, die später im Paint ausgeführt wird,
+/*N*/
+/*N*/ 	//Transformation berechnen, die sp?er im Paint ausgef?rt wird,
 /*N*/ 	//(Derzeit sind die Labelobject-Positionen unbekannt)
 /*N*/ 	Rectangle aBound(GetSnapRect());
 /*N*/ 	Volume3D aVolume = FitInSnapRect();
@@ -193,71 +150,72 @@ namespace binfilter {
 /*N*/ 	rSet.SetFrontClippingPlane(aVolume.MinVec().Z());
 /*N*/ 	rSet.SetBackClippingPlane(aVolume.MaxVec().Z());
 /*N*/ 	rSet.SetViewportRectangle(aBound);
-/*N*/ 
-/*N*/ 
-/*N*/ 	E3dLabelObj *p3DObj=aList.First();
+/*N*/
+        size_t i = 0;
+/*N*/ 	E3dLabelObj *p3DObj = aList.empty() ? NULL : aList[ 0 ];
 /*N*/ 	E3dLabelObj *pOld3DObj=p3DObj;
 /*N*/ 	BOOL bGetCurrent=FALSE;
-/*N*/ 
+/*N*/
 /*N*/ 	if(p3DObj)
 /*N*/ 	{
 /*N*/ 		const SdrTextObj* pObj = (const SdrTextObj*)p3DObj->Get2DLabelObj();
-/*N*/ 
+/*N*/
 /*N*/ 		//Es reicht, die Rotation des ersten Elements zu ermitteln,
-/*N*/ 		//alle in der Liste sind gleichermaßen gedreht
+/*N*/ 		//alle in der Liste sind gleicherma?n gedreht
 /*N*/ 		//GetRotateAngle() gibt 100tel, gebraucht werden 10tel Grad.
 /*N*/ 		long nAngle = pObj->GetRotateAngle()/10;
-/*N*/ 
+/*N*/
 /*N*/ 		aPrevRect=Get3DDescrRect(p3DObj,rSet);
 /*N*/ 		if(nAngle!=0)
 /*N*/ 		{
-/*?*/ 			//Um TopLeft drehen, so wie es später gezeichnet wird
+/*?*/ 			//Um TopLeft drehen, so wie es sp?er gezeichnet wird
 /*?*/ 			XPolygon aPoly(aPrevRect);
 /*?*/ 			aPoly.Rotate(aPrevRect.TopLeft(),(USHORT)nAngle);
-/*?*/ 			//und um den Koordinaten-Ursprung herum zurückdrehen
-/*?*/ 			//um wieder Rectangles zu erhalten (für Intersect)
+/*?*/ 			//und um den Koordinaten-Ursprung herum zur?kdrehen
+/*?*/ 			//um wieder Rectangles zu erhalten (f? Intersect)
 /*?*/ 			aPoly.Rotate(Point(0,0),(USHORT)(3600 - nAngle));
 /*?*/ 			aPrevRect=aPoly.GetBoundRect();
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		while(p3DObj)
 /*N*/ 		{
-/*N*/ 			//nächstes Objekt holen, abhängig davon, ob das zuletzt behandelte
+/*N*/ 			//n?hstes Objekt holen, abh?gig davon, ob das zuletzt behandelte
 /*N*/ 			//entfernt wurde oder nicht (bGetCurrent)
 /*N*/ 			if(bGetCurrent)
 /*N*/ 			{
-/*?*/ 				p3DObj=aList.GetCurObject();
+/*?*/ 				p3DObj = aList[ i ];
 /*N*/ 			}
 /*N*/ 			else
 /*N*/ 			{
-/*N*/ 				p3DObj=aList.Next();
+                    ++i;
+                    p3DObj = ( i < aList.size() ) ? aList[ i ] : NULL;
 /*N*/ 			}
 /*N*/ 			bGetCurrent=FALSE;
-/*N*/ 
+/*N*/
 /*N*/ 			//Da insbesondere bei Remove() des letzten Objects sowohl Next()
-/*N*/ 			//als auch GetCurObject() den alten Pointer zurückgeben,
-/*N*/ 			//wird getestet, ob tatsächlich verschiedene Objekte vorliegen
+/*N*/ 			//als auch GetCurObject() den alten Pointer zur?kgeben,
+/*N*/ 			//wird getestet, ob tats?hlich verschiedene Objekte vorliegen
 /*N*/ 			DBG_ASSERT(p3DObj!=pOld3DObj,"Chart: pointers equal in Scene:reduce...");
 /*N*/ 			if(p3DObj && p3DObj!=pOld3DObj)
 /*N*/ 			{
 /*N*/ 				pOld3DObj=p3DObj;
-/*N*/ 
+/*N*/
 /*N*/ 				aNextRect=Get3DDescrRect(p3DObj,rSet);
-/*N*/ 
+/*N*/
 /*N*/ 				if(nAngle!=0)
 /*N*/ 				{
 /*?*/ 					//Um TopLeft drehen (wie oben):
 /*?*/ 					XPolygon aPoly(aNextRect);
 /*?*/ 					aPoly.Rotate(aNextRect.TopLeft(),(USHORT)nAngle);
-/*?*/ 					//und um den Ursprung herum zurückdrehen
+/*?*/ 					//und um den Ursprung herum zur?kdrehen
 /*?*/ 					aPoly.Rotate(Point(0,0),(USHORT)(3600 - nAngle));
 /*?*/ 					aNextRect=aPoly.GetBoundRect();
 /*N*/ 				}
-/*N*/ 
+/*N*/
 /*N*/ 				aIntersect=aNextRect.GetIntersection(aPrevRect);
 /*N*/ 				if( !  (aIntersect.IsEmpty())
 /*N*/ 					&& (   (aIntersect.GetHeight()>aNextRect.GetHeight()/100)
-/*N*/ 						 ||(aIntersect.GetWidth() >aNextRect.GetHeight()/100)//2% Deckung maximal bezogen auf die Fonthöhe
+/*N*/ 						 ||(aIntersect.GetWidth() >aNextRect.GetHeight()/100)//2% Deckung maximal bezogen auf die Fonth?e
 /*N*/ 						)
 /*N*/ 				  )
 /*N*/ 				{
@@ -266,20 +224,10 @@ namespace binfilter {
 /*N*/ 					{
 /*N*/ 						//aus der Page streichen
 /*N*/ 						pParent->Remove3DObj(p3DObj);
-/*N*/ 
-/*N*/ 
-/*N*/ 						//Die Objekte koennen ruhig in der Liste verbleiben, löschen führt
-/*N*/ 						//nur zu Problemen
-/*N*/ 
-/*N*/ 						//Da das Object entfernt wurde, darf nicht Next gerufen werden.
-/*N*/ 						//bGetCurrent=TRUE;
-/*N*/ 						//und aus der Liste streichen
-/*N*/ 						//aList.Remove();
-/*N*/ 						//delete p3DObj; (íst offenbar bei Remove() schon geschehen ???)
 /*N*/ 					}
 /*N*/ 					else
 /*N*/ 					{
-/*?*/ 						DBG_TRACE("Chart:: Object has no parent (Scene)");
+/*?*/ 						OSL_TRACE("Chart:: Object has no parent (Scene)");
 /*N*/ 					}
 /*N*/ 				}
 /*N*/ 				else
@@ -289,7 +237,7 @@ namespace binfilter {
 /*N*/ 			}
 /*N*/ 		}
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ }
 
 /*N*/ void ChartScene::Initialize()
@@ -297,19 +245,21 @@ namespace binfilter {
 /*N*/ 	// #66930# BM  activate second light source and deactivate first one
 /*N*/     // reason: the first light source is in contrast to the other seven
 /*N*/     //         lightsources specular by default
-/*N*/ 
+/*N*/
 /*N*/     // Note: Use items at the scene instead of methods at the subobjects
 /*N*/     //       otherwise settings get overwritten later
-/*N*/     
+/*N*/
 /*N*/     // copy lightsource 1 (Base3DLight0) to lightsource 2
 /*N*/     // color
 /*N*/ 	SetItem( Svx3DLightcolor2Item( GetLightGroup().GetIntensity( Base3DMaterialDiffuse, Base3DLight0 )));
 /*N*/     // direction
 /*N*/ 	SetItem( Svx3DLightDirection2Item( GetLightGroup().GetDirection( Base3DLight0 )));
-/*N*/ 
+/*N*/
 /*N*/     // enable light source 2
 /*N*/     SetItem( Svx3DLightOnOff2Item( TRUE ));
 /*N*/     // disable light source 1
 /*N*/     SetItem( Svx3DLightOnOff1Item( FALSE ));
 /*N*/ }
 }
+
+/* vim:set shiftwidth=4 softtabstop=4 expandtab: */

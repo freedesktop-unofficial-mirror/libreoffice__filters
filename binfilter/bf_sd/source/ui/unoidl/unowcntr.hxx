@@ -1,7 +1,8 @@
+/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -28,14 +29,14 @@
 #ifndef _SV_UNOWCNTR_HXX_
 #define _SV_UNOWCNTR_HXX_
 
-#ifndef _CPPUHELPER_WEAKREF_HXX_
 #include <cppuhelper/weakref.hxx>
-#endif
+#include <vector>
+
 namespace binfilter {
 
 typedef sal_Bool (*weakref_searchfunc)( ::com::sun::star::uno::WeakReference< ::com::sun::star::uno::XInterface > xRef, void* pSearchData );
 
-class WeakRefList;
+typedef ::std::vector< ::com::sun::star::uno::WeakReference< ::com::sun::star::uno::XInterface >* > WeakRefList;
 
 class SvUnoWeakContainer
 {
@@ -49,12 +50,13 @@ public:
     /** inserts the given ref into this container */
     void	insert( ::com::sun::star::uno::WeakReference< ::com::sun::star::uno::XInterface > xRef ) throw();
 
-    /** searches the container for a ref that returns true on the given 
+    /** searches the container for a ref that returns true on the given
         search function
     */
-    sal_Bool findRef( ::com::sun::star::uno::WeakReference< ::com::sun::star::uno::XInterface >& rRef, void* pSearchData, weakref_searchfunc pSearchFunc );	
+    sal_Bool findRef( ::com::sun::star::uno::WeakReference< ::com::sun::star::uno::XInterface >& rRef, void* pSearchData, weakref_searchfunc pSearchFunc );
 };
 
 } //namespace binfilter
 #endif // _SV_UNOWCNTR_HXX_
 
+/* vim:set shiftwidth=4 softtabstop=4 expandtab: */

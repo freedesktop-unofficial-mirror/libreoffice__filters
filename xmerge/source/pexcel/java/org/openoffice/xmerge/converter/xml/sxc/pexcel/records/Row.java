@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -26,7 +26,7 @@
  ************************************************************************/
 
 package org.openoffice.xmerge.converter.xml.sxc.pexcel.records;
- 
+
 import java.io.OutputStream;
 import java.io.InputStream;
 import java.io.IOException;
@@ -34,7 +34,6 @@ import java.io.IOException;
 import org.openoffice.xmerge.util.Debug;
 import org.openoffice.xmerge.util.EndianConverter;
 import org.openoffice.xmerge.converter.xml.sxc.pexcel.PocketExcelConstants;
-
 
 /**
  * Represents s BIFF Record that describes the format of a column
@@ -46,12 +45,12 @@ public class Row implements BIFFRecord {
     private byte[] grbit	= new byte[2];
     private byte[] ixfe		= new byte[2];
     private float  scale = (float) 1;
-    
+
     /**
      * Constructs a pocket Excel Document from the
      * <code>InputStream</code> and assigns it the document name passed in
      *
-     * @param	rw Zero based row number 
+     * @param	rw Zero based row number
      * @param	miyRw row height
      */
     public Row(int rw, int miyRw, boolean userDefined) {
@@ -67,62 +66,62 @@ public class Row implements BIFFRecord {
     }
 
     /**
-     * Constructs a Row fro man <code>InputStream</code> 
+     * Constructs a Row fro man <code>InputStream</code>
      *
-     * @param	is InputStream containing a Pane Record 
+     * @param	is InputStream containing a Pane Record
      */
     public Row(InputStream is) throws IOException {
-        read(is);	
+        read(is);
     }
 
     /**
-     * Get the hex code for this particular <code>BIFFRecord</code> 
+     * Get the hex code for this particular <code>BIFFRecord</code>
      *
      * @return the hex code for <code>Row</code>
      */
     public short getBiffType() {
         return PocketExcelConstants.ROW_DESCRIPTION;
     }
-    
+
     /**
-     * Get the height of this row 
+     * Get the height of this row
      *
-     * @return the height of this row 
+     * @return the height of this row
      */
     public short getRowHeight() {
         return EndianConverter.readShort(miyRw);
     }
-    
+
     /**
-     * Get the rown number for this style 
+     * Get the row number
      *
-     * @return the row this style applies to 
+     * @return the row this style applies to
      */
     public short getRowNumber() {
         return EndianConverter.readShort(rw);
-    }	
+    }
 
     /**
-     * Reads a Row from an <code>InputStream</code> 
+     * Reads a Row from an <code>InputStream</code>
      *
-     * @param	is InputStream containing a Pane Record 
+     * @param	input InputStream containing a Row Record
      */
     public int read(InputStream input) throws IOException {
-        
+
         int numOfBytesRead	= input.read(rw);
         numOfBytesRead		+= input.read(miyRw);
         short scaledHeight = (short) (EndianConverter.readShort(miyRw) / scale);
-        miyRw = EndianConverter.writeShort(scaledHeight); 
+        miyRw = EndianConverter.writeShort(scaledHeight);
         numOfBytesRead		+= input.read(grbit);
         numOfBytesRead		+= input.read(ixfe);
-            
-        Debug.log(Debug.TRACE,"\trw : "+ EndianConverter.readShort(rw) + 
+
+        Debug.log(Debug.TRACE,"\trw : "+ EndianConverter.readShort(rw) +
                             " miyRw : " + EndianConverter.readShort(miyRw) +
                             " grbit : " + EndianConverter.readShort(grbit) +
-                            " ixfe : " + EndianConverter.readShort(ixfe));           
+                            " ixfe : " + EndianConverter.readShort(ixfe));
         return numOfBytesRead;
     }
-    
+
     public void write(OutputStream output) throws IOException {
 
         output.write(getBiffType());
@@ -134,5 +133,5 @@ public class Row implements BIFFRecord {
         Debug.log(Debug.TRACE,"Writing Row record");
 
     }
-    
+
 }

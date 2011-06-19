@@ -1,7 +1,8 @@
+/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -28,70 +29,33 @@
 #ifndef _CHART_DIAGRAM_HXX
 #define _CHART_DIAGRAM_HXX
 
-#ifndef _CPPUHELPER_IMPLBASE_HXX_
 #include <cppuhelper/implbase.hxx>
-#endif
-//#include <cppuhelper/implbase12.hxx>	// helper for implementations
 
-#ifndef _COM_SUN_STAR_CHART_XDIAGRAM_HPP_
 #include <com/sun/star/chart/XDiagram.hpp>
-#endif
-#ifndef _COM_SUN_STAR_LANG_XSERVICEINFO_HPP_
 #include <com/sun/star/lang/XServiceInfo.hpp>
-#endif
-#ifndef _COM_SUN_STAR_CHART_XTWOAXISXSUPPLIER_HPP_
 #include <com/sun/star/chart/XTwoAxisXSupplier.hpp>
-#endif
-#ifndef _COM_SUN_STAR_CHART_XTWOAXISYSUPPLIER_HPP_
 #include <com/sun/star/chart/XTwoAxisYSupplier.hpp>
-#endif
-#ifndef _COM_SUN_STAR_CHART_XAXISZSUPPLIER_HPP_
 #include <com/sun/star/chart/XAxisZSupplier.hpp>
-#endif
-#ifndef _COM_SUN_STAR_CHART_XSTATISTICDISPLAY_HPP_
 #include <com/sun/star/chart/XStatisticDisplay.hpp>
-#endif
-#ifndef _COM_SUN_STAR_CHART_X3DDISPLAY_HPP_
 #include <com/sun/star/chart/X3DDisplay.hpp>
-#endif
-#ifndef _COM_SUN_STAR_BEANS_XPROPERTYSET_HPP_
 #include <com/sun/star/beans/XPropertySet.hpp>
-#endif
-#ifndef _COM_SUN_STAR_BEANS_XMULTIPROPERTYSET_HPP_
 #include <com/sun/star/beans/XMultiPropertySet.hpp>
-#endif
-#ifndef _COM_SUN_STAR_BEANS_XPROPERTYSTATE_HPP_
 #include <com/sun/star/beans/XPropertyState.hpp>
-#endif
-#ifndef _COM_SUN_STAR_BEANS_XMULTIPROPERTYSTATES_HPP_
 #include <com/sun/star/beans/XMultiPropertyStates.hpp>
-#endif
-#ifndef _COM_SUN_STAR_LANG_XUNOTUNNEL_HPP_
 #include <com/sun/star/lang/XUnoTunnel.hpp>
-#endif
-#ifndef _COM_SUN_STAR_LANG_INDEXOUTOFBOUNDSEXCEPTION_HPP_
 #include <com/sun/star/lang/IndexOutOfBoundsException.hpp>
-#endif
-#ifndef _COM_SUN_STAR_LANG_XCOMPONENT_HPP_
 #include <com/sun/star/lang/XComponent.hpp>
-#endif
-#ifndef _COM_SUN_STAR_LANG_XEVENTLISTENER_HPP_
 #include <com/sun/star/lang/XEventListener.hpp>
-#endif
-#ifndef _CPPUHELPER_INTERFACECONTAINER_HXX_
 #include <cppuhelper/interfacecontainer.hxx>
-#endif
 
 // header for class SvxItemPropertySet
-#ifndef _SVX_UNOIPSET_HXX_
 #include <bf_svx/unoipset.hxx>
-#endif
 namespace binfilter {
 
 class ChartModel;
 class SchChartDocShell;
 } //namespace binfilter
-// GrP gcc 2.95.2 on Mac OS X chokes on this huge template class. 
+// GrP gcc 2.95.2 on Mac OS X chokes on this huge template class.
 // Expand the template by hand.
 //#if ! (defined(MACOSX) && ( __GNUC__ < 3 ))
 #if 1
@@ -131,19 +95,19 @@ namespace cppu {
 
     class SAL_NO_VTABLE ImplHelperBase14
         : public ::com::sun::star::lang::XTypeProvider
-        , public ::com::sun::star::chart::XDiagram, 
-                      public ::com::sun::star::chart::XAxisZSupplier, 
-                      public ::com::sun::star::chart::XTwoAxisXSupplier, 
-                      public ::com::sun::star::chart::XTwoAxisYSupplier, 
-                      public ::com::sun::star::chart::XStatisticDisplay, 
-                      public ::com::sun::star::chart::X3DDisplay, 
-                      public ::com::sun::star::beans::XPropertySet, 
-                      public ::com::sun::star::beans::XMultiPropertySet, 
-                      public ::com::sun::star::beans::XPropertyState, 
-                      public ::com::sun::star::beans::XMultiPropertyStates, 
-                      public ::com::sun::star::lang::XServiceInfo, 
-                      public ::com::sun::star::lang::XUnoTunnel, 
-                      public ::com::sun::star::lang::XComponent, 
+        , public ::com::sun::star::chart::XDiagram,
+                      public ::com::sun::star::chart::XAxisZSupplier,
+                      public ::com::sun::star::chart::XTwoAxisXSupplier,
+                      public ::com::sun::star::chart::XTwoAxisYSupplier,
+                      public ::com::sun::star::chart::XStatisticDisplay,
+                      public ::com::sun::star::chart::X3DDisplay,
+                      public ::com::sun::star::beans::XPropertySet,
+                      public ::com::sun::star::beans::XMultiPropertySet,
+                      public ::com::sun::star::beans::XPropertyState,
+                      public ::com::sun::star::beans::XMultiPropertyStates,
+                      public ::com::sun::star::lang::XServiceInfo,
+                      public ::com::sun::star::lang::XUnoTunnel,
+                      public ::com::sun::star::lang::XComponent,
                       public ::com::sun::star::lang::XEventListener
     {
     protected:
@@ -231,9 +195,9 @@ namespace cppu {
 }
 
 #endif
-namespace binfilter {//STRIP009
-    class ChXDiagram : public ::cppu::WeakImplHelper14 
- < 
+namespace binfilter {
+    class ChXDiagram : public ::cppu::WeakImplHelper14
+ <
     ::com::sun::star::chart::XDiagram,
     ::com::sun::star::chart::XAxisZSupplier,
     ::com::sun::star::chart::XTwoAxisXSupplier,	//	: XAxisXSupplier
@@ -247,8 +211,8 @@ namespace binfilter {//STRIP009
     ::com::sun::star::lang::XServiceInfo,
     ::com::sun::star::lang::XUnoTunnel,
        ::com::sun::star::lang::XComponent,
-       ::com::sun::star::lang::XEventListener 
- > 
+       ::com::sun::star::lang::XEventListener
+ >
 {
 private:
     ::rtl::OUString maServiceName;
@@ -409,20 +373,20 @@ public:
     //	XMultiPropertySet
     virtual void SAL_CALL setPropertyValues	(
                 const ::com::sun::star::uno::Sequence< ::rtl::OUString >& aPropertyNames,
-                const ::com::sun::star::uno::Sequence< ::com::sun::star::uno::Any >& aValues ) 
+                const ::com::sun::star::uno::Sequence< ::com::sun::star::uno::Any >& aValues )
         throw (::com::sun::star::beans::PropertyVetoException,
                 ::com::sun::star::lang::IllegalArgumentException,
                 ::com::sun::star::lang::WrappedTargetException,
                 ::com::sun::star::uno::RuntimeException);
     virtual ::com::sun::star::uno::Sequence< ::com::sun::star::uno::Any > SAL_CALL getPropertyValues	(
-                const ::com::sun::star::uno::Sequence< ::rtl::OUString >& aPropertyNames ) 
+                const ::com::sun::star::uno::Sequence< ::rtl::OUString >& aPropertyNames )
         throw (::com::sun::star::uno::RuntimeException);
     virtual void SAL_CALL addPropertiesChangeListener	(
                 const ::com::sun::star::uno::Sequence< ::rtl::OUString >& aPropertyNames,
-                const ::com::sun::star::uno::Reference< ::com::sun::star::beans::XPropertiesChangeListener >& xListener ) 
+                const ::com::sun::star::uno::Reference< ::com::sun::star::beans::XPropertiesChangeListener >& xListener )
         throw (::com::sun::star::uno::RuntimeException);
     virtual void SAL_CALL removePropertiesChangeListener	(
-                const ::com::sun::star::uno::Reference< ::com::sun::star::beans::XPropertiesChangeListener >& xListener ) 
+                const ::com::sun::star::uno::Reference< ::com::sun::star::beans::XPropertiesChangeListener >& xListener )
         throw (::com::sun::star::uno::RuntimeException);
     virtual void SAL_CALL firePropertiesChangeEvent	(
                 const ::com::sun::star::uno::Sequence< ::rtl::OUString >& aPropertyNames,
@@ -454,9 +418,9 @@ public:
         throw (::com::sun::star::beans::UnknownPropertyException,
                 ::com::sun::star::uno::RuntimeException);
     virtual ::com::sun::star::uno::Sequence< ::com::sun::star::uno::Any > SAL_CALL getPropertyDefaults	(
-                const ::com::sun::star::uno::Sequence< ::rtl::OUString >& aPropertyNames ) 
-        throw (::com::sun::star::beans::UnknownPropertyException, 
-                ::com::sun::star::lang::WrappedTargetException, 
+                const ::com::sun::star::uno::Sequence< ::rtl::OUString >& aPropertyNames )
+        throw (::com::sun::star::beans::UnknownPropertyException,
+                ::com::sun::star::lang::WrappedTargetException,
                 ::com::sun::star::uno::RuntimeException);
 
     // XServiceInfo
@@ -479,23 +443,23 @@ public:
         throw( ::com::sun::star::uno::RuntimeException );
     virtual void SAL_CALL removeEventListener( const ::com::sun::star::uno::Reference< ::com::sun::star::lang::XEventListener >& aListener )
         throw( ::com::sun::star::uno::RuntimeException );
-   
+
     //	XEventListener
     virtual void SAL_CALL disposing (const ::com::sun::star::lang::EventObject & Source)
         throw (::com::sun::star::uno::RuntimeException);
-        
+
 protected:
     /**	@descr	In an array of SfxItemPropertyMap entries advance from the position pointed to
-            by pProperty to that property that has the name given by pPropertyName.  If the 
+            by pProperty to that property that has the name given by pPropertyName.  If the
             property list does not contain such an entry an UnknownPropertyException is thrown.
         @param	pProperty Pointer into an array of properties.  It is modified such that after
             the methods returns it points to a property with the same name as pPropertyName.
         @param	pPropertyName	Name of the property that is searched for.
     */
-    void AdvanceToName	(const SfxItemPropertyMap *& pProperty, 
+    void AdvanceToName	(const SfxItemPropertyMap *& pProperty,
                         const ::rtl::OUString * pPropertyName)
         throw (::com::sun::star::beans::UnknownPropertyException);
-    
+
 private:
     ///	Mutex used by the interface container.
     ::osl::Mutex	maMutex;
@@ -507,3 +471,4 @@ private:
 } //namespace binfilter
 #endif	// _CHART_DIAGRAM_HXX
 
+/* vim:set shiftwidth=4 softtabstop=4 expandtab: */

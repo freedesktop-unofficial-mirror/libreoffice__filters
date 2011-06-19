@@ -1,7 +1,8 @@
+/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -33,21 +34,11 @@
 #endif
 
 
-#ifndef _SOT_FORMATS_HXX
 #include <sot/formats.hxx>
-#endif
-#ifndef _LNKBASE_HXX
 #include <bf_so3/lnkbase.hxx>
-#endif
-#ifndef _SFXAPP_HXX
 #include <bf_sfx2/app.hxx>
-#endif
-#ifndef _SFX_PROGRESS_HXX
 #include <bf_sfx2/progress.hxx>
-#endif
-#ifndef _SFX_INTERNO_HXX
 #include <bf_sfx2/interno.hxx>
-#endif
 
 #include "fileobj.hxx"
 #include "linkmgr.hxx"
@@ -66,7 +57,7 @@ using namespace ::com::sun::star::uno;
 /*N*/ {
 /*N*/ 	Graphic aGrf;
 /*N*/ 	Timer aTimer;
-/*N*/ 
+/*N*/
 /*N*/ 	Impl_DownLoadData( const Link& rLink )
 /*N*/ 	{
 /*N*/ 		aTimer.SetTimeout( 100 );
@@ -83,7 +74,7 @@ using namespace ::com::sun::star::uno;
 
 
 /*N*/ SvFileObject::SvFileObject()
-/*N*/ 	: nType( FILETYPE_TEXT ), pDownLoadData( 0 )
+/*N*/ 	: pDownLoadData( 0 ), nType( FILETYPE_TEXT )
 /*N*/ {
 /*N*/ 	bLoadAgain = bMedUseCache = TRUE;
 /*N*/ 	bSynchron = bLoadError = bWaitForData = bDataReady = bNativFormat =
@@ -117,10 +108,10 @@ using namespace ::com::sun::star::uno;
 /*N*/ 			// relativen Datei Links aufzuloesen!!!! Wird ueber den
 /*N*/ 			// LinkManager und damit von dessen Storage erledigt.
 /*N*/ 			rData <<= ::rtl::OUString( sFileNm );
-/*N*/ 
+/*N*/
 /*
 ===========================================================================
-JP 28.02.96: noch eine Baustelle:
+noch eine Baustelle:
                 Idee: hier das Medium und die DocShell anlegen, Doc laden
                       und ueber OLE-SS (GetObj(...)) den Bereich als
                       PseudoObject erfragen. Dieses mit den Daten oder
@@ -150,25 +141,24 @@ JP 28.02.96: noch eine Baustelle:
 */
 /*N*/ 		}
 /*N*/ 		break;
-/*N*/ 
+/*N*/
 /*N*/ 	case FILETYPE_GRF:
 /*?*/ 		if( !bLoadError )
 /*?*/ 		{
 /*?*/ 			SfxMediumRef xTmpMed;
-/*?*/ 
+/*?*/
 /*?*/ 			if( FORMAT_GDIMETAFILE == nFmt || FORMAT_BITMAP == nFmt ||
 /*?*/ 				SOT_FORMATSTR_ID_SVXB == nFmt )
 /*?*/ 			{
 /*?*/ 				Graphic aGrf;
-/*?*/ 
-/*?*/ 				//JP 15.07.98: Bug 52959
+/*?*/
 /*?*/ 				//		falls das Nativformat doch erwuenscht ist, muss am
 /*?*/ 				//		Ende das Flag zurueckgesetzt werden.
 /*?*/ // wird einzig und allein im sw/ndgrf.cxx benutzt, wenn der Link vom
 /*?*/ // GraphicNode entfernt wird.
 /*?*/ 				BOOL bOldNativFormat = bNativFormat;
 /*?*/ //!!??				bNativFormat = 0 != (ASPECT_ICON & pSvData->GetAspect());
-/*?*/ 
+/*?*/
 /*?*/ 				// falls gedruckt werden soll, warten wir bis die
 /*?*/ 				// Daten vorhanden sind
 /*?*/ 				if( bGetSynchron )
@@ -182,24 +172,24 @@ JP 28.02.96: noch eine Baustelle:
 /*?*/ 							// dann mit der hoechsten Prioritaet
 /*?*/ 							xMed->SetTransferPriority( SFX_TFPRIO_VISIBLE_LOWRES_GRAPHIC );
 /*?*/ 					}
-/*?*/ 
+/*?*/
 /*?*/ 					if( !bInCallDownLoad )
 /*?*/ 					{
 /*?*/ 						xTmpMed = xMed;
 /*?*/ 						while( bWaitForData )
 /*?*/ 							Application::Reschedule();
-/*?*/ 
+/*?*/
 /*?*/ 						xMed = xTmpMed;
 /*?*/ 						bClearMedium = TRUE;
 /*?*/ 					}
 /*?*/ 				}
-/*?*/ 
+/*?*/
 /*?*/ 				if( pDownLoadData ||
 /*?*/ 					( !bWaitForData && ( xMed.Is() || 		// wurde als URL geladen
 /*?*/ 						( bSynchron && LoadFile_Impl() && xMed.Is() ) )) )
 /*?*/ 				{
 /*?*/ 					// falls
-/*?*/ 
+/*?*/
 /*?*/ 					// falls es uebers Internet gesogen wurde, nicht
 /*?*/ 					// wieder versuchen
 /*?*/ 					if( !bGetSynchron )
@@ -213,12 +203,12 @@ JP 28.02.96: noch eine Baustelle:
 /*?*/ 						break;
 /*?*/ 					aGrf.SetDefaultType();
 /*?*/ 				}
-/*?*/ 
+/*?*/
 /*?*/ 				if( SOT_FORMATSTR_ID_SVXB != nFmt )
 /*?*/ 					nFmt = (bLoadError || GRAPHIC_BITMAP == aGrf.GetType())
 /*?*/ 								? FORMAT_BITMAP
 /*?*/ 								: FORMAT_GDIMETAFILE;
-/*?*/ 
+/*?*/
 /*?*/ 				SvMemoryStream aMemStm( 0, 65535 );
 /*?*/ 				switch ( nFmt )
 /*?*/ 				{
@@ -229,14 +219,14 @@ JP 28.02.96: noch eine Baustelle:
 /*?*/ 						aMemStm << aGrf;
 /*?*/ 					}
 /*?*/ 					break;
-/*?*/ 
+/*?*/
 /*?*/ 				case  FORMAT_BITMAP:
 /*?*/ 					if( !aGrf.GetBitmap().IsEmpty())
 /*?*/ 						aMemStm << aGrf.GetBitmap();
 /*?*/ 					break;
-/*?*/ 
+/*?*/
 /*?*/ 				default:
-/*?*/ 					if( aGrf.GetGDIMetaFile().GetActionCount() )
+/*?*/ 					if( aGrf.GetGDIMetaFile().GetActionSize() )
 /*?*/ 					{
 /*?*/ 						GDIMetaFile aMeta( aGrf.GetGDIMetaFile() );
 /*?*/ 						aMeta.Write( aMemStm );
@@ -244,9 +234,9 @@ JP 28.02.96: noch eine Baustelle:
 /*?*/ 				}
 /*?*/ 				rData <<= Sequence< sal_Int8 >( (sal_Int8*) aMemStm.GetData(),
 /*?*/ 										aMemStm.Seek( STREAM_SEEK_TO_END ) );
-/*?*/ 
+/*?*/
 /*?*/ 				bNativFormat = bOldNativFormat;
-/*?*/ 
+/*?*/
 /*?*/ 				// alles fertig?
 /*?*/ 				if( xMed.Is() && !bSynchron && bClearMedium )
 /*?*/ 				{
@@ -267,16 +257,16 @@ JP 28.02.96: noch eine Baustelle:
 /*N*/ {
 /*N*/ 	if( !pLink || !pLink->GetLinkManager() )
 /*N*/ 		return FALSE;
-/*N*/ 
+/*N*/
 /*N*/ 	// teste doch mal, ob nicht ein anderer Link mit der gleichen
 /*N*/ 	// Verbindung schon existiert
 /*N*/ 	pLink->GetLinkManager()->GetDisplayNames( pLink, 0, &sFileNm, 0, &sFilter );
-/*N*/ 
+/*N*/
 /*N*/ 	if( OBJECT_CLIENT_GRF == pLink->GetObjType() )
 /*N*/ 	{
 /*?*/ 		if( !pLink->IsUseCache() )
 /*?*/ 			bMedUseCache = FALSE;
-/*?*/ 
+/*?*/
 /*?*/ 		// Reload-Erkennung ???
 /*?*/ 		SvInPlaceObjectRef aRef( pLink->GetLinkManager()->GetPersist() );
 /*?*/ 		if( aRef.Is() )
@@ -284,32 +274,32 @@ JP 28.02.96: noch eine Baustelle:
 /*?*/ 			SfxObjectShell* pShell = ((SfxInPlaceObject*)&aRef)->GetObjectShell();
 /*?*/ 			if( pShell->IsAbortingImport() )
 /*?*/ 				return FALSE;
-/*?*/ 
+/*?*/
 /*?*/ 			if( pShell->IsReloading() )
 /*?*/ 				bMedUseCache = FALSE;
-/*?*/ 
+/*?*/
 /*?*/ 			if( pShell->GetMedium() )
 /*?*/ 				sReferer = pShell->GetMedium()->GetName();
 /*?*/ 		}
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	switch( pLink->GetObjType() )
 /*N*/ 	{
 /*N*/ 	case OBJECT_CLIENT_GRF:
 /*?*/ 		nType = FILETYPE_GRF;
 /*?*/ 		bSynchron = pLink->IsSynchron();
 /*?*/ 		break;
-/*N*/ 
+/*N*/
 /*N*/ 	case OBJECT_CLIENT_FILE:
 /*N*/ 		nType = FILETYPE_TEXT;
 /*N*/ 		break;
-/*N*/ 
+/*N*/
 /*N*/ 	default:
 /*N*/ 		return FALSE;
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	SetUpdateTimeout( 0 );
-/*N*/ 
+/*N*/
 /*N*/ 	// und jetzt bei diesem oder gefundenem Pseudo-Object anmelden
 /*N*/ 	AddDataAdvise( pLink, SotExchange::GetFormatMimeType( pLink->GetContentType() ), 0 );
 /*N*/ 	return TRUE;
@@ -321,7 +311,7 @@ JP 28.02.96: noch eine Baustelle:
 /*?*/ 	// wir sind noch im Laden!!
 /*?*/ 	if( bWaitForData || !bLoadAgain || xMed.Is() || pDownLoadData )
 /*?*/ 		return FALSE;
-/*?*/ 
+/*?*/
 /*?*/ 	// z.Z. nur auf die aktuelle DocShell
 /*?*/ 	xMed = new SfxMedium( sFileNm, STREAM_STD_READ, TRUE );
 /*?*/ 	// Keinen Eintrag im Roter Button Menu
@@ -331,34 +321,34 @@ JP 28.02.96: noch eine Baustelle:
 /*?*/ 		xMed->SetReferer( sReferer );
 /*?*/ 	// erstmal mit der niedrigsten Prioritaet
 /*?*/ 	xMed->SetTransferPriority( SFX_TFPRIO_INVISIBLE_HIGHRES_GRAPHIC );
-/*?*/ 
+/*?*/
 /*?*/ 	if( !bSynchron )
 /*?*/ 	{
 /*?*/ 		bLoadAgain = bDataReady = bInNewData = FALSE;
 /*?*/ 		bWaitForData = TRUE;
-/*?*/ 
+/*?*/
 /*?*/ 		SfxMediumRef xTmpMed = xMed;
 /*?*/ 		xMed->SetDataAvailableLink( STATIC_LINK( this, SvFileObject, LoadGrfNewData_Impl ) );
 /*?*/ 		bInCallDownLoad = TRUE;
 /*?*/ 		xMed->DownLoad( STATIC_LINK( this, SvFileObject, LoadGrfReady_Impl ) );
 /*?*/ 		bInCallDownLoad = FALSE;
-/*?*/ 
+/*?*/
 /*?*/ 		bClearMedium = !xMed.Is();
 /*?*/ 		if( bClearMedium )
 /*?*/ 			xMed = xTmpMed;		// falls gleich im DownLoad schon schluss ist
 /*?*/ 		return bDataReady;
 /*?*/ 	}
-/*?*/ 
+/*?*/
 /*?*/ 	bWaitForData = TRUE;
 /*?*/ 	bDataReady = bInNewData = FALSE;
 /*?*/ 	xMed->DownLoad();
 /*?*/ 	bLoadAgain = !xMed->IsRemote();
 /*?*/ 	bWaitForData = FALSE;
-/*?*/ 
+/*?*/
 /*?*/ 	// Grafik ist fertig, also DataChanged von der Statusaederung schicken:
 /*?*/ 	SendStateChg_Impl( xMed->GetInStream() && xMed->GetInStream()->GetError()
 /*?*/ 						? STATE_LOAD_ERROR : STATE_LOAD_OK );
-/*?*/ 
+/*?*/
 /*?*/ 	return TRUE;
 /*?*/ }
 
@@ -369,15 +359,15 @@ JP 28.02.96: noch eine Baustelle:
 /*?*/ 	const int nFilter = sFilter.Len() && pGF->GetImportFormatCount()
 /*?*/ 							? pGF->GetImportFormatNumber( sFilter )
 /*?*/ 							: GRFILTER_FORMAT_DONTKNOW;
-/*?*/ 
+/*?*/
 /*?*/ 	String aEmptyStr;
 /*?*/ 	int nRes;
-/*?*/ 
+/*?*/
 /*?*/ 	// vermeiden, dass ein native Link angelegt wird
 /*?*/ 	if( ( !pStream || !pDownLoadData ) && !rGrf.IsLink() &&
 /*?*/ 		!rGrf.GetContext() && !bNativFormat )
 /*?*/ 		rGrf.SetLink( GfxLink() );
-/*?*/ 
+/*?*/
 /*?*/ 	if( !pStream )
 /*?*/ 		nRes = xMed.Is() ? GRFILTER_OPENERROR
 /*?*/ 						 : pGF->ImportGraphic( rGrf, INetURLObject(sFileNm), nFilter );
@@ -390,14 +380,14 @@ JP 28.02.96: noch eine Baustelle:
 /*?*/ 	{
 /*?*/ 		nRes = pGF->ImportGraphic( pDownLoadData->aGrf, aEmptyStr,
 /*?*/ 									*pStream, nFilter );
-/*?*/ 
+/*?*/
 /*?*/ 		if( pDownLoadData )
 /*?*/ 		{
 /*?*/ 			rGrf = pDownLoadData->aGrf;
 /*?*/ 			if( GRAPHIC_NONE == rGrf.GetType() )
 /*?*/ 				rGrf.SetDefaultType();
-/*?*/ 
-/*?*/ 
+/*?*/
+/*?*/
 /*?*/ 			if( !pDownLoadData->aGrf.GetContext() )
 /*?*/ 			{
 /*?*/ 				xMed->SetDataAvailableLink( Link() );
@@ -413,10 +403,10 @@ JP 28.02.96: noch eine Baustelle:
 /*?*/ 			}
 /*?*/ 		}
 /*?*/ 	}
-/*?*/ 
+/*?*/
 /*?*/ 	if( pStream && ERRCODE_IO_PENDING == pStream->GetError() )
 /*?*/ 		pStream->ResetError();
-/*?*/ 
+/*?*/
 /*?*/ #ifdef DBG_UTIL
 /*?*/ 	if( nRes )
 /*?*/ 	{
@@ -434,7 +424,7 @@ JP 28.02.96: noch eine Baustelle:
 /*?*/ 		}
 /*?*/ 	}
 /*?*/ #endif
-/*?*/ 
+/*?*/
 /*?*/ 	return GRFILTER_OK == nRes;
 /*?*/ }
 
@@ -447,18 +437,18 @@ JP 28.02.96: noch eine Baustelle:
 /*?*/ 	pThis->bLoadError = FALSE;
 /*?*/ 	pThis->bWaitForData = FALSE;
 /*?*/ 	pThis->bInCallDownLoad = FALSE;
-/*?*/ 
+/*?*/
 /*?*/ 	if( !pThis->bInNewData && !pThis->bDataReady )
 /*?*/ 	{
 /*?*/ 			// Grafik ist fertig, also DataChanged von der Status-
 /*?*/ 			// aederung schicken:
 /*?*/ 		pThis->bDataReady = TRUE;
 /*?*/ 		pThis->SendStateChg_Impl( STATE_LOAD_OK );
-/*?*/ 
+/*?*/
 /*?*/ 			// und dann nochmal die Daten senden
 /*?*/ 		pThis->NotifyDataChanged();
 /*?*/ 	}
-/*?*/ 
+/*?*/
 /*?*/ 	if( pThis->bDataReady )
 /*?*/ 	{
 /*?*/ 		pThis->bLoadAgain = TRUE;
@@ -466,7 +456,7 @@ JP 28.02.96: noch eine Baustelle:
 /*?*/ 		{
 /*?*/ 			pThis->xMed->SetDataAvailableLink( Link() );
 /*?*/ 			pThis->xMed->SetDoneLink( Link() );
-/*?*/ 
+/*?*/
 /*?*/ 			Application::PostUserEvent(
 /*?*/ 						STATIC_LINK( pThis, SvFileObject, DelMedium_Impl ),
 /*?*/ 						new SfxMediumRef( pThis->xMed ));
@@ -475,12 +465,13 @@ JP 28.02.96: noch eine Baustelle:
 /*?*/ 		if( pThis->pDownLoadData )
 /*?*/ 			delete pThis->pDownLoadData, pThis->pDownLoadData = 0;
 /*?*/ 	}
-/*?*/ 
+/*?*/
 /*?*/ 	return 0;
 /*?*/ }
 
 /*?*/ IMPL_STATIC_LINK( SvFileObject, DelMedium_Impl, SfxMediumRef*, pDelMed )
 /*?*/ {
+/*?*/ 	(void)pThis;
 /*?*/ 	delete pDelMed;
 /*?*/ 	return 0;
 /*?*/ }
@@ -490,15 +481,15 @@ JP 28.02.96: noch eine Baustelle:
 /*?*/ 	// wenn wir von hier kommen, kann es kein Fehler mehr sein
 /*?*/ 	if( pThis->bInNewData )
 /*?*/ 		return 0;
-/*?*/ 
+/*?*/
 /*?*/ 	pThis->bInNewData = TRUE;
 /*?*/ 	pThis->bLoadError = FALSE;
-/*?*/ 
+/*?*/
 /*?*/ 	if( !pThis->pDownLoadData )
 /*?*/ 	{
 /*?*/ 		pThis->pDownLoadData = new Impl_DownLoadData(
 /*?*/ 						STATIC_LINK( pThis, SvFileObject, LoadGrfNewData_Impl ) );
-/*?*/ 
+/*?*/
 /*?*/ 		// Null-Link setzen, damit keine temporaeren Grafiken
 /*?*/ 		// rausgeswapt werden; der Filter prueft, ob schon
 /*?*/ 		// ein Link gesetzt ist => falls dies zutrifft, wird
@@ -511,22 +502,22 @@ JP 28.02.96: noch eine Baustelle:
 /*?*/ 			pThis->pDownLoadData->aGrf.SetLink( aDummyLink );
 /*?*/ 		}
 /*?*/ 	}
-/*?*/ 
+/*?*/
 /*?*/ 	pThis->NotifyDataChanged();
-/*?*/ 
+/*?*/
 /*?*/ 	SvStream* pStrm = pThis->xMed.Is() ? pThis->xMed->GetInStream() : 0;
 /*?*/ 	if( pStrm && pStrm->GetError() )
 /*?*/ 	{
 /*?*/ 		if( ERRCODE_IO_PENDING == pStrm->GetError() )
 /*?*/ 			pStrm->ResetError();
-/*?*/ 
+/*?*/
 /*?*/ 		// im DataChanged ein DataReady?
 /*?*/ 		else if( pThis->bWaitForData && pThis->pDownLoadData )
 /*?*/ 		{
 /*?*/ 			pThis->bLoadError = TRUE;
 /*?*/ 		}
 /*?*/ 	}
-/*?*/ 
+/*?*/
 /*?*/ 	if( pThis->bDataReady )
 /*?*/ 	{
 /*?*/ 		// Grafik ist fertig, also DataChanged von der Status-
@@ -534,7 +525,7 @@ JP 28.02.96: noch eine Baustelle:
 /*?*/ 		pThis->SendStateChg_Impl( pStrm->GetError() ? STATE_LOAD_ERROR
 /*?*/ 													: STATE_LOAD_OK );
 /*?*/ 	}
-/*?*/ 
+/*?*/
 /*?*/ 	pThis->bInNewData = FALSE;
 /*?*/ 	return 0;
 /*?*/ }
@@ -556,7 +547,7 @@ JP 28.02.96: noch eine Baustelle:
 /*N*/ {
 /*N*/ 	if( xMed.Is() )
 /*?*/ 		xMed->CancelTransfers();
-/*N*/ 
+/*N*/
 /*N*/ 	// und aus dem Cache austragen, wenn man mitten im Laden ist
 /*N*/ 	if( !bDataReady )
 /*N*/ 	{
@@ -584,3 +575,5 @@ JP 28.02.96: noch eine Baustelle:
 
 
 }
+
+/* vim:set shiftwidth=4 softtabstop=4 expandtab: */

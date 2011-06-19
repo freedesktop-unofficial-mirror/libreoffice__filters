@@ -1,7 +1,8 @@
+/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -25,11 +26,6 @@
  *
  ************************************************************************/
 
-// System - Includes -----------------------------------------------------
-
-#ifdef PCH
-#endif
-
 #ifdef _MSC_VER
 #pragma hdrstop
 #endif
@@ -42,6 +38,7 @@
 #include "document.hxx"
 #include "bcaslot.hxx"
 #include "scerrors.hxx"
+#include <vector>
 namespace binfilter {
 
 // Anzahl der Slots je Dimension
@@ -63,14 +60,9 @@ namespace binfilter {
 #error BCA_SLOTS DOOMed!
 #endif
 
-DECLARE_LIST( ScBroadcastAreaList, ScBroadcastArea* )//STRIP008 ;
+typedef ::std::vector< ScBroadcastArea* > ScBroadcastAreaList;
 
 // STATIC DATA -----------------------------------------------------------
-
-#ifdef erDEBUG
-ULONG erCountBCAInserts = 0;
-ULONG erCountBCAFinds = 0;
-#endif
 
 /*N*/ SV_IMPL_OP_PTRARR_SORT( ScBroadcastAreas, ScBroadcastAreaPtr );
 /*N*/ TYPEINIT1( ScHint, SfxSimpleHint );
@@ -122,13 +114,13 @@ TYPEINIT1( ScAreaChangedHint, SfxHint );
 /*?*/ 		if ( !pDoc->GetHardRecalcState() )
 /*?*/ 		{
 /*?*/ 			pDoc->SetHardRecalcState( 1 );
-/*?*/ 
+/*?*/
 /*?*/ 			SfxObjectShell* pShell = pDoc->GetDocumentShell();
 /*?*/ 			DBG_ASSERT( pShell, "Missing DocShell :-/" );
-/*?*/ 
+/*?*/
 /*?*/ 			if ( pShell )
 /*?*/ 				pShell->SetError( SCWARN_CORE_HARD_RECALC );
-/*?*/ 
+/*?*/
 /*?*/ 			pDoc->SetAutoCalc( FALSE );
 /*?*/ 			pDoc->SetHardRecalcState( 2 );
 /*?*/ 		}
@@ -196,8 +188,8 @@ TYPEINIT1( ScAreaChangedHint, SfxHint );
 /*N*/ 		}
 /*N*/ 	}
 /*N*/ }
-/*N*/ 
-/*N*/ 
+/*N*/
+/*N*/
 /*N*/ USHORT ScBroadcastAreaSlot::FindBroadcastArea( const ScRange& rRange ) const
 /*N*/ {
 /*N*/ 	USHORT nPos;
@@ -333,7 +325,7 @@ TYPEINIT1( ScAreaChangedHint, SfxHint );
 
 /*N*/ ScBroadcastAreaSlotMachine::~ScBroadcastAreaSlotMachine()
 /*N*/ {
-/*N*/ 
+/*N*/
 /*N*/ 	ScBroadcastAreaSlot** pp = ppSlots;
 /*N*/ 	for ( USHORT j=0; j < BCA_SLOTS; ++j, ++pp )
 /*N*/ 	{
@@ -341,11 +333,9 @@ TYPEINIT1( ScAreaChangedHint, SfxHint );
 /*N*/ 			delete *pp;
 /*N*/ 	}
 /*N*/ 	delete[] ppSlots;
-/*N*/ 
-/*N*/ 	for ( ScBroadcastArea* pBCA = pBCAlwaysList->First(); pBCA; pBCA = pBCAlwaysList->Next() )
-/*N*/ 	{
-/*N*/ 		delete pBCA;
-/*N*/ 	}
+/*N*/
+        for ( size_t i = 0, n = pBCAlwaysList->size(); i < n; ++i )
+            delete (*pBCAlwaysList)[ i ];
 /*N*/ 	delete pBCAlwaysList;
 /*N*/ }
 
@@ -386,26 +376,26 @@ TYPEINIT1( ScAreaChangedHint, SfxHint );
 /*N*/ 	if ( rRange == BCA_LISTEN_ALWAYS  )
 /*N*/ 	{
 /*N*/ 		ScBroadcastArea* pBCA;
-/*N*/ 		if ( !pBCAlwaysList->Count() )
+/*N*/ 		if ( pBCAlwaysList->empty() )
 /*N*/ 		{
 /*N*/ 			pBCA = new ScBroadcastArea( rRange );
 /*N*/ 			pListener->StartListening( *pBCA, FALSE );	// kein PreventDupes
-/*N*/ 			pBCAlwaysList->Insert( pBCA, LIST_APPEND );
+/*N*/ 			pBCAlwaysList->push_back( pBCA );
 /*N*/ 			return ;
 /*N*/ 		}
-/*N*/ 		ScBroadcastArea* pLast;
-/*N*/ 		for ( pBCA = pBCAlwaysList->First(); pBCA; pBCA = pBCAlwaysList->Next() )
-/*N*/ 		{
-/*N*/ 			if ( pListener->IsListening( *pBCA ) )
+/*N*/ 		ScBroadcastArea* pLast(NULL);
+            for ( size_t i = 0, n = pBCAlwaysList->size(); i < n; ++i )
+            {
+                pLast = (*pBCAlwaysList)[ i ];
+/*N*/ 			if ( pListener->IsListening( *pLast ) )
 /*N*/ 				return ;		// keine Dupes
-/*N*/ 			pLast = pBCA;
 /*N*/ 		}
 /*?*/ 		pBCA = pLast;
 /*?*/ 		//! ListenerArrays don't shrink!
 /*?*/ 		if ( pBCA->GetListenerCount() > ((USHRT_MAX / 2) / sizeof(SfxBroadcaster*)) )
 /*?*/ 		{	// Arrays nicht zu gross werden lassen
 /*?*/ 			pBCA = new ScBroadcastArea( rRange );
-/*?*/ 			pBCAlwaysList->Insert( pBCA, LIST_APPEND );
+/*?*/ 			pBCAlwaysList->push_back( pBCA );
 /*?*/ 		}
 /*?*/ 		pListener->StartListening( *pBCA, FALSE );	// kein PreventDupes
 /*N*/ 	}
@@ -446,16 +436,18 @@ TYPEINIT1( ScAreaChangedHint, SfxHint );
 /*N*/ {
 /*N*/ 	if ( rRange == BCA_LISTEN_ALWAYS  )
 /*N*/ 	{
-/*?*/ 		if ( pBCAlwaysList->Count() )
+/*?*/ 		if ( pBCAlwaysList->size() )
 /*?*/ 		{
-/*?*/ 			for ( ScBroadcastArea* pBCA = pBCAlwaysList->First(); pBCA; pBCA = pBCAlwaysList->Next() )
-/*?*/ 			{
-/*?*/ 				// EndListening liefert FALSE wenn !IsListening, keine Dupes
+                for ( size_t i = 0; i < pBCAlwaysList->size(); ++i )
+                {
+                    ScBroadcastArea* pBCA = (*pBCAlwaysList)[ i ];
 /*?*/ 				if ( pListener->EndListening( *pBCA, FALSE ) )
 /*?*/ 				{
 /*?*/ 					if ( !pBCA->HasListeners() )
 /*?*/ 					{
-/*?*/ 						pBCAlwaysList->Remove();
+                            ScBroadcastAreaList::iterator it = pBCAlwaysList->begin();
+                            ::std::advance( it, i );
+/*?*/ 						pBCAlwaysList->erase( it );
 /*?*/ 						delete pBCA;
 /*?*/ 					}
 /*?*/ 					return ;
@@ -490,17 +482,18 @@ TYPEINIT1( ScAreaChangedHint, SfxHint );
 /*N*/ 		}
 /*N*/ 	}
 /*N*/ }
-/*N*/ 
-/*N*/ 
+/*N*/
+/*N*/
 /*N*/ BOOL ScBroadcastAreaSlotMachine::AreaBroadcast( const ScHint& rHint ) const
 /*N*/ {
 /*N*/     const ScAddress& rAddress = rHint.GetAddress();
 /*N*/ 	if ( rAddress == BCA_BRDCST_ALWAYS )
 /*N*/ 	{
-/*N*/ 		if ( pBCAlwaysList->Count() )
+/*N*/ 		if ( pBCAlwaysList->size() )
 /*N*/ 		{
-/*N*/ 			for ( ScBroadcastArea* pBCA = pBCAlwaysList->First(); pBCA; pBCA = pBCAlwaysList->Next() )
-/*N*/ 			{
+                for ( size_t i = 0, n = pBCAlwaysList->size(); i < n; ++i )
+                {
+                    ScBroadcastArea* pBCA = (*pBCAlwaysList)[ i ];
 /*N*/ 				pBCA->Broadcast( rHint );
 /*N*/ 			}
 /*N*/ 			return TRUE;
@@ -580,3 +573,5 @@ TYPEINIT1( ScAreaChangedHint, SfxHint );
 
 
 }
+
+/* vim:set shiftwidth=4 softtabstop=4 expandtab: */

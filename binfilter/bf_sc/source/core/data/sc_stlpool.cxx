@@ -1,7 +1,8 @@
+/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -25,9 +26,6 @@
  *
  ************************************************************************/
 
-#ifdef PCH
-#endif
-
 #ifdef _MSC_VER
 #pragma hdrstop
 #endif
@@ -45,17 +43,11 @@
 
 
 
-#ifndef _SVX_ITEMDATA_HXX
 #include <bf_svx/itemdata.hxx>
-#endif
 
-#ifndef _DATE_HXX
 #include <tools/date.hxx>
-#endif
 
-#ifndef _TOOLS_TIME_HXX
 #include <tools/time.hxx>
-#endif
 
 #include <bf_svx/flditem.hxx>
 #include <bf_svx/fontitem.hxx>
@@ -80,9 +72,9 @@ namespace binfilter {
 
 //========================================================================
 
-/*N*/ ScStyleSheetPool::ScStyleSheetPool( SfxItemPool&	rPool,
+/*N*/ ScStyleSheetPool::ScStyleSheetPool( SfxItemPool&	rInPool,
 /*N*/ 									ScDocument*		pDocument )
-/*N*/ 	:	SfxStyleSheetPool( rPool ),
+/*N*/ 	:	SfxStyleSheetPool( rInPool ),
 /*N*/ 		pActualStyleSheet( NULL ),
 /*N*/ 		pDoc( pDocument ),
 /*N*/ 		pForceStdName( NULL )
@@ -91,7 +83,7 @@ namespace binfilter {
 
 //------------------------------------------------------------------------
 
-/*N*/ __EXPORT ScStyleSheetPool::~ScStyleSheetPool()
+/*N*/ ScStyleSheetPool::~ScStyleSheetPool()
 /*N*/ {
 /*N*/ }
 
@@ -117,14 +109,14 @@ namespace binfilter {
 /*N*/ 	//	When updating styles from a template, Office 5.1 sometimes created
 /*N*/ 	//	files with multiple default styles.
 /*N*/ 	//	Create new styles in that case:
-/*N*/ 
+/*N*/
 /*N*/ 	//!	only when loading?
-/*N*/ 
+/*N*/
 /*N*/ 	if ( rName.EqualsAscii(STRING_STANDARD) && Find( rName, eFam ) != NULL )
 /*N*/ 	{
-/*?*/ 		DBG_ERROR("renaming additional default style");
-/*?*/ 		long nCount = aStyles.Count();
-/*?*/ 		for ( long nAdd = 1; nAdd <= nCount; nAdd++ )
+/*?*/ 		OSL_FAIL("renaming additional default style");
+/*?*/ 		size_t nCount = aStyles.size();
+/*?*/ 		for ( size_t nAdd = 1; nAdd <= nCount; nAdd++ )
 /*?*/ 		{
 /*?*/ 			String aNewName = ScGlobal::GetRscString(STR_STYLENAME_STANDARD);
 /*?*/ 			aNewName += String::CreateFromInt32( nAdd );
@@ -132,29 +124,29 @@ namespace binfilter {
 /*?*/ 				return SfxStyleSheetPool::Make( aNewName, eFam, mask, nPos );
 /*?*/ 		}
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	return SfxStyleSheetPool::Make( rName, eFam, mask, nPos );
 /*N*/ }
 
 //------------------------------------------------------------------------
 
-/*N*/ SfxStyleSheetBase* __EXPORT ScStyleSheetPool::Create(
+/*N*/ SfxStyleSheetBase* ScStyleSheetPool::Create(
 /*N*/ 											const String&	rName,
 /*N*/ 											SfxStyleFamily	eFamily,
-/*N*/ 											USHORT			nMask )
+/*N*/ 											USHORT			nInMask )
 /*N*/ {
-/*N*/ 	ScStyleSheet* pSheet = new ScStyleSheet( rName, *this, eFamily, nMask );
+/*N*/ 	ScStyleSheet* pSheet = new ScStyleSheet( rName, *this, eFamily, nInMask );
 /*N*/ 	if ( eFamily == SFX_STYLE_FAMILY_PARA && ScGlobal::GetRscString(STR_STYLENAME_STANDARD) != rName )
 /*N*/ 		pSheet->SetParent( ScGlobal::GetRscString(STR_STYLENAME_STANDARD) );
-/*N*/ 
+/*N*/
 /*N*/ 	return pSheet;
 /*N*/ }
 
 //------------------------------------------------------------------------
 
-/*N*/ SfxStyleSheetBase* __EXPORT ScStyleSheetPool::Create( const SfxStyleSheetBase& rStyle )
+/*N*/ SfxStyleSheetBase* ScStyleSheetPool::Create( const SfxStyleSheetBase& )
 /*N*/ {
-/*?*/ 	DBG_BF_ASSERT(0, "STRIP"); return NULL;//STRIP001 DBG_ASSERT( rStyle.ISA(ScStyleSheet), "Invalid StyleSheet-class! :-/" );
+/*?*/ 	DBG_BF_ASSERT(0, "STRIP"); return NULL;
 /*N*/ }
 
 //------------------------------------------------------------------------
@@ -192,7 +184,7 @@ namespace binfilter {
 /*N*/ void ScStyleSheetPool::CreateStandardStyles()
 /*N*/ {
 /*N*/ 	//	neue Eintraege auch bei CopyStdStylesFrom eintragen
-/*N*/ 
+/*N*/
 /*N*/ 	Color			aColBlack	( COL_BLACK );
 /*N*/ 	Color			aColGrey	( COL_LIGHTGRAY );
 /*N*/ 	String			aStr;
@@ -212,28 +204,28 @@ namespace binfilter {
 /*N*/ 	SvxBorderLine	aBorderLine		( &aColBlack, DEF_LINE_WIDTH_2 );
 /*N*/ 	SvxBoxItem		aBoxItem		( ATTR_BORDER );
 /*N*/ 	SvxBoxInfoItem	aBoxInfoItem	( ATTR_BORDER_INNER );
-/*N*/ 
+/*N*/
 /*N*/ 	String aStrStandard = ScGlobal::GetRscString(STR_STYLENAME_STANDARD);
-/*N*/ 
+/*N*/
 /*N*/ 	//==========================================================
 /*N*/ 	// Zellformatvorlagen:
 /*N*/ 	//==========================================================
-/*N*/ 
+/*N*/
 /*N*/ 	//------------
 /*N*/ 	// 1. Standard
 /*N*/ 	//------------
 /*N*/ 	pSheet = (ScStyleSheet*) &Make( aStrStandard, SFX_STYLE_FAMILY_PARA, SCSTYLEBIT_STANDARD );
 /*N*/ 	pSheet->SetHelpId( aHelpFile, HID_SC_SHEET_CELL_STD );
-/*N*/ 
+/*N*/
 /*N*/ 	//	if default fonts for the document's languages are different from the pool default,
 /*N*/ 	//	put them into the default style
 /*N*/ 	//	(not as pool defaults, because pool defaults can't be changed by the user)
 /*N*/ 	//	the document languages must be set before creating the default styles!
-/*N*/ 
+/*N*/
 /*N*/ 	pSet = &pSheet->GetItemSet();
 /*N*/ 	LanguageType eLatin, eCjk, eCtl;
 /*N*/ 	pDoc->GetLanguage( eLatin, eCjk, eCtl );
-/*N*/ 
+/*N*/
 /*N*/ 	//	#108374# / #107782#: If the UI language is Korean, the default Latin font has to
 /*N*/ 	//	be queried for Korean, too (the Latin language from the document can't be Korean).
 /*N*/ 	//	This is the same logic as in SwDocShell::InitNew.
@@ -245,15 +237,15 @@ namespace binfilter {
 /*N*/ 			eLatin = eUiLanguage;
 /*N*/ 		break;
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	lcl_CheckFont( *pSet, eLatin, DEFAULTFONT_LATIN_SPREADSHEET, ATTR_FONT );
 /*N*/ 	lcl_CheckFont( *pSet, eCjk, DEFAULTFONT_CJK_SPREADSHEET, ATTR_CJK_FONT );
 /*N*/ 	lcl_CheckFont( *pSet, eCtl, DEFAULTFONT_CTL_SPREADSHEET, ATTR_CTL_FONT );
-/*N*/ 
+/*N*/
 /*N*/ 	//------------
 /*N*/ 	// 2. Ergebnis
 /*N*/ 	//------------
-/*N*/ 
+/*N*/
 /*N*/ 	pSheet = (ScStyleSheet*) &Make( SCSTR( STR_STYLENAME_RESULT ),
 /*N*/ 									SFX_STYLE_FAMILY_PARA,
 /*N*/ 									SCSTYLEBIT_STANDARD );
@@ -263,30 +255,30 @@ namespace binfilter {
 /*N*/ 	pSet->Put( SvxWeightItem( WEIGHT_BOLD, ATTR_FONT_WEIGHT ) );
 /*N*/ 	pSet->Put( SvxPostureItem( ITALIC_NORMAL, ATTR_FONT_POSTURE ) );
 /*N*/ 	pSet->Put( SvxUnderlineItem( UNDERLINE_SINGLE, ATTR_FONT_UNDERLINE ) );
-/*N*/ 
+/*N*/
 /*N*/ 	//-------------
 /*N*/ 	// 3. Ergebnis1
 /*N*/ 	//-------------
-/*N*/ 
+/*N*/
 /*N*/ 	pSheet = (ScStyleSheet*) &Make( SCSTR( STR_STYLENAME_RESULT1 ),
 /*N*/ 									SFX_STYLE_FAMILY_PARA,
 /*N*/ 									SCSTYLEBIT_STANDARD );
-/*N*/ 
+/*N*/
 /*N*/ 	pSheet->SetParent( SCSTR( STR_STYLENAME_RESULT ) );
 /*N*/ 	pSheet->SetHelpId( aHelpFile, HID_SC_SHEET_CELL_ERG1 );
 /*N*/ 	pSet = &pSheet->GetItemSet();
 /*N*/ 	nNumFmt = pDoc->GetFormatTable()->GetStandardFormat( NUMBERFORMAT_CURRENCY,
 /*N*/ 														ScGlobal::eLnge );
 /*N*/ 	pSet->Put( SfxUInt32Item( ATTR_VALUE_FORMAT, nNumFmt ) );
-/*N*/ 
+/*N*/
 /*N*/ 	//----------------
 /*N*/ 	// 4. Ueberschrift
 /*N*/ 	//----------------
-/*N*/ 
+/*N*/
 /*N*/ 	pSheet = (ScStyleSheet*) &Make( SCSTR( STR_STYLENAME_HEADLINE ),
 /*N*/ 									SFX_STYLE_FAMILY_PARA,
 /*N*/ 									SCSTYLEBIT_STANDARD );
-/*N*/ 
+/*N*/
 /*N*/ 	pSheet->SetParent( aStrStandard );
 /*N*/ 	pSheet->SetHelpId( aHelpFile, HID_SC_SHEET_CELL_UEB );
 /*N*/ 	pSet = &pSheet->GetItemSet();
@@ -294,41 +286,41 @@ namespace binfilter {
 /*N*/ 	pSet->Put( SvxWeightItem( WEIGHT_BOLD, ATTR_FONT_WEIGHT ) );
 /*N*/ 	pSet->Put( SvxPostureItem( ITALIC_NORMAL, ATTR_FONT_POSTURE ) );
 /*N*/ 	pSet->Put( SvxHorJustifyItem( SVX_HOR_JUSTIFY_CENTER, ATTR_HOR_JUSTIFY ) );
-/*N*/ 
+/*N*/
 /*N*/ 	//-----------------
 /*N*/ 	// 5. Ueberschrift1
 /*N*/ 	//-----------------
-/*N*/ 
+/*N*/
 /*N*/ 	pSheet = (ScStyleSheet*) &Make( SCSTR( STR_STYLENAME_HEADLINE1 ),
 /*N*/ 									SFX_STYLE_FAMILY_PARA,
 /*N*/ 									SCSTYLEBIT_STANDARD );
-/*N*/ 
+/*N*/
 /*N*/ 	pSheet->SetParent( SCSTR( STR_STYLENAME_HEADLINE ) );
 /*N*/ 	pSheet->SetHelpId( aHelpFile, HID_SC_SHEET_CELL_UEB1 );
 /*N*/ 	pSet = &pSheet->GetItemSet();
 /*N*/ 	pSet->Put( SvxOrientationItem( SVX_ORIENTATION_BOTTOMTOP, ATTR_ORIENTATION ) );
-/*N*/ 
+/*N*/
 /*N*/ 	//==========================================================
 /*N*/ 	// Seitenformat-Vorlagen:
 /*N*/ 	//==========================================================
-/*N*/ 
+/*N*/
 /*N*/ 	//------------
 /*N*/ 	// 1. Standard
 /*N*/ 	//------------
-/*N*/ 
+/*N*/
 /*N*/ 	pSheet = (ScStyleSheet*) &Make( aStrStandard,
 /*N*/ 									SFX_STYLE_FAMILY_PAGE,
 /*N*/ 									SCSTYLEBIT_STANDARD );
-/*N*/ 
+/*N*/
 /*N*/ 	pSet = &pSheet->GetItemSet();
 /*N*/ 	pSheet->SetHelpId( aHelpFile, HID_SC_SHEET_PAGE_STD );
-/*N*/ 
+/*N*/
 /*N*/ 	// Abstand der Kopf-/Fusszeilen von der Tabelle
 /*N*/ 	pHFSetItem = new SvxSetItem( ((SvxSetItem&)pSet->Get( ATTR_PAGE_HEADERSET ) ) );
 /*N*/ 	pSet->Put( *pHFSetItem, ATTR_PAGE_HEADERSET );
 /*N*/ 	pSet->Put( *pHFSetItem, ATTR_PAGE_FOOTERSET );
 /*N*/ 	DELETEZ( pHFSetItem );
-/*N*/ 
+/*N*/
 /*N*/ 	//----------------------------------------
 /*N*/ 	// Kopfzeile:
 /*N*/ 	// [leer][\TABELLE\][leer]
@@ -341,7 +333,7 @@ namespace binfilter {
 /*N*/ 	pHeaderItem->SetRightArea ( *pEmptyTxtObj );
 /*N*/ 	pSet->Put( *pHeaderItem );
 /*N*/ 	DELETEZ( pTxtObj );
-/*N*/ 
+/*N*/
 /*N*/ 	//----------------------------------------
 /*N*/ 	// Fusszeile:
 /*N*/ 	// [leer][Seite \SEITE\][leer]
@@ -356,17 +348,17 @@ namespace binfilter {
 /*N*/ 	pFooterItem->SetRightArea ( *pEmptyTxtObj );
 /*N*/ 	pSet->Put( *pFooterItem );
 /*N*/ 	DELETEZ( pTxtObj );
-/*N*/ 
+/*N*/
 /*N*/ 	//----------
 /*N*/ 	// 2. Report
 /*N*/ 	//----------
-/*N*/ 
+/*N*/
 /*N*/ 	pSheet = (ScStyleSheet*) &Make( SCSTR( STR_STYLENAME_REPORT ),
 /*N*/ 									SFX_STYLE_FAMILY_PAGE,
 /*N*/ 									SCSTYLEBIT_STANDARD );
 /*N*/ 	pSet = &pSheet->GetItemSet();
 /*N*/ 	pSheet->SetHelpId( aHelpFile, HID_SC_SHEET_PAGE_REP );
-/*N*/ 
+/*N*/
 /*N*/ 	// Hintergrund und Umrandung
 /*N*/ 	aBoxItem.SetLine( &aBorderLine, BOX_LINE_TOP );
 /*N*/ 	aBoxItem.SetLine( &aBorderLine, BOX_LINE_BOTTOM );
@@ -380,17 +372,17 @@ namespace binfilter {
 /*N*/ 	aBoxInfoItem.SetValid( VALID_DISTANCE, TRUE );
 /*N*/ 	aBoxInfoItem.SetTable( FALSE );
 /*N*/ 	aBoxInfoItem.SetDist ( TRUE );
-/*N*/ 
+/*N*/
 /*N*/ 	pHFSetItem = new SvxSetItem( ((SvxSetItem&)pSet->Get( ATTR_PAGE_HEADERSET ) ) );
 /*N*/ 	pHFSet = &(pHFSetItem->GetItemSet());
-/*N*/ 
+/*N*/
 /*N*/ 	pHFSet->Put( SvxBrushItem( aColGrey, ATTR_BACKGROUND ) );
 /*N*/ 	pHFSet->Put( aBoxItem );
 /*N*/ 	pHFSet->Put( aBoxInfoItem );
 /*N*/ 	pSet->Put( *pHFSetItem, ATTR_PAGE_HEADERSET );
 /*N*/ 	pSet->Put( *pHFSetItem, ATTR_PAGE_FOOTERSET );
 /*N*/ 	DELETEZ( pHFSetItem );
-/*N*/ 
+/*N*/
 /*N*/ 	//----------------------------------------
 /*N*/ 	// Kopfzeile:
 /*N*/ 	// [\TABELLE\ (\DATEI\)][leer][\DATUM\, \ZEIT\]
@@ -412,7 +404,7 @@ namespace binfilter {
 /*N*/ 	pHeaderItem->SetRightArea( *pTxtObj );
 /*N*/ 	DELETEZ( pTxtObj );
 /*N*/ 	pSet->Put( *pHeaderItem );
-/*N*/ 
+/*N*/
 /*N*/ 	//----------------------------------------
 /*N*/ 	// Fusszeile:
 /*N*/ 	// [leer][Seite: \SEITE\ / \SEITEN\][leer]
@@ -430,7 +422,7 @@ namespace binfilter {
 /*N*/ 	pFooterItem->SetRightArea ( *pEmptyTxtObj );
 /*N*/ 	pSet->Put( *pFooterItem );
 /*N*/ 	DELETEZ( pTxtObj );
-/*N*/ 
+/*N*/
 /*N*/ 	//----------------------------------------------------
 /*N*/ 	DELETEZ( pEmptyTxtObj );
 /*N*/ 	DELETEZ( pHeaderItem );
@@ -443,18 +435,18 @@ namespace binfilter {
 /*N*/ void ScStyleSheetPool::UpdateStdNames()
 /*N*/ {
 /*N*/ 	//	Standard-Styles den richtigen Namen in der Programm-Sprache geben
-/*N*/ 
+/*N*/
 /*N*/ 	String aHelpFile;
-/*N*/ 	ULONG nCount = aStyles.Count();
-/*N*/ 	for (ULONG n=0; n<nCount; n++)
+/*N*/ 	size_t nCount = aStyles.size();
+/*N*/ 	for (size_t n=0; n<nCount; n++)
 /*N*/ 	{
-/*N*/ 		SfxStyleSheetBase* pStyle = aStyles.GetObject(n);
+/*N*/ 		SfxStyleSheetBase* pStyle = aStyles[ n ];
 /*N*/ 		if (!pStyle->IsUserDefined())
 /*N*/ 		{
 /*N*/ 			String aOldName		= pStyle->GetName();
 /*N*/ 			ULONG nHelpId		= pStyle->GetHelpId( aHelpFile );
 /*N*/ 			SfxStyleFamily eFam	= pStyle->GetFamily();
-/*N*/ 
+/*N*/
 /*N*/ 			BOOL bHelpKnown = TRUE;
 /*N*/ 			String aNewName;
 /*N*/ 			USHORT nNameId = 0;
@@ -475,13 +467,13 @@ namespace binfilter {
 /*N*/ 			{
 /*N*/ 				if ( nNameId )
 /*N*/ 					aNewName = SCSTR( nNameId );
-/*N*/ 
+/*N*/
 /*N*/ 				if ( aNewName.Len() && aNewName != aOldName && !Find( aNewName, eFam ) )
 /*N*/ 				{
-/*N*/ 					DBG_TRACE( "Renaming style..." );
-/*N*/ 
+/*N*/ 					OSL_TRACE( "Renaming style..." );
+/*N*/
 /*N*/ 					pStyle->SetName( aNewName );	// setzt auch Parents um
-/*N*/ 
+/*N*/
 /*N*/ 					//	Styles in Patterns sind schon auf Pointer umgesetzt
 /*N*/ 					if (eFam == SFX_STYLE_FAMILY_PAGE)
 /*N*/ 					{
@@ -496,12 +488,12 @@ namespace binfilter {
 /*N*/ 			else
 /*N*/ 			{
 /*N*/ 				//	wrong or no HelpId -> set new HelpId
-/*N*/ 
+/*N*/
 /*N*/ 				//	no assertion for wrong HelpIds because this happens
 /*N*/ 				//  with old files (#67218#) or with old files that were
 /*N*/ 				//	saved again with a new version in a different language
 /*N*/ 				//	(so SrcVersion doesn't help)
-/*N*/ 
+/*N*/
 /*N*/ 				USHORT nNewId = 0;
 /*N*/ 				if ( eFam == SFX_STYLE_FAMILY_PARA )
 /*N*/ 				{
@@ -523,7 +515,7 @@ namespace binfilter {
 /*N*/ 					else if ( aOldName == SCSTR( STR_STYLENAME_REPORT ) )
 /*N*/ 						nNewId = HID_SC_SHEET_PAGE_REP;
 /*N*/ 				}
-/*N*/ 
+/*N*/
 /*N*/ 				if ( nNewId )				// new ID found from name -> set ID
 /*N*/ 				{
 /*?*/ 					pStyle->SetHelpId( aHelpFile, nNewId );
@@ -580,3 +572,5 @@ namespace binfilter {
 /*N*/ }
 
 }
+
+/* vim:set shiftwidth=4 softtabstop=4 expandtab: */

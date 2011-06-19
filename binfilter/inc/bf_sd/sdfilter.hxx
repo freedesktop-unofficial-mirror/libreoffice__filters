@@ -1,7 +1,8 @@
+/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -30,13 +31,8 @@
 
 #include "rtl/ustring.hxx"
 
-#ifndef _COM_SUN_STAR_FRAME_XMODEL_HPP_
 #include <com/sun/star/frame/XModel.hpp>
-#endif
-#ifndef _COM_SUN_STAR_TASK_XSTATUSINDICATORSUPPLIER_HPP_
 #include <com/sun/star/task/XStatusIndicatorSupplier.hpp>
-#endif
-namespace vos { class OModule; }
 namespace binfilter {
 
 // ------------
@@ -68,7 +64,7 @@ protected:
     void						CreateProgress();
 
 public:
-    
+
                                 SdFilter( SfxMedium& rMedium, SdDrawDocShell& rDocShell, sal_Bool bShowProgress );
                                 ~SdFilter();
 
@@ -82,3 +78,5 @@ public:
 
 } //namespace binfilter
 #endif // _SD_SDFILTER_HXX
+
+/* vim:set shiftwidth=4 softtabstop=4 expandtab: */

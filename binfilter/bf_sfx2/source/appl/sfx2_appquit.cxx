@@ -1,7 +1,8 @@
+/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -24,10 +25,6 @@
  * for a copy of the LGPLv3 License.
  *
  ************************************************************************/
-#ifndef _BASMGR_HXX //autogen
-#include "bf_basic/basmgr.hxx"
-#endif
-
 #ifdef WIN
 #define _TL_LANG_SPECIAL
 #endif
@@ -36,9 +33,7 @@
 #pragma hdrstop
 #endif
 
-#ifndef _COM_SUN_STAR_LANG_XTYPEPROVIDER_HPP_
 #include <com/sun/star/lang/XTypeProvider.hpp>
-#endif
 
 #include "appdata.hxx"
 #include "plugobj.hxx"
@@ -61,8 +56,7 @@
 
 namespace binfilter {
 
-DECLARE_LIST( SfxFrameWindowFactoryArray_Impl, SfxFrameWindowFactory* )
-SV_DECL_PTRARR(SfxInitLinkList, Link*, 2, 2)//STRIP008 ;
+SV_DECL_PTRARR(SfxInitLinkList, Link*, 2, 2)
 
 //-------------------------------------------------------------------------
 
@@ -70,20 +64,20 @@ SV_DECL_PTRARR(SfxInitLinkList, Link*, 2, 2)//STRIP008 ;
 /*?*/ {
 /*?*/     if ( bDowning )
 /*?*/         return;
-/*?*/ 
+/*?*/
 /*?*/ 	StarBASIC::Stop();
-/*?*/ 
+/*?*/
 /*?*/ 	bDowning = TRUE; // wegen Timer aus DecAliveCount und QueryExit
-/*?*/ 
+/*?*/
 /*?*/ 	bDowning = FALSE;
 /*?*/ 	DBG_ASSERT( !SfxObjectShell::GetFirst(),
 /*?*/ 				"existing SfxObjectShell after Execute" );
 /*?*/ 	bDowning = TRUE;
-/*?*/ 
+/*?*/
 /*?*/ 	// call derived application-exit
 /*?*/ 	bInExit = TRUE;
 /*?*/ 	Exit();
-/*?*/ 
+/*?*/
 /*?*/     // Controller u."a. freigeben
 /*?*/     // dabei sollten auch restliche Komponenten ( Beamer! ) verschwinden
 /*?*/ 	SfxObjectFactory::ClearAll_Impl();
@@ -92,22 +86,24 @@ SV_DECL_PTRARR(SfxInitLinkList, Link*, 2, 2)//STRIP008 ;
 /*?*/ 		pImp->pBasicLibContainer->release();
 /*?*/ 	if( pImp->pDialogLibContainer )
 /*?*/ 		pImp->pDialogLibContainer->release();
-/*?*/ 
+/*?*/
 /*?*/ 	bInExit = FALSE;
-/*?*/ 
+/*?*/
 /*?*/ 	// ab hier d"urfen keine SvObjects mehr existieren
 /*?*/ 	DELETEX(pAppData_Impl->pMatcher);
 /*?*/ 	DELETEX(pAppData_Impl->pSfxFrameObjectFactoryPtr);
-/*?*/ 
+/*?*/
 /*?*/ 	DELETEX(pAppData_Impl->pEventConfig);
 /*?*/   DELETEX(pAppData_Impl->pMiscConfig);
 /*?*/ 	SfxMacroConfig::Release_Impl();
 /*?*/ 	DELETEX(pAppData_Impl->pInitLinkList);
-/*?*/ 
+/*?*/
 /*?*/     DELETEX(pImp->pEventHdl);
 /*?*/     DELETEX(pImp->pObjShells);
-/*?*/ 
+/*?*/
 /*?*/ 	NoChaos::ReleaseItemPool();
 /*?*/ 	pAppData_Impl->pPool = NULL;
 /*?*/ }
 }
+
+/* vim:set shiftwidth=4 softtabstop=4 expandtab: */

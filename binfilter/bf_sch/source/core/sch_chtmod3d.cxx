@@ -1,7 +1,8 @@
+/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -29,37 +30,25 @@
 
 
 
-#ifndef _SCHATTR_HXX
 #include "schattr.hxx"
-#endif
 #define ITEMID_ADJUST EE_PARA_JUST
 
 #ifndef _SVX_CHRTITEM_HXX //autogen
 #define ITEMID_CHARTDATADESCR	SCHATTR_DATADESCR_DESCR
 #define ITEMID_CHARTTEXTORIENT	SCHATTR_TEXT_ORIENT
 
-#ifndef _SFXENUMITEM_HXX
 #include <bf_svtools/eitem.hxx>
-#endif
 
 #endif
 
-#ifndef _CHTMODEL_HXX
 #include <globfunc.hxx>
-#endif
-#ifndef _SCH_AXISID_HXX
 #include "axisid.hxx"
-#endif
-#ifndef _CHTSCENE_HXX
 #include "chtscene.hxx"
-#endif
 
 #undef	ITEMID_COLOR		//	Defined in svx3ditems.hxx
 #define ITEMID_COLOR       EE_CHAR_COLOR
 
-#ifndef _SVDOCIRC_HXX //autogen
 #include <bf_svx/svdocirc.hxx>
-#endif
 #include "math.h"
 #include "glob.hrc"
 #include "float.h"
@@ -70,12 +59,8 @@
 #endif
 #include <bf_svtools/zforlist.hxx>
 #endif
-#ifndef _SVDOPATH_HXX //autogen
 #include <bf_svx/svdopath.hxx>
-#endif
-#ifndef _SVX_XLNWTIT_HXX //autogen
 #include <bf_svx/xlnwtit.hxx>
-#endif
 
 #include "pairs.hxx"
 #include "chmod3d.hxx"
@@ -97,7 +82,7 @@ namespace binfilter {
 /*N*/ 	SdrTextObj *pXAxisTitleObj = NULL;
 /*N*/ 	SdrTextObj *pYAxisTitleObj = NULL;
 /*N*/ 	SdrTextObj *pZAxisTitleObj = NULL;
-/*N*/ 
+/*N*/
 /*N*/ 	if (bShowXAxisTitle)
 /*N*/ 	{
 /*N*/ 		pXAxisTitleObj = CreateTitle (pXAxisTitleAttr, CHOBJID_DIAGRAM_TITLE_X_AXIS,
@@ -133,12 +118,12 @@ namespace binfilter {
 /*N*/             rRect.Right() -= GetOutputSize(*pZAxisTitleObj).Width() + 200;
 /*N*/         }
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	SdrPage* pPage=GetPage(0);
 /*N*/ 	if (pXAxisTitleObj) pPage->NbcInsertObject( pXAxisTitleObj );
 /*N*/ 	if (pYAxisTitleObj) pPage->NbcInsertObject( pYAxisTitleObj );
 /*N*/ 	if (pZAxisTitleObj) pPage->NbcInsertObject( pZAxisTitleObj );
-/*N*/ 
+/*N*/
 /*N*/     // this should resize the scene according to the space needed
 /*N*/     // by the titles. However this results in strange effects like
 /*N*/     // constant resizing until the scene has 0 size and also the title
@@ -168,9 +153,9 @@ namespace binfilter {
 /*N*/ 	pChartXAxis->GetItemSet()->Put(SfxBoolItem(SCHATTR_AXIS_LOGARITHM,bXLogarithm));
 /*N*/ 	pChartYAxis->GetItemSet()->Put(SfxBoolItem(SCHATTR_AXIS_LOGARITHM,bYLogarithm));
 /*N*/ 	pChartZAxis->GetItemSet()->Put(SfxBoolItem(SCHATTR_AXIS_LOGARITHM,bZLogarithm));
-/*N*/ 
+/*N*/
 /*N*/ 	String     aNumStr;
-/*N*/ 
+/*N*/
 /*N*/ 	E3dObject* pXGridMainGroup = bShowXGridMain
 /*N*/ 											 ? Create3DObject (CHOBJID_DIAGRAM_X_GRID_MAIN_GROUP)
 /*N*/ 											 : 0;
@@ -199,38 +184,38 @@ namespace binfilter {
 /*N*/ 											 ? Create3DAxisObj( CHOBJID_DIAGRAM_Z_AXIS )
 /*N*/ 											 : 0;
 /*N*/ 	Polygon3D    aRect3D;
-/*N*/ 	
+/*N*/
 /*N*/ 	pChartXAxis->Initialise(rRect,bSwitchColRow,eStackMode,bPercent,FALSE);
 /*N*/ 	pChartYAxis->Initialise(rRect,bSwitchColRow,eStackMode,bPercent,FALSE);
 /*N*/ 	pChartZAxis->Initialise(rRect,bSwitchColRow,eStackMode,bPercent,FALSE);
-/*N*/ 
+/*N*/
 /*N*/ 	pChartXAxis->CalcValueSteps();
 /*N*/ 	pChartYAxis->CalcValueSteps();
 /*N*/ 	pChartZAxis->CalcValueSteps();
-/*N*/ 
+/*N*/
 /*N*/ //Vorlaeufige Notloesung, entsprechende Stellen sollen noch geaendert werden, daher bitte kein Search&Repleace statt der #defs!
 /*N*/ #define	fOriginY		pChartYAxis->GetOrigin()
 /*N*/ #define fMinValueY		pChartYAxis->GetMin()
 /*N*/ #define fMaxValueY		pChartYAxis->GetMax()
 /*N*/ #define fValueStepMainY pChartYAxis->GetStep()
 /*N*/ #define fValueStepHelpY pChartYAxis->GetHelpStep()
-/*N*/ 
+/*N*/
 /*N*/ 	//ToDo: vorlaeufig
 /*N*/ 	SfxItemSet* pXAxisAttr=&GetAttr(CHOBJID_DIAGRAM_X_AXIS);
 /*N*/ 	SfxItemSet* pYAxisAttr=&GetAttr(CHOBJID_DIAGRAM_Y_AXIS);
 /*N*/ 	SfxItemSet* pZAxisAttr=&GetAttr(CHOBJID_DIAGRAM_Z_AXIS);
-/*N*/ 
+/*N*/
 /*N*/ 	SvxChartTextOrient eDescrOrient = ((const SvxChartTextOrientItem&)pXAxisAttr->Get(SCHATTR_TEXT_ORIENT)).GetValue();
 /*N*/ 	SvxChartTextOrient eValueOrient = ((const SvxChartTextOrientItem&)pYAxisAttr->Get(SCHATTR_TEXT_ORIENT)).GetValue();
-/*N*/ 
-/*N*/ 	Size aMaxValueSizeY = pChartYAxis->CalcMaxTextSize(eValueOrient);
-/*N*/ 	Size aMaxValueSizeX = pChartXAxis->CalcMaxTextSize(eDescrOrient);
-/*N*/ 
-/*N*/ 	Size aMaxDescrSizeY = CalcMaxDescrSize( TRUE,  eValueOrient, bPercent, CHAXIS_AXIS_Y );
-/*N*/ 	Size aMaxDescrSizeX = CalcMaxDescrSize( FALSE, eDescrOrient, bPercent, CHAXIS_AXIS_X );
-/*N*/ 
+/*N*/
+/*N*/ 	pChartYAxis->CalcMaxTextSize(eValueOrient);
+/*N*/ 	pChartXAxis->CalcMaxTextSize(eDescrOrient);
+/*N*/
+/*N*/ 	CalcMaxDescrSize( TRUE,  eValueOrient, bPercent, CHAXIS_AXIS_Y );
+/*N*/ 	CalcMaxDescrSize( FALSE, eDescrOrient, bPercent, CHAXIS_AXIS_X );
+/*N*/
 /*N*/ 	short   nV, i;
-/*N*/ 
+/*N*/
 /*N*/ 	long   nRowCnt     = bFlatChart
 /*N*/ 							  ? 1
 /*N*/ 							  : GetRowCount();
@@ -240,26 +225,23 @@ namespace binfilter {
 /*N*/ 	long   nColumnCnt  = bPartDescr
 /*N*/ 							  ? nBackColCnt
 /*N*/ 							  : nBackColCnt - 1;
-/*N*/ 
-/*N*/ 
+/*N*/
+/*N*/
 /*N*/ 	// FG: Diese Variable ist ein reiner Zwischenspeicher damit in der Chartscene bei FitInSnapRect
 /*N*/ 	//     die Achsentitel gemaess dieses Parameters gesetzt werden koennen.
 /*N*/ 	bSwitch3DColRow = bSwitchColRow;
-/*N*/ 
-/*N*/ 	long nMaxTextWidth = 0;
-/*N*/ 
-/*N*/ 	aXDescrList.Clear();
-/*N*/ 	aYDescrList.Clear();
-/*N*/ 	aZDescrList.Clear();
-/*N*/ 
+/*N*/
+/*N*/ 	aXDescrList.clear();
+/*N*/ 	aYDescrList.clear();
+/*N*/ 	aZDescrList.clear();
+/*N*/
 /*N*/ 	E3dDefaultAttributes aDefltAttr3D;
-/*N*/ 
+/*N*/
 /*N*/ 	Matrix4D aShift;
 /*N*/ 	aShift.Translate(-(aSizeVec/500.0));//Wände etwas verschieben...
-/*N*/ 
+/*N*/
 /*N*/ 	const double fFloorWidth = 100.0;
-/*N*/ 	const double fWallWith	 = 50.0;	// BM: unused for now
-/*N*/ 	
+/*N*/
 /*N*/ 	for (nV = 0; nV < 3; nV++)
 /*N*/ 	{
 /*N*/ 		switch (nV)
@@ -275,53 +257,53 @@ namespace binfilter {
 /*N*/ 				aPos[nV]     -= aSizeVec[nV];
 /*N*/ 				aRect3D[3]    = aPos;
 /*N*/ 				aPos[nV + 1] -= aSizeVec[nV + 1];
-/*N*/ 
+/*N*/
 /*N*/ 				E3dPolygonObj *pWallObj = new SchE3dPolygonObj(aDefltAttr3D, aRect3D);
-/*N*/ 
+/*N*/
 /*N*/ 				pWallObj->SetModel (this);
 /*N*/ 				pWallObj->InsertUserData(new SchObjectId(CHOBJID_DIAGRAM_WALL));
 /*N*/ 				rScene.Insert3DObj(pWallObj);
-/*N*/ 
-/*N*/ //-/				pWallObj->NbcSetAttributes(*pDiagramWallAttr, FALSE);
+/*N*/
 /*N*/ 				pWallObj->SetItemSet(*pDiagramWallAttr);
-/*N*/ 
+/*N*/
 /*N*/ 				pWallObj->NbcSetTransform(aShift);
-/*N*/ 
+/*N*/
 /*N*/ 				if (!nV)
 /*N*/ 				{
 /*N*/ 					// X-Achse zeichnen
 /*N*/ 					Vector3D aLine3D [2] = { aRect3D [0], aRect3D [1] };
-/*N*/ 
+/*N*/
 /*N*/ 					//#47500#
 /*N*/ 					if (pXAxisGroup && pChartXAxis->IsVisible())
 /*N*/ 					{
 /*N*/ 						Create3DPolyObject (pXAxisAttr, new SchE3dPolygonObj (aDefltAttr3D, aLine3D[0], aLine3D[1]),
 /*N*/ 							CHOBJID_LINE, pXAxisGroup);
 /*N*/ 					}
-/*N*/ 
+/*N*/
 /*N*/ 					if( pYGridMainGroup || pYGridHelpGroup )
+/*N*/ 					{
 /*N*/ 						// Y-Anteile
 /*N*/ 						if (bSwitchColRow)
 /*N*/ 						{
-/*N*/ 							Vector3D aLine3D [2] = { aRect3D [0], aRect3D [1] };
+/*N*/ 							Vector3D aLclLine3D [2] = { aRect3D [0], aRect3D [1] };
 /*N*/ 							long     nStepMainY  = (long) aSizeVec.Y () / nColumnCnt;
 /*N*/ 							long     nStepHelpY  = nStepMainY / 2;
-/*N*/ 
+/*N*/
 /*N*/ 							// hauptgitter auf der X-Ebene, parallel zur X-Achse
 /*N*/ 							for (i = 0; i <= nColumnCnt; i++)
 /*N*/ 							{
-/*N*/ 								aLine3D[0].Y() =
-/*N*/ 								aLine3D[1].Y() = aPos.Y() + nStepMainY * i;
+/*N*/ 								aLclLine3D[0].Y() =
+/*N*/ 								aLclLine3D[1].Y() = aPos.Y() + nStepMainY * i;
 /*N*/ 								if( pYGridMainGroup )
-/*N*/ 									Create3DPolyObject (pYGridMainAttr, new SchE3dPolygonObj (aDefltAttr3D, aLine3D[0], aLine3D[1]),
+/*N*/ 									Create3DPolyObject (pYGridMainAttr, new SchE3dPolygonObj (aDefltAttr3D, aLclLine3D[0], aLclLine3D[1]),
 /*N*/ 														CHOBJID_DIAGRAM_Y_GRID_MAIN, pYGridMainGroup);
-/*N*/ 
+/*N*/
 /*N*/ 								// hilfsgitter auf der X-Ebene, parallel zur X-Achse
 /*N*/ 								if (pYGridHelpGroup && (i < nColumnCnt))
 /*N*/ 								{
-/*?*/ 									aLine3D [0].Y () += nStepHelpY;
-/*?*/ 									aLine3D [1].Y () += nStepHelpY;
-/*?*/ 									Create3DPolyObject (pYGridHelpAttr, new SchE3dPolygonObj (aDefltAttr3D, aLine3D[0], aLine3D[1]),
+/*?*/ 									aLclLine3D [0].Y () += nStepHelpY;
+/*?*/ 									aLclLine3D [1].Y () += nStepHelpY;
+/*?*/ 									Create3DPolyObject (pYGridHelpAttr, new SchE3dPolygonObj (aDefltAttr3D, aLclLine3D[0], aLclLine3D[1]),
 /*?*/ 														CHOBJID_DIAGRAM_Y_GRID_HELP, pYGridHelpGroup);
 /*N*/ 								}
 /*N*/ 							}
@@ -330,10 +312,10 @@ namespace binfilter {
 /*N*/ 						{
 /*N*/ 							aLine3D [0] = aRect3D[0];
 /*N*/ 							aLine3D [1] = aRect3D[3];
-/*N*/ 
+/*N*/
 /*N*/ 							long nStepMainX  = (long) aSizeVec.X () / nColumnCnt;
 /*N*/ 							long nStepHelpX  = nStepMainX / 2;
-/*N*/ 
+/*N*/
 /*N*/ 							// hauptgitter auf der X-Ebene, parallel zur Y-Achse
 /*N*/ 							for (i = 0; i <= nColumnCnt; i++)
 /*N*/ 							{
@@ -342,7 +324,7 @@ namespace binfilter {
 /*N*/ 								if( pYGridMainGroup )
 /*N*/ 									Create3DPolyObject (pYGridMainAttr, new SchE3dPolygonObj (aDefltAttr3D, aLine3D[0], aLine3D[1]),
 /*N*/ 														CHOBJID_DIAGRAM_Y_GRID_MAIN, pYGridMainGroup);
-/*N*/ 
+/*N*/
 /*N*/ 								// hilfsgitter auf der X-Ebene, parallel zur Y-Achse
 /*N*/ 								if (pYGridHelpGroup && (i < nColumnCnt))
 /*N*/ 								{
@@ -353,105 +335,106 @@ namespace binfilter {
 /*N*/ 								}
 /*N*/ 							}
 /*N*/ 						}
+/*N*/ 					}
 /*N*/ 				}
 /*N*/ 				else
 /*N*/ 				{
 /*N*/ 					// Y-Achse zeichnen
 /*N*/ 					Vector3D aLine3D [2] = { aRect3D [0], aRect3D [1] };
-/*N*/ 
+/*N*/
 /*N*/ 					// Z-Anteile
 /*N*/ 					//#47500#
 /*N*/ 					if (pYAxisGroup && pChartYAxis->IsVisible()) Create3DPolyObject (pYAxisAttr, new SchE3dPolygonObj (aDefltAttr3D, aLine3D[0], aLine3D[1]),
 /*N*/ 														 CHOBJID_LINE, pYAxisGroup);
-/*N*/ 
+/*N*/
 /*N*/ 					// hauptgitter auf der Z-Ebene, parallel zur Z-Achse
 /*N*/ 					if( pZGridMainGroup || pZGridHelpGroup )
 /*N*/ 					{
-/*N*/ 						Vector3D aLine3D [2] = { aRect3D[2], aRect3D[3] };
+/*N*/ 						Vector3D aLclLine3D [2] = { aRect3D[2], aRect3D[3] };
 /*N*/ 						long     nStepMainZ  = (long) aSizeVec.Z () / nRowCnt;
 /*N*/ 						long     nStepHelpZ  = nStepMainZ / 2;
-/*N*/ 
-/*N*/ 						BOOL bCreateGridLine = ( (aLine3D[ 0 ].X() != aLine3D[ 1 ].X()) ||
-/*N*/ 												 (aLine3D[ 0 ].Y() != aLine3D[ 1 ].Y()) );
+/*N*/
+/*N*/ 						BOOL bCreateGridLine = ( (aLclLine3D[ 0 ].X() != aLclLine3D[ 1 ].X()) ||
+/*N*/ 												 (aLclLine3D[ 0 ].Y() != aLclLine3D[ 1 ].Y()) );
 /*N*/ 						// Z() values become equal in the for loop
 /*N*/ 						// => start and end points would be equal if !bCreateGridLine
-/*N*/ 
+/*N*/
 /*N*/ 						for (i = 0; i <= nRowCnt; i++)
 /*N*/ 						{
-/*N*/ 							aLine3D[0].Z() =
-/*N*/ 							aLine3D[1].Z() = aPos.Z() + nStepMainZ * i;
+/*N*/ 							aLclLine3D[0].Z() =
+/*N*/ 							aLclLine3D[1].Z() = aPos.Z() + nStepMainZ * i;
 /*N*/ 							if( pZGridMainGroup && bCreateGridLine )
-/*N*/ 								Create3DPolyObject( pZGridMainAttr, new SchE3dPolygonObj( aDefltAttr3D, aLine3D[0], aLine3D[1] ),
+/*N*/ 								Create3DPolyObject( pZGridMainAttr, new SchE3dPolygonObj( aDefltAttr3D, aLclLine3D[0], aLclLine3D[1] ),
 /*N*/ 													CHOBJID_DIAGRAM_Z_GRID_MAIN, pZGridMainGroup );
-/*N*/ 
+/*N*/
 /*N*/ 							// hilfsgitter auf der Z-Ebene, parallel zur Z-Achse
 /*N*/ 							if (pZGridHelpGroup && (i < nRowCnt))
 /*N*/ 							{
-/*?*/ 								aLine3D[0].Z() += nStepHelpZ;
-/*?*/ 								aLine3D[1].Z() += nStepHelpZ;
+/*?*/ 								aLclLine3D[0].Z() += nStepHelpZ;
+/*?*/ 								aLclLine3D[1].Z() += nStepHelpZ;
 /*?*/ 								if( bCreateGridLine )
-/*?*/ 									Create3DPolyObject( pZGridHelpAttr, new SchE3dPolygonObj( aDefltAttr3D, aLine3D[0], aLine3D[1] ),
+/*?*/ 									Create3DPolyObject( pZGridHelpAttr, new SchE3dPolygonObj( aDefltAttr3D, aLclLine3D[0], aLclLine3D[1] ),
 /*?*/ 														CHOBJID_DIAGRAM_Z_GRID_HELP, pZGridHelpGroup );
 /*N*/ 							}
 /*N*/ 						}
 /*N*/ 					}
 /*N*/ 				}
-/*N*/ 
-/*N*/ 				Vector3D   aLine3D [2] = { aRect3D[0], aRect3D[(nV || !nV && bSwitchColRow)
+/*N*/
+/*N*/ 				Vector3D   aLine3D [2] = { aRect3D[0], aRect3D[(nV || (!nV && bSwitchColRow))
 /*N*/ 																   ? 3
 /*N*/ 																   : 1] };
 /*N*/ 				double     fAct        = fMinValueY;
-/*N*/ 
+/*N*/
 /*N*/ 				SfxItemSet aYTextAttr ((const SfxItemSet &) *pYAxisAttr);
 /*N*/ 				aYTextAttr.Put(XLineStyleItem (XLINE_NONE));
 /*N*/ 				aYTextAttr.Put(XLineWidthItem (0));
-/*N*/ 
+/*N*/
 /*N*/ 				// create Y grid. Attention: Some variables are called XGrid...
 /*N*/ 				if (fMinValueY != fMaxValueY)
 /*N*/ 					while (fAct <= fMaxValueY)
 /*N*/ 					{
 /*N*/ 						double fFact = pChartYAxis->CalcFact(fAct);
-/*N*/ 
+/*N*/
 /*N*/ 						if (bSwitchColRow)
 /*N*/ 						{
 /*N*/ 							// create major gridline
 /*N*/ 							aLine3D[0].X() = aLine3D[1].X() = fFact * aSizeVec.X();
-/*N*/ 
+/*N*/
 /*N*/ 							if (pXGridMainGroup)
 /*N*/ 								Create3DPolyObject(pXGridMainAttr, new SchE3dPolygonObj(aDefltAttr3D,
 /*N*/ 								aLine3D[0], aLine3D[1]),CHOBJID_DIAGRAM_X_GRID_MAIN,pXGridMainGroup);
-/*N*/ 
+/*N*/
 /*N*/ 							if (pYAxisGroup && pChartYAxis->HasDescription() && nV)
 /*N*/ 							{
 /*N*/ 								Color *pTextColor = NULL;
 /*N*/ 								SvxColorItem *pOldTextColor = NULL;
-/*N*/ 
+/*N*/
 /*N*/ 								pNumFormatter->GetOutputString((bPercent)?fAct/100.0:fAct,
 /*N*/ 									GetNumFmt(CHOBJID_DIAGRAM_Y_AXIS,bPercent), aNumStr, &pTextColor);
-/*N*/ 
+/*N*/
 /*N*/ 								if( pTextColor )			// BM #60999#
 /*N*/ 								{
 /*?*/ 									pOldTextColor = (SvxColorItem*)(aYTextAttr.GetItem( EE_CHAR_COLOR ));
 /*?*/ 									aYTextAttr.Put(SvxColorItem( *pTextColor ));
 /*N*/ 								}
-/*N*/ 
+/*N*/
 /*N*/ 								SdrTextObj *pTextObj = CreateTextObj(CHOBJID_TEXT, Point (),aNumStr,
 /*N*/ 									aYTextAttr, FALSE,CHADJUST_TOP_RIGHT);
-/*N*/ 								
+/*N*/
 /*N*/ 								if( pOldTextColor )
 /*N*/ 								{
 /*?*/ 									aYTextAttr.Put( *pOldTextColor );
 /*N*/ 								}
-/*N*/ 
+/*N*/
 /*N*/ 								E3dLabelObj *pE3DLabel = new E3dLabelObj(aLine3D[1],pTextObj);
-/*N*/ 								aYDescrList.Insert(pE3DLabel,LIST_APPEND);
+/*N*/ 								aYDescrList.push_back( pE3DLabel );
 /*N*/ 							}
 /*N*/ 						}
 /*N*/ 						else
 /*N*/ 						{
 /*N*/ 							// create major gridline
 /*N*/ 							aLine3D[0].Y() = aLine3D[1].Y() = fFact * aSizeVec.Y();
-/*N*/ 
+/*N*/
 /*N*/ 							if(pXGridMainGroup)
 /*N*/ 								Create3DPolyObject(pXGridMainAttr,new SchE3dPolygonObj(aDefltAttr3D,
 /*N*/ 								aLine3D[0],aLine3D[1]),CHOBJID_DIAGRAM_X_GRID_MAIN, pXGridMainGroup);
@@ -460,38 +443,38 @@ namespace binfilter {
 /*N*/ 							{
 /*N*/ 								Color *pTextColor = NULL;
 /*N*/ 								SvxColorItem *pOldTextColor = NULL;
-/*N*/ 
+/*N*/
 /*N*/ 								pNumFormatter->GetOutputString((bPercent)?fAct/100.0:fAct,
 /*N*/ 									GetNumFmt(CHOBJID_DIAGRAM_Y_AXIS,bPercent), aNumStr, &pTextColor);
-/*N*/ 
+/*N*/
 /*N*/ 								if( pTextColor )			// BM #60999#
 /*N*/ 								{
 /*?*/ 									pOldTextColor = (SvxColorItem*)(aYTextAttr.GetItem( EE_CHAR_COLOR ));
 /*?*/ 									aYTextAttr.Put(SvxColorItem( *pTextColor ));
 /*N*/ 								}
-/*N*/ 
+/*N*/
 /*N*/ 								// erzeuge das 3D-textobjekt
 /*N*/ 								SdrTextObj *pTextObj = CreateTextObj(CHOBJID_TEXT, Point (),
 /*N*/ 									aNumStr,
 /*N*/ 									aYTextAttr, FALSE,CHADJUST_CENTER_RIGHT);
-/*N*/ 
+/*N*/
 /*N*/ 								if( pOldTextColor )
 /*N*/ 								{
 /*?*/ 									aYTextAttr.Put( *pOldTextColor );
 /*N*/ 								}
-/*N*/ 
+/*N*/
 /*N*/ 								E3dLabelObj *pE3DLabel = new E3dLabelObj(aLine3D [1],pTextObj);
-/*N*/ 								aYDescrList.Insert(pE3DLabel,LIST_APPEND);
+/*N*/ 								aYDescrList.push_back( pE3DLabel );
 /*N*/ 							}
-/*N*/ 
+/*N*/
 /*N*/ 						}
-/*N*/ 
+/*N*/
 /*N*/ 						IncValue(fAct, fValueStepMainY, bYLogarithm);
 /*N*/ 					}
-/*N*/ 
+/*N*/
 /*N*/ 				fAct = fMinValueY;
 /*N*/ 				double	fActMain = fAct;	//	This is used for calculating the positions of main grid lines.
-/*N*/ 				
+/*N*/
 /*N*/ 				if (pXGridHelpGroup && (fMinValueY != fMaxValueY))
 /*N*/ 				{
 /*?*/ 					IncValue(fAct, fValueStepHelpY, FALSE);
@@ -501,7 +484,7 @@ namespace binfilter {
 /*?*/ 						{
 /*?*/ 							double fPos = pChartYAxis->CalcFact(fAct ) * aSizeVec.X();
 /*?*/ 							if (fPos > aSizeVec.X()) break;
-/*?*/ 
+/*?*/
 /*?*/ 							//	If there is a main grid then ommit creating help grid lines coinciding with main grid lines.
 /*?*/ 							if (pXGridMainGroup)
 /*?*/ 							{
@@ -515,12 +498,12 @@ namespace binfilter {
 /*?*/ 									continue;
 /*?*/ 								}
 /*?*/ 							}
-/*?*/ 
+/*?*/
 /*?*/ 							aLine3D[0].X() =
 /*?*/ 							aLine3D[1].X() = fPos;
 /*?*/ 							Create3DPolyObject (pXGridHelpAttr, new SchE3dPolygonObj (aDefltAttr3D, aLine3D[0], aLine3D[1]),
 /*?*/ 												CHOBJID_DIAGRAM_X_GRID_HELP, pXGridHelpGroup);
-/*?*/ 
+/*?*/
 /*?*/ 							//	In case of a help grid with a main grid, draw only every other line.
 /*?*/ 							IncValue(fAct, fValueStepHelpY, FALSE);
 /*?*/ 						}
@@ -531,7 +514,7 @@ namespace binfilter {
 /*?*/ 						{
 /*?*/ 							double fPos = pChartYAxis->CalcFact(fAct ) * aSizeVec.Y();
 /*?*/ 							if (fPos > aSizeVec.Y()) break;
-/*?*/ 
+/*?*/
 /*?*/ 							//	If there is a main grid then ommit creating help grid lines coinciding with main grid lines.
 /*?*/ 							if (pXGridMainGroup)
 /*?*/ 							{
@@ -545,12 +528,12 @@ namespace binfilter {
 /*?*/ 									continue;
 /*?*/ 								}
 /*?*/ 							}
-/*?*/ 
+/*?*/
 /*?*/ 							aLine3D[0].Y() =
 /*?*/ 							aLine3D[1].Y() = fPos;
 /*?*/ 							Create3DPolyObject (pXGridHelpAttr, new SchE3dPolygonObj (aDefltAttr3D, aLine3D[0], aLine3D[1]),
 /*?*/ 												CHOBJID_DIAGRAM_X_GRID_HELP, pXGridHelpGroup);
-/*?*/ 
+/*?*/
 /*?*/ 							//	In case of a help grid with a main grid, draw only every other line.
 /*?*/ 							IncValue(fAct, fValueStepHelpY, FALSE);
 /*N*/ 						}
@@ -558,7 +541,7 @@ namespace binfilter {
 /*N*/ 				}
 /*N*/ 				break;
 /*N*/ 			}
-/*N*/ 
+/*N*/
 /*N*/ 			case 2:		// floor
 /*N*/ 			{
 /*N*/ 				// BM: create 'thick' floor
@@ -566,67 +549,66 @@ namespace binfilter {
 /*N*/ 				PolyPolygon aPolyPolygon;
 /*N*/ 				Polygon aPoly( aRect );
 /*N*/ 				aPolyPolygon.Insert( aPoly );
-/*N*/ 
+/*N*/
 /*N*/ 				E3dExtrudeObj* pFloorObj = new SchE3dExtrudeObj( aDefltAttr3D, aPolyPolygon, fFloorWidth );
 /*N*/ 				Matrix4D aMatrix;
 /*N*/ 				aMatrix.RotateX( 90.0 * F_PI180 );
 /*N*/ 				aMatrix.TranslateZ( aSizeVec.Z() );
 /*N*/ 				aMatrix.Translate( aPos );
-/*N*/ 
+/*N*/
 /*N*/ 				pFloorObj->SetModel( this );
 /*N*/ 				pFloorObj->InsertUserData( new SchObjectId( CHOBJID_DIAGRAM_FLOOR ) );
 /*N*/ 				rScene.Insert3DObj( pFloorObj );
-/*N*/ 
-/*N*/ //-/				pFloorObj->NbcSetAttributes( *pDiagramFloorAttr, FALSE );
+/*N*/
 /*N*/ 				pFloorObj->SetItemSet(*pDiagramFloorAttr);
-/*N*/ 
+/*N*/
 /*N*/ 				pFloorObj->NbcSetTransform( aMatrix * aShift );
-/*N*/ 
+/*N*/
 /*N*/ 				Vector3D aEndPos( aPos );
 /*N*/ 				aEndPos.Z() += aSizeVec.Z();
-/*N*/ 
+/*N*/
 /*N*/ 				Vector3D aLine3D [2] = { aPos, aEndPos };
-/*N*/ 
+/*N*/
 /*N*/ 				SfxItemSet aXTextAttr ((const SfxItemSet &) *pXAxisAttr);
 /*N*/ 				aXTextAttr.Put(XLineStyleItem (XLINE_NONE));
 /*N*/ 				aXTextAttr.Put(XLineWidthItem (0));
-/*N*/ 
+/*N*/
 /*N*/ 				//#47500#
 /*N*/ 				if (pZAxisGroup && pChartZAxis->IsVisible()) Create3DPolyObject( pZAxisAttr, new SchE3dPolygonObj (aDefltAttr3D, aLine3D[0], aLine3D[1]),
 /*N*/ 																				 CHOBJID_LINE, pZAxisGroup );
-/*N*/ 
+/*N*/
 /*N*/ 				if (bSwitchColRow)
 /*N*/ 				{
 /*N*/ 					long nStepMainY  = (long) aSizeVec.Y () / nColumnCnt;
 /*N*/ 					long nStepHelpY  = nStepMainY / 2;
-/*N*/ 
+/*N*/
 /*N*/ 					for (i = 0; i <= nColumnCnt; i++)
 /*N*/ 					{
 /*N*/ 						// erzeuge hilfslinie
 /*N*/ 						aLine3D[0].Y() =
 /*N*/ 						aLine3D[1].Y() = aPos.Y() + nStepMainY * i;
-/*N*/ 
+/*N*/
 /*N*/ 						if (pYGridMainGroup) Create3DPolyObject (pYGridMainAttr, new SchE3dPolygonObj (aDefltAttr3D, aLine3D[0], aLine3D[1]),
 /*N*/ 																 CHOBJID_DIAGRAM_Y_GRID_MAIN, pYGridMainGroup);
-/*N*/ 
+/*N*/
 /*N*/ 						if ((i < nColumnCnt) && pXAxisGroup && pChartXAxis->HasDescription())
 /*N*/ 						{
 /*N*/ 							// bei tiefen diagrammtypen muessen die beschriftungen auf halbem abstand
 /*N*/ 							// untergebracht sein
 /*N*/ 							Vector3D aTextPos = aLine3D[1];
-/*N*/ 
+/*N*/
 /*N*/ 							if (bPartDescr) aTextPos.Y() += nStepHelpY / 2;
-/*N*/ 
-/*N*/ 
+/*N*/
+/*N*/
 /*N*/ 							SdrTextObj *pTextObj = CreateTextObj(CHOBJID_TEXT,
 /*N*/ 								Point (),ColText(i),
 /*N*/ 								aXTextAttr, FALSE,CHADJUST_CENTER_RIGHT);
 /*N*/ 							E3dLabelObj *pE3DLabel = new E3dLabelObj
 /*N*/ 								(aTextPos,pTextObj );
 /*N*/ 							pE3DLabel->SetMarkProtect(TRUE);
-/*N*/ 							aXDescrList.Insert(pE3DLabel,LIST_APPEND);
+/*N*/ 							aXDescrList.push_back( pE3DLabel );
 /*N*/ 						}
-/*N*/ 
+/*N*/
 /*N*/ 						// hilfslinien koennen mit erzeugt werden
 /*N*/ 						if (pYGridHelpGroup && (i < nColumnCnt))
 /*N*/ 						{
@@ -641,33 +623,33 @@ namespace binfilter {
 /*N*/ 				{
 /*N*/ 					long nStepMainX  = (long) aSizeVec.X () / nColumnCnt;
 /*N*/ 					long nStepHelpX  = nStepMainX / 2;
-/*N*/ 
+/*N*/
 /*N*/ 					for (i = 0; i <= nColumnCnt; i++)
 /*N*/ 					{
 /*N*/ 						// erzeuge hilfslinie
 /*N*/ 						aLine3D[0].X() =
 /*N*/ 						aLine3D[1].X() = aPos.X() + nStepMainX * i;
-/*N*/ 
+/*N*/
 /*N*/ 						if (pYGridMainGroup) Create3DPolyObject (pYGridMainAttr, new SchE3dPolygonObj (aDefltAttr3D, aLine3D[0], aLine3D[1]),
 /*N*/ 																 CHOBJID_DIAGRAM_Y_GRID_MAIN, pYGridMainGroup);
-/*N*/ 
+/*N*/
 /*N*/ 						if ((i < nColumnCnt) && pXAxisGroup && pChartXAxis->HasDescription())
 /*N*/ 						{
 /*N*/ 							// bei tiefen diagrammtypen muessen die beschriftungen auf halbem abstand
 /*N*/ 							// untergebracht sein
 /*N*/ 							Vector3D aTextPos = aLine3D[1];
-/*N*/ 
+/*N*/
 /*N*/ 							if (bPartDescr) aTextPos.X() += nStepHelpX;
-/*N*/ 
-/*N*/ 
+/*N*/
+/*N*/
 /*N*/ 							SdrTextObj *pTextObj = CreateTextObj(CHOBJID_TEXT,
 /*N*/ 								Point (),ColText(i),
 /*N*/ 								aXTextAttr, FALSE,CHADJUST_TOP_RIGHT);
 /*N*/ 							E3dLabelObj *pE3DLabel = new E3dLabelObj (aTextPos,pTextObj );
 /*N*/ 							pE3DLabel->SetMarkProtect(TRUE);
-/*N*/ 							aXDescrList.Insert(pE3DLabel,LIST_APPEND);
+/*N*/ 							aXDescrList.push_back( pE3DLabel );
 /*N*/ 						}
-/*N*/ 
+/*N*/
 /*N*/ 						// hilfslinien koennen mit erzeugt werden
 /*N*/ 						if (pYGridHelpGroup && (i < nColumnCnt))
 /*N*/ 						{
@@ -678,51 +660,51 @@ namespace binfilter {
 /*N*/ 						}
 /*N*/ 					}
 /*N*/ 				}
-/*N*/ 
+/*N*/
 /*N*/ 				aLine3D[ 0 ] =
 /*N*/ 				aLine3D[ 1 ] = aEndPos;
 /*N*/ 				aLine3D[ 1 ].X() += aSizeVec.X();
-/*N*/ 				
+/*N*/
 /*N*/ 				SfxItemSet aZTextAttr ((const SfxItemSet &) *pZAxisAttr);
 /*N*/ 				aZTextAttr.Put(XLineStyleItem (XLINE_NONE));
 /*N*/ 				aZTextAttr.Put(XLineWidthItem (0));
-/*N*/ 
+/*N*/
 /*N*/ 				long nStepMainZ = (long) aSizeVec.Z () / nRowCnt;
 /*N*/ 				long nStepHelpZ = nStepMainZ / 2;
-/*N*/ 
+/*N*/
 /*N*/ 				BOOL bCreateGridLine = ( (aLine3D[ 0 ].X() != aLine3D[ 1 ].X()) ||
 /*N*/ 										 (aLine3D[ 0 ].Y() != aLine3D[ 1 ].Y()) );
 /*N*/ 				// Z() values become equal in the for loop
 /*N*/ 				// => start and end points would be equal
-/*N*/ 
+/*N*/
 /*N*/ 				for (i = 0; i <= nRowCnt; i++)
 /*N*/ 				{
 /*N*/ 					// create main gridline
 /*N*/ 					aLine3D[0].Z() =
 /*N*/ 					aLine3D[1].Z() = aPos.Z() + nStepMainZ * i;
-/*N*/ 
+/*N*/
 /*N*/ 					if( pZGridMainGroup && bCreateGridLine )
 /*N*/ 						Create3DPolyObject( pZGridMainAttr, new SchE3dPolygonObj( aDefltAttr3D, aLine3D[ 0 ], aLine3D[ 1 ] ),
 /*N*/ 											CHOBJID_DIAGRAM_Z_GRID_MAIN, pZGridMainGroup );
-/*N*/ 
+/*N*/
 /*N*/ 					// bei tiefen diagrammtypen muessen die beschriftungen auf halbem abstand
 /*N*/ 					// untergebracht sein
 /*N*/ 					Vector3D aTextPos = aLine3D[1];
-/*N*/ 
+/*N*/
 /*N*/ 					if (bPartDescr) aTextPos.Z () += nStepHelpZ;
-/*N*/ 
+/*N*/
 /*N*/ 					if ((i < nRowCnt) && (nRowCnt > 1) && pZAxisGroup && pChartZAxis->HasDescription())
 /*N*/ 					{
-/*N*/ 
+/*N*/
 /*N*/ 						SdrTextObj *pTextObj=CreateTextObj(CHOBJID_TEXT, Point (),
 /*N*/ 							RowText(nRowCnt - 1 - i), aZTextAttr,
 /*N*/ 							FALSE, CHADJUST_TOP_LEFT) ;
-/*N*/ 
+/*N*/
 /*N*/ 						E3dLabelObj *pE3DLabel = new E3dLabelObj(aTextPos,pTextObj);
 /*N*/ 						pE3DLabel->SetMarkProtect(TRUE);
-/*N*/ 						aZDescrList.Insert(pE3DLabel,(ULONG)0);//ZListe umgekehrt füllen
+/*N*/ 						aZDescrList.insert( aZDescrList.begin(), pE3DLabel );//ZListe umgekehrt füllen
 /*N*/ 					}
-/*N*/ 
+/*N*/
 /*N*/ 					if (pZGridHelpGroup && (i < nRowCnt))
 /*N*/ 					{
 /*?*/ 						aLine3D[0].Z() += nStepHelpZ;
@@ -732,16 +714,16 @@ namespace binfilter {
 /*?*/ 												CHOBJID_DIAGRAM_Z_GRID_HELP, pZGridHelpGroup );
 /*N*/ 					}
 /*N*/ 				}
-/*N*/ 
+/*N*/
 /*N*/ 				break;
 /*N*/ 			}
 /*N*/ 		}
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	pScene->InsertAllTitleText (aXDescrList, pXAxisGroup,SCH_AXIS_ID_X);
 /*N*/ 	pScene->InsertAllTitleText (aYDescrList, pYAxisGroup,SCH_AXIS_ID_Y);
 /*N*/ 	pScene->InsertAllTitleText (aZDescrList, pZAxisGroup,SCH_AXIS_ID_Z);
-/*N*/ 
+/*N*/
 /*N*/ 	if (pXGridHelpGroup) rScene.Insert3DObj(pXGridHelpGroup);
 /*N*/ 	if (pYGridHelpGroup) rScene.Insert3DObj(pYGridHelpGroup);
 /*N*/ 	if (pZGridHelpGroup) rScene.Insert3DObj(pZGridHelpGroup);
@@ -751,7 +733,7 @@ namespace binfilter {
 /*N*/ 	if (pXAxisGroup) rScene.Insert3DObj(pXAxisGroup);
 /*N*/ 	if (pYAxisGroup) rScene.Insert3DObj(pYAxisGroup);
 /*N*/ 	if (pZAxisGroup) rScene.Insert3DObj(pZAxisGroup);
-/*N*/ 
+/*N*/
 /*N*/ 	//TVM: aus FitInSnapRect
 /*N*/ 	//TVM: Bound statt Logic
 /*N*/ 	Position3DAxisTitles(rScene.GetBoundRect());
@@ -766,10 +748,10 @@ namespace binfilter {
 /*N*/ SdrObjGroup* ChartModel::Create3DDeepChart(Rectangle &rRect)
 /*N*/ {
 /*N*/ 	const long nGapWidth = 10;
-/*N*/ 
+/*N*/
 /*N*/ 	pScene = CreateScene (rRect, *aLightVec, fSpotIntensity, aSpotColor,
 /*N*/ 						  fAmbientIntensity, aAmbientColor);
-/*N*/ 
+/*N*/
 /*N*/ 	Vector3D	aTextPos3D;
 /*N*/ 	Polygon3D   aRect3D(4);
 /*N*/ 	Polygon3D   aTriangle3D(3);
@@ -777,9 +759,9 @@ namespace binfilter {
 /*N*/ 	Polygon3D	aBackSide;
 /*N*/ 	BOOL        bSwitchColRow  = IsBar();
 /*N*/ 	E3dDefaultAttributes aDefltAttr3D;
-/*N*/ 
+/*N*/
 /*N*/ 	CreateAndInsert3DAxesTitles (rRect, bSwitchColRow);
-/*N*/ 
+/*N*/
 /*N*/ 	long	nX      = 0;
 /*N*/ 	long	nY      = 0;
 /*N*/ 	long	nW      = FIXED_SIZE_FOR_3D_CHART_VOLUME;
@@ -788,9 +770,9 @@ namespace binfilter {
 /*N*/ 	long	nColCnt = GetColCount();
 /*N*/ 	long	nRowCnt = GetRowCount();
 /*N*/ 	short	nCol, nRow;
-/*N*/ 
+/*N*/
 /*N*/ 	Polygon     aFrontExtrude(1+nColCnt*2);
-/*N*/ 
+/*N*/
 /*N*/ 	long nGapX      = nW * nGapWidth / 1000;
 /*N*/ 	long nGapY      = nH * nGapWidth / 1000;
 /*N*/ 	long nGapZ      = nZ * nGapWidth / 1000;
@@ -798,9 +780,9 @@ namespace binfilter {
 /*N*/ 	long nPartWidth;
 /*N*/ 	long nBarWidthX;
 /*N*/ 	long nBarWidthZ = nPartDepth - nGapZ * 2;
-/*N*/ 
+/*N*/
 /*N*/ 	BOOL bLogarithm = ((const SfxBoolItem&) pChartYAxis->GetItemSet()->Get(SCHATTR_AXIS_LOGARITHM)).GetValue();
-/*N*/ 
+/*N*/
 /*N*/ 	BOOL bPartDescr;
 /*N*/ 	long nDepth = ((eChartStyle == CHSTYLE_3D_BAR) ||
 /*N*/ 				   (eChartStyle == CHSTYLE_3D_COLUMN) ||
@@ -808,7 +790,7 @@ namespace binfilter {
 /*N*/ 				   (eChartStyle == CHSTYLE_3D_AREA))
 /*N*/ 					  ? -nZ
 /*N*/ 					  : nPartDepth;
-/*N*/ 
+/*N*/
 /*N*/ 	nPartWidth	= (eChartStyle == CHSTYLE_3D_BAR)
 /*N*/ 					  ? nH / nColCnt
 /*N*/ 					  : ((eChartStyle == CHSTYLE_3D_COLUMN)
@@ -820,7 +802,7 @@ namespace binfilter {
 /*N*/ 					  ? nPartWidth - nGapY * 2
 /*N*/ 					  : nPartWidth - nGapX * 2;
 /*N*/ 	bPartDescr	= TRUE;
-/*N*/ 
+/*N*/
 /*N*/ 	Camera3D aCam(pScene->GetCamera());
 /*N*/ 	Vector3D aCamPos(nX + nW/2, nH/2, nW/2);
 /*N*/ 	Vector3D aLookAt(nX + nW/2, nH/2, nDepth/2);
@@ -831,25 +813,25 @@ namespace binfilter {
 /*N*/ 	aCam.RotateAroundLookAt(DEG2RAD((double)nYAngle / 10.0), DEG2RAD((double)nXAngle / 10.0));
 /*N*/ 	aCam.SetAspectMapping(AS_HOLD_SIZE);
 /*N*/ 	pScene->SetCamera(aCam);
-/*N*/ 
+/*N*/
 /*N*/ 	nY = 0;
-/*N*/ 
+/*N*/
 /*N*/ 	Vector3D a3DPos(nX, nY, nDepth);
 /*N*/ 	Vector3D a3DSize(nW, nH, -nDepth);
-/*N*/ 
+/*N*/
 /*N*/ 	Create3DBackplanes(rRect, a3DPos, a3DSize, *pScene,
 /*N*/ 					   bPartDescr, FALSE, bLogarithm, FALSE, CHSTACK_NONE, FALSE, FALSE,
 /*N*/ 					   bSwitchColRow);
-/*N*/ 
+/*N*/
 /*N*/ 	nY     = (long)(pChartYAxis->CalcFactOrigin() * nH);
 /*N*/ 	a3DPos = Vector3D(0, nY, nDepth - nBarWidthZ + nPartDepth - nGapZ);
-/*N*/ 
+/*N*/
 /*N*/ 	DataDescription aDescription;
-/*N*/ 
+/*N*/
 /*N*/ 	for (nRow = nRowCnt-1; nRow >= 0; nRow--)
 /*N*/ 	{
 /*N*/ 		E3dScene* pStripe   = NULL;
-/*N*/ 
+/*N*/
 /*N*/         // create row-groups. Insertion into main scene is done at the end of
 /*N*/         // the for loop (#109628#)
 /*N*/ 		E3dScene* pRowGroup = Create3DScene (CHOBJID_DIAGRAM_ROWGROUP);
@@ -857,48 +839,48 @@ namespace binfilter {
 /*N*/         // top-level scene
 /*N*/         pRowGroup->SetItemSet( pScene->GetItemSet() );
 /*N*/         pRowGroup->InsertUserData(new SchDataRow(nRow));
-/*N*/ 
+/*N*/
 /*N*/ 		if ( eChartStyle == CHSTYLE_3D_STRIPE )
 /*N*/ 			pStripe = pRowGroup;
-/*N*/ 
+/*N*/
 /*N*/ 		a3DPos.X() = nX;
 /*N*/ 		a3DPos.Y() = nY;
-/*N*/ 
+/*N*/
 /*N*/ 		switch(eChartStyle)
 /*N*/ 		{
 /*N*/ 			case  CHSTYLE_3D_COLUMN:
-/*N*/ 
+/*N*/
 /*N*/ 				a3DPos.X() += nGapX;
 /*N*/ 				break;
-/*N*/ 
+/*N*/
 /*N*/ 			case CHSTYLE_3D_BAR:
-/*N*/ 
+/*N*/
 /*N*/ 				// #67333# the y axis of bar charts is not interrested in negative values
 /*N*/ 				a3DPos.Y() = nGapY; // += nGapY;
 /*N*/ 				break;
-/*N*/ 
+/*N*/
 /*N*/ 			default:
-/*N*/ 
+/*N*/
 /*?*/ 				aBackSide[0]       = a3DPos;
 /*?*/ 				aFrontSide[0]      = a3DPos;
 /*?*/ 				aFrontSide[0].Z() += nBarWidthZ;
-/*?*/ 
+/*?*/
 /*?*/ 				aFrontExtrude[0]   =Point((long)a3DPos.X(),(long)-a3DPos.Y());
 /*N*/ 				break;
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		Vector3D aLastValue;
 /*N*/ 		short     nPoints = 0;
-/*N*/ 
+/*N*/
 /*N*/ 		for (nCol = 0; nCol < nColCnt; nCol++)
 /*N*/ 		{
 /*N*/ 			double fData = GetData(nCol, nRow);
-/*N*/ 
+/*N*/
 /*N*/ 			SfxItemSet aDataPointAttr(GetFullDataPointAttr(nCol, nRow));
-/*N*/ 
+/*N*/
 /*N*/ 			SvxChartDataDescr eDescr = ((const SvxChartDataDescrItem&)aDataPointAttr.
 /*N*/ 										  Get(SCHATTR_DATADESCR_DESCR)).GetValue();
-/*N*/ 
+/*N*/
 /*N*/ 			BOOL bShowDataDescrLocal = (eDescr != CHDESCR_NONE) && bShowDataDescr && // bShowDataDescr is class member
 /*N*/                 fData != DBL_MIN;
 /*N*/ 			if( bShowDataDescrLocal )
@@ -906,12 +888,12 @@ namespace binfilter {
                 /**************************************************************
                 * DataDescription erforderlich
                 **************************************************************/
-/*N*/ 				
+/*N*/
 /*?*/ 				aDescription.eDescr = eDescr;
 /*?*/ 				aDescription.bSymbol = ((const SfxBoolItem&)aDataPointAttr.
 /*?*/ 											  Get(SCHATTR_DATADESCR_SHOW_SYM)).GetValue();
 /*N*/ 			}
-/*N*/ 
+/*N*/
 /*N*/ 			if (eChartStyle == CHSTYLE_3D_COLUMN)
 /*N*/ 			{
 /*N*/ 				double fTop, fBottom;
@@ -925,19 +907,19 @@ namespace binfilter {
 /*N*/ 					fTop	= fData;
 /*N*/ 					fBottom	= fOriginY;
 /*N*/ 				}
-/*N*/ 
+/*N*/
 /*N*/ 				long nTop =	Min((long)(pChartYAxis->CalcFact(fTop) * nH), nH);
 /*N*/ 				long nBottom = Max((long)(pChartYAxis->CalcFact(fBottom) * nH), 0L);
-/*N*/ 
+/*N*/
 /*N*/ 				if( fData != DBL_MIN )
 /*N*/ 				{
 /*N*/ 					long nBarHeight = nTop - nBottom + 1;
 /*N*/ 					a3DPos.Y() = nBottom;
-/*N*/ 
+/*N*/
 /*N*/                     if( nTop > nBottom )
 /*N*/                         pRowGroup->Insert3DObj(Create3DBar(a3DPos, Vector3D(nBarWidthX, nBarHeight, nBarWidthZ), nCol, nRow,
 /*N*/                                                            aDataPointAttr, FALSE,0,pChartYAxis->CalcFactOrigin()*(double)nH,0));
-/*N*/ 
+/*N*/
 /*N*/ 					if( bShowDataDescrLocal )
 /*N*/ 					{
 /*?*/ 						aDescription.aTextPos3D      = a3DPos;
@@ -968,28 +950,28 @@ namespace binfilter {
 /*N*/ 					fRight = fData;
 /*N*/ 					fLeft	= fOriginY;
 /*N*/ 				}
-/*N*/ 
+/*N*/
 /*N*/ 				long nRight = Min((long)(pChartYAxis->CalcFact(fRight) * nW), nW);
 /*N*/ 				long nLeft  = Max((long)(pChartYAxis->CalcFact(fLeft) * nW), 0L);
-/*N*/ 
+/*N*/
 /*N*/                 if( fData != DBL_MIN )
 /*N*/                 {
 /*N*/ 					long nBarWidth = nRight - nLeft + 1;
 /*N*/ 					a3DPos.X() = nLeft;
-/*N*/ 
+/*N*/
 /*N*/                     if( nRight > nLeft )
 /*N*/                         pRowGroup->Insert3DObj(Create3DBar(a3DPos, Vector3D(nBarWidth, nBarWidthX, nBarWidthZ), nCol, nRow,
 /*N*/                                                            aDataPointAttr,FALSE,0,pChartYAxis->CalcFactOrigin()*(double)nW,0));
-/*N*/ 
+/*N*/
 /*N*/ 					if (bShowDataDescrLocal)
 /*N*/ 					{
 /*?*/ 						aDescription.aTextPos3D      = a3DPos;
-/*?*/ 
+/*?*/
 /*?*/ 						// #67379# corrected orientation of description
 /*?*/ 						aDescription.aTextPos3D.X() += (fData<0)? 0: nBarWidth;
 /*?*/ 						aDescription.aTextPos3D.Y() += nBarWidthX / 2;
 /*?*/ 						aDescription.aTextPos3D.Z() += nBarWidthZ / 2;
-/*?*/ 	
+/*?*/
 /*?*/ 						aDescription.fValue          = GetData(nCol, nRow,		// #67378#
 /*?*/ 															   ((aDescription.eDescr == CHDESCR_PERCENT) ||
 /*?*/ 																(aDescription.eDescr == CHDESCR_TEXTANDPERCENT)) );
@@ -1006,11 +988,11 @@ namespace binfilter {
 /*?*/ 				long nPos = (long)(pChartYAxis->CalcFact(fData ) * nH);
 /*?*/ 				if (nPos < 0L) nPos = 0L;
 /*?*/ 				else if (nPos > nH) nPos = nH;
-/*?*/ 
+/*?*/
 /*?*/ 				const SfxItemSet& rDataRowAttr = GetDataRowAttr(nRow);
-/*?*/ 
+/*?*/
 /*?*/ 				a3DPos.Y() = nPos;
-/*?*/ 
+/*?*/
 /*?*/ 				switch (eChartStyle)
 /*?*/ 				{
 /*?*/ 					case CHSTYLE_3D_STRIPE:
@@ -1018,13 +1000,13 @@ namespace binfilter {
 /*?*/ 						{
 /*?*/ 							UINT16 nRev       = nColCnt + 1 - nPoints;
 /*?*/ 							BOOL  bValidData = TRUE;
-/*?*/ 
+/*?*/
 /*?*/ 							if ((eChartStyle == CHSTYLE_3D_AREA) && (fData == DBL_MIN))
 /*?*/ 							{
 /*?*/ 								fData      = 0.0;
 /*?*/ 								bValidData = FALSE;
 /*?*/ 							}
-/*?*/ 
+/*?*/
 /*?*/ 							if (fData != DBL_MIN)
 /*?*/ 							{
 /*?*/ 								//Stripes:
@@ -1033,7 +1015,7 @@ namespace binfilter {
 /*?*/ 								aBackSide[nPoints]    = a3DPos;
 /*?*/ 								//Area:
 /*?*/ 								aFrontExtrude[nRev]  = Point((long)a3DPos.X(),(long)-a3DPos.Y());
-/*?*/ 
+/*?*/
 /*?*/ 								if (!nPoints)
 /*?*/ 								{
 /*?*/ 									//Stripes:
@@ -1055,17 +1037,16 @@ namespace binfilter {
 /*?*/ 										aRect3D[2] = aFrontSide[nRev];
 /*?*/ 										aRect3D[3] = aBackSide[nPoints];
 /*?*/ 										E3dPolygonObj *pPolyObj=new SchE3dPolygonObj (aDefltAttr3D, aRect3D);
-/*?*/ 
-/*?*/ //-/										pPolyObj->SetDoubleSided(TRUE); //Neu 18.5.98
+/*?*/
 /*?*/ 										pPolyObj->SetItem(Svx3DDoubleSidedItem(TRUE)); //Neu 18.5.98
-/*?*/ 										
+/*?*/
 /*?*/ 										Create3DPolyObject (&rDataRowAttr,pPolyObj,CHOBJID_AREA, pStripe);
 /*?*/ 									}
 /*?*/ 								}
 /*?*/ 								nPoints ++;
 /*?*/ 							}
 /*?*/ 							else bValidData = FALSE;
-/*?*/ 
+/*?*/
 /*?*/ 							if (nPoints && (eChartStyle==CHSTYLE_3D_AREA) && (nCol==nColCnt-1))
 /*?*/ 							{
 /*?*/ 								Vector3D aFill = (fData == DBL_MIN) ? aLastValue : a3DPos;
@@ -1077,7 +1058,7 @@ namespace binfilter {
 /*?*/ 									aFrontSide[nColCnt+1-nFill].Z() += nBarWidthZ;
 /*?*/ 									aFrontExtrude[nColCnt+1-nFill]=Point((long)aFill.X(),0);
 /*?*/ 								}
-/*?*/ 
+/*?*/
 /*?*/ 								if (nColCnt > 1)
 /*?*/ 								{
 /*?*/ 									PolyPolygon aPolyPoly;
@@ -1090,13 +1071,13 @@ namespace binfilter {
 /*?*/ 									Create3DExtrudePolyObj(&rDataRowAttr,pExtrudeObj,CHOBJID_AREA,pRowGroup);
 /*?*/ 								}
 /*?*/ 							}    //Area
-/*?*/ 
+/*?*/
 /*?*/ 							if (fData == DBL_MIN) nPoints = 0;
-/*?*/ 
+/*?*/
 /*?*/ 							if (bShowDataDescrLocal)
 /*?*/ 							{
 /*?*/ 								aDescription.aTextPos3D = aFrontSide[nRev];
-/*?*/ 
+/*?*/
 /*?*/ 								if (bValidData)
 /*?*/ 								{
 /*?*/ 									if ((aDescription.eDescr == CHDESCR_PERCENT) ||
@@ -1113,13 +1094,13 @@ namespace binfilter {
 /*?*/ 								{
 /*?*/ 									aDescription.fValue = DBL_MIN;
 /*?*/ 								}
-/*?*/ 
+/*?*/
 /*?*/ 								aDescription.eAdjust = CHADJUST_CENTER_CENTER;
 /*?*/ 							}
-/*?*/ 
+/*?*/
 /*?*/ 							break;
 /*?*/ 						}
-/*?*/ 
+/*?*/
 /*?*/ 					case CHSTYLE_3D_SURFACE:
 /*?*/ 						if (nColCnt > 1)
 /*?*/ 						{
@@ -1136,10 +1117,10 @@ namespace binfilter {
 /*?*/ 							aTriangle3D[3].Z() -= nPartDepth;
 /*?*/ 							aTriangle3D[3].Y() =
 /*?*/ 								(long)(pChartYAxis->CalcFact(GetData(nCol+1, nRow)) * nH);
-/*?*/ 
+/*?*/
 /*?*/ 							Create3DPolyObject (&rDataRowAttr, new SchE3dPolygonObj (aDefltAttr3D, aTriangle3D, TRUE, TRUE),
 /*?*/ 												CHOBJID_AREA, pRowGroup);
-/*?*/ 
+/*?*/
 /*?*/ 							aTriangle3D[0] = aTriangle3D[1];
 /*?*/ 							aTriangle3D[1] = aTriangle3D[2];
 /*?*/ 							aTriangle3D[2] = a3DPos;
@@ -1147,20 +1128,21 @@ namespace binfilter {
 /*?*/ 												CHOBJID_AREA, pRowGroup);
 /*?*/ 						}
 /*?*/ 						break;
+                        default: break;
 /*?*/ 				}
 /*?*/ 			}
-/*N*/ 
+/*N*/
 /*N*/ 			aLastValue = a3DPos;
 /*N*/ 			if (eChartStyle == CHSTYLE_3D_BAR) a3DPos.Y() += nPartWidth;
 /*N*/ 			else a3DPos.X() += nPartWidth;
-/*N*/ 
+/*N*/
 /*N*/ 			if( pScene && bShowDataDescrLocal )
 /*N*/ 			{
-/*?*/				DBG_BF_ASSERT(0, "STRIP"); //STRIP001 /*?*/ 				CreateDataDescr( aDescription, nCol, nRow, NULL, FALSE, TRUE );
+/*?*/				DBG_BF_ASSERT(0, "STRIP");
 /*N*/ 			}
-/*N*/ 
+/*N*/
 /*N*/ 		}// end for nCol
-/*N*/ 
+/*N*/
 /*N*/         // #109628# insert row groups into main scene only if they contain data
 /*N*/         // points
 /*N*/         if( pRowGroup->GetSubList()->GetObjCount() > 0 )
@@ -1168,13 +1150,9 @@ namespace binfilter {
 /*?*/             pScene->Insert3DObj( pRowGroup );
 /*N*/         }
 
-        /*Dirty3D (nColCnt, nRow, TRUE, pDescription, (eDataDescr != CHDESCR_NONE) && bShowDataDescr
-                                                                             ? pScene
-                                                                             : NULL);
-        */
 /*N*/ 		a3DPos.Z() += nPartDepth;
 /*N*/ 	}//end for nRow
-/*N*/ 
+/*N*/
 /*N*/ 	return (SdrObjGroup*) pScene;
 /*N*/ }
 
@@ -1187,22 +1165,22 @@ namespace binfilter {
 /*N*/ SdrObjGroup* ChartModel::Create3DFlatChart(Rectangle &rRect)
 /*N*/ {
 /*N*/ 	const long nGapWidth = 10;
-/*N*/ 
+/*N*/
 /*N*/ 	pScene = CreateScene (rRect, *aLightVec, fSpotIntensity, aSpotColor,
 /*N*/ 						  fAmbientIntensity, aAmbientColor);
-/*N*/ 
+/*N*/
 /*N*/ 	Vector3D	aTextPos3D;
-/*N*/ 
+/*N*/
 /*N*/ 	Polygon3D	aFrontSide;
-/*N*/ 
+/*N*/
 /*N*/ 	BOOL       bSwitchColRow   = IsBar();
 /*N*/ 	E3dDefaultAttributes aDefltAttr3D;
-/*N*/ 
+/*N*/
 /*N*/ 	CreateAndInsert3DAxesTitles (rRect, bSwitchColRow);
-/*N*/ 
+/*N*/
 /*N*/ 	BOOL bPercent = IsPercent();
-/*N*/ 
-/*N*/ 
+/*N*/
+/*N*/
 /*N*/ 	USHORT eStackMode;
 /*N*/ 	switch (eChartStyle)
 /*N*/ 	{
@@ -1212,17 +1190,17 @@ namespace binfilter {
 /*N*/ 		case CHSTYLE_3D_PERCENTFLATBAR:
 /*N*/ 			eStackMode = CHSTACK_MINMAX;
 /*N*/ 			break;
-/*N*/ 
+/*N*/
 /*N*/ 		case CHSTYLE_3D_STACKEDAREA:
 /*N*/ 		case CHSTYLE_3D_PERCENTAREA:
 /*N*/ 			eStackMode = CHSTACK_OVERLAP;
 /*N*/ 			break;
-/*N*/ 
+/*N*/
 /*N*/ 		default:
 /*N*/ 			eStackMode = CHSTACK_NONE;
 /*N*/ 			break;
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	long	nX = 0;
 /*N*/ 	long	nY = 0;
 /*N*/ 	long	nW = FIXED_SIZE_FOR_3D_CHART_VOLUME;
@@ -1230,7 +1208,7 @@ namespace binfilter {
 /*N*/ 	long	nColCnt = GetColCount();
 /*N*/ 	long	nRowCnt = GetRowCount();
 /*N*/ 	long	nCol, nRow;
-/*N*/ 
+/*N*/
 /*N*/ 	long nGapX      = nW * nGapWidth / 1000;
 /*N*/ 	long nGapY      = nH * nGapWidth / 1000;
 /*N*/ 	long nGapZ      = nW * nGapWidth / 1000;
@@ -1240,14 +1218,13 @@ namespace binfilter {
 /*N*/ 	long nBarWidthX;
 /*N*/ 	long nBarWidthZ = nPartDepth - nGapZ * 2;
 /*N*/ 	long nDepth     = -nPartDepth;
-/*N*/ 
+/*N*/
 /*N*/ 	SfxItemSet* pYAxisAttr = pChartYAxis->GetItemSet();
-/*N*/ //	BOOL bLogarithm = ((const SfxBoolItem&) pYAxisAttr->Get(SCHATTR_Y_AXIS_LOGARITHM)).GetValue();
 /*N*/ 	BOOL bLogarithm = ((const SfxBoolItem&) pYAxisAttr->Get(SCHATTR_AXIS_LOGARITHM)).GetValue();
 /*N*/ 	BOOL bPartDescr;
-/*N*/ 
+/*N*/
 /*N*/ 	Polygon     aFrontExtrude(1+nColCnt*2);
-/*N*/ 
+/*N*/
 /*N*/ 	switch (eChartStyle)
 /*N*/ 	{
 /*N*/ 		case CHSTYLE_3D_STACKEDAREA:
@@ -1275,7 +1252,7 @@ namespace binfilter {
 /*N*/ 			break;
 /*N*/ 		}
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	Camera3D aCam(pScene->GetCamera());
 /*N*/ 	Vector3D aCamPos(nX + nW/2, nH/2, nW/2);
 /*N*/ 	Vector3D aLookAt(nX + nW/2, nH/2, nDepth/2);
@@ -1286,52 +1263,52 @@ namespace binfilter {
 /*N*/ 	aCam.RotateAroundLookAt(DEG2RAD((double)nYAngle / 10.0), DEG2RAD((double)nXAngle / 10.0));
 /*N*/ 	aCam.SetAspectMapping(AS_HOLD_SIZE);
 /*N*/ 	pScene->SetCamera(aCam);
-/*N*/ 
+/*N*/
 /*N*/ 	nY = 0;
 /*N*/ 	Vector3D a3DPos(nX, nY, nDepth);
 /*N*/ 	Vector3D a3DSize(nW, nH, -nDepth);
-/*N*/ 
+/*N*/
 /*N*/ 	Create3DBackplanes(rRect, a3DPos, a3DSize, *pScene,
 /*N*/ 					   bPartDescr, FALSE, bLogarithm, FALSE, eStackMode, bPercent, TRUE,
 /*N*/ 					   bSwitchColRow);
-/*N*/ 
+/*N*/
 /*N*/ 	a3DPos = Vector3D(nX, nY, nDepth - nBarWidthZ + nPartDepth - nGapZ);
-/*N*/ 
+/*N*/
 /*N*/ 	switch (eChartStyle)
 /*N*/ 	{
 /*N*/ 		case CHSTYLE_3D_STACKEDAREA:
 /*N*/ 		case CHSTYLE_3D_PERCENTAREA:
 /*N*/ 		{
 /*N*/ 			DataDescription* pDescription = NULL;
-/*N*/ 
+/*N*/
 /*N*/ 			double* fOldData = new double[nColCnt];
 /*N*/ 			a3DPos.Z() += nBarWidthZ;
-/*N*/ 
+/*N*/
 /*N*/ 			for (nRow = 0; nRow < nRowCnt; nRow++)
 /*N*/ 			{
 /*N*/ 				E3dScene* pRowGroup = Create3DScene (CHOBJID_DIAGRAM_ROWGROUP);
 /*N*/ 				pScene->Insert3DObj(pRowGroup);
-/*N*/ 
+/*N*/
 /*N*/ 				pRowGroup->InsertUserData(new SchDataRow((short)nRow));
-/*N*/ 
+/*N*/
 /*N*/ 				const SfxItemSet& rDataRowAttr = GetDataRowAttr(nRow);
-/*N*/ 
+/*N*/
 /*N*/ 				for (nCol = 0; nCol < nColCnt; nCol++)
 /*N*/ 				{
 /*N*/ 					double     fData          = fabs(GetData(nCol, nRow, bPercent));
 /*N*/ 					SfxItemSet aDataPointAttr (GetFullDataPointAttr(nCol, nRow));
 /*N*/ 					BOOL       bValidData;
-/*N*/ 
+/*N*/
 /*N*/ 					if (fData == DBL_MIN)
 /*N*/ 					{
 /*?*/ 						fData      = 0.0;
 /*?*/ 						bValidData = FALSE;
 /*N*/ 					}
 /*N*/ 					else bValidData = TRUE;
-/*N*/ 
+/*N*/
 /*N*/ 					SvxChartDataDescr eDescr = ((const SvxChartDataDescrItem&)aDataPointAttr.
 /*N*/ 												  Get(SCHATTR_DATADESCR_DESCR)).GetValue();
-/*N*/ 
+/*N*/
 /*N*/ 					if( (eDescr != CHDESCR_NONE) && bShowDataDescr)
 /*N*/ 					{
                         /******************************************************
@@ -1340,17 +1317,16 @@ namespace binfilter {
 /*?*/ 						if (!pDescription)
 /*?*/ 						{
 /*?*/ 							// DataDescription noch nicht vorhanden -> erzeugen
-/*?*/ 							DBG_BF_ASSERT(0, "STRIP"); //STRIP001 pDescription = new DataDescription [nColCnt];
-/*?*/ 						//STRIP001 	ClearDataDescription(pDescription,nColCnt);
+/*?*/ 							DBG_BF_ASSERT(0, "STRIP");
 /*?*/ 						}
-/*?*/ 
+/*?*/
 /*?*/ 						pDescription [nCol].eDescr = eDescr;
 /*?*/ 						pDescription [nCol].bSymbol = ((const SfxBoolItem&)aDataPointAttr.
 /*?*/ 													   Get(SCHATTR_DATADESCR_SHOW_SYM)).GetValue();
 /*N*/ 					}
-/*N*/ 
+/*N*/
 /*N*/ 					long nRev = nColCnt * 2 - 1 - nCol;
-/*N*/ 
+/*N*/
 /*N*/ 					if (!nRow)
 /*N*/ 					{
 /*N*/ 						a3DPos.Y()           = Min((long)(pChartYAxis->CalcFact(fData) * nH), nH);
@@ -1370,14 +1346,14 @@ namespace binfilter {
 /*N*/ 						aFrontExtrude[(UINT16)nCol] = aFrontExtrude[(UINT16)nRev];
 /*N*/ 						aFrontExtrude[(UINT16)nRev]=Point((long)a3DPos.X(),(long)-a3DPos.Y());
 /*N*/ 					}
-/*N*/ 
+/*N*/
 /*N*/ 					fOldData[nCol] = fData;
-/*N*/ 
+/*N*/
 /*N*/ 					if (pDescription)
 /*N*/ 					{
 /*?*/ 						pDescription [nCol].aTextPos3D      = aFrontSide[(UINT16)nRev];
 /*?*/ 						pDescription [nCol].aTextPos3D.Y() -= (aFrontSide[(UINT16)nRev].Y() - aFrontSide[(UINT16)nCol].Y()) / 2;
-/*?*/ 
+/*?*/
 /*?*/ 						if (bValidData)
 /*?*/ 						{
 /*?*/ 							if ((pDescription [nCol].eDescr == CHDESCR_PERCENT) ||
@@ -1394,25 +1370,25 @@ namespace binfilter {
 /*?*/ 						{
 /*?*/ 							pDescription [nCol].fValue = DBL_MIN;
 /*?*/ 						}
-/*?*/ 
+/*?*/
 /*?*/ 						pDescription [nCol].eAdjust = CHADJUST_CENTER_CENTER;
-/*?*/ 
+/*?*/
 /*?*/ 						if( eDescr != CHDESCR_NONE && bValidData )
 /*?*/ 						{
-/*?*/ 							DBG_BF_ASSERT(0, "STRIP"); //STRIP001 CreateDataDescr( pDescription[ nCol ], nCol, nRow, NULL, FALSE, TRUE );
+/*?*/ 							DBG_BF_ASSERT(0, "STRIP");
 /*?*/ 						}
 /*N*/ 					}
-/*N*/ 
+/*N*/
 /*N*/ 					a3DPos.X() += nPartWidth;
 /*N*/ 				} //end for nCol
-/*N*/ 
+/*N*/
 /*N*/ 				if (nColCnt > 1)
 /*N*/ 				{
-/*N*/ 
+/*N*/
 /*N*/ 					PolyPolygon aPolyPoly;
 /*N*/ 					aFrontExtrude[nColCnt*2]=aFrontExtrude[0];//.SetClosed(TRUE);
 /*N*/ 					aPolyPoly.Insert(aFrontExtrude);
-/*N*/ 
+/*N*/
 /*N*/ 					E3dExtrudeObj* pExtrudeObj= new SchE3dExtrudeObj(aDefltAttr3D, aPolyPoly,nBarWidthZ);
 /*N*/ 					Matrix4D aMatrix;
 /*N*/ 					aMatrix.Translate(Vector3D(0,0,nDepth - nBarWidthZ + nPartDepth - nGapZ ));   //-(double)nBarWidthZ
@@ -1422,23 +1398,23 @@ namespace binfilter {
 /*N*/ 				}
 /*N*/ 				a3DPos.X() = nX;
 /*N*/ 			}//end for nRow
-/*N*/ 
+/*N*/
 /*N*/ 			delete[] fOldData;
 /*N*/ 			delete[] pDescription;
 /*N*/ 			break;
 /*N*/ 		}  // end case Area's
-/*N*/ 
+/*N*/
 /*N*/ 		default:
 /*N*/ 		{
 /*N*/ 			DataDescription* pDescription = NULL;
-/*N*/ 
+/*N*/
 /*N*/ 			if (bSwitchColRow) a3DPos.Y() += nGapY;
 /*N*/ 			else a3DPos.X() += nGapX;
-/*N*/ 
+/*N*/
 /*N*/             // #100288# same structure as all other charts (no stacked and special groups)
 /*N*/             // create groups for all series
 /*N*/             E3dScene ** pDataGroup = new E3dScene * [ nRowCnt ];
-/*N*/ 
+/*N*/
 /*N*/             // create 3d sub-scenes for each data series. Insertion into the
 /*N*/             // main scene is done at the end of the for loop (#109628#)
 /*N*/             for( nRow = 0; nRow < nRowCnt; nRow++ )
@@ -1446,20 +1422,20 @@ namespace binfilter {
 /*N*/                 pDataGroup[ nRow ] = Create3DScene( CHOBJID_DIAGRAM_ROWGROUP );
 /*N*/                 pDataGroup[ nRow ]->InsertUserData( new SchDataRow( static_cast< short >( nRow ) ));
 /*N*/             }
-/*N*/ 
-/*N*/             for (nCol = 0; nCol < nColCnt; nCol++)
+/*N*/
+/*N*/           for (nCol = 0; nCol < nColCnt; nCol++)
 /*N*/ 			{
 /*N*/ 				double fDataTop		= fOriginY;
 /*N*/ 				double fDataBottom	= fOriginY;
-/*N*/ 
+/*N*/
 /*N*/ 				//Vor-Berechnung des Maximalen/Minimalen Zeichenpunktes
 /*N*/ 				double fPreBottom=fOriginY;
 /*N*/ 				double fPreTop   =fOriginY;
 /*N*/ 				double fPreTopPos,fPreBottomPos,fPreOriPos;
-/*N*/ 				double fTop,fBottom,fMin,fMax,fMin2,fMax2;
+/*N*/ 				double fTop=0.0,fBottom=0.0,fMin=0.0,fMax=0.0,fMin2,fMax2;
 /*N*/ 				fMin2=fMax2=fOriginY;
-/*N*/ 
-/*N*/                 for (nRow = 0; nRow < nRowCnt; nRow++)
+/*N*/
+/*N*/               for (nRow = 0; nRow < nRowCnt; nRow++)
 /*N*/ 				{
 /*N*/ 					double fData=GetData(nCol, nRow, bPercent);
 /*N*/ 					if (fData != DBL_MIN)
@@ -1500,7 +1476,7 @@ namespace binfilter {
 /*N*/ 					else
 /*N*/ 						fMax2+=fData; //right,bottom
 /*N*/ 				}
-/*N*/ 
+/*N*/
 /*N*/ 				double fR = (double)( IsBar()? nW: nH );
 /*N*/ 				fPreTopPos = pChartYAxis->CalcFact( fMin2 ) * fR;
 /*N*/ 				if( fR < fPreTopPos )
@@ -1509,15 +1485,15 @@ namespace binfilter {
 /*N*/ 				if( fPreBottomPos < 0.0 )
 /*N*/ 					fPreBottomPos = 0.0;
 /*N*/ 				fPreOriPos = pChartYAxis->CalcFactOrigin() * fR;
-/*N*/ 
+/*N*/
 /*N*/ 				for (nRow = 0; nRow < nRowCnt; nRow++)
 /*N*/ 				{
 /*N*/ 					double     fData     = GetData(nCol, nRow, bPercent);
 /*N*/ 					SfxItemSet aDataPointAttr(GetFullDataPointAttr(nCol, nRow));
-/*N*/ 
+/*N*/
 /*N*/ 					SvxChartDataDescr eDescr = ((const SvxChartDataDescrItem&)aDataPointAttr.
 /*N*/ 												  Get(SCHATTR_DATADESCR_DESCR)).GetValue();
-/*N*/ 
+/*N*/
 /*N*/ 					if( (eDescr != CHDESCR_NONE) && bShowDataDescr)
 /*N*/ 					{
                         /******************************************************
@@ -1526,51 +1502,51 @@ namespace binfilter {
 /*?*/ 						if (!pDescription)
 /*?*/ 						{
 /*?*/ 							// DataDescription noch nicht vorhanden -> erzeugen
-/*?*/ 						DBG_BF_ASSERT(0, "STRIP"); //STRIP001 	pDescription = new DataDescription [nRowCnt];
+/*?*/ 						DBG_BF_ASSERT(0, "STRIP");
 /*?*/ 						}
-/*?*/ 
+/*?*/
 /*?*/ 						pDescription [nRow].eDescr = eDescr;
 /*?*/ 						pDescription [nRow].bSymbol = ((const SfxBoolItem&)aDataPointAttr.
 /*N*/ 													   Get(SCHATTR_DATADESCR_SHOW_SYM)).GetValue();
 /*N*/ 					}
-/*N*/ 
+/*N*/
 /*N*/ 					switch (eChartStyle)
 /*N*/ 					{
 /*N*/ 						case CHSTYLE_3D_FLATCOLUMN:
 /*N*/ 							if (fData != DBL_MIN)
 /*N*/ 							{
-/*N*/ 								double fTop;
-/*N*/ 								double fBottom;
-/*N*/ 
+/*N*/ 								double fLclTop;
+/*N*/ 								double fLclBottom;
+/*N*/
 /*N*/ 								if (fData < fOriginY)
 /*N*/ 								{
-/*?*/ 									fTop	= fOriginY;
-/*?*/ 									fBottom = fData;
+/*?*/ 									fLclTop	= fOriginY;
+/*?*/ 									fLclBottom = fData;
 /*N*/ 								}
 /*N*/ 								else
 /*N*/ 								{
-/*N*/ 									fTop	= fData;
-/*N*/ 									fBottom	= fOriginY;
+/*N*/ 									fLclTop	= fData;
+/*N*/ 									fLclBottom	= fOriginY;
 /*N*/ 								}
-/*N*/ 
-/*N*/ 								long nBottom = Max ((long) (pChartYAxis->CalcFact(fBottom) * nH),0L);
-/*N*/ 								long nTop =	Min ((long) (pChartYAxis->CalcFact(fTop) * nH),nH);
-/*N*/ 
+/*N*/
+/*N*/ 								long nBottom = Max ((long) (pChartYAxis->CalcFact(fLclBottom) * nH),0L);
+/*N*/ 								long nTop =	Min ((long) (pChartYAxis->CalcFact(fLclTop) * nH),nH);
+/*N*/
 /*N*/ 								{
 /*N*/ 									long nBarHeight = nTop - nBottom + 1;
 /*N*/ 									a3DPos.Y() = nBottom;
-/*N*/ 
+/*N*/
 /*N*/                                     if (nTop > nBottom)
 /*N*/                                         pDataGroup[ nRow ]->Insert3DObj(Create3DBar(a3DPos, Vector3D(nBarWidthX, nBarHeight, nBarWidthZ), nCol, nRow,
 /*N*/                                                                             aDataPointAttr,TRUE,0,fPreOriPos,0));
-/*N*/ 
+/*N*/
 /*N*/ 									if (pDescription)
 /*N*/ 									{
 /*?*/ 										pDescription [nRow].aTextPos3D      = a3DPos;
 /*?*/ 										pDescription [nRow].aTextPos3D.X() += nBarWidthX / 2;
 /*?*/ 										pDescription [nRow].aTextPos3D.Y() += (fData<0)? 0: nBarHeight;
 /*?*/ 										pDescription [nRow].aTextPos3D.Z() += nBarWidthZ;
-/*?*/ 
+/*?*/
 /*?*/ 										if ((pDescription [nRow].eDescr == CHDESCR_PERCENT) ||
 /*?*/ 											(pDescription [nRow].eDescr == CHDESCR_TEXTANDPERCENT))
 /*?*/ 										{
@@ -1580,7 +1556,7 @@ namespace binfilter {
 /*?*/ 										{
 /*?*/ 											pDescription [nRow].fValue = GetData(nCol,nRow,FALSE);//#55586# fData;
 /*?*/ 										}
-/*?*/ 
+/*?*/
 /*?*/ 										pDescription [nRow].eAdjust = CHADJUST_CENTER_CENTER;
 /*N*/ 									}
 /*N*/ 								}
@@ -1589,16 +1565,16 @@ namespace binfilter {
 /*N*/ 							{
 /*?*/ 								pDescription [nRow].fValue = DBL_MIN;
 /*N*/ 							}
-/*N*/ 
+/*N*/
 /*N*/ 							a3DPos.X() += nBarWidthX;
 /*N*/ 							break;
-/*N*/ 
+/*N*/
 /*N*/ 						case CHSTYLE_3D_FLATBAR:
 /*N*/ 							if (fData != DBL_MIN)
 /*N*/ 							{
 /*N*/ 								double fRight;
 /*N*/ 								double fLeft;
-/*N*/ 
+/*N*/
 /*N*/ 								if (fData < fOriginY)
 /*N*/ 								{
 /*?*/ 									fRight	= fOriginY;
@@ -1609,25 +1585,25 @@ namespace binfilter {
 /*N*/ 									fLeft	= fOriginY;
 /*N*/ 									fRight	= fData;
 /*N*/ 								}
-/*N*/ 
+/*N*/
 /*N*/ 								long nLeft = Max ((long) (pChartYAxis->CalcFact(fLeft) * nW),0L);
 /*N*/ 								long nRight = Min ((long)(pChartYAxis->CalcFact(fRight) * nW),nW);
-/*N*/ 
+/*N*/
 /*N*/ 								{
 /*N*/ 									long nBarWidth = nRight - nLeft + 1;
 /*N*/ 									a3DPos.X() = nLeft;
-/*N*/ 
+/*N*/
 /*N*/                                     if (nRight > nLeft)
 /*N*/                                         pDataGroup[ nRow ]->Insert3DObj(Create3DBar(a3DPos, Vector3D(nBarWidth, nBarWidthX, nBarWidthZ), nCol, nRow,
 /*N*/                                                                             aDataPointAttr,TRUE,0,fPreOriPos,0));
-/*N*/ 
+/*N*/
 /*N*/ 									if (pDescription)
 /*N*/ 									{
 /*?*/ 										pDescription [nRow].aTextPos3D      = a3DPos;
 /*?*/ 										pDescription [nRow].aTextPos3D.X() += (fData<0)? 0: nBarWidth;
 /*?*/ 										pDescription [nRow].aTextPos3D.Y() += nBarWidthX / 2;
 /*?*/ 										pDescription [nRow].aTextPos3D.Z() += nBarWidthZ;
-/*?*/ 
+/*?*/
 /*?*/ 										if ((pDescription [nRow].eDescr == CHDESCR_PERCENT) ||
 /*?*/ 											(pDescription [nRow].eDescr == CHDESCR_TEXTANDPERCENT))
 /*?*/ 										{
@@ -1637,7 +1613,7 @@ namespace binfilter {
 /*?*/ 										{
 /*?*/ 											pDescription [nRow].fValue = GetData(nCol,nRow,FALSE);//#55586# fData;
 /*?*/ 										}
-/*?*/ 
+/*?*/
 /*?*/ 										pDescription [nRow].eAdjust = CHADJUST_CENTER_CENTER;
 /*N*/ 									}
 /*N*/ 								}
@@ -1646,50 +1622,50 @@ namespace binfilter {
 /*N*/ 							{
 /*?*/ 								pDescription [nRow].fValue = DBL_MIN;
 /*N*/ 							}
-/*N*/ 
+/*N*/
 /*N*/ 							a3DPos.Y() += nBarWidthX;
 /*N*/ 							break;
-/*N*/ 
+/*N*/
 /*N*/ 						case CHSTYLE_3D_STACKEDFLATCOLUMN:
 /*N*/ 						case CHSTYLE_3D_PERCENTFLATCOLUMN:
 /*N*/ 							if (fData != DBL_MIN)
 /*N*/ 							{
-/*?*/ 								double fTop;
-/*?*/ 								double fBottom;
-/*?*/ 
+/*?*/ 								double fLclTop;
+/*?*/ 								double fLclBottom;
+/*?*/
 /*?*/ 								if (fData < fOriginY)
 /*?*/ 								{
-/*?*/ 									fTop = fDataBottom;
-/*?*/ 									if (fTop == fOriginY) fDataBottom = fData;
+/*?*/ 									fLclTop = fDataBottom;
+/*?*/ 									if (fLclTop == fOriginY) fDataBottom = fData;
 /*?*/ 									else fDataBottom += fData;
-/*?*/ 									fBottom = fDataBottom;
+/*?*/ 									fLclBottom = fDataBottom;
 /*N*/ 								}
 /*N*/ 								else
 /*N*/ 								{
-/*N*/ 									fBottom = fDataTop;
-/*N*/ 									if (fBottom == fOriginY) fDataTop = fData;
+/*N*/ 									fLclBottom = fDataTop;
+/*N*/ 									if (fLclBottom == fOriginY) fDataTop = fData;
 /*N*/ 									else fDataTop += fData;
-/*N*/ 									fTop = fDataTop;
+/*N*/ 									fLclTop = fDataTop;
 /*N*/ 								}
-/*N*/ 
-/*N*/ 								long nTop =	Min((long)(pChartYAxis->CalcFact(fTop) * nH), nH);
-/*N*/ 								long nBottom = Max((long)(pChartYAxis->CalcFact(fBottom) * nH),0L);
-/*N*/ 
+/*N*/
+/*N*/ 								long nTop =	Min((long)(pChartYAxis->CalcFact(fLclTop) * nH), nH);
+/*N*/ 								long nBottom = Max((long)(pChartYAxis->CalcFact(fLclBottom) * nH),0L);
+/*N*/
 /*N*/ 								{
 /*N*/ 									long nBarHeight = nTop - nBottom + 1;
 /*N*/ 									a3DPos.Y() = nBottom;
-/*N*/ 
+/*N*/
 /*N*/                                     if (nTop > nBottom)
 /*N*/                                         pDataGroup[ nRow ]->Insert3DObj(Create3DBar(a3DPos, Vector3D(nColWidthX, nBarHeight, nBarWidthZ), nCol, nRow,
 /*N*/                                                                             aDataPointAttr,TRUE,fPreBottomPos,fPreOriPos,fPreTopPos));
-/*N*/ 
+/*N*/
 /*N*/ 									if (pDescription)
 /*?*/ 									{
 /*?*/ 										pDescription [nRow].aTextPos3D      = a3DPos;
 /*?*/ 										pDescription [nRow].aTextPos3D.X() += nColWidthX / 2;
 /*?*/ 										pDescription [nRow].aTextPos3D.Y() += nBarHeight / 2;
 /*?*/ 										pDescription [nRow].aTextPos3D.Z() += nBarWidthZ;
-/*?*/ 
+/*?*/
 /*?*/ 										if ((pDescription [nRow].eDescr == CHDESCR_PERCENT) ||
 /*?*/ 											(pDescription [nRow].eDescr == CHDESCR_TEXTANDPERCENT))
 /*?*/ 										{
@@ -1699,7 +1675,7 @@ namespace binfilter {
 /*?*/ 										{
 /*?*/ 											pDescription [nRow].fValue = GetData(nCol,nRow,FALSE);//#55586# fData;
 /*?*/ 										}
-/*?*/ 
+/*?*/
 /*?*/ 										pDescription [nRow].eAdjust = CHADJUST_CENTER_CENTER;
 /*N*/ 									}
 /*N*/ 								}
@@ -1709,14 +1685,14 @@ namespace binfilter {
 /*?*/ 								pDescription [nRow].fValue = DBL_MIN;
 /*N*/ 							}
 /*N*/ 							break;
-/*N*/ 
+/*N*/
 /*N*/ 						case CHSTYLE_3D_STACKEDFLATBAR:
 /*N*/ 						case CHSTYLE_3D_PERCENTFLATBAR:
 /*N*/ 							if (fData != DBL_MIN)
 /*N*/ 							{
 /*N*/ 								double fRight;
 /*N*/ 								double fLeft;
-/*N*/ 
+/*N*/
 /*N*/ 								if (fData < fOriginY)
 /*N*/ 								{
 /*?*/ 									fRight = fDataBottom;
@@ -1731,25 +1707,25 @@ namespace binfilter {
 /*N*/ 									else fDataTop += fData;
 /*N*/ 									fRight = fDataTop;
 /*N*/ 								}
-/*N*/ 
+/*N*/
 /*N*/ 								long nRight = Min((long)(pChartYAxis->CalcFact(fRight) * nW), nW);
 /*N*/ 								long nLeft = Max((long) (pChartYAxis->CalcFact(fLeft ) * nW), 0L);
-/*N*/ 
+/*N*/
 /*N*/ 								{
 /*N*/ 									long nBarWidth = nRight - nLeft + 1;
 /*N*/ 									a3DPos.X() = nLeft;
-/*N*/ 
+/*N*/
 /*N*/                                     if (nRight > nLeft)
 /*N*/                                         pDataGroup[ nRow ]->Insert3DObj(Create3DBar(a3DPos, Vector3D(nBarWidth, nColWidthX, nBarWidthZ), nCol, nRow,
 /*N*/                                                                             aDataPointAttr,TRUE,fPreBottomPos,fPreOriPos,fPreTopPos));
-/*N*/ 
+/*N*/
 /*N*/ 									if (pDescription)
 /*N*/ 									{
 /*?*/ 										pDescription [nRow].aTextPos3D      = a3DPos;
 /*?*/ 										pDescription [nRow].aTextPos3D.X() += nBarWidth / 2;
 /*?*/ 										pDescription [nRow].aTextPos3D.Y() += nColWidthX  / 2;
 /*?*/ 										pDescription [nRow].aTextPos3D.Z() += nBarWidthZ;
-/*?*/ 
+/*?*/
 /*?*/ 										if ((pDescription [nRow].eDescr == CHDESCR_PERCENT) ||
 /*?*/ 											(pDescription [nRow].eDescr == CHDESCR_TEXTANDPERCENT))
 /*?*/ 										{
@@ -1759,7 +1735,7 @@ namespace binfilter {
 /*?*/ 										{
 /*?*/ 											pDescription [nRow].fValue = GetData(nCol,nRow,FALSE);//#55586# fData;
 /*?*/ 										}
-/*?*/ 
+/*?*/
 /*?*/ 										pDescription [nRow].eAdjust = CHADJUST_CENTER_CENTER;
 /*N*/ 									}
 /*N*/ 								}
@@ -1769,13 +1745,10 @@ namespace binfilter {
 /*?*/ 								pDescription [nRow].fValue = DBL_MIN;
 /*N*/ 							}
 /*N*/ 							break;
+                            default: break;
 /*N*/ 					}
 /*N*/ 				}
-/*N*/ 
-/*N*/ 				//Dirty3D (nRowCnt, nCol, TRUE, pDescription, (eDataDescr != CHDESCR_NONE)&& bShowDataDescr
-/*N*/ 				//																	 ? pScene
-/*N*/ 				//																	 : NULL);
-/*N*/ 
+/*N*/
 /*N*/ 				// BM: moved here from Dirty3D.
 /*N*/ 				if( pDescription )
 /*N*/ 				{
@@ -1783,11 +1756,11 @@ namespace binfilter {
 /*?*/ 					{
 /*?*/ 						if (pScene && pDescription[nRow].fValue != DBL_MIN)
 /*?*/ 						{
-/*?*/ 						DBG_BF_ASSERT(0, "STRIP"); //STRIP001 	CreateDataDescr(pDescription[nRow], nCol, nRow, NULL, TRUE, TRUE);
+/*?*/ 						DBG_BF_ASSERT(0, "STRIP");
 /*?*/ 						}
 /*N*/ 					}
 /*N*/ 				}
-/*N*/ 
+/*N*/
 /*N*/ 				if (bSwitchColRow)
 /*N*/ 				{
 /*N*/ 					a3DPos.Y() += nBarWidthX ? nGapY * 2 : nPartWidth;
@@ -1799,7 +1772,7 @@ namespace binfilter {
 /*N*/ 					a3DPos.Y() = 0;
 /*N*/ 				}
 /*N*/ 			}
-/*N*/ 
+/*N*/
 /*N*/             // insert the data series sub-scenes if they contain any data points
 /*N*/             // (inserting empty scenes may corrupt the camera parameters of the
 /*N*/             // main scene.  See #109628#)
@@ -1809,14 +1782,14 @@ namespace binfilter {
 /*?*/                 if( pDataGroup[ nRow ]->GetSubList()->GetObjCount() > 0 )
 /*?*/                     pScene->Insert3DObj( pDataGroup[ nRow ] );
 /*N*/             }
-/*N*/ 
+/*N*/
 /*N*/ 			delete[] pDescription;
 /*N*/             delete[] pDataGroup;
-/*N*/ 
+/*N*/
 /*N*/ 			break;
 /*N*/ 		}
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	return (SdrObjGroup*) pScene;
 /*N*/ }
 
@@ -1829,44 +1802,44 @@ namespace binfilter {
 /*N*/ SdrObjGroup* ChartModel::Create3DNewPieChart(Rectangle &rRect)
 /*N*/ {
 /*N*/ 	SdrObjList  *pList=NULL;
-/*N*/ 
+/*N*/
 /*N*/ 	pChartYAxis->SetPercentMode( FALSE );	// percent is calculated using the row rather than the column
-/*N*/ 
+/*N*/
 /*N*/ 	pScene = CreateScene (rRect, *aLightVec, fSpotIntensity, aSpotColor,
 /*N*/ 						  fAmbientIntensity, aAmbientColor);
 /*N*/ 	const long nSize=FIXED_SIZE_FOR_3D_CHART_VOLUME;
-/*N*/ 
+/*N*/
 /*N*/ 	long	nW      = nSize;
 /*N*/ 	long	nH      = nSize;
 /*N*/ 	long    nZ      = nSize;//(nSize * 4) / 6;
-/*N*/ 
+/*N*/
 /*N*/ 	//erweiterung auf Donuts  emöglichen!
 /*N*/ 	long nColCnt = GetColCount();
 /*N*/ 	const short nRowCnt=1;//	long	nRowCnt = GetRowCount();
 /*N*/ 	const short nRow=0;
 /*N*/ 	short	nCol;//, nRow;
-/*N*/ 
+/*N*/
 /*N*/ 	long nZExtrude=nZ/3;
-/*N*/ 
+/*N*/
 /*N*/ 	Camera3D aCam(pScene->GetCamera());
 /*N*/ 	const long nDepth=-nZ;
-/*N*/ 
+/*N*/
 /*N*/ 	Vector3D aCamPos(0,0,nW/2);
 /*N*/ 	Vector3D aLookAt(0,0,nDepth/2);
 /*N*/ 	aCam.SetViewWindow(-nW/2, -nH/2, nW, nH);
 /*N*/ 	aCam.SetDefaults(aCamPos, aLookAt, 80, DEG2RAD(-(double)nZAngle / 10.0));
 /*N*/ 	aCam.Reset();
 /*N*/ 	aCam.SetProjection(eProjection);
-/*N*/ 
+/*N*/
 /*N*/ 	aCam.SetAspectMapping(AS_HOLD_SIZE);
 /*N*/ 	pScene->SetCamera(aCam);
 /*N*/ 	pScene->SetTransform(aSceneMatrix);
-/*N*/ 
+/*N*/
 /*N*/ 	//	Pie charts may not have titles of axes.
 /*N*/ 	bShowXAxisTitle = FALSE;
 /*N*/ 	bShowYAxisTitle = FALSE;
 /*N*/ 	bShowZAxisTitle = FALSE;
-/*N*/ 
+/*N*/
 /*N*/ 	// Max. bestimmen
 /*N*/ 	double fTotal=0.0;
 /*N*/ 	long nSegments=0;
@@ -1881,22 +1854,22 @@ namespace binfilter {
 /*N*/ 	}
 /*N*/ 	if(!nSegments || fTotal == 0.0)
 /*N*/ 		return (SdrObjGroup*) pScene;
-/*N*/ 
+/*N*/
 /*N*/ 	Rectangle aPieRect;
 /*N*/ 	aPieRect=Rectangle(Point(-nW/2,-nH/2),Size(nW,nH)); // rect in which the pie is drawn
-/*N*/ 
+/*N*/
 /*N*/ 	const long nMaxAngle=36000;
 /*N*/ 	long nPos=0;
 /*N*/ 	E3dDefaultAttributes aDefltAttr3D;
-/*N*/ 
+/*N*/
 /*N*/ 	long nEndAngle=0;
 /*N*/ 	long nStartAngle=0;
-/*N*/ 
+/*N*/
 /*N*/ 	ChartDataDescription aDescr(nColCnt,nRowCnt,pList,this,bShowDataDescr);
-/*N*/ 
+/*N*/
 /*N*/ 	Point aCenter = aPieRect.Center();
 /*N*/ 	Size aPieRectSize = aPieRect.GetSize();
-/*N*/ 
+/*N*/
 /*N*/ 	for (nCol = 0; nCol < nColCnt; nCol++)
 /*N*/ 	{
 /*N*/ 		double fValue = fabs(GetData( nCol,nRow));
@@ -1906,16 +1879,16 @@ namespace binfilter {
 /*N*/ 			SfxItemSet aDataPointAttr(GetFullDataPointAttr(nCol,nRow));
 /*N*/ 			nStartAngle=nEndAngle;
 /*N*/ 			nEndAngle+=(long)((fValue/fTotal)*nMaxAngle);
-/*N*/ 
+/*N*/
 /*N*/ 			// for last segment use exact value to avoid accumulated errors
 /*N*/ 			if( nPos == nSegments )
 /*N*/ 				nEndAngle = 36000;
-/*N*/ 
+/*N*/
 /*N*/ 			if(nEndAngle>nMaxAngle)
 /*N*/ 				nEndAngle-=nMaxAngle;
-/*N*/ 
+/*N*/
 /*N*/ 			XPolyPolygon aPolyPolygon;
-/*N*/ 
+/*N*/
 /*N*/ 			// if the angle of the sector is too small the conversion method produces an error
 /*N*/ 			// especially as angles are rounded to integers / 10
 /*N*/ 			if( nEndAngle - nStartAngle < 10 )	// approximate as triangle
@@ -1925,12 +1898,12 @@ namespace binfilter {
 /*?*/ 					fAngleEnd = (double)(nEndAngle) * F_PI / 18000.0,
 /*?*/ 					fRadiusX = (double)(aPieRectSize.Width()) / 2.0,
 /*?*/ 					fRadiusY = (double)(aPieRectSize.Height()) / 2.0;
-/*?*/ 
+/*?*/
 /*?*/ 				aPoly[ 0 ] = aCenter;
 /*?*/ 				aPoly[ 1 ] = Point( (long)(aCenter.X() + fRadiusX * cos( fAngleStart )), (long)(aCenter.Y() - fRadiusY * sin( fAngleStart )) );
 /*?*/ 				aPoly[ 2 ] = Point( (long)(aCenter.X() + fRadiusX * cos( fAngleEnd )), (long)(aCenter.Y() - fRadiusY * sin( fAngleEnd )) );
 /*?*/ 				aPoly[ 3 ] = aCenter;
-/*?*/ 
+/*?*/
 /*?*/ 				aPolyPolygon.Insert( aPoly );
 /*N*/ 			}
 /*N*/ 			else		// create a polygon
@@ -1938,11 +1911,11 @@ namespace binfilter {
 /*N*/ 				SdrCircObj aSegment( OBJ_SECT, aPieRect, nStartAngle, nEndAngle);
 /*N*/ 				GetPage(0)->NbcInsertObject( &aSegment, 0 );
 /*N*/ 				SdrPathObj* pTmp = (SdrPathObj*)aSegment.ConvertToPolyObj( FALSE, FALSE );
-/*N*/ 
+/*N*/
 /*N*/ 				// Add two extra points near the end of the arc so that
 /*N*/ 				// the lighting of the 3d object is smoothed
 /*N*/ 				XPolygon aPoly( pTmp->GetPathPoly().GetObject(0) );
-/*N*/ 
+/*N*/
 /*N*/ 				long nEnd = aPoly.GetPointCount();
 /*N*/ 				if( nEnd > 3 )
 /*N*/ 				{
@@ -1956,48 +1929,45 @@ namespace binfilter {
 /*N*/ 					aPoly.Insert( 2, aP1, XPOLY_NORMAL );
 /*N*/ 				}
 /*N*/ 				aPolyPolygon.Insert( aPoly );
-/*N*/ 
+/*N*/
 /*N*/ 				GetPage( 0 )->RemoveObject( 0 );
 /*N*/ 			}
-/*N*/ 
+/*N*/
 /*N*/ 			SchE3dExtrudeObj* pObj=new SchE3dExtrudeObj(aDefltAttr3D,
 /*N*/ 				aPolyPolygon,nZExtrude);
-/*N*/ 
+/*N*/
 /*N*/ 			DBG_ASSERT( pObj, "couldn't create extrude object" );
-/*N*/ 
+/*N*/
 /*N*/ 			// default attributes reset the texture projection items so set them explicitly
 /*N*/ 			// use object specific projection in y direction
-/*N*/ //-/			pObj->SetUseStdTextureY( FALSE );
 /*N*/ 			pObj->SetItem( Svx3DTextureProjectionYItem( 0 ));
 /*N*/ 			pObj->SetItem( Svx3DDoubleSidedItem( TRUE ));
-/*N*/  
+/*N*/
 /*N*/ 			pScene->Insert3DObj(pObj);
 /*N*/ 			pObj->InsertUserData(new SchDataPoint(nCol, nRow));
 /*N*/ 			pObj->InsertUserData (new SchObjectId (CHOBJID_DIAGRAM_DATA));
 /*N*/ 			pObj->SetMoveProtect(TRUE);
 /*N*/ 			pObj->SetResizeProtect(TRUE);
 /*N*/ 			pObj->SetModel(this);
-/*N*/ 
-/*N*/ //-/			pObj->NbcSetAttributes(aDataPointAttr,FALSE);
+/*N*/
 /*N*/ 			pObj->SetItemSet(aDataPointAttr);
-/*N*/ 
-/*N*/ 
+/*N*/
+/*N*/
 /*N*/ 			Matrix4D aMatrix;
 /*N*/ 			aMatrix.TranslateZ(-nZExtrude/2);
 /*N*/ 			pObj->NbcSetTransform(aMatrix);
-/*N*/ 
-/*N*/ 
+/*N*/
+/*N*/
 /*N*/ 			if(aDescr.Enabled())
 /*N*/ 			{
-/*N*/ 				double fZPos = (double)nZExtrude / 2.0;
 /*N*/ 				DataDescription* pDescr=aDescr.Insert(nCol,nRow,aDataPointAttr,Point(0,0),FALSE,CHADJUST_BOTTOM_CENTER,pChartYAxis);
 /*N*/ 				if(pDescr)
-/*?*/ 				{DBG_BF_ASSERT(0, "STRIP"); }//STRIP001 	Segment3DDescr(*pDescr,aPieRect,nStartAngle,nEndAngle,0,aPieRect.GetWidth()/2,aPieRect.GetWidth()/2,fZPos);
+/*?*/ 				{DBG_BF_ASSERT(0, "STRIP"); }
 /*N*/ 			}
 /*N*/ 		}
 /*N*/ 	}
 /*N*/ 	aDescr.Build3D(pScene);
-/*N*/ 
+/*N*/
 /*N*/ 	return (SdrObjGroup*) pScene;
 /*N*/ }
 
@@ -2011,18 +1981,18 @@ namespace binfilter {
 /*N*/ {
 /*N*/ 	SdrPage *pPage = GetPage (0);
 /*N*/ 	Size aPageSize = pPage->GetSize();
-/*N*/ 
+/*N*/
 /*N*/ 	if (bShowXAxisTitle)
 /*N*/ 	{
 /*N*/ 		SdrObject *pXAxisTitleObj = GetObjWithId(CHOBJID_DIAGRAM_TITLE_X_AXIS, *pPage);
 /*N*/ 		if (pXAxisTitleObj != NULL)
 /*N*/ 		{
 /*N*/ 			Rectangle aXAxisOutRect = pXAxisTitleObj->GetBoundRect();
-/*N*/ 
+/*N*/
 /*N*/ 			Point aXAxesTitlePosition (rSceneRect.Left () + (int) (rSceneRect.GetWidth () / 2),
 /*N*/ 									   Min ((long) aChartRect.Bottom(),
 /*N*/ 											(long) (rSceneRect.Bottom () + aXAxisOutRect.GetHeight()) ));
-/*N*/ 
+/*N*/
 /*N*/ 			if (GetXAxisTitleHasBeenMoved() && GetUseRelativePositions() &&
 /*N*/ 				(aXAxesTitlePosition.X() > 0) && (aXAxesTitlePosition.Y() > 0))
 /*N*/ 			{
@@ -2044,17 +2014,17 @@ namespace binfilter {
 /*N*/ 			SetTextPos((SdrTextObj &) *pXAxisTitleObj, aXAxesTitlePosition,pXAxisTitleAttr);
 /*N*/ 		}
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	if (bShowYAxisTitle)
 /*N*/ 	{
 /*N*/ 		SdrObject *pYAxisTitleObj = GetObjWithId(CHOBJID_DIAGRAM_TITLE_Y_AXIS, *pPage);
 /*N*/ 		if (pYAxisTitleObj != NULL)
 /*N*/ 		{
 /*N*/ 			Rectangle aYAxisOutRect = pYAxisTitleObj->GetBoundRect();
-/*N*/ 
+/*N*/
 /*N*/ 			Point aYAxesTitlePosition (Max (1l, (long) (rSceneRect.Left () - 2 * aYAxisOutRect.GetWidth ())),
 /*N*/ 									   Max (1l, (long) (rSceneRect.Top () + rSceneRect.GetHeight () / 2)));
-/*N*/ 
+/*N*/
 /*N*/ 			if (GetYAxisTitleHasBeenMoved() && GetUseRelativePositions() &&
 /*N*/ 				(aYAxesTitlePosition.X() >= 0) && (aYAxesTitlePosition.Y() > 0))
 /*N*/ 			{
@@ -2076,22 +2046,22 @@ namespace binfilter {
 /*N*/ 			}
 /*N*/ 			SetTextPos((SdrTextObj &) *pYAxisTitleObj, aYAxesTitlePosition,pYAxisTitleAttr);
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	if (bShowZAxisTitle)
 /*N*/ 	{
 /*N*/ 		SdrObject *pZAxisTitleObj = GetObjWithId(CHOBJID_DIAGRAM_TITLE_Z_AXIS, *pPage);
 /*N*/ 		if (pZAxisTitleObj != NULL)
 /*N*/ 		{
 /*N*/ 			Rectangle aZAxisOutRect = pZAxisTitleObj->GetBoundRect();
-/*N*/ 
-/*N*/ 
+/*N*/
+/*N*/
 /*N*/ 			Point aZAxesTitlePosition( (long)(0.95 * rSceneRect.Right()),
 /*N*/                                        (long)Min ((long) aChartRect.Bottom(),
 /*N*/                                                   (long) (rSceneRect.Bottom () - aZAxisOutRect.GetHeight())));
-/*N*/ 
-/*N*/ 
+/*N*/
+/*N*/
 /*N*/ 			if (GetZAxisTitleHasBeenMoved() && GetUseRelativePositions() &&
 /*N*/ 				(aZAxesTitlePosition.X() > 0) && (aZAxesTitlePosition.Y() > 0))
 /*N*/ 			{
@@ -2108,12 +2078,12 @@ namespace binfilter {
 /*N*/ 			}
 /*N*/ 			SetTextPos((SdrTextObj &) *pZAxisTitleObj, aZAxesTitlePosition,pZAxisTitleAttr);
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	aInitialSizefor3d = aInitialSize;
 /*N*/ }
 
-
-
 }
+
+/* vim:set shiftwidth=4 softtabstop=4 expandtab: */

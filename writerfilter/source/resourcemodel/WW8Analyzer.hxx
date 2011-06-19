@@ -1,7 +1,8 @@
+/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -30,7 +31,7 @@
 
 #include <resourcemodel/WW8ResourceModel.hxx>
 
-#include <hash_set>
+#include <boost/unordered_set.hpp>
 #include <map>
 
 namespace writerfilter
@@ -42,12 +43,12 @@ struct eqSalUInt32
     bool operator () (sal_uInt32 n1, sal_uInt32 n2) const;
 };
 
-class WW8Analyzer : public Properties, public Table, 
+class WW8Analyzer : public Properties, public Table,
                     public BinaryObj, public Stream
 {
     typedef map<sal_uInt32, sal_uInt32> SprmMap;
 
-    typedef hash_set<sal_uInt32, hash<sal_uInt32>, eqSalUInt32> IdSet;
+    typedef boost::unordered_set<sal_uInt32, boost::hash<sal_uInt32>, eqSalUInt32> IdSet;
     typedef map<Id, sal_uInt32> AttributeMap;
 
     mutable SprmMap mSprmMap;
@@ -69,7 +70,7 @@ public:
     virtual void entry(int pos, writerfilter::Reference<Properties>::Pointer_t ref);
 
     // BinaryObj
-    
+
     virtual void data(const sal_uInt8* buf, size_t len,
                       writerfilter::Reference<Properties>::Pointer_t ref);
 
@@ -84,9 +85,9 @@ public:
     virtual void text(const sal_uInt8 * data, size_t len);
     virtual void utext(const sal_uInt8 * data, size_t len);
     virtual void props(writerfilter::Reference<Properties>::Pointer_t ref);
-    virtual void table(Id name, 
+    virtual void table(Id name,
                        writerfilter::Reference<Table>::Pointer_t ref);
-    virtual void substream(Id name, 
+    virtual void substream(Id name,
                            writerfilter::Reference<Stream>::Pointer_t ref);
     virtual void info(const string & info);
     virtual void startShape( ::com::sun::star::uno::Reference< ::com::sun::star::drawing::XShape > xShape );
@@ -97,3 +98,5 @@ public:
 }
 
 #endif // INCLUDED_WW8_ANALYZER_HXX
+
+/* vim:set shiftwidth=4 softtabstop=4 expandtab: */

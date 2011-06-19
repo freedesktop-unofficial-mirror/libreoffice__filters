@@ -1,7 +1,8 @@
+/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -29,9 +30,7 @@
 
 #include <stdio.h>
 
-#ifndef _COM_SUN_STAR_UCB_INTERACTIVEAUGMENTEDIOEXCEPTION_HPP_
 #include <com/sun/star/ucb/InteractiveAugmentedIOException.hpp>
-#endif
 
 #include <ucbhelper/content.hxx>
 #include <tools/urlobj.hxx>
@@ -144,7 +143,7 @@ static const char pStorageName[] = "Configurations";
 /*N*/         SfxConfigItem_Impl* pItem = (*pItemArr)[i];
 /*N*/         if ( pItem->pCItem )
 /*N*/         {
-/*?*/             DBG_ERROR("SfxConfigItem not removed!");
+/*?*/             OSL_FAIL("SfxConfigItem not removed!");
 /*?*/             pItem->pCItem->ReleaseConfigManager();
 /*N*/         }
 /*N*/ 		delete pItem;
@@ -160,8 +159,8 @@ static const char pStorageName[] = "Configurations";
 /*?*/ 	return pDocStor->OpenSotStorage( String::CreateFromAscii(pStorageName), STREAM_STD_READWRITE );
 /*?*/ }
 
-/*?*/ void SfxConfigManager::SetModified(BOOL bMod)
-/*?*/ {DBG_BF_ASSERT(0, "STRIP"); //STRIP001
+/*?*/ void SfxConfigManager::SetModified(BOOL /*bMod*/)
+/*?*/ {DBG_BF_ASSERT(0, "STRIP");
 /*?*/ }
 
 /*N*/ BOOL SfxConfigManager::HasConfiguration( SotStorage& rStorage )
@@ -185,9 +184,9 @@ static const char pStorageName[] = "Configurations";
 /*N*/
 /*N*/     SvStorageInfoList aList;
 /*N*/     rStorage.FillInfoList( &aList );
-/*N*/     for( USHORT i = 0; i < aList.Count(); i++ )
+/*N*/     for( size_t i = 0; i < aList.size(); i++ )
 /*N*/     {
-/*?*/         SvStorageInfo& rInfo = aList.GetObject( i );
+/*?*/         SvStorageInfo& rInfo = aList[ i ];
 /*?*/         if ( rInfo.IsStream() )
 /*?*/         {
 /*?*/             // get StreamName and ItemType
@@ -233,7 +232,7 @@ static const char pStorageName[] = "Configurations";
 /*N*/     if ( m_xStorage.Is() )
 /*N*/     {
 /*N*/         // first update own storage
-/*N*/         bRet = !bModified || StoreConfiguration_Impl( m_xStorage ) && m_xStorage->Commit();
+/*N*/         bRet = !bModified || (StoreConfiguration_Impl( m_xStorage ) && m_xStorage->Commit());
 /*N*/         bOwnSaveDone = TRUE;
 /*N*/         if ( !pStorage && pObjShell )
 /*N*/         {
@@ -268,7 +267,7 @@ static const char pStorageName[] = "Configurations";
 /*?*/             }
 /*N*/         }
 /*N*/
-/*N*/         if ( bRet && !pStorage || pStorage == (SotStorage*) m_xStorage )
+/*N*/         if ( (bRet && !pStorage) || pStorage == (SotStorage*) m_xStorage )
 /*N*/         {
 /*N*/             // only storing into own storage was requested
 /*N*/             bModified = FALSE;
@@ -307,8 +306,8 @@ static const char pStorageName[] = "Configurations";
 /*?*/     return bRet;
 /*N*/ }
 
-/*?*/ BOOL SfxConfigManager::StoreConfiguration_Impl( SotStorage* pStorage )
-/*?*/ {DBG_BF_ASSERT(0, "STRIP"); //STRIP001
+/*?*/ BOOL SfxConfigManager::StoreConfiguration_Impl( SotStorage* /*pStorage*/ )
+/*?*/ {DBG_BF_ASSERT(0, "STRIP");
 /*?*/     BOOL bRet = TRUE;
 /*?*/     return bRet;
 /*?*/ }
@@ -329,7 +328,7 @@ static const char pStorageName[] = "Configurations";
 /*N*/ #ifdef DBG_UTIL
 /*N*/                 for ( USHORT nItem=0; nItem<nCount; nItem++ )
 /*N*/                     if ( rItems[nItem] == &rCItem )
-/*N*/                         DBG_ERROR("Item already inserted!");
+/*N*/                         OSL_FAIL("Item already inserted!");
 /*N*/ #endif
 /*N*/                 rItems.Insert( &rCItem, nCount );
 /*N*/             }
@@ -377,7 +376,7 @@ static const char pStorageName[] = "Configurations";
 /*N*/         }
 /*N*/     }
 /*N*/
-/*N*/     DBG_ERROR( "Item not registered!" );
+/*N*/     OSL_FAIL( "Item not registered!" );
 /*N*/ }
 
 /*N*/ BOOL SfxConfigManager::LoadConfigItem( SfxConfigItem& rCItem )
@@ -417,7 +416,7 @@ static const char pStorageName[] = "Configurations";
 /*N*/             }
 /*N*/             else
 /*N*/             {
-/*N*/                 DBG_ERROR("Item without Storage!");
+/*N*/                 OSL_FAIL("Item without Storage!");
 /*N*/                 rCItem.UseDefault();
 /*N*/                 return FALSE;
 /*N*/             }
@@ -426,19 +425,19 @@ static const char pStorageName[] = "Configurations";
 /*N*/         }
 /*N*/     }
 /*N*/
-/*N*/     DBG_ERROR("ItemType not registered!");
+/*N*/     OSL_FAIL("ItemType not registered!");
 /*N*/     return FALSE;
 /*N*/ }
 
-/*?*/ BOOL SfxConfigManager::StoreConfigItem( SfxConfigItem& rCItem )
-/*?*/ {DBG_BF_ASSERT(0, "STRIP");return FALSE;//STRIP001
+/*?*/ BOOL SfxConfigManager::StoreConfigItem( SfxConfigItem& /*rCItem*/ )
+/*?*/ {DBG_BF_ASSERT(0, "STRIP");return FALSE;
 /*?*/ }
 
 /*N*/ static const char pHeader[] = "Star Framework Config File";
 /*N*/ #define CFG_STREAM_BUFFER_SIZE  5000
 /*N*/ static const USHORT nVersion = 26;
 /*N*/ static const char cCtrlZ = 26;
-/*N*/ 
+/*N*/
 /*N*/ static const USHORT nTypesCount = 82;
 
 /*N*/ BOOL SfxConfigManagerImExport_Impl::HasConfiguration( SotStorage& rStorage )
@@ -452,13 +451,13 @@ static const char pStorageName[] = "Configurations";
 /*N*/         pInStorage->OpenSotStream( String::CreateFromAscii(pHeader), STREAM_STD_READ );
 /*N*/ 	if ( aStr->GetError() )
 /*N*/ 		return SfxConfigManager::ERR_OPEN;
-/*N*/ 
+/*N*/
 /*N*/ 	SvStream* pStream = aStr;
 /*N*/ 	pStream->SetVersion( SOFFICE_FILEFORMAT_40 );
 /*N*/ 	pStream->SetBufferSize( CFG_STREAM_BUFFER_SIZE );
 /*N*/ 	pStream->Seek(0);
 /*N*/ 	USHORT nRet = SfxConfigManager::ERR_NO;
-/*N*/ 
+/*N*/
 /*N*/ 	// check header
 /*N*/ 	const unsigned nLen = strlen( pHeader );
 /*N*/ 	char *pBuf = new char[nLen+1];
@@ -469,9 +468,9 @@ static const char pStorageName[] = "Configurations";
 /*N*/ 		delete[] pBuf;
 /*?*/ 		return SfxConfigManager::ERR_FILETYPE;
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	delete[] pBuf;
-/*N*/ 
+/*N*/
 /*N*/ 	// compare version
 /*N*/ 	char c;
 /*N*/ 	USHORT nFileVersion;
@@ -481,22 +480,22 @@ static const char pStorageName[] = "Configurations";
 /*N*/ 	{
 /*?*/ 		return SfxConfigManager::ERR_VERSION;
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	// get position of directory
-/*N*/ 	long lDirPos, lStart = pStream->Tell();
+/*N*/ 	long lDirPos;
 /*N*/ 	(*pStream) >> lDirPos;
 /*N*/ 	pStream->Seek(lDirPos);
-/*N*/ 
+/*N*/
 /*N*/ 	// get number of items
 /*N*/ 	USHORT nCount;
 /*N*/ 	(*pStream) >> nCount;
-/*N*/ 
+/*N*/
 /*N*/ 	// read in directory and convert items
 /*N*/ 	for( USHORT i=0; i < nCount; ++i )
 /*N*/ 	{
 /*N*/ 		SfxConfigItem_Impl* pItem = new SfxConfigItem_Impl;
 /*N*/ 		pItemArr->Insert( pItem, pItemArr->Count() );
-/*N*/ 
+/*N*/
 /*N*/ 		// retrieve type of item and human readable name
 /*N*/ 		long lLength, lPos;	            // dummies
 /*N*/         (*pStream) >> pItem->nType >> lPos >> lLength;
@@ -507,7 +506,7 @@ static const char pStorageName[] = "Configurations";
 /*?*/             pItem->bDefault = TRUE;
 /*?*/             return SfxConfigManager::ERR_READ;
 /*N*/         }
-/*N*/ 
+/*N*/
 /*N*/ 		// convert into new format
 /*N*/         if ( !pItem->bDefault )
 /*N*/         {
@@ -517,29 +516,29 @@ static const char pStorageName[] = "Configurations";
 /*N*/             {
 /*N*/                 long lOldPos = pStream->Tell();
 /*N*/                 pStream->Seek( lPos );
-/*N*/ 
+/*N*/
 /*N*/                 // check for correct type id, inequality is allowed for userdef toolboxes
 /*N*/                 USHORT nType;
 /*N*/                 (*pStream) >> nType;
-/*N*/                 BOOL bOk = ( nType == pItem->nType ||
-/*N*/                             1294 <= nType && nType <= 1301 &&
-/*N*/                             1294 <= pItem->nType && pItem->nType <= 1301 );
-/*N*/ 
+/*N*/                 BOOL bOk = ( (nType == pItem->nType) ||
+/*N*/                             (1294 <= nType && nType <= 1301 &&
+/*N*/                             1294 <= pItem->nType && pItem->nType <= 1301) );
+/*N*/
 /*N*/                 if ( !bOk || !ImportItem( pItem, pStream, pStorage ) )
 /*N*/                 {
 /*?*/                     pItem->bDefault = TRUE;
 /*?*/                     nRet = SfxConfigManager::ERR_IMPORT;
 /*N*/                 }
-/*N*/ 
+/*N*/
 /*N*/                 pStream->Seek( lOldPos );
 /*N*/             }
 /*N*/             else
 /*N*/             {
-/*N*/                 DBG_ERROR("Couldn't convert old configuration!");
+/*N*/                 OSL_FAIL("Couldn't convert old configuration!");
 /*N*/                 // force error message that saving this document would lose some configuration information
 /*N*/             }
 /*N*/         }
-/*N*/ 
+/*N*/
 /*N*/         if ( !pItem->aStreamName.Len() )
 /*N*/ 		{
 /*N*/             // no real config item anymore
@@ -547,11 +546,11 @@ static const char pStorageName[] = "Configurations";
 /*N*/ 			pItemArr->Remove( pItemArr->Count() - 1 );
 /*N*/ 		}
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	return nRet;
 /*N*/ }
 
-/*N*/ BOOL SfxConfigManagerImExport_Impl::ImportItem( SfxConfigItem_Impl* pItem, SvStream* pStream, SotStorage* pStor )
+/*N*/ BOOL SfxConfigManagerImExport_Impl::ImportItem( SfxConfigItem_Impl* pItem, SvStream* pStream, SotStorage* /*pStor*/ )
 /*N*/ {
 /*N*/ 	BOOL bRet = TRUE;
 /*N*/ 	if ( pItem->nType == SFX_ITEMTYPE_DOCEVENTCONFIG )
@@ -564,26 +563,28 @@ static const char pStorageName[] = "Configurations";
          return bRet;
 /*N*/ }
 
-/*?*/ USHORT SfxConfigManagerImExport_Impl::Export( SotStorage* pStor, SotStorage *pOut )
-/*?*/ {DBG_BF_ASSERT(0, "STRIP"); return 0;//STRIP001 
+/*?*/ USHORT SfxConfigManagerImExport_Impl::Export( SotStorage* /*pStor*/, SotStorage* /*pOut*/ )
+/*?*/ {DBG_BF_ASSERT(0, "STRIP"); return 0;
 /*?*/ }
 
 /*N*/ String SfxConfigManagerImExport_Impl::GetStreamName( USHORT nType )
 /*N*/ {
 /*N*/         if ( 11 == nType )
 /*N*/             return String::CreateFromAscii( "eventbindings.xml" );
-/*?*/ 
+/*?*/
 /*?*/     return String();
 /*N*/ }
 
 /*?*/ USHORT SfxConfigManagerImExport_Impl::GetType( const String& rStreamName )
 /*?*/ {
 /*NBFF*/     ByteString aCmp( rStreamName, RTL_TEXTENCODING_ASCII_US );
-/*NBFF*/ 
+/*NBFF*/
 /*NBFF*/         if ( !strcmp( aCmp.GetBuffer(), "eventbindings.xml" ) )
 /*NBFF*/             return 11;
-/*NBFF*/ 
+/*NBFF*/
 /*?*/     return 0;
 /*?*/ }
 
 }
+
+/* vim:set shiftwidth=4 softtabstop=4 expandtab: */

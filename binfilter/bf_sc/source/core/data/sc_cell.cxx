@@ -1,7 +1,8 @@
+/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -25,9 +26,6 @@
  *
  ************************************************************************/
 
-#ifdef PCH
-#endif
-
 #ifdef _MSC_VER
 #pragma hdrstop
 #endif
@@ -42,7 +40,8 @@
 #include <mac_end.h>
 #endif
 
-#if defined (SOLARIS) || defined (FREEBSD)
+#if defined(SOLARIS) || defined(FREEBSD) || defined(NETBSD) || \
+    defined(OPENBSD) || defined(DRAGONFLY)
 #include <ieeefp.h>
 #elif ( defined ( LINUX ) && ( GLIBC < 2 ) )
 #include <i386/ieeefp.h>
@@ -97,15 +96,12 @@ namespace binfilter {
 INT8 ScFormulaCell::nIterMode = 0;
 
 #ifdef DBG_UTIL
-static const sal_Char __FAR_DATA msgDbgInfinity[] =
+static const sal_Char msgDbgInfinity[] =
     "Formelzelle INFINITY ohne Err503 !!! (os/2?)\n"
     "NICHTS anruehren und ER bescheid sagen!";
 #endif
 
 // -----------------------------------------------------------------------
-
-DECLARE_LIST (ScFormulaCellList, ScFormulaCell*)//STRIP008 ;
-
 
 /*N*/ ScBaseCell* ScBaseCell::Clone(ScDocument* pDoc) const
 /*N*/ {
@@ -123,7 +119,7 @@ DECLARE_LIST (ScFormulaCellList, ScFormulaCell*)//STRIP008 ;
 /*N*/ 		case CELLTYPE_NOTE:
 /*N*/ 			return new ScNoteCell(*(const ScNoteCell*)this);
 /*N*/ 		default:
-/*N*/ 			DBG_ERROR("Unbekannter Zellentyp");
+/*N*/ 			OSL_FAIL("Unbekannter Zellentyp");
 /*N*/ 			return NULL;
 /*N*/ 	}
 /*N*/ }
@@ -156,7 +152,7 @@ DECLARE_LIST (ScFormulaCellList, ScFormulaCell*)//STRIP008 ;
 /*N*/ 			delete (ScNoteCell*) this;
 /*N*/ 			break;
 /*N*/ 		default:
-/*N*/ 			DBG_ERROR("Unbekannter Zellentyp");
+/*N*/ 			OSL_FAIL("Unbekannter Zellentyp");
 /*N*/ 			break;
 /*N*/ 	}
 /*N*/ }
@@ -180,7 +176,7 @@ DECLARE_LIST (ScFormulaCellList, ScFormulaCell*)//STRIP008 ;
 /*N*/ 		rNote = *pNote;
 /*N*/ 	else
 /*?*/ 		rNote.Clear();
-/*N*/ 
+/*N*/
 /*N*/ 	return ( pNote != NULL );
 /*N*/ }
 
@@ -212,7 +208,7 @@ DECLARE_LIST (ScFormulaCellList, ScFormulaCell*)//STRIP008 ;
 /*M*/ 		)
 /*M*/ 	{
 /*M*/ 		pDoc->SetDetectiveDirty(TRUE);	// es hat sich was geaendert...
-/*M*/ 
+/*M*/
 /*M*/ 		ScFormulaCell* pFormCell = (ScFormulaCell*)this;
 /*M*/         ScTokenArray* pArr = pFormCell->GetCode();
 /*M*/ 		if( pArr->IsRecalcModeAlways() )
@@ -235,7 +231,7 @@ DECLARE_LIST (ScFormulaCellList, ScFormulaCell*)//STRIP008 ;
 /*M*/                     bDo = TRUE;
 /*M*/                 else
 /*M*/                 {
-/*M*/                     DBG_BF_ASSERT(0, "STRIP"); //STRIP001 bDo = pArr->IsReplacedSharedFormula();
+/*M*/                     DBG_BF_ASSERT(0, "STRIP");
 /*M*/                 }
 /*M*/                 if ( bDo )
 /*M*/ 				{
@@ -290,6 +286,8 @@ DECLARE_LIST (ScFormulaCellList, ScFormulaCell*)//STRIP008 ;
 /*M*/ 								}
 /*M*/ 							}
 /*M*/ 						break;
+/*M*/ 						default:
+/*M*/ 						break;
 /*M*/ 					}
 /*M*/ 				}
 /*M*/ 			}
@@ -309,7 +307,7 @@ DECLARE_LIST (ScFormulaCellList, ScFormulaCell*)//STRIP008 ;
 /*N*/ 		)
 /*N*/ 	{
 /*N*/ 		pDoc->SetDetectiveDirty(TRUE);	// es hat sich was geaendert...
-/*N*/ 
+/*N*/
 /*N*/ 		ScFormulaCell* pFormCell = (ScFormulaCell*)this;
 /*N*/ 		if( pFormCell->GetCode()->IsRecalcModeAlways() )
 /*?*/ 			pDoc->EndListeningArea( BCA_LISTEN_ALWAYS, pFormCell );
@@ -337,7 +335,7 @@ DECLARE_LIST (ScFormulaCellList, ScFormulaCell*)//STRIP008 ;
 /*?*/                     if ( nOnlyNames & SC_LISTENING_NAMES_REL )
 /*?*/                         bDo |= (rRef1.IsRelName() || rRef2.IsRelName());
 /*?*/                     if ( nOnlyNames & SC_LISTENING_NAMES_ABS )
-/*?*/                    {  DBG_BF_ASSERT(0, "STRIP");} //STRIP001    bDo |= t->IsRPNReferenceAbsName();
+/*?*/                    {  DBG_BF_ASSERT(0, "STRIP");}
 /*?*/                     if ( nOnlyNames & SC_LISTENING_EXCEPT )
 /*?*/                         bDo = !bDo;
 /*N*/                 }
@@ -393,6 +391,8 @@ DECLARE_LIST (ScFormulaCellList, ScFormulaCell*)//STRIP008 ;
 /*N*/ 										rRef2.nTab ), pFormCell );
 /*N*/ 								}
 /*N*/ 							}
+/*N*/ 						break;
+/*N*/ 						default:
 /*N*/ 						break;
 /*N*/ 					}
 /*N*/ 				}
@@ -471,7 +471,7 @@ DECLARE_LIST (ScFormulaCellList, ScFormulaCell*)//STRIP008 ;
 /*N*/ 	}
 /*N*/ 	if ( eType1 != eType2 )
 /*N*/ 		return FALSE;
-/*N*/ 
+/*N*/
 /*N*/ 	switch ( eType1 )				// beide Typen gleich
 /*N*/ 	{
 /*N*/ 		case CELLTYPE_NONE:			// beide leer
@@ -498,10 +498,10 @@ DECLARE_LIST (ScFormulaCellList, ScFormulaCell*)//STRIP008 ;
 /*N*/ 				//!	eingefuegte Zeilen / Spalten beruecksichtigen !!!!!
 /*N*/ 				//!	Vergleichsfunktion an der Formelzelle ???
 /*N*/ 				//!	Abfrage mit ScColumn::SwapRow zusammenfassen!
-/*N*/ 
+/*N*/
 /*N*/ 				ScTokenArray* pCode1 = ((ScFormulaCell*)pCell1)->GetCode();
 /*N*/ 				ScTokenArray* pCode2 = ((ScFormulaCell*)pCell2)->GetCode();
-/*N*/ 
+/*N*/
 /*N*/ 				if (pCode1->GetLen() == pCode2->GetLen())		// nicht-UPN
 /*N*/ 				{
 /*N*/ 					BOOL bEqual = TRUE;
@@ -514,15 +514,15 @@ DECLARE_LIST (ScFormulaCellList, ScFormulaCell*)//STRIP008 ;
 /*N*/ 							bEqual = FALSE;
 /*N*/ 							break;
 /*N*/ 						}
-/*N*/ 
+/*N*/
 /*N*/ 					if (bEqual)
 /*N*/ 						return TRUE;
 /*N*/ 				}
-/*N*/ 
+/*N*/
 /*N*/ 				return FALSE;		// unterschiedlich lang oder unterschiedliche Tokens
 /*N*/ 			}
 /*N*/ 		default:
-/*N*/ 			DBG_ERROR("huch, was fuer Zellen???");
+/*N*/ 			OSL_FAIL("huch, was fuer Zellen???");
 /*N*/ 	}
 /*N*/ 	return FALSE;
 /*N*/ }
@@ -532,29 +532,29 @@ DECLARE_LIST (ScFormulaCellList, ScFormulaCell*)//STRIP008 ;
 /*N*/ ScFormulaCell::ScFormulaCell( ScDocument* pDoc, const ScAddress& rPos,
 /*N*/ 							  const String& rFormula, BYTE cMatInd ) :
 /*N*/ 	ScBaseCell( CELLTYPE_FORMULA ),
-/*N*/ 	aPos( rPos ),
-/*N*/ 	pCode( NULL ),
 /*N*/ 	nErgValue( 0.0 ),
+/*N*/ 	pCode( NULL ),
+/*N*/ 	pDocument( pDoc ),
+/*N*/ 	pMatrix( NULL ),
+/*N*/ 	pPrevious(0),
+/*N*/ 	pNext(0),
+/*N*/ 	pPreviousTrack(0),
+/*N*/ 	pNextTrack(0),
+/*N*/ 	nFormatIndex(0),
+/*N*/ 	nMatCols(0),
+/*N*/ 	nMatRows(0),
+/*N*/ 	nFormatType( NUMBERFORMAT_NUMBER ),
 /*N*/ 	bIsValue( TRUE ),
 /*N*/ 	bDirty( TRUE ), // -> wg. Benutzung im Fkt.AutoPiloten, war: cMatInd != 0
 /*N*/ 	bChanged( FALSE ),
 /*N*/ 	bRunning( FALSE ),
 /*N*/ 	bCompile( FALSE ),
 /*N*/ 	bSubTotal( FALSE ),
-/*N*/ 	pDocument( pDoc ),
-/*N*/ 	nFormatType( NUMBERFORMAT_NUMBER ),
-/*N*/ 	nFormatIndex(0),
-/*N*/ 	cMatrixFlag ( cMatInd ),
-/*N*/ 	pMatrix( NULL ),
 /*N*/ 	bIsIterCell (FALSE),
 /*N*/ 	bInChangeTrack( FALSE ),
 /*N*/ 	bTableOpDirty( FALSE ),
-/*N*/ 	pPrevious(0),
-/*N*/ 	pNext(0),
-/*N*/ 	pPreviousTrack(0),
-/*N*/ 	pNextTrack(0),
-/*N*/ 	nMatCols(0),
-/*N*/ 	nMatRows(0)
+/*N*/ 	cMatrixFlag ( cMatInd ),
+/*N*/ 	aPos( rPos )
 /*N*/ {
 /*N*/ 	Compile( rFormula, TRUE );	// bNoListening, erledigt Insert
 /*N*/ }
@@ -564,29 +564,29 @@ DECLARE_LIST (ScFormulaCellList, ScFormulaCell*)//STRIP008 ;
 /*N*/ ScFormulaCell::ScFormulaCell( ScDocument* pDoc, const ScAddress& rPos,
 /*N*/ 							  const ScTokenArray* pArr, BYTE cInd ) :
 /*N*/ 	ScBaseCell( CELLTYPE_FORMULA ),
-/*N*/ 	aPos( rPos ),
-/*N*/ 	pCode( pArr ? new ScTokenArray( *pArr ) : new ScTokenArray ),
 /*N*/ 	nErgValue( 0.0 ),
+/*N*/ 	pCode( pArr ? new ScTokenArray( *pArr ) : new ScTokenArray ),
+/*N*/ 	pDocument( pDoc ),
+/*N*/ 	pMatrix ( NULL ),
+/*N*/ 	pPrevious(0),
+/*N*/ 	pNext(0),
+/*N*/ 	pPreviousTrack(0),
+/*N*/ 	pNextTrack(0),
+/*N*/ 	nFormatIndex(0),
+/*N*/ 	nMatCols(0),
+/*N*/ 	nMatRows(0),
+/*N*/ 	nFormatType( NUMBERFORMAT_NUMBER ),
 /*N*/ 	bIsValue( TRUE ),
 /*N*/ 	bDirty( NULL != pArr ), // -> wg. Benutzung im Fkt.AutoPiloten, war: cInd != 0
 /*N*/ 	bChanged( FALSE ),
 /*N*/ 	bRunning( FALSE ),
 /*N*/ 	bCompile( FALSE ),
 /*N*/ 	bSubTotal( FALSE ),
-/*N*/ 	pDocument( pDoc ),
-/*N*/ 	nFormatType( NUMBERFORMAT_NUMBER ),
-/*N*/ 	nFormatIndex(0),
-/*N*/ 	cMatrixFlag ( cInd ),
-/*N*/ 	pMatrix ( NULL ),
 /*N*/ 	bIsIterCell (FALSE),
 /*N*/ 	bInChangeTrack( FALSE ),
 /*N*/ 	bTableOpDirty( FALSE ),
-/*N*/ 	pPrevious(0),
-/*N*/ 	pNext(0),
-/*N*/ 	pPreviousTrack(0),
-/*N*/ 	pNextTrack(0),
-/*N*/ 	nMatCols(0),
-/*N*/ 	nMatRows(0)
+/*N*/ 	cMatrixFlag ( cInd ),
+/*N*/ 	aPos( rPos )
 /*N*/ {
 /*N*/ 	// UPN-Array erzeugen
 /*N*/ 	if( pCode->GetLen() && !pCode->GetError() && !pCode->GetCodeLen() )
@@ -609,36 +609,36 @@ DECLARE_LIST (ScFormulaCellList, ScFormulaCell*)//STRIP008 ;
 /*N*/ 	SfxListener(),
 /*N*/ 	aErgString( rScFormulaCell.aErgString ),
 /*N*/ 	nErgValue( rScFormulaCell.nErgValue ),
+/*N*/ 	pDocument( pDoc ),
+/*N*/ 	pPrevious(0),
+/*N*/ 	pNext(0),
+/*N*/ 	pPreviousTrack(0),
+/*N*/ 	pNextTrack(0),
+/*N*/ 	nFormatIndex( pDoc == rScFormulaCell.pDocument ? rScFormulaCell.nFormatIndex : 0 ),
+/*N*/ 	nMatCols( rScFormulaCell.nMatCols ),
+/*N*/ 	nMatRows( rScFormulaCell.nMatRows ),
+/*N*/ 	nFormatType( rScFormulaCell.nFormatType ),
 /*N*/ 	bIsValue( rScFormulaCell.bIsValue ),
 /*N*/ 	bDirty( rScFormulaCell.bDirty ),
 /*N*/ 	bChanged( rScFormulaCell.bChanged ),
 /*N*/ 	bRunning( rScFormulaCell.bRunning ),
 /*N*/ 	bCompile( rScFormulaCell.bCompile ),
 /*N*/ 	bSubTotal( rScFormulaCell.bSubTotal ),
-/*N*/ 	pDocument( pDoc ),
-/*N*/ 	nFormatType( rScFormulaCell.nFormatType ),
-/*N*/ 	nFormatIndex( pDoc == rScFormulaCell.pDocument ? rScFormulaCell.nFormatIndex : 0 ),
-/*N*/ 	cMatrixFlag ( rScFormulaCell.cMatrixFlag ),
 /*N*/ 	bIsIterCell (FALSE),
 /*N*/ 	bInChangeTrack( FALSE ),
 /*N*/ 	bTableOpDirty( FALSE ),
-/*N*/ 	pPrevious(0),
-/*N*/ 	pNext(0),
-/*N*/ 	pPreviousTrack(0),
-/*N*/ 	pNextTrack(0),
-/*N*/ 	aPos( rNewPos ),
-/*N*/ 	nMatCols( rScFormulaCell.nMatCols ),
-/*N*/ 	nMatRows( rScFormulaCell.nMatRows )
+/*N*/ 	cMatrixFlag ( rScFormulaCell.cMatrixFlag ),
+/*N*/ 	aPos( rNewPos )
 /*N*/ {
 /*N*/ 	if (rScFormulaCell.pMatrix)
 /*?*/ 		pMatrix = rScFormulaCell.pMatrix->Clone();
 /*N*/ 	else
 /*N*/ 		pMatrix = NULL;
 /*N*/ 	pCode = rScFormulaCell.pCode->Clone();
-/*N*/ 
+/*N*/
 /*N*/     if ( nCopyFlags & 0x0001 )
-/*?*/         DBG_BF_ASSERT(0, "STRIP"); //STRIP001 pCode->ReadjustRelative3DReferences( rScFormulaCell.aPos, aPos );
-/*N*/ 
+/*?*/         DBG_BF_ASSERT(0, "STRIP");
+/*N*/
 /*N*/ 	// evtl. Fehler zuruecksetzen und neu kompilieren
 /*N*/ 	//	nicht im Clipboard - da muss das Fehlerflag erhalten bleiben
 /*N*/ 	//	Spezialfall Laenge=0: als Fehlerzelle erzeugt, dann auch Fehler behalten
@@ -678,7 +678,7 @@ DECLARE_LIST (ScFormulaCellList, ScFormulaCell*)//STRIP008 ;
 /*N*/ 	{
 /*N*/         if ( !bCompileLater && bClipMode )
 /*N*/ 		{
-/*?*/ 			DBG_BF_ASSERT(0, "STRIP"); //STRIP001 pCode->Reset();
+/*?*/ 			DBG_BF_ASSERT(0, "STRIP");
 /*N*/ 		}
 /*N*/         if ( !bCompileLater )
 /*N*/         {
@@ -696,34 +696,34 @@ DECLARE_LIST (ScFormulaCellList, ScFormulaCell*)//STRIP008 ;
 /*N*/ ScFormulaCell::ScFormulaCell( ScDocument* pDoc, const ScAddress& rPos,
 /*N*/ 							  SvStream& rStream, ScMultipleReadHeader& rHdr ) :
 /*N*/ 	ScBaseCell( CELLTYPE_FORMULA ),
-/*N*/ 	aPos( rPos ),
-/*N*/ 	pCode( new ScTokenArray ),
 /*N*/ 	nErgValue( 0.0 ),
+/*N*/ 	pCode( new ScTokenArray ),
+/*N*/ 	pDocument( pDoc ),
+/*N*/ 	pMatrix ( NULL ),
+/*N*/ 	pPrevious(0),
+/*N*/ 	pNext(0),
+/*N*/ 	pPreviousTrack(0),
+/*N*/ 	pNextTrack(0),
+/*N*/ 	nFormatIndex(0),
+/*N*/ 	nMatCols(0),
+/*N*/ 	nMatRows(0),
+/*N*/ 	nFormatType( 0 ),
 /*N*/ 	bIsValue( TRUE ),
 /*N*/ 	bDirty( FALSE ),
 /*N*/ 	bChanged( FALSE ),
 /*N*/ 	bRunning( FALSE ),
 /*N*/ 	bCompile( FALSE ),
 /*N*/ 	bSubTotal( FALSE ),
-/*N*/ 	pDocument( pDoc ),
-/*N*/ 	nFormatType( 0 ),
-/*N*/ 	nFormatIndex(0),
-/*N*/ 	pMatrix ( NULL ),
 /*N*/ 	bIsIterCell (FALSE),
 /*N*/ 	bInChangeTrack( FALSE ),
 /*N*/ 	bTableOpDirty( FALSE ),
-/*N*/ 	pPrevious(0),
-/*N*/ 	pNext(0),
-/*N*/ 	pPreviousTrack(0),
-/*N*/ 	pNextTrack(0),
-/*N*/ 	nMatCols(0),
-/*N*/ 	nMatRows(0)
+/*N*/ 	aPos( rPos )
 /*N*/ {
 /*N*/ //	ScReadHeader aHdr( rStream );
 /*N*/ 	rHdr.StartEntry();
-/*N*/ 
+/*N*/
 /*N*/ 	USHORT nVer = (USHORT) pDoc->GetSrcVersion();
-/*N*/ 
+/*N*/
 /*N*/ 	if( nVer >= SC_NUMFMT )
 /*N*/ 	{
 /*N*/ 		BYTE cData;
@@ -791,9 +791,9 @@ DECLARE_LIST (ScFormulaCellList, ScFormulaCell*)//STRIP008 ;
 /*N*/ 		// Wir koennen hier bei Calc 3.0-Docs noch kein UPN-Array
 /*N*/ 		// erzeugen, da die Named Ranges noch nicht eingelesen sind
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	rHdr.EndEntry();
-/*N*/ 
+/*N*/
 /*N*/ 	//	after loading, it must be known if ocMacro is in any formula
 /*N*/ 	//	(for macro warning, and to insert the hidden view)
 /*N*/ 	if ( !pDoc->GetHasMacroFunc() && pCode->HasOpCodeRPN( ocMacro ) )
@@ -804,78 +804,12 @@ DECLARE_LIST (ScFormulaCellList, ScFormulaCell*)//STRIP008 ;
 /*N*/ {
 /*N*/ 	ScToken* t;
 /*N*/ 	pCode->Reset();
-/*N*/ 	while ( t = pCode->GetNextReferenceRPN() )	// RPN -> auch in Namen
+/*N*/ 	while ( (t = pCode->GetNextReferenceRPN()) )	// RPN -> auch in Namen
 /*N*/ 		if ( t->GetSingleRef().nRow > nMaxRow ||
 /*N*/ 				(t->GetType() == svDoubleRef &&
 /*N*/ 				t->GetDoubleRef().Ref2.nRow > nMaxRow) )
 /*N*/ 			return TRUE;
 /*N*/ 	return FALSE;
-/*N*/ }
-
-/*N*/ void ScFormulaCell::Save( SvStream& rStream, ScMultipleWriteHeader& rHdr ) const
-/*N*/ {
-/*N*/ 	USHORT nSaveMaxRow = pDocument->GetSrcMaxRow();
-/*N*/ 	if ( nSaveMaxRow < MAXROW && lcl_IsBeyond( pCode, nSaveMaxRow ) )
-/*N*/ 	{
-/*?*/ 		//	Zelle mit Ref-Error erzeugen und speichern
-/*?*/ 		//	StartEntry/EndEntry passiert beim Speichern der neuen Zelle
-/*?*/ 
-/*?*/ 		SingleRefData aRef;
-/*?*/ 		aRef.InitAddress(ScAddress());
-/*?*/ 		aRef.SetColRel(TRUE);
-/*?*/ 		aRef.SetColDeleted(TRUE);
-/*?*/ 		aRef.SetRowRel(TRUE);
-/*?*/ 		aRef.SetRowDeleted(TRUE);
-/*?*/ 		aRef.CalcRelFromAbs(aPos);
-/*?*/ 		ScTokenArray aArr;
-/*?*/ 		aArr.AddSingleReference(aRef);
-/*?*/ 		aArr.AddOpCode(ocStop);
-/*?*/ 		ScFormulaCell* pErrCell = new ScFormulaCell( pDocument, aPos, &aArr );
-/*?*/ 		pErrCell->Save( rStream, rHdr );
-/*?*/ 		delete pErrCell;
-/*?*/ 
-/*?*/ 		pDocument->SetLostData();			// Warnung ausgeben
-/*?*/ 		return;
-/*N*/ 	}
-/*N*/ 
-/*N*/ 	rHdr.StartEntry();
-/*N*/ 
-/*N*/ 	if ( bIsValue && !pCode->GetError() && !::rtl::math::isFinite( nErgValue ) )
-/*N*/ 	{
-/*N*/ 		DBG_ERRORFILE( msgDbgInfinity );
-/*N*/ 		pCode->SetError( errIllegalFPOperation );
-/*N*/ 	}
-/*N*/ 	BYTE cFlags = cMatrixFlag & 0x03;
-/*N*/ 	if( bDirty )
-/*N*/ 		cFlags |= 0x04;
-/*N*/ 	// Daten speichern?
-/*N*/ 	if( pCode->IsRecalcModeNormal() && !pCode->GetError() )
-/*N*/ 		cFlags |= bIsValue ? 0x08 : 0x10;
-/*N*/ 	if ( bSubTotal )
-/*N*/ 		cFlags |= 0x20;
-/*N*/ #ifdef DBG_UTIL
-/*N*/ 	static BOOL bShown = 0;
-/*N*/ 	if ( !bShown && rStream.GetVersion() > SOFFICE_FILEFORMAT_50 )
-/*N*/ 	{
-/*N*/ 		bShown = 1;
-/*N*/ 		DBG_ERRORFILE( "bei inkompatiblem FileFormat den FormatIndex umheben!" );
-/*N*/ 	}
-/*N*/ //	rStream << (BYTE) 0x00;
-/*N*/ #endif
-/*N*/ 	if ( nFormatIndex )
-/*N*/ 		rStream << (BYTE) (0x10 | sizeof(UINT32)) << static_cast<sal_uInt32>(nFormatIndex);
-/*N*/ 	else
-/*N*/ 		rStream << (BYTE) 0x00;
-/*N*/ 	rStream << cFlags << (UINT16) nFormatType;
-/*N*/ 	if( cFlags & 0x08 )
-/*N*/ 		rStream << nErgValue;
-/*N*/ 	if( cFlags & 0x10 )
-/*N*/ 		rStream.WriteByteString( aErgString, rStream.GetStreamCharSet() );
-/*N*/ 	pCode->Store( rStream, aPos );
-/*N*/ 	if ( cMatrixFlag == MM_FORMULA )
-/*N*/ 		rStream << nMatCols << nMatRows;
-/*N*/ 
-/*N*/ 	rHdr.EndEntry();
 /*N*/ }
 
 /*N*/  ScBaseCell* ScFormulaCell::Clone( ScDocument* pDoc, const ScAddress& rPos,
@@ -922,7 +856,7 @@ DECLARE_LIST (ScFormulaCellList, ScFormulaCell*)//STRIP008 ;
 /*N*/ 		}
 /*N*/ 		else
 /*N*/ 		{
-/*N*/ 			DBG_ERROR("ScFormulaCell::GetFormula: Keine Matrix");
+/*N*/ 			OSL_FAIL("ScFormulaCell::GetFormula: Keine Matrix");
 /*N*/ 		}
 /*N*/ 	}
 /*N*/ 	else
@@ -930,7 +864,7 @@ DECLARE_LIST (ScFormulaCellList, ScFormulaCell*)//STRIP008 ;
 /*N*/ 		ScCompiler aComp( pDocument, aPos, *pCode );
 /*N*/ 		aComp.CreateStringFromTokenArray( rFormula );
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	rFormula.Insert( '=',0 );
 /*N*/ 	if( cMatrixFlag )
 /*N*/ 	{
@@ -959,7 +893,7 @@ DECLARE_LIST (ScFormulaCellList, ScFormulaCell*)//STRIP008 ;
 /*N*/ 	{
 /*N*/ 		if ( !pCode->GetLen() && aErgString.Len() && rFormula == aErgString )
 /*N*/ 		{	// #65994# nicht rekursiv CompileTokenArray/Compile/CompileTokenArray
-/*?*/ 		DBG_BF_ASSERT(0, "STRIP"); //STRIP001 	if ( rFormula.GetChar(0) == '=' )
+/*?*/ 		DBG_BF_ASSERT(0, "STRIP");
 /*N*/ 		}
 /*N*/ 		bCompile = TRUE;
 /*N*/ 		CompileTokenArray( bNoListening );
@@ -986,11 +920,11 @@ DECLARE_LIST (ScFormulaCellList, ScFormulaCell*)//STRIP008 ;
 /*N*/ 		BOOL bWasInFormulaTree = pDocument->IsInFormulaTree( this );
 /*N*/ 		if ( bWasInFormulaTree )
 /*?*/ 			pDocument->RemoveFromFormulaTree( this );
-/*N*/ 
+/*N*/
 /*N*/ 		// Laden aus Filter? Dann noch nix machen!
 /*N*/ 		if( pDocument->IsInsertingFromOtherDoc() )
 /*N*/ 			bNoListening = TRUE;
-/*N*/ 
+/*N*/
 /*N*/ 		if( !bNoListening && pCode->GetCodeLen() )
 /*?*/ 			EndListeningTo( pDocument );
 /*N*/ 		ScCompiler aComp(pDocument, aPos, *pCode );
@@ -1020,7 +954,7 @@ DECLARE_LIST (ScFormulaCellList, ScFormulaCell*)//STRIP008 ;
 /*N*/ 		StartListeningTo( pDocument );
 /*N*/ 		return ;
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	ScCompiler aComp( pDocument, aPos, *pCode );
 /*N*/ 	aComp.SetCompileEnglish( TRUE );
 /*N*/ 	aComp.SetImportXML( TRUE );
@@ -1038,7 +972,7 @@ DECLARE_LIST (ScFormulaCellList, ScFormulaCell*)//STRIP008 ;
 /*N*/ 	{
 /*N*/ 		if ( !pCode->GetLen() )
 /*N*/ 		{
-/*?*/ 		DBG_BF_ASSERT(0, "STRIP"); //STRIP001 	if ( aFormula.GetChar(0) == '=' )
+/*?*/ 		DBG_BF_ASSERT(0, "STRIP");
 /*N*/ 		}
 /*N*/ 		bSubTotal = aComp.CompileTokenArray();
 /*N*/ 		if( !pCode->GetError() )
@@ -1056,7 +990,7 @@ DECLARE_LIST (ScFormulaCellList, ScFormulaCell*)//STRIP008 ;
 /*N*/ 		SetTextWidth( TEXTWIDTH_DIRTY );
 /*N*/ 		SetScriptType( SC_SCRIPTTYPE_UNKNOWN );
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	//	Same as in Load: after loading, it must be known if ocMacro is in any formula
 /*N*/ 	//	(for macro warning, CompileXML is called at the end of loading XML file)
 /*N*/ 	if ( !pDocument->GetHasMacroFunc() && pCode->HasOpCodeRPN( ocMacro ) )
@@ -1136,14 +1070,14 @@ DECLARE_LIST (ScFormulaCellList, ScFormulaCell*)//STRIP008 ;
 /*N*/ 	static ScFormulaCell* pLastIterInterpreted = NULL;
 /*N*/ 	if ( !IsDirtyOrInTableOpDirty() )
 /*N*/ 		return;			// fuer IterCircRef, nix doppelt
-/*N*/ 
+/*N*/
 /*N*/ 	//!	HACK:
 /*N*/ 	//	Wenn der Aufruf aus einem Reschedule im DdeLink-Update kommt, dirty stehenlassen
 /*N*/ 	//	Besser: Dde-Link Update ohne Reschedule oder ganz asynchron !!!
-/*N*/ 
+/*N*/
 /*N*/     if ( pDocument->IsInDdeLinkUpdate() )
 /*N*/ 		return;
-/*N*/ 
+/*N*/
 /*N*/ 	if (bRunning)
 /*N*/ 	{
 /*N*/ 		// Keine Iterierung?
@@ -1162,7 +1096,7 @@ DECLARE_LIST (ScFormulaCellList, ScFormulaCell*)//STRIP008 ;
 /*N*/ 	// #63038# fuer GetErrCode, IsValue, GetValue nicht mehrfach interpretieren
 /*N*/ 	if ( nIterMode && pLastIterInterpreted == this )
 /*N*/ 		return ;
-/*N*/ 
+/*N*/
 /*N*/ 	if( !pCode->GetCodeLen() && !pCode->GetError() )
 /*N*/     {
 /*N*/         // #i11719# no UPN and no error and no token code but result string present
@@ -1182,7 +1116,7 @@ DECLARE_LIST (ScFormulaCellList, ScFormulaCell*)//STRIP008 ;
 /*N*/         }
 /*?*/ 		CompileTokenArray();
 /*N*/     }
-/*N*/ 
+/*N*/
 /*N*/ 	if( pCode->GetCodeLen() && pDocument )
 /*N*/ 	{
 /*N*/ #if defined(MAC) && !defined(SIMPLEMAXRECURSION)
@@ -1229,7 +1163,7 @@ DECLARE_LIST (ScFormulaCellList, ScFormulaCell*)//STRIP008 ;
 /*?*/ 				delete pMatrix;
 /*?*/ 				pMatrix = NULL;
 /*N*/ 			}
-/*N*/ 
+/*N*/
 /*N*/ 			switch ( pCode->GetError() )
 /*N*/ 			{
 /*?*/ 				case errCircularReference :		// wird neu festgestellt
@@ -1237,7 +1171,7 @@ DECLARE_LIST (ScFormulaCellList, ScFormulaCell*)//STRIP008 ;
 /*?*/ 					pCode->SetError( 0 );
 /*?*/ 				break;
 /*N*/ 			}
-/*N*/ 
+/*N*/
 /*N*/ 			bRunning = TRUE;
 /*N*/ 			p->Interpret();
 /*N*/ 			bRunning = FALSE;
@@ -1290,7 +1224,7 @@ DECLARE_LIST (ScFormulaCellList, ScFormulaCell*)//STRIP008 ;
 /*N*/ 			else
 /*N*/ 				bRepeat = FALSE;
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		switch( p->GetResultType() )
 /*N*/ 		{
 /*N*/ 			case svDouble:
@@ -1309,8 +1243,10 @@ DECLARE_LIST (ScFormulaCellList, ScFormulaCell*)//STRIP008 ;
 /*N*/ 					aErgString = p->GetStringResult();
 /*N*/ 				}
 /*N*/ 			break;
+/*N*/ 			default:
+/*N*/ 			break;
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		// Neuer Fehlercode?
 /*N*/ 		if( !bChanged && pCode->GetError() != nOldErrCode )
 /*N*/ 			bChanged = TRUE;
@@ -1350,17 +1286,7 @@ DECLARE_LIST (ScFormulaCellList, ScFormulaCell*)//STRIP008 ;
 /*N*/ 		pMatrix = p->GetMatrixResult();
 /*N*/ 		if( pMatrix )
 /*N*/ 		{
-/*N*/ #if 0
-/*?*/ //! MatrixFormel immer changed?!?
-/*?*/ // ist bei MD's Rundumschlag von r1.167 --> r1.168 reingekommen
-/*?*/ // => ewiges Repaint von MatrixFormel, besonders bei DDE laestig
-/*?*/ // ab r1.260 (sv369b) probieren wir's mal ohne..
-/*?*/ 			if( cMatrixFlag == MM_FORMULA )
-/*?*/ 				bChanged = TRUE;
-/*?*/ 			else
-/*N*/ #else
 /*N*/ 			if( cMatrixFlag != MM_FORMULA )
-/*N*/ #endif
 /*N*/ 			{	// mit linker oberer Ecke weiterleben
 /*?*/ 				delete pMatrix;
 /*?*/ 				pMatrix = NULL;
@@ -1385,14 +1311,14 @@ DECLARE_LIST (ScFormulaCellList, ScFormulaCell*)//STRIP008 ;
 /*N*/ 			pCode->SetError( errIllegalFPOperation );
 /*N*/ 		}
 /*N*/ #endif
-/*N*/ 
+/*N*/
 /*N*/ 		//	FORCED Zellen auch sofort auf Gueltigkeit testen (evtl. Makro starten)
-/*N*/ 
+/*N*/
 /*N*/ 		if ( pCode->IsRecalcModeForced() )
 /*N*/ 		{
-DBG_BF_ASSERT(0, "STRIP"); //STRIP001 /*?*/ 			ULONG nValidation = ((const SfxUInt32Item*) pDocument->GetAttr(
+DBG_BF_ASSERT(0, "STRIP");
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		// Reschedule verlangsamt das ganze erheblich, nur bei Prozentaenderung ausfuehren
 /*N*/ 		ScProgress::GetInterpretProgress()->SetStateCountDownOnPercent(
 /*N*/ 			pDocument->GetFormulaCodeInTree() );
@@ -1417,7 +1343,7 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 /*?*/ 			ULONG nValidation = ((const SfxUI
 /*N*/ }
 
 
-/*N*/ void __EXPORT ScFormulaCell::SFX_NOTIFY( SfxBroadcaster& rBC,
+/*N*/ void ScFormulaCell::SFX_NOTIFY( SfxBroadcaster& /*rBC*/,
 /*N*/ 		const TypeId& rBCType, const SfxHint& rHint, const TypeId& rHintType )
 /*N*/ {
 /*N*/ 	if ( !pDocument->IsInDtorClear() && !pDocument->GetHardRecalcState() )
@@ -1432,7 +1358,7 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 /*?*/ 			ULONG nValidation = ((const SfxUI
 /*?*/                 bForceTrack = !bTableOpDirty;
 /*?*/                 if ( !bTableOpDirty )
 /*?*/                 {
-/*?*/                     DBG_BF_ASSERT(0, "STRIP"); //STRIP001 pDocument->AddTableOpFormulaCell( this );
+/*?*/                     DBG_BF_ASSERT(0, "STRIP");
 /*?*/                 }
 /*N*/             }
 /*N*/ 			else
@@ -1541,18 +1467,18 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 /*?*/ 			ULONG nValidation = ((const SfxUI
 /*N*/ BOOL ScDetectiveRefIter::GetNextRef( ScTripel& rStart, ScTripel& rEnd )
 /*N*/ {
 /*N*/ 	BOOL bRet = FALSE;
-/*N*/ 
+/*N*/
 /*N*/ 	ScToken* p = pCode->GetNextReferenceRPN();
 /*N*/ 	if (p)
 /*N*/ 		p->CalcAbsIfRel( aPos );
-/*N*/ 
+/*N*/
 /*N*/ 	while ( p && lcl_ScDetectiveRefIter_SkipRef( p ) )
 /*N*/ 	{
 /*N*/ 		p = pCode->GetNextReferenceRPN();
 /*N*/ 		if (p)
 /*N*/ 			p->CalcAbsIfRel( aPos );
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	if( p )
 /*N*/ 	{
 /*N*/ 		SingleDoubleRefProvider aProv( *p );
@@ -1564,7 +1490,7 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 /*?*/ 			ULONG nValidation = ((const SfxUI
 /*N*/ 				  aProv.Ref2.nTab );
 /*N*/ 		bRet = TRUE;
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	return bRet;
 /*N*/ }
 
@@ -1583,7 +1509,7 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 /*?*/ 			ULONG nValidation = ((const SfxUI
 
 
 /*N*/ #ifdef DBG_UTIL
-/*N*/ 
+/*N*/
 /*N*/ ScStringCell::~ScStringCell()
 /*N*/ {
 /*N*/ 	eCellType = CELLTYPE_DESTROYED;
@@ -1598,7 +1524,7 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 /*?*/ 			ULONG nValidation = ((const SfxUI
 /*N*/ }
 
 /*N*/ #ifdef DBG_UTIL
-/*N*/ 
+/*N*/
 /*N*/ ScNoteCell::~ScNoteCell()
 /*N*/ {
 /*N*/ 	eCellType = CELLTYPE_DESTROYED;
@@ -1609,3 +1535,5 @@ DBG_BF_ASSERT(0, "STRIP"); //STRIP001 /*?*/ 			ULONG nValidation = ((const SfxUI
 
 
 }
+
+/* vim:set shiftwidth=4 softtabstop=4 expandtab: */

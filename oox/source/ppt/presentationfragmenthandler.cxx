@@ -1,7 +1,8 @@
+/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -128,7 +129,7 @@ void ResolveTextFields( XmlFilterBase& rFilter )
                             aURL = CREATE_OUSTRING( "#" ).concat( xNamed->getName() );
                             xPropSet->setPropertyValue( sURL, Any( aURL ) );
                             Reference< text::XTextContent > xContent( rTextField.xTextField, UNO_QUERY);
-                            Reference< text::XTextRange > xTextRange( rTextField.xTextCursor, UNO_QUERY );						
+                            Reference< text::XTextRange > xTextRange( rTextField.xTextCursor, UNO_QUERY );
                             rTextField.xText->insertTextContent( xTextRange, xContent, sal_True );
                         }
                         catch( uno::Exception& )
@@ -136,7 +137,7 @@ void ResolveTextFields( XmlFilterBase& rFilter )
                         }
                     }
                 }
-            }		
+            }
         }
     }
 }
@@ -198,7 +199,7 @@ void PresentationFragmentHandler::endDocument() throw (SAXException, RuntimeExce
                                 pMasterPersistPtr = *aIter;
                                 break;
                             }
-                            aIter++;
+                            ++aIter;
                         }
                         if ( aIter == rMasterPages.end() )
                         {   // masterpersist not found, we have to load it
@@ -245,11 +246,13 @@ void PresentationFragmentHandler::endDocument() throw (SAXException, RuntimeExce
                 }
 
                 // importing slide page
-                pSlidePersistPtr->setMasterPersist( pMasterPersistPtr );
-                pSlidePersistPtr->setTheme( pMasterPersistPtr->getTheme() );
-                Reference< drawing::XMasterPageTarget > xMasterPageTarget( pSlidePersistPtr->getPage(), UNO_QUERY );
-                if( xMasterPageTarget.is() )
-                    xMasterPageTarget->setMasterPage( pMasterPersistPtr->getPage() );
+                if (pMasterPersistPtr.get()) {
+                    pSlidePersistPtr->setMasterPersist( pMasterPersistPtr );
+                    pSlidePersistPtr->setTheme( pMasterPersistPtr->getTheme() );
+                    Reference< drawing::XMasterPageTarget > xMasterPageTarget( pSlidePersistPtr->getPage(), UNO_QUERY );
+                    if( xMasterPageTarget.is() )
+                        xMasterPageTarget->setMasterPage( pMasterPersistPtr->getPage() );
+                }
                 rFilter.getDrawPages().push_back( pSlidePersistPtr );
                 rFilter.setActualSlidePersist( pSlidePersistPtr );
                 importSlide( xSlideFragmentHandler, pSlidePersistPtr );
@@ -279,12 +282,11 @@ void PresentationFragmentHandler::endDocument() throw (SAXException, RuntimeExce
                 }
             }
         }
-        ResolveTextFields( rFilter ); 
+        ResolveTextFields( rFilter );
     }
     catch( uno::Exception& )
     {
-        OSL_ENSURE( false,
-            (rtl::OString("oox::ppt::PresentationFragmentHandler::EndDocument(), "
+        OSL_FAIL( (rtl::OString("oox::ppt::PresentationFragmentHandler::EndDocument(), "
                     "exception caught: ") +
             rtl::OUStringToOString(
                 comphelper::anyToString( cppu::getCaughtException() ),
@@ -376,7 +378,7 @@ bool PresentationFragmentHandler::importSlide( const FragmentHandlerRef& rxSlide
                 xPropertySet->setPropertyValue( sIsHeaderVisible, Any( aHeaderFooter.mbHeader ) );
             xPropertySet->setPropertyValue( sIsFooterVisible, Any( aHeaderFooter.mbFooter ) );
             xPropertySet->setPropertyValue( sIsDateTimeVisible, Any( aHeaderFooter.mbDateTime ) );
-            xPropertySet->setPropertyValue( sIsPageNumberVisible, Any( aHeaderFooter.mbSlideNumber ) );	
+            xPropertySet->setPropertyValue( sIsPageNumberVisible, Any( aHeaderFooter.mbSlideNumber ) );
         }
         catch( uno::Exception& )
         {
@@ -388,3 +390,4 @@ bool PresentationFragmentHandler::importSlide( const FragmentHandlerRef& rxSlide
 
 } }
 
+/* vim:set shiftwidth=4 softtabstop=4 expandtab: */

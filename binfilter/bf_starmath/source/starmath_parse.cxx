@@ -1,7 +1,8 @@
+/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -35,16 +36,11 @@
 
 #include <com/sun/star/i18n/UnicodeType.hpp>
 
-#ifndef INCLUDED_SVTOOLS_SYSLOCALE_HXX
 #include <bf_svtools/syslocale.hxx>
-#endif
+#include <sal/macros.h>
 
-#ifndef _STARMATH_HRC
 #include "starmath.hrc"
-#endif
-#ifndef CONFIG_HXX
 #include "config.hxx"
-#endif
 
 #include "node.hxx"
 namespace binfilter {
@@ -86,27 +82,6 @@ using namespace ::com::sun::star::i18n;
 
 /*?*/ static const SmTokenTableEntry aTokenTable[] =
 /*?*/ {
-/*?*/ //	{ "#", TPOUND, '\0', 0, 0 },
-/*?*/ //	{ "##", TDPOUND, '\0', 0, 0 },
-/*?*/ //	{ "&", TAND, MS_AND, TGPRODUCT, 0 },
-/*?*/ //	{ "(", TLPARENT, MS_LPARENT, TGLBRACES, 5 },	//! 5 to continue expression
-/*?*/ //	{ ")", TRPARENT, MS_RPARENT, TGRBRACES, 0 },	//! 0 to terminate expression
-/*?*/ //	{ "*", TMULTIPLY, MS_MULTIPLY, TGPRODUCT, 0 },
-/*?*/ //	{ "+", TPLUS, MS_PLUS, TGUNOPER | TGSUM, 5 },
-/*?*/ //	{ "+-", TPLUSMINUS, MS_PLUSMINUS, TGUNOPER | TGSUM, 5 },
-/*?*/ //	{ "-", TMINUS, MS_MINUS, TGUNOPER | TGSUM, 5 },
-/*?*/ //	{ "-+", TMINUSPLUS, MS_MINUSPLUS, TGUNOPER | TGSUM, 5 },
-/*?*/ //	{ ".", TPOINT, '\0', 0, 0 },
-/*?*/ //	{ "/", TDIVIDEBY, MS_SLASH, TGPRODUCT, 0 },
-/*?*/ //	{ "<", TLT, MS_LT, TGRELATION, 0 },
-/*?*/ //	{ "<<", TLL, MS_LL, TGRELATION, 0 },
-/*?*/ //	{ "<=", TLE, MS_LE, TGRELATION, 0 },
-/*?*/ //	{ "<>", TNEQ, MS_NEQ, TGRELATION, 0},
-/*?*/ //	{ "<?>", TPLACE, MS_PLACE, 0, 5 },
-/*?*/ //	{ "=", TASSIGN, MS_ASSIGN, TGRELATION, 0},
-/*?*/ //	{ ">", TGT, MS_GT, TGRELATION, 0 },
-/*?*/ //	{ ">=", TGE, MS_GE, TGRELATION, 0 },
-/*?*/ //	{ ">>", TGG, MS_GG, TGRELATION, 0 },
 /*?*/ 	{ "Im" , TIM, MS_IM, TGSTANDALONE, 5 },
 /*?*/ 	{ "MZ23", TDEBUG, '\0', TGATTRIBUT, 0 },
 /*?*/ 	{ "Re" , TRE, MS_RE, TGSTANDALONE, 5 },
@@ -313,16 +288,6 @@ using namespace ::com::sun::star::i18n;
 /*?*/ 	{ "widevec", TWIDEVEC, MS_VEC, TGATTRIBUT, 5},
 /*?*/ 	{ "wp" , TWP, MS_WP, TGSTANDALONE, 5},
 /*?*/ 	{ "yellow", TYELLOW, '\0', TGCOLOR, 0},
-/*?*/ //	{ "[", TLBRACKET, MS_LBRACKET, TGLBRACES, 5},	//! 5 to continue expression
-/*?*/ //	{ "\\", TESCAPE, '\0', 0, 5},
-/*?*/ //	{ "]", TRBRACKET, MS_RBRACKET, TGRBRACES, 0},	//! 0 to terminate expression
-/*?*/ //	{ "^", TRSUP, '\0', TGPOWER, 0},
-/*?*/ //	{ "_", TRSUB, '\0', TGPOWER, 0},
-/*?*/ //	{ "`", TSBLANK, '\0', TGBLANK, 5},
-/*?*/ //	{ "{", TLGROUP, MS_LBRACE, 0, 5},		//! 5 to continue expression
-/*?*/ //	{ "|", TOR, MS_OR, TGSUM, 0},
-/*?*/ //	{ "}", TRGROUP, MS_RBRACE, 0, 0},		//! 0 to terminate expression
-/*?*/ //	{ "~", TBLANK, '\0', TGBLANK, 5},
 /*?*/ 	{ "", TEND, '\0', 0, 0}
 /*?*/ };
 
@@ -332,7 +297,7 @@ using namespace ::com::sun::star::i18n;
 /*N*/ 	const SmTokenTableEntry * pRes = 0;
 /*N*/ 	if (rName.Len())
 /*N*/ 	{
-/*N*/ 		INT32 nEntries = sizeof( aTokenTable ) / sizeof( aTokenTable[0] );
+/*N*/ 		INT32 nEntries = SAL_N_ELEMENTS( aTokenTable );
 /*N*/ 		for (INT32 i = 0;  i < nEntries;  ++i)
 /*N*/ 		{
 /*N*/ 			if (rName.EqualsIgnoreCaseAscii( aTokenTable[i].pIdent ))
@@ -341,9 +306,9 @@ using namespace ::com::sun::star::i18n;
 /*N*/ 				break;
 /*N*/ 			}
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	return pRes;
 /*N*/ }
 
@@ -356,33 +321,33 @@ using namespace ::com::sun::star::i18n;
 /*N*/ 	// returns 'TRUE' iff cChar is '\0' or a delimeter
 /*N*/ {
 /*N*/ 	DBG_ASSERT( nPos <= rTxt.Len(), "index out of range" );
-/*N*/ 
+/*N*/
 /*N*/ 	sal_Unicode cChar = rTxt.GetChar( nPos );
 /*N*/ 	if(!cChar)
 /*N*/ 		return TRUE;
-/*N*/ 
+/*N*/
 /*N*/ 	// check if 'cChar' is in the delimeter table
 /*N*/ 	const sal_Unicode *pDelim = &aDelimiterTable[0];
 /*N*/ 	for ( ;  *pDelim != 0;  pDelim++)
 /*N*/ 		if (*pDelim == cChar)
 /*N*/ 			break;
-/*N*/ 
+/*N*/
 /*N*/ 	BOOL bIsDelim = *pDelim != 0;
-/*N*/ 
+/*N*/
 /*N*/ 	INT16 nTypJp = SM_MOD1()->GetSysLocale().GetCharClass().getType( rTxt, nPos );
 /*N*/ 	bIsDelim |= nTypJp == ::com::sun::star::i18n::UnicodeType::SPACE_SEPARATOR ||
 /*N*/ 				nTypJp == ::com::sun::star::i18n::UnicodeType::CONTROL;
-/*N*/ 
+/*N*/
 /*N*/ 	return bIsDelim;
 /*N*/ }
 
-#endif 
+#endif
 
 
 /*N*/ void SmParser::Insert(const String &rText, USHORT nPos)
 /*N*/ {
 /*N*/ 	BufferString.Insert(rText, nPos);
-/*N*/ 
+/*N*/
 /*N*/ 	xub_StrLen  nLen = rText.Len();
 /*N*/ 	BufferIndex += nLen;
 /*N*/ 	nTokenIndex += nLen;
@@ -392,7 +357,7 @@ using namespace ::com::sun::star::i18n;
 /*N*/ void SmParser::Replace( USHORT nPos, USHORT nLen, const String &rText )
 /*N*/ {
 /*N*/     DBG_ASSERT( nPos + nLen <= BufferString.Len(), "argument mismatch" );
-/*N*/ 
+/*N*/
 /*N*/     BufferString.Replace( nPos, nLen, rText );
 /*N*/     INT16  nChg = rText.Len() - nLen;
 /*N*/     BufferIndex += nChg;
@@ -407,7 +372,7 @@ using namespace ::com::sun::star::i18n;
 
 // Continuing characters may be any alphanumeric or dot.
 /*?*/ const sal_Int32 coContFlags =
-/*?*/     ( coStartFlags | KParseTokens::ASC_DOT ) & ~KParseTokens::IGNORE_LEADING_WS
+/*?*/     (( coStartFlags | KParseTokens::ASC_DOT ) & ~KParseTokens::IGNORE_LEADING_WS)
 /*?*/     | KParseTokens::TWO_DOUBLE_QUOTES_BREAK_STRING;
 
 // First character for numbers, may be any numeric or dot
@@ -422,7 +387,7 @@ const sal_Int32 coNumContFlags =
 /*N*/ void SmParser::NextToken()
 /*N*/ {
 /*N*/ 	static const String aEmptyStr;
-/*N*/ 
+/*N*/
 /*N*/ 	xub_StrLen	nBufLen = BufferString.Len();
 /*N*/ 	ParseResult	aRes;
 /*N*/ 	xub_StrLen	nRealStart;
@@ -435,7 +400,7 @@ const sal_Int32 coNumContFlags =
 /*N*/         while (UnicodeType::SPACE_SEPARATOR ==
 /*N*/                         rCC.getType( BufferString, BufferIndex ))
 /*N*/            ++BufferIndex;
-/*N*/ 
+/*N*/
 /*N*/         sal_Int32 nStartFlags = coStartFlags;
 /*N*/         sal_Int32 nContFlags  = coContFlags;
 /*N*/         sal_Unicode cFirstChar = BufferString.GetChar( BufferIndex );
@@ -445,14 +410,14 @@ const sal_Int32 coNumContFlags =
 /*N*/             nStartFlags = coNumStartFlags;
 /*N*/             nContFlags  = coNumContFlags;
 /*N*/         }
-/*N*/ 
+/*N*/
 /*N*/ 		aRes = rCC.parseAnyToken( BufferString, BufferIndex,
 /*N*/                                             nStartFlags, aEmptyStr,
 /*N*/                                             nContFlags, aEmptyStr );
-/*N*/ 
+/*N*/
 /*N*/ 		nRealStart = BufferIndex + (xub_StrLen) aRes.LeadingWhiteSpace;
 /*N*/         BufferIndex = nRealStart;
-/*N*/ 
+/*N*/
 /*N*/ 		bCont = FALSE;
 /*N*/ 		if ( aRes.TokenType == 0  &&
 /*N*/ 				nRealStart < nBufLen &&
@@ -476,15 +441,15 @@ const sal_Int32 coNumContFlags =
 /*N*/ 				bCont = TRUE;
 /*N*/ 			}
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 	} while (bCont);
-/*N*/ 
+/*N*/
 /*N*/ 	// set index of current token
 /*N*/ 	nTokenIndex = BufferIndex;
-/*N*/ 
+/*N*/
 /*N*/ 	CurToken.nRow	= Row;
 /*N*/ 	CurToken.nCol	= nRealStart - ColOff + 1;
-/*N*/ 
+/*N*/
 /*N*/ 	BOOL bHandled = TRUE;
 /*N*/ 	if (nRealStart >= nBufLen)
 /*N*/ 	{
@@ -504,7 +469,7 @@ const sal_Int32 coNumContFlags =
 /*N*/ 		CurToken.nGroup     = 0;
 /*N*/ 		CurToken.nLevel     = 5;
 /*N*/ 		CurToken.aText      = BufferString.Copy( nRealStart, (xub_StrLen) n );
-/*N*/ 
+/*N*/
 /*N*/ #if OSL_DEBUG_LEVEL > 1
 /*N*/             if (!IsDelimiter( BufferString, aRes.EndPos ))
 /*N*/                 DBG_WARNING( "identifier really finished? (compatibility!)" );
@@ -526,7 +491,7 @@ const sal_Int32 coNumContFlags =
 /*N*/ 		DBG_ASSERT( n >= 0, "length < 0" );
 /*N*/ 		String aName( BufferString.Copy( nRealStart, (xub_StrLen) n ) );
 /*N*/ 		const SmTokenTableEntry *pEntry = GetTokenTableEntry( aName );
-/*N*/ 
+/*N*/
 /*N*/ 		if (pEntry)
 /*N*/ 		{
 /*N*/ 			CurToken.eType      = pEntry->eType;
@@ -542,7 +507,7 @@ const sal_Int32 coNumContFlags =
 /*N*/ 			CurToken.nGroup     = 0;
 /*N*/ 			CurToken.nLevel     = 5;
 /*N*/ 			CurToken.aText      = aName;
-/*N*/ 
+/*N*/
 /*N*/ #if OSL_DEBUG_LEVEL > 1
 /*N*/             if (!IsDelimiter( BufferString, aRes.EndPos ))
 /*N*/                 DBG_WARNING( "identifier really finished? (compatibility!)" );
@@ -556,7 +521,7 @@ const sal_Int32 coNumContFlags =
 /*N*/ 		CurToken.nGroup	   = TGPOWER;
 /*N*/ 		CurToken.nLevel	   = 0;
 /*N*/ 		CurToken.aText.AssignAscii( "_" );
-/*N*/ 
+/*N*/
 /*N*/ 		aRes.EndPos = nRealStart + 1;
 /*N*/ 	}
 /*N*/ 	else if (aRes.TokenType & KParseType::BOOLEAN)
@@ -578,7 +543,7 @@ const sal_Int32 coNumContFlags =
 /*N*/ 							CurToken.nGroup	   = TGRELATION;
 /*N*/ 							CurToken.nLevel	   = 0;
 /*N*/ 							CurToken.aText.AssignAscii( "<<" );
-/*N*/ 
+/*N*/
 /*N*/ 							rnEndPos = nRealStart + 2;
 /*N*/ 						}
 /*N*/ 						else if (BufferString.Copy( nRealStart, 2 ).
@@ -589,7 +554,7 @@ const sal_Int32 coNumContFlags =
 /*N*/ 							CurToken.nGroup	   = TGRELATION;
 /*N*/ 							CurToken.nLevel	   = 0;
 /*N*/ 							CurToken.aText.AssignAscii( "<=" );
-/*N*/ 
+/*N*/
 /*N*/ 							rnEndPos = nRealStart + 2;
 /*N*/ 						}
 /*N*/ 						else if (BufferString.Copy( nRealStart, 2 ).
@@ -600,7 +565,7 @@ const sal_Int32 coNumContFlags =
 /*N*/ 							CurToken.nGroup	   = TGRELATION;
 /*N*/ 							CurToken.nLevel	   = 0;
 /*N*/ 							CurToken.aText.AssignAscii( "<>" );
-/*N*/ 
+/*N*/
 /*N*/ 							rnEndPos = nRealStart + 2;
 /*N*/ 						}
 /*N*/ 						else if (BufferString.Copy( nRealStart, 3 ).
@@ -611,7 +576,7 @@ const sal_Int32 coNumContFlags =
 /*N*/ 							CurToken.nGroup	   = 0;
 /*N*/ 							CurToken.nLevel	   = 5;
 /*N*/ 							CurToken.aText.AssignAscii( "<?>" );
-/*N*/ 
+/*N*/
 /*N*/ 							rnEndPos = nRealStart + 3;
 /*N*/ 						}
 /*N*/ 						else
@@ -634,7 +599,7 @@ const sal_Int32 coNumContFlags =
 /*N*/ 							CurToken.nGroup	   = TGRELATION;
 /*N*/ 							CurToken.nLevel	   = 0;
 /*N*/ 							CurToken.aText.AssignAscii( ">=" );
-/*N*/ 
+/*N*/
 /*N*/ 							rnEndPos = nRealStart + 2;
 /*N*/ 						}
 /*N*/ 						else if (BufferString.Copy( nRealStart, 2 ).
@@ -645,7 +610,7 @@ const sal_Int32 coNumContFlags =
 /*N*/ 							CurToken.nGroup	   = TGRELATION;
 /*N*/ 							CurToken.nLevel	   = 0;
 /*N*/ 							CurToken.aText.AssignAscii( ">>" );
-/*N*/ 
+/*N*/
 /*N*/ 							rnEndPos = nRealStart + 2;
 /*N*/ 						}
 /*N*/ 						else
@@ -667,7 +632,7 @@ const sal_Int32 coNumContFlags =
 /*N*/ 	{
 /*N*/ 		sal_Int32 &rnEndPos = aRes.EndPos;
 /*N*/ 		String	aName( BufferString.Copy( nRealStart, rnEndPos - nRealStart ) );
-/*N*/ 
+/*N*/
 /*N*/ 		if (1 == aName.Len())
 /*N*/ 		{
 /*N*/ 			sal_Unicode ch = aName.GetChar( 0 );
@@ -676,11 +641,11 @@ const sal_Int32 coNumContFlags =
 /*N*/ 				case '%':
 /*N*/ 					{
 /*N*/ 						//! modifies aRes.EndPos
-/*N*/ 
+/*N*/
 /*N*/ 						DBG_ASSERT( rnEndPos >= nBufLen  ||
 /*N*/ 									'%' != BufferString.GetChar( rnEndPos ),
 /*N*/ 								"unexpected comment start" );
-/*N*/ 
+/*N*/
 /*N*/ 						// get identifier of user-defined character
 /*N*/ 						ParseResult aTmpRes = rCC.parseAnyToken(
 /*N*/ 								BufferString, rnEndPos,
@@ -688,10 +653,10 @@ const sal_Int32 coNumContFlags =
 /*N*/ 								aEmptyStr,
 /*N*/                                 coContFlags,
 /*N*/ 								aEmptyStr );
-/*N*/ 
+/*N*/
 /*N*/                         xub_StrLen nTmpStart = rnEndPos +
 /*N*/                                 (xub_StrLen) aTmpRes.LeadingWhiteSpace;
-/*N*/ 
+/*N*/
 /*N*/                         // default setting fo the case that no identifier
 /*N*/                         // i.e. a valid symbol-name is following the '%'
 /*N*/                         // character
@@ -702,14 +667,14 @@ const sal_Int32 coNumContFlags =
 /*N*/                         CurToken.aText      = String();
 /*N*/                         CurToken.nRow       = Row;
 /*N*/                         CurToken.nCol       = nTmpStart - ColOff + 1;
-/*N*/ 
+/*N*/
 /*N*/                         if (aTmpRes.TokenType & KParseType::IDENTNAME)
 /*N*/                         {
-/*N*/ 
+/*N*/
 /*N*/                             INT32 n = aTmpRes.EndPos - nTmpStart;
 /*N*/                             CurToken.eType      = TSPECIAL;
 /*N*/                             CurToken.aText      = BufferString.Copy( nTmpStart, n );
-/*N*/ 
+/*N*/
 /*N*/                             DBG_ASSERT( aTmpRes.EndPos > rnEndPos,
 /*N*/                                     "empty identifier" );
 /*N*/                             if (aTmpRes.EndPos > rnEndPos)
@@ -717,7 +682,7 @@ const sal_Int32 coNumContFlags =
 /*N*/                             else
 /*N*/                                 ++rnEndPos;
 /*N*/                         }
-/*N*/ 
+/*N*/
 /*N*/                         // if no symbol-name was found we start-over with
 /*N*/                         // finding the next token right afer the '%' sign.
 /*N*/                         // I.e. we leave rnEndPos unmodified.
@@ -814,7 +779,7 @@ const sal_Int32 coNumContFlags =
 /*N*/ 							CurToken.nGroup	   = 0;
 /*N*/ 							CurToken.nLevel	   = 0;
 /*N*/ 							CurToken.aText.AssignAscii( "##" );
-/*N*/ 
+/*N*/
 /*N*/ 							rnEndPos = nRealStart + 2;
 /*N*/ 						}
 /*N*/ 						else
@@ -873,7 +838,7 @@ const sal_Int32 coNumContFlags =
 /*N*/ 							CurToken.nGroup	   = TGUNOPER | TGSUM;
 /*N*/ 							CurToken.nLevel	   = 5;
 /*N*/ 							CurToken.aText.AssignAscii( "+-" );
-/*N*/ 
+/*N*/
 /*N*/ 							rnEndPos = nRealStart + 2;
 /*N*/ 						}
 /*N*/ 						else
@@ -896,7 +861,7 @@ const sal_Int32 coNumContFlags =
 /*N*/ 							CurToken.nGroup	   = TGUNOPER | TGSUM;
 /*N*/ 							CurToken.nLevel	   = 5;
 /*N*/ 							CurToken.aText.AssignAscii( "-+" );
-/*N*/ 
+/*N*/
 /*N*/ 							rnEndPos = nRealStart + 2;
 /*N*/ 						}
 /*N*/ 						else
@@ -918,7 +883,7 @@ const sal_Int32 coNumContFlags =
 /*N*/ 						CurToken.cMathChar = '\0';
 /*N*/ 						CurToken.nGroup	   = 0;
 /*N*/                         CurToken.nLevel    = 5;
-/*N*/ 
+/*N*/
 /*N*/                         xub_StrLen nTxtStart = BufferIndex;
 /*N*/                         sal_Unicode cChar;
 /*N*/                         do
@@ -926,7 +891,7 @@ const sal_Int32 coNumContFlags =
 /*N*/                             cChar = BufferString.GetChar( ++BufferIndex );
 /*N*/                         }
 /*N*/                         while ( cChar == '.' || ('0' <= cChar && cChar <= '9') );
-/*N*/ 
+/*N*/
 /*N*/                         CurToken.aText = BufferString.Copy( nTxtStart, BufferIndex - nTxtStart );
 /*N*/                         aRes.EndPos = BufferIndex;
 /*N*/ 					}
@@ -956,7 +921,7 @@ const sal_Int32 coNumContFlags =
 /*N*/ 	}
 /*N*/ 	else
 /*N*/ 		bHandled = FALSE;
-/*N*/ 
+/*N*/
 /*N*/ 	if (!bHandled)
 /*N*/ 	{
 /*N*/ 		CurToken.eType      = TCHARACTER;
@@ -964,15 +929,15 @@ const sal_Int32 coNumContFlags =
 /*N*/ 		CurToken.nGroup     = 0;
 /*N*/ 		CurToken.nLevel     = 5;
 /*N*/ 		CurToken.aText      = BufferString.Copy( nRealStart, 1 );
-/*N*/ 
+/*N*/
 /*N*/ 		aRes.EndPos = nRealStart + 1;
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	if (TEND != CurToken.eType)
 /*N*/ 		BufferIndex = (xub_StrLen)aRes.EndPos;
 /*N*/ }
-/*N*/ 
-/*N*/ 
+/*N*/
+/*N*/
 ////////////////////////////////////////
 // grammar
 //
@@ -981,24 +946,24 @@ const sal_Int32 coNumContFlags =
 /*N*/ void SmParser::Table()
 /*N*/ {
 /*N*/ 	SmNodeArray  LineArray;
-/*N*/ 
+/*N*/
 /*N*/ 	Line();
 /*N*/ 	while (CurToken.eType == TNEWLINE)
 /*N*/ 	{
 /*N*/ 		NextToken();
 /*N*/ 		Line();
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	if (CurToken.eType != TEND)
 /*?*/ 		Error(PE_UNEXPECTED_CHAR);
-/*N*/ 
+/*N*/
 /*N*/ 	ULONG n = NodeStack.Count();
-/*N*/ 
+/*N*/
 /*N*/ 	LineArray.SetSize(n);
-/*N*/ 
+/*N*/
 /*N*/ 	for (ULONG i = 0; i < n; i++)
 /*N*/ 		LineArray.Put(n - (i + 1), NodeStack.Pop());
-/*N*/ 
+/*N*/
 /*N*/ 	SmStructureNode *pSNode = new SmTableNode(CurToken);
 /*N*/ 	pSNode->SetSubNodes(LineArray);
 /*N*/ 	NodeStack.Push(pSNode);
@@ -1010,7 +975,7 @@ const sal_Int32 coNumContFlags =
 /*N*/ {
 /*N*/ 	SmStructureNode *pSNode = 0;
 /*N*/ 	BOOL    bNeedGroupClose = FALSE;
-/*N*/ 
+/*N*/
 /*N*/ 	if (TokenInGroup(TGALIGN))
 /*N*/ 	{
 /*?*/         if (CONVERT_40_TO_50 == GetConversion())
@@ -1018,7 +983,7 @@ const sal_Int32 coNumContFlags =
 /*?*/ 			// (here group-open brace)
 /*?*/ 		{	Insert('{', GetTokenIndex());
 /*?*/ 			bNeedGroupClose = TRUE;
-/*?*/ 
+/*?*/
 /*?*/ 			// get first valid align statement in sequence
 /*?*/ 			// (the dominant one in 4.0) and erase all others (especially old
 /*?*/ 			// discarded tokens) from command string.
@@ -1029,16 +994,16 @@ const sal_Int32 coNumContFlags =
 /*?*/ 				}
 /*?*/ 				else
 /*?*/                   pSNode = new SmAlignNode(CurToken);
-/*?*/ 
+/*?*/
 /*?*/ 				NextToken();
 /*?*/ 			}
 /*?*/ 		}
 /*?*/ 		else
 /*?*/ 		{
 /*?*/           pSNode = new SmAlignNode(CurToken);
-/*?*/ 
+/*?*/
 /*?*/           NextToken();
-/*?*/ 
+/*?*/
 /*?*/           // allow for just one align statement in 5.0
 /*?*/             if (CONVERT_40_TO_50 != GetConversion() && TokenInGroup(TGALIGN))
 /*?*/           {   Error(PE_DOUBLE_ALIGN);
@@ -1046,12 +1011,12 @@ const sal_Int32 coNumContFlags =
 /*?*/           }
 /*?*/ 		}
 /*?*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	Expression();
-/*N*/ 
+/*N*/
 /*N*/ 	if (bNeedGroupClose)
 /*?*/ 		Insert('}', GetTokenIndex());
-/*N*/ 
+/*N*/
 /*N*/ 	if (pSNode)
 /*?*/ 	{	pSNode->SetSubNodes(NodeStack.Pop(), 0);
 /*?*/ 		NodeStack.Push(pSNode);
@@ -1063,9 +1028,9 @@ const sal_Int32 coNumContFlags =
 /*N*/ {
 /*N*/ 	USHORT  n = 0;
 /*N*/ 	SmNodeArray  ExpressionArray;
-/*N*/ 
+/*N*/
 /*N*/ 	ExpressionArray.SetSize(n);
-/*N*/ 
+/*N*/
 /*N*/ 	// start with single expression that may have an alignment statement
 /*N*/ 	// (and go on with expressions that must not have alignment
 /*N*/ 	// statements in 'while' loop below. See also 'Expression()'.)
@@ -1074,7 +1039,7 @@ const sal_Int32 coNumContFlags =
 /*N*/ 		ExpressionArray.SetSize(++n);
 /*N*/ 		ExpressionArray.Put(n - 1, NodeStack.Pop());
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	while (CurToken.eType != TEND  &&  CurToken.eType != TNEWLINE)
 /*N*/     {   if (CONVERT_40_TO_50 != GetConversion())
 /*N*/ 			Expression();
@@ -1083,7 +1048,7 @@ const sal_Int32 coNumContFlags =
 /*N*/ 		ExpressionArray.SetSize(++n);
 /*N*/ 		ExpressionArray.Put(n - 1, NodeStack.Pop());
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	SmStructureNode *pSNode = new SmLineNode(CurToken);
 /*N*/ 	pSNode->SetSubNodes(ExpressionArray);
 /*N*/ 	NodeStack.Push(pSNode);
@@ -1094,19 +1059,19 @@ const sal_Int32 coNumContFlags =
 /*N*/ {
 /*N*/ 	USHORT		 n = 0;
 /*N*/ 	SmNodeArray  RelationArray;
-/*N*/ 
+/*N*/
 /*N*/ 	RelationArray.SetSize(n);
-/*N*/ 
+/*N*/
 /*N*/ 	Relation();
 /*N*/ 	RelationArray.SetSize(++n);
 /*N*/ 	RelationArray.Put(n - 1, NodeStack.Pop());
-/*N*/ 
+/*N*/
 /*N*/ 	while (CurToken.nLevel >= 4)
 /*N*/ 	{	Relation();
 /*N*/ 		RelationArray.SetSize(++n);
 /*N*/ 		RelationArray.Put(n - 1, NodeStack.Pop());
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	SmStructureNode *pSNode = new SmExpressionNode(CurToken);
 /*N*/ 	pSNode->SetSubNodes(RelationArray);
 /*N*/ 	NodeStack.Push(pSNode);
@@ -1120,12 +1085,12 @@ const sal_Int32 coNumContFlags =
 /*N*/ 	{
 /*N*/ 		SmStructureNode *pSNode  = new SmBinHorNode(CurToken);
 /*N*/ 		SmNode *pFirst = NodeStack.Pop();
-/*N*/ 
+/*N*/
 /*N*/ 		OpSubSup();
 /*N*/ 		SmNode *pSecond = NodeStack.Pop();
-/*N*/ 
+/*N*/
 /*N*/ 		Sum();
-/*N*/ 
+/*N*/
 /*N*/ 		pSNode->SetSubNodes(pFirst, pSecond, NodeStack.Pop());
 /*N*/ 		NodeStack.Push(pSNode);
 /*N*/ 	}
@@ -1139,12 +1104,12 @@ const sal_Int32 coNumContFlags =
 /*N*/ 	{
 /*N*/ 		SmStructureNode *pSNode  = new SmBinHorNode(CurToken);
 /*N*/ 		SmNode *pFirst = NodeStack.Pop();
-/*N*/ 
+/*N*/
 /*N*/ 		OpSubSup();
 /*N*/ 		SmNode *pSecond = NodeStack.Pop();
-/*N*/ 
+/*N*/
 /*N*/ 		Product();
-/*N*/ 
+/*N*/
 /*N*/ 		pSNode->SetSubNodes(pFirst, pSecond, NodeStack.Pop());
 /*N*/ 		NodeStack.Push(pSNode);
 /*N*/ 	}
@@ -1154,13 +1119,13 @@ const sal_Int32 coNumContFlags =
 /*N*/ void SmParser::Product()
 /*N*/ {
 /*N*/ 	Power();
-/*N*/ 
+/*N*/
 /*N*/ 	while (TokenInGroup(TGPRODUCT))
 /*N*/ 	{	SmStructureNode *pSNode;
 /*N*/ 		SmNode *pFirst = NodeStack.Pop(),
 /*N*/ 			   *pOper;
 /*N*/ 		BOOL bSwitchArgs = FALSE;
-/*N*/ 
+/*N*/
 /*N*/ 		SmTokenType eType = CurToken.eType;
 /*N*/ 		switch (eType)
 /*N*/ 		{
@@ -1169,46 +1134,46 @@ const sal_Int32 coNumContFlags =
 /*N*/ 				pOper = new SmRectangleNode(CurToken);
 /*N*/ 				NextToken();
 /*N*/ 				break;
-/*N*/ 
+/*N*/
 /*N*/ 			case TBOPER:
 /*?*/ 				pSNode = new SmBinHorNode(CurToken);
-/*?*/ 
+/*?*/
 /*?*/ 				NextToken();
-/*?*/ 
+/*?*/
 /*?*/ 				GlyphSpecial();
 /*?*/ 				pOper = NodeStack.Pop();
 /*?*/ 				break;
-/*N*/ 
+/*N*/
 /*N*/ 			case TOVERBRACE :
 /*N*/ 			case TUNDERBRACE :
 /*?*/               pSNode = new SmVerticalBraceNode(CurToken);
 /*?*/               pOper = new SmMathSymbolNode(CurToken);
 /*?*/               NextToken();
 /*?*/ 				break;
-/*?*/ 
+/*?*/
 /*?*/ 			case TWIDEBACKSLASH:
 /*?*/ 			case TWIDESLASH:
 /*?*/ 			{
 /*?*/               SmBinDiagonalNode *pSTmp = new SmBinDiagonalNode(CurToken);
 /*?*/               pSTmp->SetAscending(eType == TWIDESLASH);
 /*?*/               pSNode = pSTmp;
-/*?*/ 
+/*?*/
 /*?*/               pOper = new SmPolyLineNode(CurToken);
 /*?*/               NextToken();
-/*?*/ 
+/*?*/
 /*?*/               bSwitchArgs =TRUE;
 /*?*/ 				break;
 /*?*/ 			}
-/*?*/ 
+/*?*/
 /*N*/ 			default:
 /*N*/ 				pSNode = new SmBinHorNode(CurToken);
-/*N*/ 
+/*N*/
 /*N*/ 				OpSubSup();
 /*N*/ 				pOper = NodeStack.Pop();
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		Power();
-/*N*/ 
+/*N*/
 /*N*/ 		if (bSwitchArgs)
 /*N*/ 			//! vgl siehe SmBinDiagonalNode::Arrange
 /*?*/ 			pSNode->SetSubNodes(pFirst, NodeStack.Pop(), pOper);
@@ -1223,34 +1188,34 @@ const sal_Int32 coNumContFlags =
 /*N*/ {
 /*N*/ 	DBG_ASSERT(nActiveGroup == TGPOWER  ||  nActiveGroup == TGLIMIT,
 /*N*/ 			   "Sm: falsche Tokengruppe");
-/*N*/ 
+/*N*/
 /*N*/ 	if (!TokenInGroup(nActiveGroup))
 /*N*/ 		// already finish
 /*N*/ 		return;
-/*N*/ 
+/*N*/
 /*N*/ 	SmSubSupNode *pNode = new SmSubSupNode(CurToken);
 /*N*/ 	//! Of course 'CurToken' ist just the first sub-/supscript token.
 /*N*/ 	//! It should be of no further interest. The positions of the
 /*N*/ 	//! sub-/supscripts will be identified by the corresponding subnodes
 /*N*/ 	//! index in the 'aSubNodes' array (enum value from 'SmSubSup').
-/*N*/ 
+/*N*/
 /*N*/ 	pNode->SetUseLimits(nActiveGroup == TGLIMIT);
-/*N*/ 
+/*N*/
 /*N*/ 	// initialize subnodes array
 /*N*/ 	SmNodeArray  aSubNodes;
 /*N*/ 	aSubNodes.SetSize(1 + SUBSUP_NUM_ENTRIES);
 /*N*/ 	aSubNodes.Put(0, NodeStack.Pop());
 /*N*/ 	for (USHORT i = 1;  i < aSubNodes.GetSize();  i++)
 /*N*/ 		aSubNodes.Put(i, NULL);
-/*N*/ 
+/*N*/
 /*N*/ 	// process all sub-/supscripts
 /*N*/ 	int  nIndex = 0;
 /*N*/ 	while (TokenInGroup(nActiveGroup))
 /*N*/ 	{	SmTokenType  eType (CurToken.eType);
-/*N*/ 
+/*N*/
 /*N*/ 		// skip sub-/supscript token
 /*N*/ 		NextToken();
-/*N*/ 
+/*N*/
 /*N*/ 		// get sub-/supscript node on top of stack
 /*N*/ 		if (eType == TFROM  ||  eType == TTO)
 /*N*/ 		{
@@ -1259,7 +1224,7 @@ const sal_Int32 coNumContFlags =
 /*N*/ 		}
 /*N*/ 		else
 /*N*/ 			Term();
-/*N*/ 
+/*N*/
 /*N*/ 		switch (eType)
 /*N*/ 		{	case TRSUB :	nIndex = (int) RSUB;	break;
 /*N*/ 			case TRSUP :	nIndex = (int) RSUP;	break;
@@ -1275,13 +1240,13 @@ const sal_Int32 coNumContFlags =
 /*N*/ 		nIndex++;
 /*N*/ 		DBG_ASSERT(1 <= nIndex	&&	nIndex <= 1 + SUBSUP_NUM_ENTRIES,
 /*N*/ 				   "SmParser::Power() : sub-/supscript index falsch");
-/*N*/ 
+/*N*/
 /*N*/ 		// set sub-/supscript if not already done
 /*N*/ 		if (aSubNodes.Get(nIndex) != NULL)
 /*?*/ 			Error(PE_DOUBLE_SUBSUPSCRIPT);
 /*N*/ 		aSubNodes.Put(nIndex, NodeStack.Pop());
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	pNode->SetSubNodes(aSubNodes);
 /*N*/ 	NodeStack.Push(pNode);
 /*N*/ }
@@ -1303,7 +1268,7 @@ const sal_Int32 coNumContFlags =
 /*N*/ {
 /*N*/ 	// get body for sub- supscripts on top of stack
 /*N*/ 	Term();
-/*N*/ 
+/*N*/
 /*N*/ 	SubSup(TGPOWER);
 /*N*/ }
 
@@ -1312,18 +1277,18 @@ const sal_Int32 coNumContFlags =
 /*N*/ {
 /*N*/ 	DBG_ASSERT(TokenInGroup(TGBLANK), "Sm : falsches Token");
 /*N*/ 	SmBlankNode *pBlankNode = new SmBlankNode(CurToken);
-/*N*/ 
+/*N*/
 /*N*/ 	while (TokenInGroup(TGBLANK))
 /*N*/ 	{
 /*N*/ 		pBlankNode->IncreaseBy(CurToken);
 /*N*/ 		NextToken();
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	// Blanks am Zeilenende ignorieren wenn die entsprechende Option gesetzt ist
-/*N*/ 	if (CurToken.eType == TNEWLINE  ||  CurToken.eType == TEND
-/*N*/         &&  SM_MOD1()->GetConfig()->IsIgnoreSpacesRight())
+/*N*/ 	if (CurToken.eType == TNEWLINE  ||  (CurToken.eType == TEND
+/*N*/         &&  SM_MOD1()->GetConfig()->IsIgnoreSpacesRight()))
 /*?*/ 		pBlankNode->Clear();
-/*N*/ 
+/*N*/
 /*N*/ 	NodeStack.Push(pBlankNode);
 /*N*/ }
 
@@ -1334,16 +1299,16 @@ const sal_Int32 coNumContFlags =
 /*N*/ 	{	case TESCAPE :
 /*N*/ 			Escape();
 /*N*/ 			break;
-/*N*/ 
+/*N*/
 /*N*/ 		case TLGROUP :
 /*N*/ 			NextToken();
-/*N*/ 
+/*N*/
 /*N*/ 			// allow for empty group
 /*N*/ 			if (CurToken.eType == TRGROUP)
 /*N*/ 			{	SmStructureNode *pSNode = new SmExpressionNode(CurToken);
 /*N*/ 				pSNode->SetSubNodes(NULL, NULL);
 /*N*/ 				NodeStack.Push(pSNode);
-/*N*/ 
+/*N*/
 /*N*/ 				NextToken();
 /*N*/ 			}
 /*N*/ 			else	// go as usual
@@ -1355,16 +1320,16 @@ const sal_Int32 coNumContFlags =
 /*N*/ 				}
 /*N*/ 			}
 /*N*/ 			break;
-/*N*/ 
+/*N*/
 /*N*/ 		case TLEFT :
 /*N*/ 			Brace();
 /*N*/ 			break;
-/*N*/ 
+/*N*/
 /*N*/ 		case TBLANK :
 /*N*/ 		case TSBLANK :
 /*N*/ 			Blank();
 /*N*/ 			break;
-/*N*/ 
+/*N*/
 /*N*/ 		case TTEXT :
 /*N*/ 			NodeStack.Push(new SmTextNode(CurToken, FNT_TEXT));
 /*N*/ 			NextToken();
@@ -1378,7 +1343,7 @@ const sal_Int32 coNumContFlags =
 /*N*/ 			NodeStack.Push(new SmTextNode(CurToken, FNT_NUMBER));
 /*N*/ 			NextToken();
 /*N*/ 			break;
-/*N*/ 
+/*N*/
 /*N*/ 		case TLEFTARROW :
 /*N*/ 		case TRIGHTARROW :
 /*N*/ 		case TUPARROW :
@@ -1415,28 +1380,28 @@ const sal_Int32 coNumContFlags =
 /*N*/ 			NodeStack.Push(new SmMathSymbolNode(CurToken));
 /*N*/ 			NextToken();
 /*N*/ 			break;
-/*N*/ 
+/*N*/
 /*N*/ 		case TPLACE:
 /*N*/ 			NodeStack.Push(new SmPlaceNode(CurToken));
 /*N*/ 			NextToken();
 /*N*/ 			break;
-/*N*/ 
+/*N*/
 /*N*/ 		case TSPECIAL:
 /*N*/ 			Special();
 /*N*/ 			break;
-/*N*/ 
+/*N*/
 /*N*/ 		case TBINOM:
 /*N*/			Binom(); // matrixfett.smf
 /*N*/ 			break;
-/*N*/ 
+/*N*/
 /*N*/ 		case TSTACK:
 /*N*/			Stack(); // matrixfett.smf
 /*?*/ 			break;
-/*N*/ 
+/*N*/
 /*N*/ 		case TMATRIX:
 /*N*/ 			Matrix();
 /*N*/ 			break;
-/*N*/ 
+/*N*/
 /*N*/ 		default:
 /*N*/ 			if (TokenInGroup(TGLBRACES))
 /*N*/ 			{	Brace();
@@ -1450,27 +1415,27 @@ const sal_Int32 coNumContFlags =
 /*N*/ 			else if (    TokenInGroup(TGATTRIBUT)
 /*N*/ 					 ||  TokenInGroup(TGFONTATTR))
 /*N*/ 			{	SmStructureNodeArray  aArray;
-/*N*/ 
+/*N*/
 /*N*/ 				BOOL    bIsAttr;
 /*N*/ 				USHORT  n = 0;
 /*N*/ 				while ((bIsAttr = TokenInGroup(TGATTRIBUT))
 /*N*/ 					   ||  TokenInGroup(TGFONTATTR))
 /*N*/ 				{	aArray.SetSize(n + 1);
-/*N*/ 
+/*N*/
 /*N*/ 					if (bIsAttr)
 /*N*/ 						Attribut();
 /*N*/ 					else
 /*N*/ 						FontAttribut();
-/*N*/ 
+/*N*/
 /*N*/ 					// check if casting in following line is ok
 /*N*/ 					DBG_ASSERT(!NodeStack.Top()->IsVisible(), "Sm : Ooops...");
-/*N*/ 
+/*N*/
 /*N*/ 					aArray.Put(n, (SmStructureNode *) NodeStack.Pop());
 /*N*/ 					n++;
 /*N*/ 				}
-/*N*/ 
+/*N*/
 /*N*/ 				Power();
-/*N*/ 
+/*N*/
 /*N*/ 				SmNode *pFirstNode = NodeStack.Pop();
 /*N*/ 				while (n > 0)
 /*N*/ 				{	aArray.Get(n - 1)->SetSubNodes(0, pFirstNode);
@@ -1487,24 +1452,24 @@ const sal_Int32 coNumContFlags =
 /*N*/ 				{
 /*N*/ 					// insert opening brace
 /*N*/ 					Insert('{', GetTokenIndex());
-/*N*/ 
+/*N*/
 /*N*/ 					//
 /*N*/ 					// parse in 4.0 style
 /*N*/ 					//
 /*N*/ 					Function();
-/*N*/ 
+/*N*/
 /*N*/ 					SmNode *pFunc = NodeStack.Pop();
-/*N*/ 
+/*N*/
 /*N*/ 					if (CurToken.eType == TLPARENT)
 /*?*/ 					{	Term();
 /*N*/ 					}
 /*N*/ 					else
 /*N*/ 					{	Align();
 /*N*/ 					}
-/*N*/ 
+/*N*/
 /*N*/ 					// insert closing brace
 /*N*/ 					Insert('}', GetTokenIndex());
-/*N*/ 
+/*N*/
 /*N*/ 					SmStructureNode *pSNode = new SmExpressionNode(pFunc->GetToken());
 /*N*/ 					pSNode->SetSubNodes(pFunc, NodeStack.Pop());
 /*N*/ 					NodeStack.Push(pSNode);
@@ -1519,36 +1484,36 @@ const sal_Int32 coNumContFlags =
 /*N*/ void SmParser::Escape()
 /*N*/ {
 /*N*/ 	NextToken();
-/*N*/ 
-/*N*/ 	sal_Unicode	cChar;
+/*N*/
 /*N*/ 	switch (CurToken.eType)
-/*N*/ 	{	case TLPARENT :		cChar = MS_LPARENT;		break;
-/*N*/ 		case TRPARENT :		cChar = MS_RPARENT;		break;
-/*N*/ 		case TLBRACKET :	cChar = MS_LBRACKET;	break;
-/*N*/ 		case TRBRACKET :	cChar = MS_RBRACKET;	break;
-/*N*/         case TLDBRACKET :   cChar = MS_LDBRACKET;   break;
-/*N*/         case TRDBRACKET :   cChar = MS_RDBRACKET;   break;
+/*N*/ 	{	case TLPARENT :
+/*N*/ 		case TRPARENT :
+/*N*/ 		case TLBRACKET :
+/*N*/ 		case TRBRACKET :
+/*N*/         case TLDBRACKET :
+/*N*/         case TRDBRACKET :
 /*N*/ 		case TLBRACE :
-/*N*/ 		case TLGROUP :		cChar = MS_LBRACE;		break;
+/*N*/ 		case TLGROUP :
 /*N*/ 		case TRBRACE :
-/*N*/ 		case TRGROUP :		cChar = MS_RBRACE;		break;
-/*N*/ 		case TLANGLE :		cChar = MS_LANGLE;		break;
-/*N*/ 		case TRANGLE :		cChar = MS_RANGLE;		break;
-/*N*/ 		case TLCEIL :		cChar = MS_LCEIL;		break;
-/*N*/ 		case TRCEIL :		cChar = MS_RCEIL;		break;
-/*N*/ 		case TLFLOOR :		cChar = MS_LFLOOR;		break;
-/*N*/ 		case TRFLOOR :		cChar = MS_RFLOOR;		break;
+/*N*/ 		case TRGROUP :
+/*N*/ 		case TLANGLE :
+/*N*/ 		case TRANGLE :
+/*N*/ 		case TLCEIL :
+/*N*/ 		case TRCEIL :
+/*N*/ 		case TLFLOOR :
+/*N*/ 		case TRFLOOR :
 /*N*/ 		case TLLINE :
-/*N*/ 		case TRLINE :		cChar = MS_LINE;		break;
+/*N*/ 		case TRLINE :
 /*N*/ 		case TLDLINE :
-/*N*/ 		case TRDLINE :		cChar = MS_DLINE;		break;
+/*N*/ 		case TRDLINE :
+/*N*/ 		    break;
 /*N*/ 		default:
 /*N*/ 			Error(PE_UNEXPECTED_TOKEN);
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	SmNode *pNode = new SmMathSymbolNode(CurToken);
 /*N*/ 	NodeStack.Push(pNode);
-/*N*/ 
+/*N*/
 /*N*/ 	NextToken();
 /*N*/ }
 
@@ -1557,17 +1522,17 @@ const sal_Int32 coNumContFlags =
 /*N*/ {
 /*N*/ 	if (TokenInGroup(TGOPER))
 /*N*/ 	{	SmStructureNode *pSNode = new SmOperNode(CurToken);
-/*N*/ 
+/*N*/
 /*N*/ 		// put operator on top of stack
 /*N*/ 		Oper();
-/*N*/ 
+/*N*/
 /*N*/ 		if (TokenInGroup(TGLIMIT) || TokenInGroup(TGPOWER))
 /*N*/ 			SubSup(CurToken.nGroup);
 /*N*/ 		SmNode *pOperator = NodeStack.Pop();
-/*N*/ 
+/*N*/
 /*N*/ 		// get argument
 /*N*/ 		Power();
-/*N*/ 
+/*N*/
 /*N*/ 		pSNode->SetSubNodes(pOperator, NodeStack.Pop());
 /*N*/ 		NodeStack.Push(pSNode);
 /*N*/ 	}
@@ -1578,7 +1543,7 @@ const sal_Int32 coNumContFlags =
 /*N*/ {
 /*N*/ 	SmTokenType  eType (CurToken.eType);
 /*N*/ 	SmNode      *pNode = NULL;
-/*N*/ 
+/*N*/
 /*N*/ 	switch (eType)
 /*N*/ 	{
 /*N*/ 		case TSUM :
@@ -1592,7 +1557,7 @@ const sal_Int32 coNumContFlags =
 /*N*/ 		case TLLLINT :
 /*N*/ 			pNode = new SmMathSymbolNode(CurToken);
 /*N*/ 			break;
-/*N*/ 
+/*N*/
 /*N*/ 		case TLIM :
 /*N*/ 		case TLIMSUP :
 /*N*/ 		case TLIMINF :
@@ -1603,30 +1568,31 @@ const sal_Int32 coNumContFlags =
 /*N*/ 					case TLIM :		pLim = "lim";		break;
 /*N*/ 					case TLIMSUP :  pLim = "lim sup";	break;
 /*N*/ 					case TLIMINF :  pLim = "lim inf";	break;
+                        default: break;
 /*N*/ 				}
 /*N*/ 				if( pLim )
 /*N*/ 					CurToken.aText.AssignAscii( pLim );
 /*N*/ 				pNode = new SmTextNode(CurToken, FNT_TEXT);
 /*N*/ 			}
 /*N*/ 			break;
-/*N*/ 
+/*N*/
 /*N*/ 		case TOVERBRACE :
 /*N*/ 		case TUNDERBRACE :
 /*N*/ 				pNode = new SmMathSymbolNode(CurToken);
 /*N*/ 			break;
-/*N*/ 
+/*N*/
 /*N*/ 		case TOPER :
 /*?*/ 			NextToken();
-/*N*/ 
+/*N*/
 /*?*/ 			DBG_ASSERT(CurToken.eType == TSPECIAL, "Sm: falsches Token");
 /*?*/ 			pNode = new SmGlyphSpecialNode(CurToken);
 /*?*/ 			break;
-/*N*/ 
+/*N*/
 /*N*/ 		default :
 /*N*/ 			DBG_ASSERT(0, "Sm: unbekannter Fall");
 /*N*/ 	}
 /*N*/ 	NodeStack.Push(pNode);
-/*N*/ 
+/*N*/
 /*N*/ 	NextToken();
 /*N*/ }
 
@@ -1634,35 +1600,35 @@ const sal_Int32 coNumContFlags =
 /*N*/ void SmParser::UnOper()
 /*N*/ {
 /*N*/ 	DBG_ASSERT(TokenInGroup(TGUNOPER), "Sm: falsches Token");
-/*N*/ 
+/*N*/
 /*N*/ 	SmToken		 aNodeToken = CurToken;
 /*N*/ 	SmTokenType  eType 		= CurToken.eType;
 /*N*/ 	BOOL		 bIsPostfix = eType == TFACT;
-/*N*/ 
+/*N*/
 /*N*/ 	SmStructureNode *pSNode;
-/*N*/ 	SmNode *pOper,
+/*N*/ 	SmNode *pOper = 0,
 /*N*/ 		   *pExtra = 0,
 /*N*/ 		   *pArg;
-/*N*/ 
+/*N*/
 /*N*/ 	switch (eType)
 /*N*/ 	{
 /*N*/ 		case TABS :
 /*N*/ 		case TSQRT :
 /*N*/ 			NextToken();
 /*N*/ 			break;
-/*N*/ 
+/*N*/
 /*N*/ 		case TNROOT :
 /*N*/ 			NextToken();
 /*N*/ 			Power();
 /*N*/ 			pExtra = NodeStack.Pop();
 /*N*/ 			break;
-/*N*/ 
+/*N*/
 /*N*/ 		case TUOPER :
 /*?*/ 			NextToken();
 /*?*/ 			GlyphSpecial();
 /*?*/ 			pOper = NodeStack.Pop();
 /*?*/ 			break;
-/*N*/ 
+/*N*/
 /*N*/ 		case TPLUS :
 /*N*/ 		case TMINUS :
 /*N*/ 		case TPLUSMINUS :
@@ -1672,19 +1638,19 @@ const sal_Int32 coNumContFlags =
 /*N*/ 			OpSubSup();
 /*N*/ 			pOper = NodeStack.Pop();
 /*N*/ 			break;
-/*N*/ 
+/*N*/
 /*N*/ 		default :
 /*N*/ 			Error(PE_UNOPER_EXPECTED);
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	// get argument
 /*N*/ 	Power();
 /*N*/ 	pArg = NodeStack.Pop();
-/*N*/ 
+/*N*/
 /*N*/ 	if (eType == TABS)
 /*N*/ 	{	pSNode = new SmBraceNode(aNodeToken);
 /*N*/ 		pSNode->SetScaleMode(SCALE_HEIGHT);
-/*N*/ 
+/*N*/
 /*N*/ 		// build nodes for left & right lines
 /*N*/ 		// (text, group, level of the used token are of no interrest here)
 /*N*/ 		// we'll use row & column of the keyword for abs
@@ -1695,7 +1661,7 @@ const sal_Int32 coNumContFlags =
 /*N*/ 		//
 /*N*/ 		aNodeToken.cMathChar = MS_LINE;
 /*N*/ 		SmNode* pRight = new SmMathSymbolNode(aNodeToken);
-/*N*/ 
+/*N*/
 /*N*/ 		pSNode->SetSubNodes(pLeft, pArg, pRight);
 /*N*/ 	}
 /*N*/ 	else if (eType == TSQRT  ||  eType == TNROOT)
@@ -1705,14 +1671,14 @@ const sal_Int32 coNumContFlags =
 /*N*/ 	}
 /*N*/ 	else
 /*N*/ 	{	pSNode = new SmUnHorNode(aNodeToken);
-/*N*/ 
+/*N*/
 /*N*/ 		if (bIsPostfix)
 /*N*/ 			pSNode->SetSubNodes(pArg, pOper);
 /*N*/ 		else
 /*N*/ 			// prefix operator
 /*N*/ 			pSNode->SetSubNodes(pOper, pArg);
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	NodeStack.Push(pSNode);
 /*N*/ }
 
@@ -1720,11 +1686,11 @@ const sal_Int32 coNumContFlags =
 /*N*/ void SmParser::Attribut()
 /*N*/ {
 /*N*/ 	DBG_ASSERT(TokenInGroup(TGATTRIBUT), "Sm: falsche Tokengruppe");
-/*N*/ 
+/*N*/
 /*N*/ 	SmStructureNode	*pSNode = new SmAttributNode(CurToken);
 /*N*/ 	SmNode		*pAttr;
 /*N*/ 	SmScaleMode  eScaleMode = SCALE_NONE;
-/*N*/ 
+/*N*/
 /*N*/ 	// get appropriate node for the attribut itself
 /*N*/ 	switch (CurToken.eType)
 /*N*/ 	{	case TUNDERLINE :
@@ -1733,20 +1699,20 @@ const sal_Int32 coNumContFlags =
 /*?*/ 			pAttr = new SmRectangleNode(CurToken);
 /*?*/ 			eScaleMode = SCALE_WIDTH;
 /*?*/ 			break;
-/*N*/ 
+/*N*/
 /*N*/ 		case TWIDEVEC :
 /*N*/ 		case TWIDEHAT :
 /*N*/ 		case TWIDETILDE :
 /*N*/ 			pAttr = new SmMathSymbolNode(CurToken);
 /*N*/ 			eScaleMode = SCALE_WIDTH;
 /*?*/ 			break;
-/*N*/ 
+/*N*/
 /*N*/ 		default :
 /*N*/ 			pAttr = new SmMathSymbolNode(CurToken);
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	NextToken();
-/*N*/ 
+/*N*/
 /*N*/ 	pSNode->SetSubNodes(pAttr, 0);
 /*N*/ 	pSNode->SetScaleMode(eScaleMode);
 /*N*/ 	NodeStack.Push(pSNode);
@@ -1756,7 +1722,7 @@ const sal_Int32 coNumContFlags =
 /*N*/ void SmParser::FontAttribut()
 /*N*/ {
 /*N*/ 	DBG_ASSERT(TokenInGroup(TGFONTATTR), "Sm: falsche Tokengruppe");
-/*N*/ 
+/*N*/
 /*N*/ 	switch (CurToken.eType)
 /*N*/ 	{
 /*N*/ 		case TITALIC :
@@ -1767,19 +1733,19 @@ const sal_Int32 coNumContFlags =
 /*N*/ 			NodeStack.Push(new SmFontNode(CurToken));
 /*N*/ 			NextToken();
 /*N*/ 			break;
-/*N*/ 
+/*N*/
 /*N*/ 		case TSIZE :
 /*N*/ 			FontSize();
 /*N*/ 			break;
-/*N*/ 
+/*N*/
 /*N*/ 		case TFONT :
 /*N*/ 			Font();
 /*N*/ 			break;
-/*N*/ 
+/*N*/
 /*N*/ 		case TCOLOR :
 /*N*/ 			Color();
 /*N*/ 			break;
-/*N*/ 
+/*N*/
 /*N*/ 		default :
 /*N*/ 			DBG_ASSERT(0, "Sm: unbekannter Fall");
 /*N*/ 	}
@@ -1789,12 +1755,12 @@ const sal_Int32 coNumContFlags =
 /*N*/ void SmParser::Color()
 /*N*/ {
 /*N*/     DBG_ASSERT(CurToken.eType == TCOLOR, "Sm : Ooops...");
-/*N*/ 
+/*N*/
 /*N*/     // last color rules, get that one
 /*N*/     SmToken  aToken;
 /*N*/     do
 /*N*/     {   NextToken();
-/*N*/ 
+/*N*/
 /*N*/         if (TokenInGroup(TGCOLOR))
 /*N*/         {   aToken = CurToken;
 /*N*/             NextToken();
@@ -1802,7 +1768,7 @@ const sal_Int32 coNumContFlags =
 /*N*/         else
 /*N*/             Error(PE_COLOR_EXPECTED);
 /*N*/     } while (CurToken.eType == TCOLOR);
-/*N*/ 
+/*N*/
 /*N*/     NodeStack.Push(new SmFontNode(aToken));
 /*N*/ }
 
@@ -1810,12 +1776,12 @@ const sal_Int32 coNumContFlags =
 /*N*/ void SmParser::Font()
 /*N*/ {
 /*N*/ 	DBG_ASSERT(CurToken.eType == TFONT, "Sm : Ooops...");
-/*N*/ 
+/*N*/
 /*N*/ 	// last font rules, get that one
 /*N*/ 	SmToken  aToken;
 /*N*/ 	do
 /*N*/ 	{	NextToken();
-/*N*/ 
+/*N*/
 /*N*/ 		if (TokenInGroup(TGFONT))
 /*N*/ 		{	aToken = CurToken;
 /*N*/ 			NextToken();
@@ -1823,7 +1789,7 @@ const sal_Int32 coNumContFlags =
 /*N*/ 		else
 /*N*/ 			Error(PE_FONT_EXPECTED);
 /*N*/ 	} while (CurToken.eType == TFONT);
-/*N*/ 
+/*N*/
 /*N*/ 	NodeStack.Push(new SmFontNode(aToken));
 /*N*/ }
 /*N*/ BOOL lcl_IsNumber(const UniString& rText)
@@ -1849,12 +1815,12 @@ const sal_Int32 coNumContFlags =
 /*N*/ void SmParser::FontSize()
 /*N*/ {
 /*N*/ 	DBG_ASSERT(CurToken.eType == TSIZE, "Sm : Ooops...");
-/*N*/ 
+/*N*/
 /*N*/ 	USHORT	   Type;
 /*N*/ 	SmFontNode *pFontNode = new SmFontNode(CurToken);
-/*N*/ 
+/*N*/
 /*N*/ 	NextToken();
-/*N*/ 
+/*N*/
 /*N*/ 	switch (CurToken.eType)
 /*N*/ 	{
 /*N*/ 		case TNUMBER:	Type = FNTSIZ_ABSOLUT;	break;
@@ -1862,13 +1828,13 @@ const sal_Int32 coNumContFlags =
 /*N*/ 		case TMINUS:	Type = FNTSIZ_MINUS;	break;
 /*N*/ 		case TMULTIPLY:	Type = FNTSIZ_MULTIPLY;	break;
 /*N*/ 		case TDIVIDEBY:	Type = FNTSIZ_DIVIDE;	break;
-/*N*/ 
+/*N*/
 /*N*/ 		default:
 /*?*/ 			delete pFontNode;
 /*?*/ 			Error(PE_SIZE_EXPECTED);
 /*?*/ 			return;
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	if (Type != FNTSIZ_ABSOLUT)
 /*N*/ 	{
 /*N*/ 		NextToken();
@@ -1879,16 +1845,16 @@ const sal_Int32 coNumContFlags =
 /*?*/ 			return;
 /*N*/ 		}
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	// get number argument
 /*N*/ 	double	  fTmp;
 /*N*/ 	Fraction  aValue;
 /*N*/ 	if(lcl_IsNumber(CurToken.aText) &&
 /*N*/ 		sscanf(ByteString(CurToken.aText, RTL_TEXTENCODING_ASCII_US).GetBuffer(), "%lf", &fTmp) == 1)
 /*N*/ 		aValue = fTmp;
-/*N*/ 
+/*N*/
 /*N*/ 	NextToken();
-/*N*/ 
+/*N*/
 /*N*/ 	pFontNode->SetSizeParameter(aValue, Type);
 /*N*/ 	NodeStack.Push(pFontNode);
 /*N*/ }
@@ -1898,31 +1864,31 @@ const sal_Int32 coNumContFlags =
 /*N*/ {
 /*N*/ 	DBG_ASSERT(CurToken.eType == TLEFT  ||  TokenInGroup(TGLBRACES),
 /*N*/ 		"Sm: kein Klammer Ausdruck");
-/*N*/ 
+/*N*/
 /*N*/ 	SmStructureNode *pSNode  = new SmBraceNode(CurToken);
 /*N*/ 	SmNode *pBody   = 0,
 /*N*/ 		   *pLeft   = 0,
 /*N*/ 		   *pRight  = 0;
 /*N*/ 	SmScaleMode   eScaleMode = SCALE_NONE;
 /*N*/ 	SmParseError  eError     = PE_NONE;
-/*N*/ 
+/*N*/
 /*N*/ 	if (CurToken.eType == TLEFT)
 /*N*/ 	{	NextToken();
-/*N*/ 
+/*N*/
 /*N*/ 		eScaleMode = SCALE_HEIGHT;
-/*N*/ 
+/*N*/
 /*N*/ 		// check for left bracket
 /*N*/ 		if (TokenInGroup(TGLBRACES) || TokenInGroup(TGRBRACES))
 /*N*/ 		{
 /*N*/ 			pLeft = new SmMathSymbolNode(CurToken);
-/*N*/ 
+/*N*/
 /*N*/ 			NextToken();
 /*N*/ 			Bracebody(TRUE);
 /*N*/ 			pBody = NodeStack.Pop();
-/*N*/ 
+/*N*/
 /*N*/ 			if (CurToken.eType == TRIGHT)
 /*N*/ 			{	NextToken();
-/*N*/ 
+/*N*/
 /*N*/ 				// check for right bracket
 /*N*/ 				if (TokenInGroup(TGLBRACES) || TokenInGroup(TGRBRACES))
 /*N*/ 				{
@@ -1943,11 +1909,11 @@ const sal_Int32 coNumContFlags =
 /*N*/ 		if (TokenInGroup(TGLBRACES))
 /*N*/ 		{
 /*N*/ 			pLeft = new SmMathSymbolNode(CurToken);
-/*N*/ 
+/*N*/
 /*N*/ 			NextToken();
 /*N*/ 			Bracebody(FALSE);
 /*N*/ 			pBody = NodeStack.Pop();
-/*N*/ 
+/*N*/
 /*N*/ 			SmTokenType  eExpectedType = TUNKNOWN;
 /*N*/ 			switch (pLeft->GetToken().eType)
 /*N*/ 			{	case TLPARENT :	 	eExpectedType = TRPARENT;	break;
@@ -1962,7 +1928,7 @@ const sal_Int32 coNumContFlags =
 /*N*/ 				default :
 /*N*/ 					DBG_ASSERT(0, "Sm: unbekannter Fall");
 /*N*/ 			}
-/*N*/ 
+/*N*/
 /*N*/ 			if (CurToken.eType == eExpectedType)
 /*N*/ 			{
 /*N*/ 				pRight = new SmMathSymbolNode(CurToken);
@@ -1974,7 +1940,7 @@ const sal_Int32 coNumContFlags =
 /*N*/ 		else
 /*N*/ 			eError = PE_LBRACE_EXPECTED;
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	if (eError == PE_NONE)
 /*N*/ 	{   DBG_ASSERT(pLeft,  "Sm: NULL pointer");
 /*N*/ 		DBG_ASSERT(pRight, "Sm: NULL pointer");
@@ -1987,7 +1953,7 @@ const sal_Int32 coNumContFlags =
 /*N*/ 		delete pBody;
 /*N*/ 		delete pLeft;
 /*N*/ 		delete pRight;
-/*N*/ 
+/*N*/
 /*N*/ 		Error(eError);
 /*N*/ 	}
 /*N*/ }
@@ -1998,7 +1964,7 @@ const sal_Int32 coNumContFlags =
 /*N*/ 	SmStructureNode *pBody = new SmBracebodyNode(CurToken);
 /*N*/ 	SmNodeArray  	 aNodes;
 /*N*/ 	USHORT		 	 nNum = 0;
-/*N*/ 
+/*N*/
 /*N*/ 	// get body if any
 /*N*/ 	if (bIsLeftRight)
 /*N*/ 	{
@@ -2013,7 +1979,7 @@ const sal_Int32 coNumContFlags =
 /*N*/ 			else if (CurToken.eType != TRIGHT)
 /*N*/ 			{	Align();
 /*N*/ 				nNum++;
-/*N*/ 
+/*N*/
 /*N*/ 				if (CurToken.eType != TMLINE  &&  CurToken.eType != TRIGHT)
 /*N*/ 					Error(PE_RIGHT_EXPECTED);
 /*N*/ 			}
@@ -2032,18 +1998,18 @@ const sal_Int32 coNumContFlags =
 /*N*/ 			else if (!TokenInGroup(TGRBRACES))
 /*N*/ 			{	Align();
 /*N*/ 				nNum++;
-/*N*/ 
+/*N*/
 /*N*/ 				if (CurToken.eType != TMLINE  &&  !TokenInGroup(TGRBRACES))
 /*N*/ 					Error(PE_RBRACE_EXPECTED);
 /*N*/ 			}
 /*N*/ 		} while (CurToken.eType != TEND  &&  !TokenInGroup(TGRBRACES));
 /*N*/ 	}
-/*N*/ 
+/*N*/
 /*N*/ 	// build argument vector in parsing order
 /*N*/ 	aNodes.SetSize(nNum);
 /*N*/ 	for (USHORT i = 0;  i < nNum;  i++)
 /*N*/ 		aNodes.Put(nNum - 1 - i, NodeStack.Pop());
-/*N*/ 
+/*N*/
 /*N*/ 	pBody->SetSubNodes(aNodes);
 /*N*/ 	pBody->SetScaleMode(bIsLeftRight ? SCALE_HEIGHT : SCALE_NONE);
 /*N*/ 	NodeStack.Push(pBody);
@@ -2057,7 +2023,7 @@ const sal_Int32 coNumContFlags =
 /*N*/ 		case TFUNC:
 /*N*/ 			NextToken();	// skip "FUNC"-statement
 /*N*/ 			// fall through
-/*N*/ 
+/*N*/
 /*N*/ 		case TSIN :
 /*N*/ 		case TCOS :
 /*N*/ 		case TTAN :
@@ -2080,7 +2046,7 @@ const sal_Int32 coNumContFlags =
 /*N*/ 			NodeStack.Push(new SmTextNode(CurToken, FNT_FUNCTION));
 /*N*/ 			NextToken();
 /*N*/ 			break;
-/*N*/ 
+/*N*/
 /*N*/ 		default:
 /*N*/ 			Error(PE_FUNC_EXPECTED);
 /*N*/ 	}
@@ -2091,17 +2057,17 @@ const sal_Int32 coNumContFlags =
 /*N*/ {
 /*N*/ 	SmNodeArray  ExpressionArray;
 /*N*/ 	SmStructureNode	*pSNode = new SmTableNode(CurToken);
-/*N*/ 
+/*N*/
 /*N*/ 	NextToken();
-/*N*/ 
+/*N*/
 /*N*/ 	Sum();
 /*N*/ 	Sum();
-/*N*/ 
+/*N*/
 /*N*/ 	ExpressionArray.SetSize(2);
-/*N*/ 
+/*N*/
 /*N*/ 	for (int i = 0;  i < 2;  i++)
 /*N*/ 		ExpressionArray.Put(2 - (i + 1), NodeStack.Pop());
-/*N*/ 
+/*N*/
 /*N*/ 	pSNode->SetSubNodes(ExpressionArray);
 /*N*/ 	NodeStack.Push(pSNode);
 /*N*/ }
@@ -2114,7 +2080,7 @@ const sal_Int32 coNumContFlags =
 /*N*/ 	if (CurToken.eType == TLGROUP)
 /*N*/ 	{
 /*N*/ 		USHORT n = 0;
-/*N*/ 
+/*N*/
 /*N*/ 		do
 /*N*/ 		{
 /*N*/ 			NextToken();
@@ -2122,17 +2088,17 @@ const sal_Int32 coNumContFlags =
 /*N*/ 			n++;
 /*N*/ 		}
 /*N*/ 		while (CurToken.eType == TPOUND);
-/*N*/ 
+/*N*/
 /*N*/ 		ExpressionArray.SetSize(n);
-/*N*/ 
+/*N*/
 /*N*/ 		for (USHORT i = 0; i < n; i++)
 /*N*/ 			ExpressionArray.Put(n - (i + 1), NodeStack.Pop());
-/*N*/ 
+/*N*/
 /*N*/ 		if (CurToken.eType != TRGROUP)
 /*N*/ 			Error(PE_RGROUP_EXPECTED);
-/*N*/ 
+/*N*/
 /*N*/ 		NextToken();
-/*N*/ 
+/*N*/
 /*N*/ 		SmStructureNode *pSNode = new SmTableNode(CurToken);
 /*N*/ 		pSNode->SetSubNodes(ExpressionArray);
 /*N*/ 		NodeStack.Push(pSNode);
@@ -2145,12 +2111,12 @@ const sal_Int32 coNumContFlags =
 /*N*/ void SmParser::Matrix()
 /*N*/ {
 /*N*/ 	SmNodeArray  ExpressionArray;
-/*N*/ 
+/*N*/
 /*N*/ 	NextToken();
 /*N*/ 	if (CurToken.eType == TLGROUP)
 /*N*/ 	{
 /*N*/ 		USHORT c = 0;
-/*N*/ 
+/*N*/
 /*N*/ 		do
 /*N*/ 		{
 /*N*/ 			NextToken();
@@ -2158,9 +2124,9 @@ const sal_Int32 coNumContFlags =
 /*N*/ 			c++;
 /*N*/ 		}
 /*N*/ 		while (CurToken.eType == TPOUND);
-/*N*/ 
+/*N*/
 /*N*/ 		USHORT r = 1;
-/*N*/ 
+/*N*/
 /*N*/ 		while (CurToken.eType == TDPOUND)
 /*N*/ 		{
 /*N*/ 			NextToken();
@@ -2177,22 +2143,22 @@ const sal_Int32 coNumContFlags =
 /*N*/ 						Error(PE_POUND_EXPECTED);
 /*N*/ 				}
 /*N*/ 			}
-/*N*/ 
+/*N*/
 /*N*/ 			r++;
 /*N*/ 		}
-/*N*/ 
+/*N*/
 /*N*/ 		long nRC = r * c;
-/*N*/ 
+/*N*/
 /*N*/ 		ExpressionArray.SetSize(nRC);
-/*N*/ 
+/*N*/
 /*N*/ 		for (USHORT i = 0; i < (nRC); i++)
 /*N*/ 			ExpressionArray.Put((nRC) - (i + 1), NodeStack.Pop());
-/*N*/ 
+/*N*/
 /*N*/ 		if (CurToken.eType != TRGROUP)
 /*N*/ 			Error(PE_RGROUP_EXPECTED);
-/*N*/ 
+/*N*/
 /*N*/ 		NextToken();
-/*N*/ 
+/*N*/
 /*N*/ 		SmMatrixNode *pMNode = new SmMatrixNode(CurToken);
 /*N*/ 		pMNode->SetSubNodes(ExpressionArray);
 /*N*/ 		pMNode->SetRowCol(r, c);
@@ -2208,7 +2174,7 @@ const sal_Int32 coNumContFlags =
 /*M*/     BOOL bReplace = FALSE;
 /*M*/     String &rName = CurToken.aText;
 /*M*/     String aNewName;
-/*M*/ 
+/*M*/
 /*M*/     if (CONVERT_NONE == GetConversion())
 /*M*/     {
 /*M*/         // conversion of symbol names for 6.0 (XML) file format
@@ -2229,19 +2195,19 @@ const sal_Int32 coNumContFlags =
 /*M*/     }
 /*M*/     else    // 5.0 <-> 6.0 formula text (symbol name) conversion
 /*M*/     {
-/*M*/         LanguageType nLang = GetLanguage();
+/*M*/         LanguageType nLclLang = GetLanguage();
 /*M*/         SmLocalizedSymbolData &rData = SM_MOD1()->GetLocSymbolData();
 /*M*/         const ResStringArray *pFrom = 0;
 /*M*/         const ResStringArray *pTo   = 0;
 /*M*/         if (CONVERT_50_TO_60 == GetConversion())
 /*M*/         {
-/*M*/             pFrom = rData.Get50NamesArray( nLang );
-/*M*/             pTo   = rData.Get60NamesArray( nLang );
+/*M*/             pFrom = rData.Get50NamesArray( nLclLang );
+/*M*/             pTo   = rData.Get60NamesArray( nLclLang );
 /*M*/         }
 /*M*/         else if (CONVERT_60_TO_50 == GetConversion())
 /*M*/         {
-/*M*/             pFrom = rData.Get60NamesArray( nLang );
-/*M*/             pTo   = rData.Get50NamesArray( nLang );
+/*M*/             pFrom = rData.Get60NamesArray( nLclLang );
+/*M*/             pTo   = rData.Get50NamesArray( nLclLang );
 /*M*/         }
 /*M*/         if (pFrom  &&  pTo)
 /*M*/         {
@@ -2261,13 +2227,13 @@ const sal_Int32 coNumContFlags =
 /*M*/         // conversion arrays not found or (usually)
 /*M*/         // conversion not necessary
 /*M*/     }
-/*M*/ 
+/*M*/
 /*M*/     if (bReplace  &&  aNewName.Len()  &&  rName != aNewName)
 /*M*/     {
 /*M*/         Replace( GetTokenIndex() + 1, rName.Len(), aNewName );
 /*M*/         rName = aNewName;
 /*M*/     }
-/*M*/ 
+/*M*/
 /*M*/ 	NodeStack.Push(new SmSpecialNode(CurToken));
 /*M*/ 	NextToken();
 /*M*/ }
@@ -2285,14 +2251,14 @@ const sal_Int32 coNumContFlags =
 /*N*/ 	SmStructureNode *pSNode = new SmExpressionNode(CurToken);
 /*N*/ 	SmErrorNode		*pErr   = new SmErrorNode(eError, CurToken);
 /*N*/ 	pSNode->SetSubNodes(pErr, 0);
-/*N*/ 
+/*N*/
 /*N*/ 	//! put a structure node on the stack (instead of the error node itself)
 /*N*/ 	//! because sometimes such a node is expected in order to attach some
 /*N*/ 	//! subnodes
 /*N*/ 	NodeStack.Push(pSNode);
-/*N*/ 
+/*N*/
 /*N*/ 	AddError(eError, pSNode);
-/*N*/ 
+/*N*/
 /*N*/ 	NextToken();
 /*N*/ }
 
@@ -2317,30 +2283,29 @@ const sal_Int32 coNumContFlags =
 /*N*/ 	Row 		 = 1;
 /*N*/ 	ColOff		 = 0;
 /*N*/ 	CurError	 = -1;
-/*N*/ 
-/*N*/ 	for (USHORT i = 0;  i < ErrDescList.Count();  i++)
-/*N*/ 		delete ErrDescList.Remove(i);
-/*N*/ 
-/*N*/ 	ErrDescList.Clear();
-/*N*/ 
+/*N*/
+        for ( size_t i = 0, n = ErrDescList.size(); i < n; ++i )
+            delete ErrDescList[ i ];
+        ErrDescList.clear();
+/*N*/
 /*N*/ 	NodeStack.Clear();
-/*N*/ 
+/*N*/
 /*N*/     SetLanguage( Application::GetSettings().GetUILanguage() );
 /*N*/ 	NextToken();
 /*N*/ 	Table();
-/*N*/ 
+/*N*/
 /*N*/ 	return NodeStack.Pop();
 /*N*/ }
 
 
-/*N*/ USHORT SmParser::AddError(SmParseError Type, SmNode *pNode)
+/*N*/ void SmParser::AddError(SmParseError Type, SmNode *pNode)
 /*N*/ {
 /*N*/ 	SmErrorDesc *pErrDesc = new SmErrorDesc;
-/*N*/ 
+/*N*/
 /*N*/ 	pErrDesc->Type  = Type;
 /*N*/ 	pErrDesc->pNode = pNode;
 /*N*/ 	pErrDesc->Text  = String(SmResId(RID_ERR_IDENT));
-/*N*/ 
+/*N*/
 /*N*/ 	USHORT  nRID;
 /*N*/ 	switch (Type)
 /*N*/ 	{
@@ -2357,15 +2322,13 @@ const sal_Int32 coNumContFlags =
 /*N*/ 		case PE_POUND_EXPECTED:		 nRID = RID_ERR_POUNDEXPECTED;			break;
 /*N*/ 		case PE_COLOR_EXPECTED:		 nRID = RID_ERR_COLOREXPECTED;			break;
 /*N*/ 		case PE_RIGHT_EXPECTED:		 nRID = RID_ERR_RIGHTEXPECTED;			break;
-/*N*/ 
+/*N*/
 /*N*/ 		default:
 /*N*/ 			nRID = RID_ERR_UNKOWN;
 /*N*/ 	}
 /*N*/ 	pErrDesc->Text += SmResId(nRID);
-/*N*/ 
-/*N*/ 	ErrDescList.Insert(pErrDesc);
-/*N*/ 
-/*N*/ 	return (USHORT) ErrDescList.GetPos(pErrDesc);
+/*N*/
+/*N*/ 	ErrDescList.push_back( pErrDesc );
 /*N*/ }
 
 
@@ -2376,3 +2339,5 @@ const sal_Int32 coNumContFlags =
 
 
 }
+
+/* vim:set shiftwidth=4 softtabstop=4 expandtab: */

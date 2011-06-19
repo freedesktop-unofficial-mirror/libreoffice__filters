@@ -1,7 +1,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2000, 2010 Oracle and/or its affiliates.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -50,20 +50,19 @@ public class ColumnRowInfo {
     /**
      * Constructor for a <code>ColumnRowInfo</code>
      *
-     * @param dimension if it's a row the height, a column the width 
-     * @param repeated 
+     * @param type whether ROW or COLUMN record .
      */
     public ColumnRowInfo(int type) {
 
         this.type = type;
     }
-    
+
     /**
      * Constructor for a <code>ColumnRowInfo</code>
      *
-     * @param dimension if it's a row the height, a column the width 
-     * @param repeated how many times it is repeated
-     * @param type whether Row or column record 
+     * @param dimension if it's a row the height, a column the width.
+     * @param repeated how many times it is repeated.
+     * @param type whether ROW or COLUMN record.
      */
     public ColumnRowInfo(int dimension, int repeated, int type) {
 
@@ -73,20 +72,24 @@ public class ColumnRowInfo {
     }
 
     /**
-     * Constructor that includes userDefined field
+     * Constructor for a <code>ColumnRowInfo</code> that includes userDefined
+     * field.
      *
-     * @param userDefined whether the record is manually set
+     * @param dimension if it's a row the height, a column the width.
+     * @param repeated how many times it is repeated.
+     * @param type whether ROW or COLUMN record.
+     * @param userDefined whether the record is manually set.
      */
     public ColumnRowInfo(int dimension, int repeated, int type, boolean userDefined) {
-    
+
         this(dimension, repeated, type);
         this.userDefined = userDefined;
     }
-    
+
     /**
-     * sets the definition 
+     * Sets the format.
      *
-     * @param newDefinition sets the definition
+     * @param fmt The new format to use.
      */
     public void setFormat(Format fmt) {
 
@@ -94,9 +97,9 @@ public class ColumnRowInfo {
     }
 
     /**
-     * returns Name of the definition 
-     * 
-     * @return the name which identifies the definition
+     * Get the current format.
+     *
+     * @return The current format.
      */
     public Format getFormat() {
 
@@ -104,67 +107,68 @@ public class ColumnRowInfo {
     }
 
     /**
-     * returns Name of the definition 
-     * 
-     * @return the name which identifies the definition
+     * Get the height (for rows) or width (for columns).
+     *
+     * @return The height or width.
      */
     public int getSize() {
 
         return dimension;
     }
-    
+
     /**
-     * sets the definition 
+     * Set the height (for rows) or width (for columns).
      *
-     * @param newDefinition sets the definition
+     * @param dimension The height or width.
      */
     public void setSize(int dimension) {
 
         this.dimension = dimension;
     }
+
     /**
-     * Returns the definition itself
+     * Get the repeat count for this item.
      *
-     * @return the definition 
+     * @return The number of times this item is repeated.
      */
     public int getRepeated() {
-    
+
         return repeated;
     }
 
     /**
-     * Returns the base Cell address 
-     * 
-     * @return the base cell address
+     * Set the repeat count for this item.
+     *
+     * @param repeated The number of times this item is repeated.
      */
     public void setRepeated(int repeated) {
 
         this.repeated = repeated;
     }
-    
+
     /**
-     * Returns the definition itself
+     * Does this <code>ColumnRowInfo</code> represent a row?
      *
-     * @return the definition 
+     * @return True if a row, false if not.
      */
     public boolean isRow() {
-    
+
         if(type==ROW)
             return true;
-        else 
+        else
             return false;
     }
 
     /**
-     * Returns the base Cell address 
-     * 
-     * @return the base cell address
+     * Does this <code>ColumnRowInfo</code> represent a column?
+     *
+     * @return True if a column, false if not.
      */
     public boolean isColumn() {
 
         if(type==COLUMN)
             return true;
-        else 
+        else
             return false;
     }
 
@@ -177,7 +181,7 @@ public class ColumnRowInfo {
 
         return userDefined;
     }
-    
+
     /**
      * Test if the row height is default
      *
@@ -189,7 +193,7 @@ public class ColumnRowInfo {
             dimension>DEFAULTROWSIZE_MIN &&
             dimension<DEFAULTROWSIZE_MAX)
             return true;
-        else 
+        else
             return false;
-    }		
+    }
 }
