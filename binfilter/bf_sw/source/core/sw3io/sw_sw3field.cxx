@@ -936,9 +936,9 @@ SwAuthorityFieldType* lcl_sw3io_InAuthorityFieldType( Sw3IoImp& rIo )
 /*N*/ 	String sTxt( ((SwDBField *)pFld)->GetOldContent() );
 /*N*/ 	if( ((SwDBField *)pFld)->IsValidValue() )
 /*N*/ 	{
-/*?*/ 		cFlag = 0x01;
-/*?*/         ByteString sValue(ByteString::CreateFromDouble(((SwDBField *)pFld)->GetValue()));
-/*?*/         sTxt.AssignAscii( sValue.GetBuffer() );
+/*?*/ 	    cFlag = 0x01;
+/*?*/       rtl::OString sValue(rtl::OString::valueOf(((SwDBField *)pFld)->GetValue()));
+/*?*/       sTxt.AssignAscii(sValue.getStr());
 /*N*/ 	}
 /*N*/ 	*rIo.pStrm << (UINT16)rIo.aStringPool.Find( ((SwDBFieldType *)pFld->GetTyp())->GetColumnName(), USHRT_MAX );
 /*N*/ 	rIo.OutString( *rIo.pStrm, sTxt );
