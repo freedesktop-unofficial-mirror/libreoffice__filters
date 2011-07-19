@@ -276,7 +276,7 @@ void SheetDataContext::onEndElement()
                 maCurrCell.mnCellType = XML_TOKEN_INVALID;
             }
         }
-        if( maCurrCell.mnSharedId >= 0 )
+        if( maCurrCell.mnFormulaType == XML_shared && maCurrCell.mnSharedId >= 0 )
         {
             Reference< XFormulaTokens > xTokens( maCurrCell.mxCell, UNO_QUERY_THROW );
             ExtCellFormulaContext aContext( *this, xTokens, maCurrCell.maAddress );
