@@ -2,7 +2,7 @@
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -58,7 +58,14 @@
 #include <com/sun/star/java/XJavaVM.hpp>
 #include <com/sun/star/java/XJavaThreadRegister_11.hpp>
 #include <com/sun/star/lang/XMultiServiceFactory.hpp>
+#include <com/sun/star/style/ParagraphAdjust.hdl>
+#include <com/sun/star/style/ParagraphAdjust.hpp>
+#include <com/sun/star/drawing/FillStyle.hpp>
+#include <com/sun/star/graphic/XGraphicProvider.hpp>
+#include <com/sun/star/graphic/XGraphicProvider.hdl>
 
+
+#include <boost/unordered_set.hpp>
 #include <boost/unordered_map.hpp>
 #include <osl/diagnose.h>
 #include <rtl/process.h>
@@ -82,9 +89,6 @@
 #include <svx/svdobj.hxx>
 #include <xmloff/xmlexp.hxx>
 
-#include "svgfilter.hxx"
-#include "svgscript.hxx"
-
 #include <cstdio>
 
 using namespace ::com::sun::star::uno;
@@ -96,6 +100,7 @@ using namespace ::com::sun::star::drawing;
 using namespace ::com::sun::star::presentation;
 using namespace ::com::sun::star::document;
 using namespace ::com::sun::star::text;
+using namespace ::com::sun::star::style;
 using namespace ::com::sun::star::io;
 using namespace ::com::sun::star::xml::sax;
 using namespace ::std;
@@ -106,6 +111,15 @@ using namespace ::std;
 
 #define SVG_EXPORT_ALLPAGES ((sal_Int32)-1)
 
+
+// -----------
+// - statics -
+// -----------
+
+// Placeholder tag used into the ImplWriteActions method to filter text placeholder fields
+static const ::rtl::OUString sPlaceholderTag = ::rtl::OUString::createFromAscii( "<[:isPlaceholder:]>" );
+
+
 // -------------
 // - SVGExport -
 // -------------
@@ -115,8 +129,8 @@ class SVGExport : public SvXMLExport
 {
     typedef ::std::list< ::basegfx::B2DPolyPolygon > B2DPolyPolygonList;
 
-public:						
-                        
+public:
+
     SVGExport( const ::com::sun::star::uno::Reference< ::com::sun::star::lang::XMultiServiceFactory > xServiceFactory,
                 const Reference< XDocumentHandler >& rxHandler,
                 const Sequence< PropertyValue >& rFilterData );
@@ -129,25 +143,25 @@ public:
     ::rtl::OUString GetGlyphPlacement() const;
     sal_Bool IsUseOpacity() const;
     sal_Bool IsUseGradient() const;
-    
+
     void  pushClip( const ::basegfx::B2DPolyPolygon& rPolyPoly );
     void  popClip();
     sal_Bool  hasClip() const;
     const ::basegfx::B2DPolyPolygon* getCurClip() const;
-    
+
 protected:
 
-virtual void			_ExportStyles( sal_Bool /* bUsed */ ) {}
-virtual void            _ExportAutoStyles() {}
-virtual void            _ExportContent() {}
-virtual void            _ExportMasterStyles() {}
-virtual sal_uInt32		exportDoc( enum ::xmloff::token::XMLTokenEnum /* eClass */ ) { return 0; }
+    virtual void            _ExportStyles( sal_Bool /* bUsed */ ) {}
+    virtual void            _ExportAutoStyles() {}
+    virtual void            _ExportContent() {}
+    virtual void            _ExportMasterStyles() {}
+    virtual sal_uInt32        exportDoc( enum ::xmloff::token::XMLTokenEnum /* eClass */ ) { return 0; }
 
 private:
-    
+
     const Sequence< PropertyValue >&    mrFilterData;
     B2DPolyPolygonList                  maClipList;
-        
+
     SVGExport();
 };
 
@@ -159,24 +173,47 @@ class ObjectRepresentation
 {
 private:
 
-    Reference< XInterface >			mxObject;
-    GDIMetaFile*					mpMtf;
-                                    
-public:								
-                                    
-                                    ObjectRepresentation();
-                                    ObjectRepresentation( const Reference< XInterface >& rxIf, 
-                                                          const GDIMetaFile& rMtf );
-                                    ObjectRepresentation( const ObjectRepresentation& rPresentation );
-                                    ~ObjectRepresentation();
-                                    
-    ObjectRepresentation&			operator=( const ObjectRepresentation& rPresentation );
-    sal_Bool							operator==( const ObjectRepresentation& rPresentation ) const;
+    Reference< XInterface >         mxObject;
+    GDIMetaFile*                    mpMtf;
 
-    const Reference< XInterface >&	GetObject() const { return mxObject; }	
-    sal_Bool						HasRepresentation() const { return mpMtf != NULL; }
-    const GDIMetaFile&				GetRepresentation() const { return *mpMtf; }	
+public:
+
+                                      ObjectRepresentation();
+                                      ObjectRepresentation( const Reference< XInterface >& rxIf,
+                                                            const GDIMetaFile& rMtf );
+                                      ObjectRepresentation( const ObjectRepresentation& rPresentation );
+                                      ~ObjectRepresentation();
+
+    ObjectRepresentation&             operator=( const ObjectRepresentation& rPresentation );
+    sal_Bool                          operator==( const ObjectRepresentation& rPresentation ) const;
+
+    const Reference< XInterface >&    GetObject() const { return mxObject; }
+    sal_Bool                          HasRepresentation() const { return mpMtf != NULL; }
+    const GDIMetaFile&                GetRepresentation() const { return *mpMtf; }
 };
+
+// -------------------
+// - PagePropertySet -
+// -------------------
+
+struct PagePropertySet
+{
+    sal_Bool               bIsBackgroundVisible;
+    sal_Bool               bAreBackgroundObjectsVisible;
+    sal_Bool               bIsPageNumberFieldVisible;
+    sal_Bool               bIsDateTimeFieldVisible;
+    sal_Bool               bIsFooterFieldVisible;
+    sal_Bool               bIsHeaderFieldVisible;
+    sal_Int32              nPageNumberingType;
+    sal_Bool               bIsDateTimeFieldFixed;
+    sal_Int16              nPageNumber;
+    sal_Int32              nDateTimeFormat;
+    ::rtl::OUString        sDateTimeText;
+    ::rtl::OUString        sFooterText;
+    ::rtl::OUString        sHeaderText;
+};
+
+
 
 // ---------------------------
 // - HashReferenceXInterface -
@@ -189,6 +226,25 @@ struct HashReferenceXInterface
         return reinterpret_cast< size_t >( rxIf.get() );
     }
 };
+
+// ---------------------------
+// - HashOUString -
+// ---------------------------
+
+struct HashOUString
+{
+    size_t operator()( const ::rtl::OUString& oustr ) const { return static_cast< size_t >( oustr.hashCode() ); }
+};
+
+// ---------------------------
+// - HashUChar -
+// ---------------------------
+
+struct HashUChar
+{
+    size_t operator()( const sal_Unicode uchar ) const { return static_cast< size_t >( uchar ); }
+};
+
 
 // -------------
 // - SVGFilter -
@@ -203,65 +259,83 @@ class SVGFilter : public cppu::WeakImplHelper4 < XFilter,
                                                  XExporter,
                                                  XExtendedFilterDetection >
 {
-    typedef ::boost::unordered_map< Reference< XInterface >, ObjectRepresentation, HashReferenceXInterface > ObjectMap;
+public:
+    typedef ::boost::unordered_map< Reference< XInterface >, ObjectRepresentation, HashReferenceXInterface >    ObjectMap;
     typedef ::std::vector< ::rtl::OUString > UniqueIdVector;
+    typedef ::boost::unordered_set< Reference< XInterface >, HashReferenceXInterface >                          ObjectSet;
+    typedef Sequence< Reference< XInterface > >                                                                 ObjectSequence;
+    typedef Sequence< Reference< XDrawPage > >                                                                  XDrawPageSequence;
+
+    typedef ::boost::unordered_set< sal_Unicode, HashUChar >                                                    UCharSet;
+    typedef ::boost::unordered_map< ::rtl::OUString, UCharSet, HashOUString >                                   UCharSetMap;
+    typedef ::boost::unordered_map< Reference< XInterface >, UCharSetMap, HashReferenceXInterface >             UCharSetMapMap;
 
 private:
 
-    Reference< XMultiServiceFactory >	mxMSF;
-    SvXMLElementExport*					mpSVGDoc;
-    SVGExport*							mpSVGExport;
-    SVGFontExport*						mpSVGFontExport;
-    SVGActionWriter*					mpSVGWriter;
-    SdrPage*							mpDefaultSdrPage;
-    SdrModel*							mpSdrModel;
-    sal_Bool							mbPresentation;
+    Reference< XMultiServiceFactory >   mxMSF;
+    SvXMLElementExport*                 mpSVGDoc;
+    SVGExport*                          mpSVGExport;
+    SVGFontExport*                      mpSVGFontExport;
+    SVGActionWriter*                    mpSVGWriter;
+    SdrPage*                            mpDefaultSdrPage;
+    SdrModel*                           mpSdrModel;
+    sal_Bool                            mbPresentation;
+    sal_Bool                            mbExportAll;
+    sal_Bool                            mbSinglePage;
+    sal_Int32                           mnVisiblePage;
+    sal_Int32                           mnVisibleMasterPage;
+    sal_Bool                            mbIsPageVisible;
+    PagePropertySet                     mVisiblePagePropSet;
+    ::rtl::OUString                     msClipPathId;
+    UCharSetMapMap                      mTextFieldCharSets;
+    Reference< XInterface >             mCreateOjectsCurrentMasterPage;
 
-    ObjectMap*							mpObjects;
-    Reference< XComponent >				mxSrcDoc;
-    Reference< XComponent >				mxDstDoc;
-    Reference< XDrawPage > 				mxDefaultPage;
+    ObjectMap*                          mpObjects;
+    Reference< XComponent >             mxSrcDoc;
+    Reference< XComponent >             mxDstDoc;
+    Reference< XDrawPage >              mxDefaultPage;
     Sequence< PropertyValue >           maFilterData;
+    XDrawPageSequence                   mSelectedPages;
+    XDrawPageSequence                   mMasterPageTargets;
+
     UniqueIdVector                      maUniqueIdVector;
     sal_Int32                           mnMasterSlideId;
     sal_Int32                           mnSlideId;
     sal_Int32                           mnDrawingGroupId;
     sal_Int32                           mnDrawingId;
-    Link								maOldFieldHdl;
+    Link                                maOldFieldHdl;
 
     sal_Bool                            implImport( const Sequence< PropertyValue >& rDescriptor ) throw (RuntimeException);
 
     sal_Bool                            implExport( const Sequence< PropertyValue >& rDescriptor ) throw (RuntimeException);
     Reference< XDocumentHandler >       implCreateExportDocumentHandler( const Reference< XOutputStream >& rxOStm );
 
-    sal_Bool							implGenerateMetaData( const Reference< XDrawPages >& rxMasterPages, 
-                                                              const Reference< XDrawPages >& rxDrawPages );
-    sal_Bool                            implGenerateScript( const Reference< XDrawPages >& rxMasterPages, 
-                                                            const Reference< XDrawPages >& rxDrawPages );
+    sal_Bool                            implGetPagePropSet( const Reference< XDrawPage > & rxPage );
+    sal_Bool                            implGenerateMetaData();
+    sal_Bool                            implGenerateScript();
 
-    sal_Bool							implExportDocument( const Reference< XDrawPages >& rxMasterPages,
-                                                            const Reference< XDrawPages >& rxDrawPages,
-                                                            sal_Int32 nPageToExport );
-    
-    sal_Bool							implExportPages( const Reference< XDrawPages >& rxPages,
+    sal_Bool                            implExportDocument();
+
+    sal_Bool                            implExportPages( const XDrawPageSequence& rxPages,
                                                          sal_Int32 nFirstPage, sal_Int32 nLastPage,
                                                          sal_Int32 nVisiblePage, sal_Bool bMaster );
-    
-    sal_Bool							implExportShapes( const Reference< XShapes >& rxShapes );
+
+    sal_Bool                            implExportShapes( const Reference< XShapes >& rxShapes );
     sal_Bool                            implExportShape( const Reference< XShape >& rxShape );
 
-    sal_Bool							implCreateObjects( const Reference< XDrawPages >& rxMasterPages,
-                                                           const Reference< XDrawPages >& rxDrawPages,
-                                                           sal_Int32 nPageToExport );
-    sal_Bool							implCreateObjectsFromShapes( const Reference< XShapes >& rxShapes );
+    sal_Bool                            implCreateObjects();
+    sal_Bool                            implCreateObjectsFromShapes( const Reference< XShapes >& rxShapes );
     sal_Bool                            implCreateObjectsFromShape( const Reference< XShape >& rxShape );
-    sal_Bool							implCreateObjectsFromBackground( const Reference< XDrawPage >& rxMasterPage );
-    
-    ::rtl::OUString						implGetClassFromShape( const Reference< XShape >& rxShape );
-    ::rtl::OUString						implGetValidIDFromInterface( const Reference< XInterface >& rxIf, sal_Bool bUnique = sal_False );
-    
+    sal_Bool                            implCreateObjectsFromBackground( const Reference< XDrawPage >& rxMasterPage );
+
+    ::rtl::OUString                     implGetClassFromShape( const Reference< XShape >& rxShape );
+    ::rtl::OUString                     implGetValidIDFromInterface( const Reference< XInterface >& rxIf, sal_Bool bUnique = sal_False );
+    sal_Bool                            implLookForFirstVisiblePage();
+    Any                                 implSafeGetPagePropSet( const ::rtl::OUString & sPropertyName,
+                                                                const Reference< XPropertySet > & rxPropSet,
+                                                                const Reference< XPropertySetInfo > & rxPropSetInfo );
                                         DECL_LINK( CalcFieldHdl, EditFieldInfo* );
-    
+
 protected:
 
     // XFilter
@@ -278,10 +352,12 @@ protected:
     virtual rtl::OUString SAL_CALL detect( Sequence< PropertyValue >& io_rDescriptor ) throw (RuntimeException);
 
 public:
-    
+
     explicit SVGFilter( const Reference< XComponentContext >& rxCtx );
-    virtual	~SVGFilter();
+    virtual    ~SVGFilter();
 };
+
+
 
 // -----------------------------------------------------------------------------
 

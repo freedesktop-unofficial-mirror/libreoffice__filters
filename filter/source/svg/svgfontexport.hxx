@@ -2,7 +2,7 @@
  /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- * 
+ *
  * Copyright 2008 by Sun Microsystems, Inc.
  *
  * OpenOffice.org - a multi-platform office productivity suite
@@ -33,12 +33,19 @@
 #define SVGFONTEXPORT_HXX
 
 #include <comphelper/stl_types.hxx>
-#include "svgfilter.hxx"
-#include "svgwriter.hxx"
+#include <tools/fontenum.hxx>
+
 
 // -----------------
 // - SVGFontExport -
 // -----------------
+
+
+class ObjectRepresentation;
+class SVGExport;
+class Font;
+class OutputDevice;
+
 
 class SVGFontExport
 {
@@ -48,24 +55,24 @@ class SVGFontExport
     typedef ::std::map< FontWeight, FontItalicMap >                             FontWeightMap;
     typedef ::std::map< ::rtl::OUString, FontWeightMap >                        FontNameMap;
     typedef FontNameMap                                                         GlyphTree;
-    
+
 private:
 
     SVGExport&		    mrExport;
     GlyphTree      		maGlyphTree;
     ObjectVector		maObjects;
     sal_Int32			mnCurFontId;
-                        
+
     GlyphSet&           implGetGlyphSet( const Font& rFont );
     void				implCollectGlyphs();
     void                implEmbedFont( const Font& rFont );
     void				implEmbedGlyph( OutputDevice& rOut, const ::rtl::OUString& rCellStr );
-                        
-public:					
-                        
+
+public:
+
                         SVGFontExport( SVGExport& rExport, const ::std::vector< ObjectRepresentation >& rObjects );
                         ~SVGFontExport();
-                        
+
     void				EmbedFonts();
     ::rtl::OUString		GetMappedFontName( const ::rtl::OUString& rFontName ) const;
 };
