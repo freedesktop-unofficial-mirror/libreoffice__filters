@@ -67,7 +67,7 @@ SAL_DLLPUBLIC_EXPORT void * SAL_CALL component_getFactory(sal_Char const * implN
     fprintf(stderr, "Loading service: %s: ", implName);
 
     void * pResult = ::cppu::component_getFactoryHelper(implName, xMgr, xRegistry, s_component_entries );
-    
+
     fprintf(stderr, "%p\n", pResult);
 
     return pResult;

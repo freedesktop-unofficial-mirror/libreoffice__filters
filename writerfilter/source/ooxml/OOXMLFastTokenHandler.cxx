@@ -58,8 +58,8 @@ OOXMLFastTokenHandler::OOXMLFastTokenHandler
         nResult = pToken->nToken;
 
 #ifdef DEBUG_TOKEN
-    clog << "getToken: " 
-         << OUStringToOString(Identifier, RTL_TEXTENCODING_ASCII_US).getStr() 
+    clog << "getToken: "
+         << OUStringToOString(Identifier, RTL_TEXTENCODING_ASCII_US).getStr()
          << ", " << nResult
          << endl;
 #endif
@@ -107,7 +107,7 @@ css::uno::Sequence< ::sal_Int8 > SAL_CALL OOXMLFastTokenHandler::getUTF8Identifi
         nResult = pToken->nToken;
 
 #ifdef DEBUG_TOKEN
-    clog << "getTokenFromUTF8: " 
+    clog << "getTokenFromUTF8: "
          << string(reinterpret_cast<const char *>
                    (Identifier.getConstArray()), Identifier.getLength())
          << ", " << nResult

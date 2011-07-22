@@ -54,7 +54,7 @@ void lcl_printProperties( uno::Sequence< beans::PropertyValue > aProps )
             sValue = OUString::valueOf( nValue );
 
 #if DEBUG
-        fprintf( stderr, "Property %s: %s\n", 
+        fprintf( stderr, "Property %s: %s\n",
                 OUSTR_TO_C( aProps[i].Name ),
                 OUSTR_TO_C( sValue ) );
 #endif

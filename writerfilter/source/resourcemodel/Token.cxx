@@ -1,4 +1,3 @@
-/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*************************************************************************
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
@@ -25,41 +24,59 @@
  * for a copy of the LGPLv3 License.
  *
  ************************************************************************/
-#ifndef INCLUDED_FRACTION_HXX
-#define INCLUDED_FRACTION_HXX
 
-#include <sal/types.h>
+#include <iostream>
+#include "resourcemodel/WW8ResourceModel.hxx"
+#include "ooxml/OOXMLFastTokens.hxx"
 
-#include <WriterFilterDllApi.hxx>
-
-namespace writerfilter {
-namespace resourcemodel {
-
-class WRITERFILTER_DLLPUBLIC Fraction
+namespace writerfilter 
 {
-public:
-    explicit Fraction(sal_Int32 nNumerator, sal_Int32 nDenominator = 1);
-    explicit Fraction(const Fraction & a, const Fraction & b);
-    virtual ~Fraction();
 
-    void init(sal_Int32 nNumerator, sal_Int32 nDenominator);
-    void assign(const Fraction & rFraction);
-    
-    Fraction inverse() const;
+size_t TokenHash::operator()(const Token_t & rToken) const
+{
+    return rToken.getId();
+}
 
-    Fraction operator=(const Fraction & rFraction);
-    Fraction operator+(const Fraction & rFraction) const;
-    Fraction operator-(const Fraction & rFraction) const;
-    Fraction operator*(const Fraction & rFraction) const;
-    Fraction operator/(const Fraction & rFraction) const;
-    operator sal_Int32() const;
-    operator float() const;
+Token_t::Token_t()
+{
+    assign(ooxml::OOXML_FAST_TOKENS_END);
+}
 
-private:
-    sal_Int32 mnNumerator;
-    sal_Int32 mnDenominator;
-};
-}}
-#endif // INCLUDED_FRACTION_HXX
+Token_t::Token_t(sal_Int32 nId)
+{
+    assign(nId);
+}
 
-/* vim:set shiftwidth=4 softtabstop=4 expandtab: */
+void Token_t::assign(sal_Int32 nId)
+{
+    m_nId = nId;
+}
+
+Token_t::~Token_t()
+{
+}
+
+sal_Int32 Token_t::getId() const
+{
+    return m_nId;
+}
+
+Token_t::operator sal_Int32() const
+{
+    return getId();
+}
+
+Token_t & Token_t::operator = (sal_Int32 nId)
+{
+    assign(nId);
+
+    return *this;
+}
+
+#ifdef DEBUG
+::std::string Token_t::toString() const
+{
+    return m_string;
+}
+#endif
+}

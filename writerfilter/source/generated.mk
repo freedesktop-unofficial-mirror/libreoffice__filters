@@ -2,7 +2,7 @@
 #
 # DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
 #
-# Copyright 2000, 2010 Oracle and/or its affiliates.
+# Copyright 2009 by Sun Microsystems, Inc.
 #
 # OpenOffice.org - a multi-platform office productivity suite
 #
@@ -14,27 +14,42 @@
 #
 # OpenOffice.org is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	See the
 # GNU Lesser General Public License version 3 for more details
 # (a copy is included in the LICENSE file that accompanied this code).
 #
 # You should have received a copy of the GNU Lesser General Public License
-# version 3 along with OpenOffice.org.  If not, see
+# version 3 along with OpenOffice.org.	If not, see
 # <http://www.openoffice.org/license.html>
 # for a copy of the LGPLv3 License.
 #
 #*************************************************************************
 
-PRJ=..
-TARGET=prj
+# this namespace list is needed both in the library and the custom makefile
+WRITERFILTER_OOXMLNAMESPACES= \
+	wml \
+	dml-stylesheet \
+	dml-styleDefaults \
+	dml-shape3DLighting \
+	dml-shape3DScene \
+	dml-shape3DStyles \
+	dml-shape3DCamera \
+	dml-baseStylesheet \
+	dml-textCharacter \
+	dml-shapeEffects \
+	dml-shapeLineProperties \
+	dml-shapeProperties \
+	dml-baseTypes \
+	dml-documentProperties \
+	dml-graphicalObject \
+	dml-shapeGeometry \
+	dml-wordprocessingDrawing \
+	sml-customXmlMappings \
+	shared-math \
+	shared-relationshipReference \
+	dml-chartDrawing \
+	vml-main \
+	vml-officeDrawing \
+	vml-wordprocessingDrawing \
 
-.INCLUDE : settings.mk
 
-.IF "$(VERBOSE)"!=""
-VERBOSEFLAG :=
-.ELSE
-VERBOSEFLAG := -s
-.ENDIF
-
-all:
-    cd $(PRJ) && $(GNUMAKE) $(VERBOSEFLAG) -r -j$(MAXPROCESS) $(gb_MAKETARGET) && $(GNUMAKE) $(VERBOSEFLAG) -r deliverlog
