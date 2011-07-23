@@ -65,7 +65,7 @@ public:
         mpHandler = dynamic_cast<ChildClass *>(xRef.get());
 #ifdef DEBUG_MEMORY
         if (mpHandler != NULL)
-            clog << "MEMORY:" << mpHandler->getInstanceNumber()
+            clog << "MEMORY:" << mpHandler->getInstanceNumber() 
                  << ":RefAndPointer" << endl;
 #endif
     }
@@ -74,7 +74,7 @@ public:
     {
 #ifdef DEBUG_MEMORY
         if (mpHandler != NULL)
-            clog << "MEMORY:" << mpHandler->getInstanceNumber()
+            clog << "MEMORY:" << mpHandler->getInstanceNumber() 
                  << ":~RefAndPointer" << endl;
 #endif
     }
