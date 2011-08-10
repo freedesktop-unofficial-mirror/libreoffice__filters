@@ -4631,8 +4631,7 @@ SdrObject* SvxMSDffManager::ImportGroup( const DffRecordHeader& rHd, SvStream& r
     {
         mnFix16Angle = 0;
 
-        if (!aRecHd.SeekToBegOfRecord(rSt))
-            return pRet;
+        aRecHd.SeekToBegOfRecord(rSt);
 
         pRet = ImportObj( rSt, pClientData, rClientRect, rGlobalChildRect, nCalledByGroup + 1, pShapeId );
         if ( pRet )
