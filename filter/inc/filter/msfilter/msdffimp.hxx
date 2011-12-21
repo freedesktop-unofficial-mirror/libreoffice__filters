@@ -77,9 +77,20 @@ public:
     bool IsContainer() const { return nRecVer == DFF_PSFLAG_CONTAINER; }
     sal_uLong    GetRecBegFilePos() const { return nFilePos; }
     sal_uLong    GetRecEndFilePos() const { return nFilePos + DFF_COMMON_RECORD_HEADER_SIZE + nRecLen; }
-    void SeekToEndOfRecord(SvStream& rIn) const { rIn.Seek(nFilePos + DFF_COMMON_RECORD_HEADER_SIZE + nRecLen ); }
-    void SeekToContent(    SvStream& rIn) const { rIn.Seek(nFilePos + DFF_COMMON_RECORD_HEADER_SIZE ); }
-    void SeekToBegOfRecord(SvStream& rIn) const { rIn.Seek( nFilePos ); }
+    bool SeekToEndOfRecord(SvStream& rIn) const
+    {
+        sal_Size nPos = nFilePos + DFF_COMMON_RECORD_HEADER_SIZE + nRecLen;
+        return nPos == rIn.Seek(nPos);
+    }
+    bool SeekToContent(SvStream& rIn) const
+    {
+        sal_Size nPos = nFilePos + DFF_COMMON_RECORD_HEADER_SIZE;
+        return nPos == rIn.Seek(nPos);
+    }
+    bool SeekToBegOfRecord(SvStream& rIn) const
+    {
+        return nFilePos == rIn.Seek(nFilePos);
+    }
 
     MSFILTER_DLLPUBLIC friend SvStream& operator>>(SvStream& rIn, DffRecordHeader& rRec);
 
