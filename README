@@ -1,0 +1,20 @@
+
+This git repository is part of the "bootstrap" family of Libreoffice repos.
+It is obsolete and its only useful content are the LibreOffice 3.3
+and 3.4 release branches.
+
+If you are interested in the latest and greatest development branch "master",
+or in release branches of LibreOffice versions newer than 3.4, please
+check out the "core" git repository, as described on the Wiki:
+
+  http://wiki.documentfoundation.org/Development/Native_Build
+
+If you want to build the 3.3 or 3.4 release, you need to switch to the
+corresponding release branch:
+
+  ./g checkout libreoffice-3-4
+
+If for some reason you want to look at obsolete in-development code,
+check out the "master-backup" branch in this repository; this is most likely
+to be a complete waste of time though.
+
